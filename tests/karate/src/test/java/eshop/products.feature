@@ -29,3 +29,16 @@ Feature: EShop Product Catalog API
         "category_id": '#number'
       }
       """
+
+  @k2 @data-driven
+  Scenario Outline: K2 - Query product by ID with boundary & discrepancy assertions: <testCase>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                                | testCase                                                                        |
+      | 1         | 200            | { price: '#number' }                         | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
+      | 2         | 200            | { price: '#string' }                         | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
+      | 9999      | 200            | {}                                           | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
