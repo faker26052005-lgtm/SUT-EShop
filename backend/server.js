@@ -11,6 +11,12 @@ const SECRET_KEY = "super_secret_key_that_should_not_be_here";
 app.use(cors());
 app.use(bodyParser.json());
 
+// Middleware in log mỗi khi có bất kỳ Request nào gửi tới Backend
+app.use((req, res, next) => {
+  console.log(`[BACKEND SUT] Nhận request: ${req.method} ${req.url} lúc ${new Date().toLocaleTimeString()}`);
+  next();
+});
+
 const userCarts = {};
 
 // ==========================================
