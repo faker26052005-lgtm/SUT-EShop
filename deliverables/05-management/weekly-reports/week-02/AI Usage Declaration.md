@@ -529,7 +529,7 @@ add all previous prompts of this session in AI usage declaration
 <!-- START_SESSION: b71488b2 -->
 ### Phiên làm việc: 2026-10-15 01:06:53 (Session ID: `b71488b2`)
 - **Mô hình / Công cụ:** Google Antigravity (Gemini 3.8 Flash)
-- **Tổng số lượt tương tác (Turns):** 8
+- **Tổng số lượt tương tác (Turns):** 9
 - **Thời gian bắt đầu:** 2026-10-15 01:06:53
 
 #### Bảng Tổng Hợp Tương Tác & Kết Quả (Executive Summary Table)
@@ -542,7 +542,8 @@ add all previous prompts of this session in AI usage declaration
 | #5 | 2026-10-15 02:16:20 | you forgot log the previous prompt into Declaration. | <strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The prompt and its full response have been logged into AI Usage Declaration.md under session `b71488b2`:<br/>• - **Turn #4:**<br/>• - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?` | Thành viên nhóm review & phê duyệt kết quả |
 | #6 | 2026-10-15 02:24:51 | Execute the K1 scenario as planned. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `products.feature`<br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The **K1 scenario** has been created and executed.<br/>• 1. Test Scenario Definition<br/>• We created `products.feature` with the **K1** smoke and schema validation scenario: | Thành viên nhóm review & phê duyệt kết quả |
 | #7 | 2026-10-15 02:35:13 | Execute the K2 scenario as planned. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `products.feature`<br/>Cập nhật file: `products.feature`<br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The **K2 scenario** (Data-driven & SUT Discrepancy Assertions) has been implemented and executed.<br/>• 1. Test Scenario Definition<br/>• We expanded `products.feature` with the **K2** `Scenario Outline`, covering valid partitions and real backend discrepancies: | Thành viên nhóm review & phê duyệt kết quả |
-| #8 | 2026-10-15 13:05:13 | Execute the K3 scenario as planned. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `auth-cart-checkout.feature`<br/>Cập nhật file: `auth-cart-checkout.feature` | Thành viên nhóm review & phê duyệt kết quả |
+| #8 | 2026-10-15 13:05:13 | Execute the K3 scenario as planned. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `auth-cart-checkout.feature`<br/>Cập nhật file: `auth-cart-checkout.feature`<br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The **K3 scenario** (End-to-End Authenticated Shopping Workflow & Security Negative Test) has been implemented and executed.<br/>• 1. Test Scenario Definition<br/>• We created `auth-cart-checkout.feature` covering both the happy path and security authorization checks: | Thành viên nhóm review & phê duyệt kết quả |
+| #9 | 2026-10-15 13:14:05 | execute the Component 3 in Implementation plan. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `README.md` | Thành viên nhóm review & phê duyệt kết quả |
 
 #### Nhật Ký Chi Tiết Hội Thoại (Traceable Chat Log)
 <details>
@@ -1032,6 +1033,1068 @@ mvn test -Dkarate.options="--tags @k2"
 - **Case 1 (`id=1`):** `GET /api/products/1` $ightarrow$ `200 OK`, `price` validated as `#number` (30,000,000). **PASS**
 - **Case 2 (`id=2`):** `GET /api/products/2` $ightarrow$ `200 OK`, `price` detected and validated as `#string` ("28000000"), recording Bug 1 without masking it. **PASS**
 - **Case 3 (`id=9999`):** `GET /api/products/9999` $ightarrow$ `200 OK` with `{}` object, recording Bug 2 as an observed SUT discrepancy. **PASS**
+
+```text
+---------------------------------------------------------
+feature: classpath:eshop/products.feature
+scenarios:  3 | passed:  3 | failed:  0 | time: 0.1804
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.34 | threads:    1 | thread time: 0.18 
+features:     1 | skipped:    0 | efficiency: 0.13
+scenarios:    3 | passed:     3 | failed: 0
+======================================================
+[INFO] BUILD SUCCESS
+```
+
+Full suite run (`K1` + `K2`):
+```bash
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+# scenarios: 4 | passed: 4 | failed: 0 (100% PASS)
+```
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #7 along with its deliverables and execution results has been logged into:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #8: Execute the K3 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 13:05:13)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K3 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `view_file`: Check server.js auth and product routes
+- `view_file`: Check cart and checkout routes in server.js
+- `view_file`: Check cart, checkout, and orders routes
+- `view_file`: Check registration route in server.js
+- `run_command`: Check backend status
+- `find_by_name`: Check if auth-cart-checkout.feature exists
+- `write_to_file`: Create auth-cart-checkout.feature
+- `run_command`: Execute K3 scenario via Maven
+- `replace_file_content`: Fix variable matching syntax in auth-cart-checkout.feature
+- `run_command`: Execute K3 scenario via Maven
+- `run_command`: Check actual HTTP request sent
+- `write_to_file`: Update auth-cart-checkout.feature
+- `run_command`: Execute K3 test suite
+- `view_file`: View lines 85 to 105 in auth-cart-checkout.feature
+- `replace_file_content`: Fix string variable matching syntax
+- `run_command`: Run K3 test suite via Maven
+- `run_command`: Check target/test-classes/eshop/auth-cart-checkout.feature
+- `run_command`: Inspect checkout request payload in report
+- `run_command`: Inspect checkout request in report
+- `write_to_file`: Update auth-cart-checkout.feature with embedded expressions
+- `run_command`: Execute K3 test suite via Maven
+- `run_command`: Run complete Karate test suite
+- `run_command`: Log K3 execution into AI Usage Declaration
+- `view_file`: Check Turn 8 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K3 scenario** (End-to-End Authenticated Shopping Workflow & Security Negative Test) has been implemented and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We created [`auth-cart-checkout.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/auth-cart-checkout.feature) covering both the happy path and security authorization checks:
+
+```cucumber
+@workflow
+Feature: EShop Authenticated Shopping & Checkout Workflow (K3)
+
+  Background:
+    * url baseUrl
+
+  @k3 @e2e @smoke
+  Scenario: K3 - Complete End-to-End Shopping Workflow (Register -> Login -> Add to Cart -> Checkout -> Verify Order)
+    # Step 1: Tạo tài khoản động theo timestamp để đảm bảo tính độc lập & giỏ hàng sạch
+    * def timestamp = java.lang.System.currentTimeMillis()
+    * def testEmail = 'karate_k3_' + timestamp + '@eshop.com'
+    * def testPassword = 'Password123!'
+    * def testName = 'Karate Tester ' + timestamp
+    * def registerPayload = { name: '#(testName)', email: '#(testEmail)', password: '#(testPassword)' }
+
+    Given path 'api', 'register'
+    And request registerPayload
+    When method post
+    Then status 200
+    And match response.message == 'User registered successfully'
+
+    # Step 2: Đăng nhập lấy JWT Auth Token
+    * def loginPayload = { email: '#(testEmail)', password: '#(testPassword)' }
+    Given path 'api', 'login'
+    And request loginPayload
+    When method post
+    Then status 200
+    * def authToken = response.token
+
+    # Step 3: Lấy danh mục sản phẩm và chọn sản phẩm đầu tiên
+    Given path 'api', 'products'
+    When method get
+    Then status 200
+    * def selectedProduct = response[0]
+
+    # Step 4: Thêm sản phẩm vào giỏ hàng với Bearer Token
+    * def cartItem = { productId: '#(selectedProduct.id)', name: '#(selectedProduct.name)', price: '#(selectedProduct.price)', quantity: 1 }
+    Given path 'api', 'cart'
+    And header Authorization = 'Bearer ' + authToken
+    And request cartItem
+    When metho
+<truncated 983 bytes>
+rders', 'my-orders'
+    And header Authorization = 'Bearer ' + authToken
+    When method get
+    Then status 200
+    And match response[0].id == generatedOrderId
+    And match response[0].status == 'pending'
+    And match response[0].shipping_address == shippingAddr
+
+  @k3 @security @negative
+  Scenario: K3 - Security Negative Test: Accessing protected cart without token must return 401 Unauthorized
+    Given path 'api', 'cart'
+    When method get
+    Then status 401
+    And match response.error == 'Unauthorized'
+```
+
+---
+
+### 2. Execution Results
+
+#### Executing K3 Feature Only:
+```bash
+mvn test -Dkarate.options="classpath:eshop/auth-cart-checkout.feature"
+```
+```text
+---------------------------------------------------------
+feature: classpath:eshop/auth-cart-checkout.feature
+scenarios:  2 | passed:  2 | failed:  0 | time: 0.3188
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.53 | threads:    1 | thread time: 0.32 
+features:     1 | skipped:    0 | efficiency: 0.21
+scenarios:    2 | passed:     2 | failed: 0
+======================================================
+[INFO] BUILD SUCCESS
+```
+
+#### Executing Complete Suite (`K1` + `K2` + `K3`):
+```bash
+mvn clean test
+```
+```text
+Karate version: 1.4.1
+======================================================
+elapsed:   1.61 | threads:    1 | thread time: 0.32 
+features:     2 | skipped:    0 | efficiency: 0.20
+scenarios:    6 | passed:     6 | failed: 0
+======================================================
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
+
+All 6 scenarios across `products.feature` (K1, K2) and `auth-cart-checkout.feature` (K3) passed.
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #8 and the full K3 implementation and execution trail have been logged in:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #9: execute the Component 3 in Implementation plan. Please remember log this prompt into Declaration.</strong> (2026-10-15 13:14:05)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+execute the Component 3 in Implementation plan. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `view_file`: View current tests/karate/README.md
+- `write_to_file`: Update tests/karate/README.md for Component 3
+- `run_command`: Verify products.feature execution from README
+- `run_command`: Log Component 3 into AI Usage Declaration
+- `view_file`: Check Turn 9 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+</details>
+<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
+- `view_file`: Verify updated turns in AI Usage Declaration.md
+- `view_file`: Check Turn 4 in AI Usage Declaration.md
+- `run_command`: Refresh AI usage declaration with latest turn
+
+**Kết quả phản hồi của AI:**
+
+The prompt and its full response have been logged into [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md) under session `b71488b2`:
+
+- **Turn #4:**
+  - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?`
+  - **Actual Deliverables & Outcomes:** Detailed explanation of `products.feature` covering its role in **Clip K1** (smoke test & array schema assertions) and **Clip K2** (Scenario Outline data-driven tests & SUT discrepancy detection for Bugs 1 and 2).
+  - **Traceable Chat Log:** Recorded in the expandable `<details>` section with the complete response and breakdown.
+
+</details>
+
+<details>
+<summary><strong>Turn #6: Execute the K1 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:24:51)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K1 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `find_by_name`: Check if products.feature exists
+- `view_file`: View products.feature
+- `write_to_file`: Write K1 scenario to products.feature
+- `run_command`: Execute K1 scenario via Maven
+- `run_command`: Check if backend is running
+- `view_file`: Check backend package.json
+- `run_command`: Start EShop backend server
+- `run_command`: Verify backend is responding
+- `run_command`: Execute K1 test scenario
+- `run_command`: Log K1 execution into AI Usage Declaration
+- `view_file`: Check Turn 6 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K1 scenario** has been created and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We created [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) with the **K1** smoke and schema validation scenario:
+
+```cucumber
+@products
+Feature: EShop Product Catalog API
+
+  Background:
+    * url baseUrl
+
+  @k1 @smoke
+  Scenario: K1 - Get all products returns a valid array and schema
+    # Step 1: Gọi endpoint GET /api/products
+    Given path 'api', 'products'
+    When method get
+
+    # Step 2: Xác thực mã trạng thái HTTP 200 OK
+    Then status 200
+
+    # Step 3: Xác thực cấu trúc phản hồi là một mảng JSON
+    And match response == '#[]'
+    And assert response.length > 0
+
+    # Step 4: Kiểm tra schema của phần tử đầu tiên trong danh mục
+    And match response[0] contains
+      """
+      {
+        "id": '#number',
+        "name": '#string',
+        "price": '#number',
+        "description": '#string',
+        "imageUrl": '#string',
+        "category_id": '#number'
+      }
+      """
+```
+
+---
+
+### 2. Execution Results
+
+We verified that the local backend service was running and executed the scenario via Maven:
+
+```bash
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+#### Terminal Execution Output:
+```text
+09:26:07.254 [main] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:3000/api/products
+1 > Host: localhost:3000
+1 > Connection: Keep-Alive
+1 > User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.20.1)
+1 > Accept-Encoding: gzip,deflate
+
+09:26:07.277 [main] DEBUG com.intuit.karate - response time in milliseconds: 15
+1 < 200
+1 < X-Powered-By: Express
+1 < Access-Control-Allow-Origin: *
+1 < Content-Type: application/json; charset=utf-8
+1 < Content-Length: 969
+[{"id":1,"name":"iPhone 15 Pro Max","price":30000000,"description":"Điện thoại cao cấp của Apple",...}]
+
+---------------------------------------------------------
+feature: classpath:eshop/products.feature
+scenarios:  1 | passed:  1 | failed:  0 | time: 0.1824
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.29 | threads:    1 | thread time: 0.18 
+features:     1 | skipped:    0 | efficiency: 0.14
+scenarios:    1 | passed:     1 | failed: 0
+======================================================
+
+[INFO] BUILD SUCCESS
+```
+
+- **Status:** **1 Passed, 0 Failed (100% PASS)**
+- **Report generated at:** `target/karate-reports/karate-summary.html`
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #6 and its deliverables (`products.feature` creation, test execution, and results) have been recorded in:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #7: Execute the K2 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:35:13)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K2 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Check if backend is up
+- `run_command`: Check product endpoints for K2
+- `write_to_file`: Add K2 scenarios to products.feature
+- `run_command`: Run K1 and K2 tests
+- `run_command`: Run only K2 tag
+- `run_command`: Verify intentional failure demo scenario
+- `replace_file_content`: Clean up products.feature
+- `run_command`: Run full products.feature suite
+- `run_command`: Log K2 execution into AI Usage Declaration
+- `view_file`: Check Turn 7 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K2 scenario** (Data-driven & SUT Discrepancy Assertions) has been implemented and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We expanded [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) with the **K2** `Scenario Outline`, covering valid partitions and real backend discrepancies:
+
+```cucumber
+  @k2 @data-driven
+  Scenario Outline: K2 - Query product by ID with boundary & discrepancy assertions: <testCase>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                                | testCase                                                                        |
+      | 1         | 200            | { price: '#number' }                         | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
+      | 2         | 200            | { price: '#string' }                         | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
+      | 9999      | 200            | {}                                           | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
+```
+
+---
+
+### 2. Execution Results
+
+We executed the K2 scenario suite via Maven:
+
+```bash
+mvn test -Dkarate.options="--tags @k2"
+```
+
+#### Terminal Execution Summary:
+- **Case 1 (`id=1`):** `GET /api/products/1` $
+ightarrow$ `200 OK`, `price` validated as `#number` (30,000,000). **PASS**
+- **Case 2 (`id=2`):** `GET /api/products/2` $
+ightarrow$ `200 OK`, `price` detected and validated as `#string` ("28000000"), recording Bug 1 without masking it. **PASS**
+- **Case 3 (`id=9999`):** `GET /api/products/9999` $
+ightarrow$ `200 OK` with `{}` object, recording Bug 2 as an observed SUT discrepancy. **PASS**
+
+```text
+---------------------------------------------------------
+feature: classpath:eshop/products.feature
+scenarios:  3 | passed:  3 | failed:  0 | time: 0.1804
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.34 | threads:    1 | thread time: 0.18 
+features:     1 | skipped:    0 | efficiency: 0.13
+scenarios:    3 | passed:     3 | failed: 0
+======================================================
+[INFO] BUILD SUCCESS
+```
+
+Full suite run (`K1` + `K2`):
+```bash
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+# scenarios: 4 | passed: 4 | failed: 0 (100% PASS)
+```
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #7 along with its deliverables and execution results has been logged into:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #8: Execute the K3 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 13:05:13)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K3 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `view_file`: Check server.js auth and product routes
+- `view_file`: Check cart and checkout routes in server.js
+- `view_file`: Check cart, checkout, and orders routes
+- `view_file`: Check registration route in server.js
+- `run_command`: Check backend status
+- `find_by_name`: Check if auth-cart-checkout.feature exists
+- `write_to_file`: Create auth-cart-checkout.feature
+- `run_command`: Execute K3 scenario via Maven
+- `replace_file_content`: Fix variable matching syntax in auth-cart-checkout.feature
+- `run_command`: Execute K3 scenario via Maven
+- `run_command`: Check actual HTTP request sent
+- `write_to_file`: Update auth-cart-checkout.feature
+- `run_command`: Execute K3 test suite
+- `view_file`: View lines 85 to 105 in auth-cart-checkout.feature
+- `replace_file_content`: Fix string variable matching syntax
+- `run_command`: Run K3 test suite via Maven
+- `run_command`: Check target/test-classes/eshop/auth-cart-checkout.feature
+- `run_command`: Inspect checkout request payload in report
+- `run_command`: Inspect checkout request in report
+- `write_to_file`: Update auth-cart-checkout.feature with embedded expressions
+- `run_command`: Execute K3 test suite via Maven
+- `run_command`: Run complete Karate test suite
+- `run_command`: Log K3 execution into AI Usage Declaration
+- `view_file`: Check Turn 8 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K3 scenario** (End-to-End Authenticated Shopping Workflow & Security Negative Test) has been implemented and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We created [`auth-cart-checkout.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/auth-cart-checkout.feature) covering both the happy path and security authorization checks:
+
+```cucumber
+@workflow
+Feature: EShop Authenticated Shopping & Checkout Workflow (K3)
+
+  Background:
+    * url baseUrl
+
+  @k3 @e2e @smoke
+  Scenario: K3 - Complete End-to-End Shopping Workflow (Register -> Login -> Add to Cart -> Checkout -> Verify Order)
+    # Step 1: Tạo tài khoản động theo timestamp để đảm bảo tính độc lập & giỏ hàng sạch
+    * def timestamp = java.lang.System.currentTimeMillis()
+    * def testEmail = 'karate_k3_' + timestamp + '@eshop.com'
+    * def testPassword = 'Password123!'
+    * def testName = 'Karate Tester ' + timestamp
+    * def registerPayload = { name: '#(testName)', email: '#(testEmail)', password: '#(testPassword)' }
+
+    Given path 'api', 'register'
+    And request registerPayload
+    When method post
+    Then status 200
+    And match response.message == 'User registered successfully'
+
+    # Step 2: Đăng nhập lấy JWT Auth Token
+    * def loginPayload = { email: '#(testEmail)', password: '#(testPassword)' }
+    Given path 'api', 'login'
+    And request loginPayload
+    When method post
+    Then status 200
+    * def authToken = response.token
+
+    # Step 3: Lấy danh mục sản phẩm và chọn sản phẩm đầu tiên
+    Given path 'api', 'products'
+    When method get
+    Then status 200
+    * def selectedProduct = response[0]
+
+    # Step 4: Thêm sản phẩm vào giỏ hàng với Bearer Token
+    * def cartItem = { productId: '#(selectedProduct.id)', name: '#(selectedProduct.name)', price: '#(selectedProduct.price)', quantity: 1 }
+    Given path 'api', 'cart'
+    And header Authorization = 'Bearer ' + authToken
+    And request cartItem
+    When metho
+<truncated 983 bytes>
+rders', 'my-orders'
+    And header Authorization = 'Bearer ' + authToken
+    When method get
+    Then status 200
+    And match response[0].id == generatedOrderId
+    And match response[0].status == 'pending'
+    And match response[0].shipping_address == shippingAddr
+
+  @k3 @security @negative
+  Scenario: K3 - Security Negative Test: Accessing protected cart without token must return 401 Unauthorized
+    Given path 'api', 'cart'
+    When method get
+    Then status 401
+    And match response.error == 'Unauthorized'
+```
+
+---
+
+### 2. Execution Results
+
+#### Executing K3 Feature Only:
+```bash
+mvn test -Dkarate.options="classpath:eshop/auth-cart-checkout.feature"
+```
+```text
+---------------------------------------------------------
+feature: classpath:eshop/auth-cart-checkout.feature
+scenarios:  2 | passed:  2 | failed:  0 | time: 0.3188
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.53 | threads:    1 | thread time: 0.32 
+features:     1 | skipped:    0 | efficiency: 0.21
+scenarios:    2 | passed:     2 | failed: 0
+======================================================
+[INFO] BUILD SUCCESS
+```
+
+#### Executing Complete Suite (`K1` + `K2` + `K3`):
+```bash
+mvn clean test
+```
+```text
+Karate version: 1.4.1
+======================================================
+elapsed:   1.61 | threads:    1 | thread time: 0.32 
+features:     2 | skipped:    0 | efficiency: 0.20
+scenarios:    6 | passed:     6 | failed: 0
+======================================================
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
+
+All 6 scenarios across `products.feature` (K1, K2) and `auth-cart-checkout.feature` (K3) passed.
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #8 and the full K3 implementation and execution trail have been logged in:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #9: execute the Component 3 in Implementation plan. Please remember log this prompt into Declaration.</strong> (2026-10-15 13:14:05)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+execute the Component 3 in Implementation plan. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `view_file`: View current tests/karate/README.md
+- `write_to_file`: Update tests/karate/README.md for Component 3
+- `run_command`: Verify products.feature execution from README
+- `run_command`: Log Component 3 into AI Usage Declaration
+
+</details>
+<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
+- `view_file`: Verify updated turns in AI Usage Declaration.md
+- `view_file`: Check Turn 4 in AI Usage Declaration.md
+- `run_command`: Refresh AI usage declaration with latest turn
+
+**Kết quả phản hồi của AI:**
+
+The prompt and its full response have been logged into [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md) under session `b71488b2`:
+
+- **Turn #4:**
+  - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?`
+  - **Actual Deliverables & Outcomes:** Detailed explanation of `products.feature` covering its role in **Clip K1** (smoke test & array schema assertions) and **Clip K2** (Scenario Outline data-driven tests & SUT discrepancy detection for Bugs 1 and 2).
+  - **Traceable Chat Log:** Recorded in the expandable `<details>` section with the complete response and breakdown.
+
+</details>
+
+<details>
+<summary><strong>Turn #6: Execute the K1 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:24:51)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K1 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `find_by_name`: Check if products.feature exists
+- `view_file`: View products.feature
+- `write_to_file`: Write K1 scenario to products.feature
+- `run_command`: Execute K1 scenario via Maven
+- `run_command`: Check if backend is running
+- `view_file`: Check backend package.json
+- `run_command`: Start EShop backend server
+- `run_command`: Verify backend is responding
+- `run_command`: Execute K1 test scenario
+- `run_command`: Log K1 execution into AI Usage Declaration
+- `view_file`: Check Turn 6 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K1 scenario** has been created and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We created [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) with the **K1** smoke and schema validation scenario:
+
+```cucumber
+@products
+Feature: EShop Product Catalog API
+
+  Background:
+    * url baseUrl
+
+  @k1 @smoke
+  Scenario: K1 - Get all products returns a valid array and schema
+    # Step 1: Gọi endpoint GET /api/products
+    Given path 'api', 'products'
+    When method get
+
+    # Step 2: Xác thực mã trạng thái HTTP 200 OK
+    Then status 200
+
+    # Step 3: Xác thực cấu trúc phản hồi là một mảng JSON
+    And match response == '#[]'
+    And assert response.length > 0
+
+    # Step 4: Kiểm tra schema của phần tử đầu tiên trong danh mục
+    And match response[0] contains
+      """
+      {
+        "id": '#number',
+        "name": '#string',
+        "price": '#number',
+        "description": '#string',
+        "imageUrl": '#string',
+        "category_id": '#number'
+      }
+      """
+```
+
+---
+
+### 2. Execution Results
+
+We verified that the local backend service was running and executed the scenario via Maven:
+
+```bash
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+#### Terminal Execution Output:
+```text
+09:26:07.254 [main] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:3000/api/products
+1 > Host: localhost:3000
+1 > Connection: Keep-Alive
+1 > User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.20.1)
+1 > Accept-Encoding: gzip,deflate
+
+09:26:07.277 [main] DEBUG com.intuit.karate - response time in milliseconds: 15
+1 < 200
+1 < X-Powered-By: Express
+1 < Access-Control-Allow-Origin: *
+1 < Content-Type: application/json; charset=utf-8
+1 < Content-Length: 969
+[{"id":1,"name":"iPhone 15 Pro Max","price":30000000,"description":"Điện thoại cao cấp của Apple",...}]
+
+---------------------------------------------------------
+feature: classpath:eshop/products.feature
+scenarios:  1 | passed:  1 | failed:  0 | time: 0.1824
+---------------------------------------------------------
+
+Karate version: 1.4.1
+======================================================
+elapsed:   1.29 | threads:    1 | thread time: 0.18 
+features:     1 | skipped:    0 | efficiency: 0.14
+scenarios:    1 | passed:     1 | failed: 0
+======================================================
+
+[INFO] BUILD SUCCESS
+```
+
+- **Status:** **1 Passed, 0 Failed (100% PASS)**
+- **Report generated at:** `target/karate-reports/karate-summary.html`
+
+---
+
+### 3. AI Usage Declaration Updated
+
+Turn #6 and its deliverables (`products.feature` creation, test execution, and results) have been recorded in:
+- [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+</details>
+
+<details>
+<summary><strong>Turn #7: Execute the K2 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:35:13)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K2 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Check if backend is up
+- `run_command`: Check product endpoints for K2
+- `write_to_file`: Add K2 scenarios to products.feature
+- `run_command`: Run K1 and K2 tests
+- `run_command`: Run only K2 tag
+- `run_command`: Verify intentional failure demo scenario
+- `replace_file_content`: Clean up products.feature
+- `run_command`: Run full products.feature suite
+- `run_command`: Log K2 execution into AI Usage Declaration
+- `view_file`: Check Turn 7 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The **K2 scenario** (Data-driven & SUT Discrepancy Assertions) has been implemented and executed.
+
+---
+
+### 1. Test Scenario Definition
+
+We expanded [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) with the **K2** `Scenario Outline`, covering valid partitions and real backend discrepancies:
+
+```cucumber
+  @k2 @data-driven
+  Scenario Outline: K2 - Query product by ID with boundary & discrepancy assertions: <testCase>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                                | testCase                                                                        |
+      | 1         | 200            | { price: '#number' }                         | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
+      | 2         | 200            | { price: '#string' }                         | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
+      | 9999      | 200            | {}                                           | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
+```
+
+---
+
+### 2. Execution Results
+
+We executed the K2 scenario suite via Maven:
+
+```bash
+mvn test -Dkarate.options="--tags @k2"
+```
+
+#### Terminal Execution Summary:
+- **Case 1 (`id=1`):** `GET /api/products/1` $
+ightarrow$ `200 OK`, `price` validated as `#number` (30,000,000). **PASS**
+- **Case 2 (`id=2`):** `GET /api/products/2` $
+ightarrow$ `200 OK`, `price` detected and validated as `#string` ("28000000"), recording Bug 1 without masking it. **PASS**
+- **Case 3 (`id=9999`):** `GET /api/products/9999` $
+ightarrow$ `200 OK` with `{}` object, recording Bug 2 as an observed SUT discrepancy. **PASS**
 
 ```text
 ---------------------------------------------------------
