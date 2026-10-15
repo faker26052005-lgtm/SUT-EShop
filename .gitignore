@@ -119,12 +119,15 @@ playwright/.cache/
 cypress/videos/
 cypress/screenshots/
 
-# API Testing & Test Runner Reports (Newman, Allure, JUnit)
+# API Testing & Test Runner Reports (Newman, Allure, JUnit, Karate, Maven)
 newman/
 reports/*.html
 allure-results/
 allure-report/
 junit.xml
+target/
+karate-reports/
+*.class
 
 # Performance testing (k6, JMeter)
 *.jtl

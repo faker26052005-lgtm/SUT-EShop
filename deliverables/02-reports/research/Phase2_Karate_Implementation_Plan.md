@@ -31,53 +31,53 @@ Tài liệu này vạch ra chi tiết các bước thiết lập môi trường,
 
 ## Proposed Changes
 
-Chúng ta sẽ tạo toàn bộ mã nguồn kiểm thử Karate trong thư mục độc lập `artifacts/demo/karate/` để tách biệt hoàn toàn với mã nguồn backend SUT.
+Chúng ta triển khai toàn bộ mã nguồn kiểm thử Karate trong thư mục chuẩn `tests/karate/` (theo đúng quy ước tại [REPOSITORY_STRUCTURE.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/REPOSITORY_STRUCTURE.md)) nhằm tách biệt hoàn toàn với mã nguồn backend SUT và các suite test khác (`postman/`, `pact/`, `ai-agent/`).
 
 ```
-artifacts/demo/karate/
-├── pom.xml
-├── README.md
+tests/karate/
+├── pom.xml                                  # [ĐÃ TẠO] Cấu hình Maven & Karate 1.4.1
+├── README.md                                # [ĐÃ TẠO] Hướng dẫn chạy và cấu hình
 └── src
     └── test
         └── java
             ├── eshop
-            │   ├── EshopTest.java
-            │   ├── auth-cart-checkout.feature
-            │   └── products.feature
-            ├── karate-config.js
-            └── logback-test.xml
+            │   ├── EshopTest.java           # [ĐÃ TẠO] JUnit 5 Runner
+            │   ├── products.feature         # [CẦN TẠO] Kịch bản K1, K2
+            │   ├── auth-cart-checkout.feature # [CẦN TẠO] Kịch bản K3
+            │   └── generated/               # [ĐÃ TẠO] Thư mục nhận test từ AI của Kiên
+            ├── karate-config.js             # [ĐÃ TẠO] Cấu hình môi trường & baseUrl
+            └── logback-test.xml             # [ĐÃ TẠO] Cấu hình log format
 ```
+
 
 ---
 
 ### Component 1: Cấu hình Dự án & Test Runner (Maven & Karate Core)
 
-Tạo khung dự án Maven chuẩn cho Karate 1.4.1 (phiên bản ổn định cao, tương thích tốt với Java 17+ và JUnit 5).
+Khung dự án Maven chuẩn cho Karate 1.4.1 (Java 17+ và JUnit 5) đã được tạo sẵn tại thư mục `tests/karate/`.
 
-#### [NEW] [pom.xml](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/pom.xml)
+#### [SCAFFOLDED] [pom.xml](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/pom.xml)
 - Cấu hình groupId `com.eshop`, artifactId `karate-demo`, Java 17.
-- Khai báo dependency `com.intuit.karate:karate-junit5:1.4.1`.
-- Cấu hình build `<testResources>` để Maven copy các file `.feature` từ `src/test/java` vào classpath khi build.
-- Cấu hình `maven-surefire-plugin` hỗ trợ chạy test song song hoặc theo từng feature.
+- Dependency `com.intuit.karate:karate-junit5:1.4.1`.
+- Cấu hình `<testResources>` copy các file `.feature` vào classpath khi build.
+- Cấu hình `maven-surefire-plugin` hỗ trợ chạy test.
 
-#### [NEW] [karate-config.js](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/src/test/java/karate-config.js)
-- Thiết lập hàm khởi tạo cấu hình môi trường Karate.
-- Đặt `baseUrl: 'http://localhost:3000'`.
-- Cấu hình timeouts: `connectTimeout: 5000`, `readTimeout: 5000`.
-- Hỗ trợ truyền biến môi trường `-Dkarate.env` nếu cần đổi base URL linh hoạt.
+#### [SCAFFOLDED] [karate-config.js](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/karate-config.js)
+- Hàm khởi tạo cấu hình môi trường Karate.
+- Đặt `baseUrl: 'http://localhost:3000'`, `connectTimeout: 5000`, `readTimeout: 5000`.
 
-#### [NEW] [EshopTest.java](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/src/test/java/eshop/EshopTest.java)
+#### [SCAFFOLDED] [EshopTest.java](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/EshopTest.java)
 - JUnit 5 Test Runner sử dụng `@Karate.Test`.
-- Quét và thực thi toàn bộ các file `.feature` trong package `eshop` và các thư mục con (kể cả thư mục `generated` do AI của Kiên sinh ra sau này).
+- Quét và thực thi toàn bộ các file `.feature` trong package `eshop` và các thư mục con (bao gồm cả `generated/` do AI của Kiên sinh ra sau này).
 
-#### [NEW] [logback-test.xml](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/src/test/java/logback-test.xml)
-- Cấu hình Logback để hiển thị log HTTP Request/Response rõ ràng trong terminal và file log, tránh spam log không cần thiết.
+#### [SCAFFOLDED] [logback-test.xml](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/logback-test.xml)
+- Cấu hình Logback hiển thị log HTTP Request/Response rõ ràng.
 
 ---
 
 ### Component 2: Kịch bản Kiểm thử Tính năng (Feature Files)
 
-#### [NEW] [products.feature](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/src/test/java/eshop/products.feature)
+#### [NEW] [products.feature](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature)
 Phục vụ trực tiếp cho **Clip K1** và **Clip K2**:
 - **Kịch bản K1 — Request đầu tiên & Response Array:**
   - `GET /api/products`
@@ -91,7 +91,7 @@ Phục vụ trực tiếp cho **Clip K1** và **Clip K2**:
     - Case 3: ID không tồn tại (`id = 9999`) ➔ Backend hiện trả `200 OK` kèm `{}` thay vì `404 Not Found`. Test sẽ assert theo hành vi quan sát được và gắn tag `@discrepancy`.
     - Case 4: Kịch bản mismatch có chủ đích (intentional failure) để trình chiếu trong video cách Karate báo lỗi assertion màu đỏ rõ ràng, sau đó hoàn nguyên để test xanh.
 
-#### [NEW] [auth-cart-checkout.feature](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/src/test/java/eshop/auth-cart-checkout.feature)
+#### [NEW] [auth-cart-checkout.feature](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/auth-cart-checkout.feature)
 Phục vụ trực tiếp cho **Clip K3** (Workflow mua hàng có trạng thái & Authentication):
 - **Kịch bản Happy Path (End-to-End Shopping Workflow):**
   1. *Đăng ký / Đăng nhập:* Gửi `POST /api/login` (hoặc tạo user mới để tránh xung đột), trích xuất `token` từ response gán vào biến Karate `authToken`.
@@ -107,7 +107,7 @@ Phục vụ trực tiếp cho **Clip K3** (Workflow mua hàng có trạng thái 
 
 ### Component 3: Tài liệu Hướng dẫn & Tích hợp với AI Task của Kiên
 
-#### [NEW] [README.md](file:///home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate/README.md)
+#### [SCAFFOLDED] [README.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/README.md)
 - Tài liệu chi tiết hướng dẫn:
   - Yêu cầu môi trường (Java 17, Maven 3.8+).
   - Lệnh khởi động backend EShop.
@@ -118,7 +118,65 @@ Phục vụ trực tiếp cho **Clip K3** (Workflow mua hàng có trạng thái 
     mvn test -Dkarate.options="classpath:eshop/auth-cart-checkout.feature"
     ```
   - Đường dẫn xem báo cáo trực quan HTML: `target/karate-reports/karate-summary.html`.
-  - Hướng dẫn bàn giao cho Kiên: Quy ước đặt file test do AI Agent sinh ra vào thư mục `artifacts/demo/karate/src/test/java/eshop/generated/` để Maven tự động nhận diện và chạy được ngay.
+  - Hướng dẫn bàn giao cho Kiên: Quy ước đặt file test do AI Agent sinh ra vào thư mục `tests/karate/src/test/java/eshop/generated/` để Maven tự động nhận diện và chạy được ngay.
+
+---
+
+### Component 4: Quy trình Git Commit & Quản lý Minh chứng (Weekly Report Alignment)
+
+Để đáp ứng đầy đủ yêu cầu tại [weekly-report-requirements.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/00-requirements/weekly-report-requirements.md), toàn bộ quá trình thực hiện kiểm thử Karate phải tuân thủ nghiêm ngặt các bước sau:
+
+#### 1. Kiểm tra Danh tính Git (Git Author Identity)
+Trước khi commit, xác nhận chính xác thông tin tác giả cá nhân của Kỳ:
+```bash
+git config user.name "Nguyen Quoc Ky"
+git config user.email "nqky2407@gmail.com"
+```
+Đảm bảo thông tin này khớp với dòng ánh xạ ở đầu báo cáo `Git Commit Log Total.md`:
+`Nguyen Quoc Ky <nqky2407@gmail.com> ↔ [MSSV] - Nguyễn Quốc Kỳ`.
+
+#### 2. Chiến lược Commit Nguyên tử (Atomic Git Commits)
+Không gom toàn bộ bài làm vào 1 commit lớn cuối cùng. Thực hiện commit tuần tự theo từng mốc công việc:
+- **Commit 1 (K1 & K2):**
+  ```bash
+  git add tests/karate/src/test/java/eshop/products.feature
+  git commit -m "feat(karate): add products.feature for smoke and data-driven tests (K1, K2)"
+  ```
+- **Commit 2 (K3):**
+  ```bash
+  git add tests/karate/src/test/java/eshop/auth-cart-checkout.feature
+  git commit -m "feat(karate): add auth-cart-checkout.feature for e2e stateful workflow (K3)"
+  ```
+- **Commit 3 (Tài liệu & Kế hoạch cập nhật):**
+  ```bash
+  git add deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md tests/karate/README.md
+  git commit -m "docs(karate): update implementation plan and test suite execution guide"
+  ```
+*Lưu ý vệ sinh Git:* Tuyệt đối không commit thư mục `target/` hoặc các file sinh tạm của Maven.
+
+#### 3. Danh mục Thu thập Minh chứng Thực tế (Screenshots & Logs Checklist)
+Trong lúc chạy test, chụp lại các màn hình minh chứng sau để lưu vào báo cáo tuần:
+1. `java -version` và `mvn -version`.
+2. Backend EShop chạy tại terminal (`node server.js` hiển thị port 3000).
+3. Terminal chạy `mvn test` hiển thị kết quả các Scenario xanh (PASS).
+4. Terminal chạy ca lỗi có chủ đích (K2 intentional mismatch) hiển thị assertion đỏ (FAIL), sau đó hoàn nguyên để test xanh.
+5. Báo cáo HTML trực quan: Mở `target/karate-reports/karate-summary.html` trên trình duyệt và chụp tổng quan dashboard cùng chi tiết timeline.
+6. Xác minh Database SQLite: Chụp dữ liệu bảng `orders` trước và sau khi chạy K3 để chứng minh đơn hàng thực sự được ghi vào CSDL.
+
+#### 4. Ghi nhận Tự động Báo cáo AI Usage (AI Usage Declaration)
+Sau khi hoàn thành các tương tác hoặc phiên làm việc, chạy skill `ai-usage-logger` để cập nhật tự động toàn bộ prompt, tool calls, và quyết định human review vào tài liệu nộp:
+```bash
+python3 ~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py --week 02
+```
+File kết quả được ghi nhận tại:
+[deliverables/05-management/weekly-reports/week-02/AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md)
+
+#### 5. Ghi nhận Bất đồng bộ SUT (Discrepancies & Failure Modes)
+Ghi chú chi tiết các lỗi của SUT EShop phát hiện qua kịch bản Karate để đưa vào slide thuyết trình và báo cáo cuối môn:
+- Bug 1: `GET /api/products/2` trả về `price` dạng String thay vì Number.
+- Bug 2: `GET /api/products/9999` trả về HTTP `200` kèm object rỗng `{}` thay vì HTTP `404 Not Found`.
+- Bug 3: Đăng nhập sai 2 lần liên tiếp dẫn đến khóa tài khoản 3 phút (`login_attempts >= 3`).
+
 
 ---
 
@@ -132,18 +190,27 @@ Phục vụ trực tiếp cho **Clip K3** (Workflow mua hàng có trạng thái 
    ```
 2. **Khởi động Backend SUT:**
    ```bash
-   cd /home/quocky05/academy/software-testing/eshop-sut/backend
+   cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/backend
    node server.js
    ```
 3. **Thực thi bộ test Karate:**
    ```bash
-   cd /home/quocky05/academy/software-testing/eshop-sut/artifacts/demo/karate
+   cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
    mvn clean test
    ```
-4. **Kiểm tra kết quả và báo cáo:**
+4. **Kiểm tra kết quả và báo cáo HTML:**
    - Xác nhận log trên terminal hiển thị đầy đủ các Scenario pass/fail theo đúng kịch bản.
    - Kiểm tra file `target/karate-reports/karate-summary.html` được sinh ra đầy đủ.
+5. **Kiểm tra lịch sử Git Commit:**
+   ```bash
+   git -C /home/quocky05/academy/software-testing/seminar/SUT-EShop log -n 5 --oneline
+   ```
+6. **Cập nhật & kiểm tra AI Usage Declaration:**
+   ```bash
+   python3 ~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py --week 02
+   ```
 
 ### Manual Verification
 - Xác minh kịch bản lỗi có chủ đích (K2 intentional mismatch): Cố tình đổi assertion `status 201` cho `GET /api/products/1` để quan sát báo cáo lỗi màu đỏ, sau đó đổi lại `200` để báo cáo xanh trở lại.
 - Xác minh dữ liệu trong database SQLite: Sau khi chạy K3, kiểm tra bảng `orders` để đảm bảo đơn hàng mới thực sự được tạo với đúng `user_id` và `total_amount`.
+
