@@ -529,7 +529,7 @@ add all previous prompts of this session in AI usage declaration
 <!-- START_SESSION: b71488b2 -->
 ### Phiên làm việc: 2026-10-15 01:06:53 (Session ID: `b71488b2`)
 - **Mô hình / Công cụ:** Google Antigravity (Gemini 3.8 Flash)
-- **Tổng số lượt tương tác (Turns):** 3
+- **Tổng số lượt tương tác (Turns):** 6
 - **Thời gian bắt đầu:** 2026-10-15 01:06:53
 
 #### Bảng Tổng Hợp Tương Tác & Kết Quả (Executive Summary Table)
@@ -537,7 +537,10 @@ add all previous prompts of this session in AI usage declaration
 | :--- | :--- | :--- | :--- | :--- |
 | #1 | 2026-10-15 01:06:53 | I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session. | <strong>Sản phẩm/Tác vụ:</strong><br/>Cập nhật file: `logback-test.xml`<br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• Here is the review of **Component 1 (Project Configuration & Test Runner)** against the requirements in Phase2_Karate_Implementation_Plan.md.<br/>• 1. Executive Summary & Audit Findings<br/>• The core setup of Component 1 is **solid and conforms to Karate 1.4.1 + JUnit 5 standards**. We verified dependency resolution, resource copying to classpath, test runner discovery, and environment readiness. | Thành viên nhóm review & phê duyệt kết quả |
 | #2 | 2026-10-15 01:46:07 | please move the AI log usage of this session at "Phiên làm việc: 2026-10-15 01:06:53 (Conversation: b71488b2...)" in declaration file after the session "Phiên làm việc: 2026-10-15 00:05:53 (Session ID: b8b0681e)". | Đã hoàn thành phân tích và đề xuất giải pháp kỹ thuật. | Thành viên nhóm review & phê duyệt kết quả |
-| #3 | 2026-10-15 01:54:33 | Add the prompt "I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session." log into Declaration | <strong>Sản phẩm/Tác vụ:</strong><br/>Cập nhật file: `extract_ai_usage.py` | Thành viên nhóm review & phê duyệt kết quả |
+| #3 | 2026-10-15 01:54:33 | Add the prompt "I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session." log into Declaration | <strong>Sản phẩm/Tác vụ:</strong><br/>Cập nhật file: `extract_ai_usage.py`<br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The AI log usage for this session (`Phiên làm việc: 2026-10-15 01:06:53 (Session ID: b71488b2)`) has been placed in AI Usage Declaration.md, positioned directly after `Phiên làm việc: 2026-10-15 00:05:53 (Session ID: b8b0681e)`.<br/>• Summary of Updates:<br/>• 1. **Session Ordering & Delimitation:** | Thành viên nhóm review & phê duyệt kết quả |
+| #4 | 2026-10-15 02:14:50 | Regarding products.feature, What does this file contain and What does it do? | <strong>Nội dung phản hồi / Giải pháp:</strong><br/>• In our testing architecture, `products.feature` is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).<br/>• It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in Phase2_Karate_Implementation_Plan.md and demo-script.md.<br/>• 1. What does `products.feature` do? | Thành viên nhóm review & phê duyệt kết quả |
+| #5 | 2026-10-15 02:16:20 | you forgot log the previous prompt into Declaration. | <strong>Nội dung phản hồi / Giải pháp:</strong><br/>• The prompt and its full response have been logged into AI Usage Declaration.md under session `b71488b2`:<br/>• - **Turn #4:**<br/>• - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?` | Thành viên nhóm review & phê duyệt kết quả |
+| #6 | 2026-10-15 02:24:51 | Execute the K1 scenario as planned. Please remember log this prompt into Declaration. | <strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: `products.feature` | Thành viên nhóm review & phê duyệt kết quả |
 
 #### Nhật Ký Chi Tiết Hội Thoại (Traceable Chat Log)
 <details>
@@ -690,6 +693,626 @@ Add the prompt "I'm working through the Karate tasks based on Phase2_Karate_Impl
 - `view_file`: View session transition in AI Usage Declaration.md
 - `view_file`: View lines 670 to end of AI Usage Declaration.md
 - `run_command`: Final refresh of AI usage declaration
+
+**Kết quả phản hồi của AI:**
+
+The AI log usage for this session (`Phiên làm việc: 2026-10-15 01:06:53 (Session ID: b71488b2)`) has been placed in [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md), positioned directly after `Phiên làm việc: 2026-10-15 00:05:53 (Session ID: b8b0681e)`.
+
+### Summary of Updates:
+
+1. **Session Ordering & Delimitation:**
+   - **Session 1:** `<!-- START_SESSION: b8b0681e -->` ... `<!-- END_SESSION: b8b0681e -->` (Turns #1 to #6 preserved 100%).
+   - **Session 2 (Current Session):** `<!-- START_SESSION: b71488b2 -->` ... `<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
+- `view_file`: Verify updated turns in AI Usage Declaration.md
+- `view_file`: Check Turn 4 in AI Usage Declaration.md
+- `run_command`: Refresh AI usage declaration with latest turn
+
+**Kết quả phản hồi của AI:**
+
+The prompt and its full response have been logged into [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md) under session `b71488b2`:
+
+- **Turn #4:**
+  - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?`
+  - **Actual Deliverables & Outcomes:** Detailed explanation of `products.feature` covering its role in **Clip K1** (smoke test & array schema assertions) and **Clip K2** (Scenario Outline data-driven tests & SUT discrepancy detection for Bugs 1 and 2).
+  - **Traceable Chat Log:** Recorded in the expandable `<details>` section with the complete response and breakdown.
+
+</details>
+
+<details>
+<summary><strong>Turn #6: Execute the K1 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:24:51)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K1 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `find_by_name`: Check if products.feature exists
+- `view_file`: View products.feature
+- `write_to_file`: Write K1 scenario to products.feature
+- `run_command`: Execute K1 scenario via Maven
+- `run_command`: Check if backend is running
+- `view_file`: Check backend package.json
+- `run_command`: Start EShop backend server
+- `run_command`: Verify backend is responding
+- `run_command`: Execute K1 test scenario
+- `run_command`: Log K1 execution into AI Usage Declaration
+- `view_file`: Check Turn 6 in AI Usage Declaration.md
+- `run_command`: Final refresh of AI usage declaration
+
+</details>
+<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
+- `view_file`: Verify updated turns in AI Usage Declaration.md
+- `view_file`: Check Turn 4 in AI Usage Declaration.md
+- `run_command`: Refresh AI usage declaration with latest turn
+
+**Kết quả phản hồi của AI:**
+
+The prompt and its full response have been logged into [AI Usage Declaration.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/weekly-reports/week-02/AI%20Usage%20Declaration.md) under session `b71488b2`:
+
+- **Turn #4:**
+  - **Prompt:** `Regarding products.feature, What does this file contain and What does it do?`
+  - **Actual Deliverables & Outcomes:** Detailed explanation of `products.feature` covering its role in **Clip K1** (smoke test & array schema assertions) and **Clip K2** (Scenario Outline data-driven tests & SUT discrepancy detection for Bugs 1 and 2).
+  - **Traceable Chat Log:** Recorded in the expandable `<details>` section with the complete response and breakdown.
+
+</details>
+
+<details>
+<summary><strong>Turn #6: Execute the K1 scenario as planned. Please remember log this prompt into Declaration.</strong> (2026-10-15 02:24:51)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Execute the K1 scenario as planned. Please remember log this prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `find_by_name`: Check if products.feature exists
+- `view_file`: View products.feature
+- `write_to_file`: Write K1 scenario to products.feature
+- `run_command`: Execute K1 scenario via Maven
+- `run_command`: Check if backend is running
+- `view_file`: Check backend package.json
+- `run_command`: Start EShop backend server
+- `run_command`: Verify backend is responding
+- `run_command`: Execute K1 test scenario
+- `run_command`: Log K1 execution into AI Usage Declaration
+
+</details>
+<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
+- `view_file`: Verify updated turns in AI Usage Declaration.md
+- `view_file`: Check Turn 4 in AI Usage Declaration.md
+- `run_command`: Refresh AI usage declaration with latest turn
+
+</details>
+<!-- END_SESSION: b71488b2 -->` placed immediately following Session 1.
+   - **Section 3 (Human Review):** All human-in-the-loop decisions across both sessions are retained.
+
+2. **Logged Prompt & Deliverables:**
+   - **Turn #1:** 
+     - **Prompt:** `I'm working through the Karate tasks based on Phase2_Karate_Implementation_Plan.md. I have completed Component 1 of the plan. Could you review it and check whether I have missed anything? Also, remember to use the AI Usage Logger skill for this session.`
+     - **Outcome:** Review and verification of Component 1 (`pom.xml`, `karate-config.js`, `EshopTest.java`), fix in `logback-test.xml` (`INFO` -> `DEBUG` to enable HTTP wire logging), and test runner verification.
+     - **Details block:** Full prompt text, 38 tool execution records, and the full assistant response.
+
+3. **Skill Script Hardening:**
+   - Updated `~/.gemini/config/skills/ai-usage-logger/scripts/extract_ai_usage.py` so that future runs cleanly update existing sessions in-place using their session markers without overwriting or displacing earlier sessions.
+
+</details>
+
+<details>
+<summary><strong>Turn #4: Regarding products.feature, What does this file contain and What does it do?</strong> (2026-10-15 02:14:50)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+Regarding products.feature, What does this file contain and What does it do?
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `grep_search`: Search K1 references in deliverables
+- `view_file`: View demo script for K1 and K2
+
+**Kết quả phản hồi của AI:**
+
+In our testing architecture, [`products.feature`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate/src/test/java/eshop/products.feature) is the Karate test specification file dedicated to testing the **Product Catalog API** (`/api/products`).
+
+It serves as the test script and execution evidence for **Clip K1** (First test & basic assertions) and **Clip K2** (Advanced assertions & data-driven testing) as outlined in [Phase2_Karate_Implementation_Plan.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/02-reports/research/Phase2_Karate_Implementation_Plan.md#L80-L93) and [demo-script.md](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md#L343-L400).
+
+---
+
+### 1. What does `products.feature` do?
+
+1. **Acts as a Smoke & Sanity Test (K1):**
+   - Validates that the backend server is reachable and responds correctly to `GET /api/products`.
+   - Verifies HTTP status codes and ensures the response is a valid JSON array matching the product catalog schema.
+
+2. **Performs Data-Driven & Boundary Testing (K2):**
+   - Uses Gherkin's `Scenario Outline` with an `Examples` table to run the same test logic across multiple input sets (valid IDs, invalid IDs, edge cases).
+
+3. **Documents and Detects SUT Discrepancies (Bugs):**
+   - Rather than masking backend bugs, it tests and records specific flaws in the EShop backend:
+     - **Bug 1 (`price` as String):** Product ID 2 (`Samsung S24 Ultra`) has its price serialized as a string instead of a number.
+     - **Bug 2 (Missing 404):** Requesting a non-existent product (`id = 9999`) returns `200 OK` with `{}` instead of `404 Not Found`.
+
+4. **Provides Video Demo Evidence:**
+   - Demonstrates Karate's readable Gherkin DSL (`Given`, `When`, `Then`, `And match`).
+   - Includes a repeatable mismatch case to illustrate how Karate reports failures (red) and how it passes (green).
+
+---
+
+### 2. What does `products.feature` contain?
+
+The file is organized into three main functional
+<truncated 180 bytes>
+Scenario Outline<br/>(Data-Driven & Discrepancies)"]
+```
+
+#### A. Background Section
+Configures the base URL for every scenario in the file:
+```cucumber
+Background:
+  * url baseUrl
+```
+
+#### B. K1 Kịch bản: Request đầu tiên & Response Array
+Validates the entire product list and checks the schema of the returned array:
+- **Endpoint:** `GET /api/products`
+- **Assertions:**
+  - `status 200`
+  - `response == '#[]'` (asserts that the response is a JSON array)
+  - `response.length > 0`
+  - Schema assertion on each element:
+    ```cucumber
+    And match each response ==
+    """
+    {
+      "id": '#number',
+      "name": '#string',
+      "price": '#number',
+      "description": '#string',
+      "imageUrl": '#string',
+      "category_id": '#number'
+    }
+    """
+    ```
+
+#### C. K2 Kịch bản: Scenario Outline (Data-Driven & Edge Cases)
+Tests the single product lookup endpoint (`GET /api/products/<id>`) using parameterized data rows:
+- **Structure:**
+  ```cucumber
+  Scenario Outline: Get product by ID - <caseDescription>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch                  | caseDescription                         |
+      | 1         | 200            | { price: '#number' }           | Valid product (Odd ID - Number price)   |
+      | 2         | 200            | { price: '#string' }           | Valid product (Even ID - Bug: String)   |
+      | 9999      | 200            | {}                             | Non-existent ID (Bug: returns 200 empty)|
+  ```
+
+---
+
+### 3. How to execute it
+
+You can execute this specific feature file independently of the rest of the test suite using Maven:
+
+```bash
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate
+mvn test -Dkarate.options="classpath:eshop/products.feature"
+```
+
+Once completed, the visual HTML report is generated at:
+`tests/karate/target/karate-reports/karate-summary.html`.
+
+</details>
+
+<details>
+<summary><strong>Turn #5: you forgot log the previous prompt into Declaration.</strong> (2026-10-15 02:16:20)</summary>
+
+**Yêu cầu của Người dùng (Prompt đầy đủ):**
+```text
+you forgot log the previous prompt into Declaration.
+```
+
+**Các hành động & Công cụ đã thực thi:**
+- `run_command`: Run AI usage extraction script
 
 </details>
 <!-- END_SESSION: b71488b2 -->
