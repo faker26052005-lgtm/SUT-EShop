@@ -1,0 +1,17 @@
+{
+  "name": "eshop-pact-tests",
+  "version": "1.0.0",
+  "description": "Consumer-Driven Contract Testing for EShop using Pact JS",
+  "main": "index.js",
+  "scripts": {
+    "test:consumer": "mocha consumer/**/*.test.js --timeout 30000",
+    "test:provider": "node provider/verify.js",
+    "test:breaking": "node breaking-change/verify-breaking.js"
+  },
+  "dependencies": {
+    "@pact-foundation/pact": "^13.2.0",
+    "axios": "^1.7.7",
+    "chai": "^4.3.10",
+    "mocha": "^10.7.3"
+  }
+}
