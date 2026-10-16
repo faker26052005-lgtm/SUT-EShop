@@ -1,0 +1,113 @@
+{
+  "info": {
+    "name": "EShop - Khung chay test do AI sinh",
+    "description": "Khung chạy test do AI sinh ra. Xem AI_Experiment_Guide.md. Thay phần giữa hai dòng BẮT ĐẦU/KẾT THÚC PHẦN DÁN trong tab Scripts (Post-response) bằng code của AI, khởi động lại server rồi bấm Send.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "AI TESTS - Dán code AI vào tab Scripts rồi bấm Send",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "categories"
+          ]
+        },
+        "description": "Request này chỉ gọi GET /api/categories để kiểm tra server đang chạy. Code test của AI nằm trong tab Scripts, mục Post-response."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ============================================================================",
+              "// KHUNG CHẠY TEST DO AI SINH RA (template)",
+              "// Cách dùng:",
+              "//   1. Khởi động lại server (node server.js) để dữ liệu sạch.",
+              "//   2. Mở tab Scripts của request này, mục Post-response.",
+              "//   3. Thay TOÀN BỘ phần giữa hai dòng \"BẮT ĐẦU PHẦN DÁN\" và \"KẾT THÚC PHẦN DÁN\" bằng code AI viết",
+              "//      (hàm aiTests(ctx) và các hàm phụ nếu có). Không sửa phần còn lại của khung.",
+              "//   4. Bấm Send, xem tab Test Results.",
+              "// Khung này cung cấp cho AI các công cụ sau (đưa đúng mô tả này vào prompt):",
+              "//   ctx.call(method, path, { token, body })  -> Promise<{ code, json, text, ct }>",
+              "//   ctx.newUser(label)                       -> Promise<{ email, password, id, token }>",
+              "//   ctx.ADMIN, ctx.USER                      -> JWT của admin@eshop.com và test@eshop.com",
+              "//   ctx.RUN                                  -> chuỗi duy nhất của lần chạy (để đặt tên dữ liệu)",
+              "// ============================================================================",
+              "",
+              "// ===== BẮT ĐẦU PHẦN DÁN CODE CỦA AI =====",
+              "async function aiTests(ctx) {",
+              "  // Ví dụ mẫu, xóa khi dán code của AI.",
+              "  const r = await ctx.call(\"GET\", \"/api/products\", {});",
+              "  pm.test(\"EX01 [mẫu] Danh sách sản phẩm trả 200 và là mảng\", function () {",
+              "    pm.expect(r.code).to.equal(200);",
+              "    pm.expect(r.json).to.be.an(\"array\");",
+              "  });",
+              "}",
+              "// ===== KẾT THÚC PHẦN DÁN CODE CỦA AI =====",
+              "",
+              "const BASE = String(pm.variables.get(\"baseUrl\") || \"http://localhost:3000\").replace(/\\/+$/, \"\");",
+              "const RUN = Date.now().toString(36);",
+              "",
+              "function call(method, path, opt) {",
+              "  opt = opt || {};",
+              "  return new Promise(function (resolve) {",
+              "    const req = { url: BASE + path, method: method, header: { \"Content-Type\": \"application/json\" } };",
+              "    if (opt.token) req.header[\"Authorization\"] = \"Bearer \" + opt.token;",
+              "    if (opt.body !== undefined) req.body = { mode: \"raw\", raw: JSON.stringify(opt.body) };",
+              "    pm.sendRequest(req, function (err, res) {",
+              "      if (err || !res) { resolve({ code: 0, json: null, text: (err && err.message) ? err.message : String(err), ct: \"\" }); return; }",
+              "      const text = res.text();",
+              "      let json = null;",
+              "      try { json = JSON.parse(text); } catch (e) { json = null; }",
+              "      resolve({ code: res.code, json: json, text: text, ct: res.headers.get(\"Content-Type\") || \"\" });",
+              "    });",
+              "  });",
+              "}",
+              "",
+              "async function newUser(label) {",
+              "  const email = \"ai.\" + RUN + \".\" + String(label || \"u\").replace(/[^a-zA-Z0-9]/g, \"\") + \"@test.com\";",
+              "  const password = \"Pass1234!\";",
+              "  const reg = await call(\"POST\", \"/api/register\", { body: { name: \"AI \" + label, email: email, password: password } });",
+              "  const lg = await call(\"POST\", \"/api/login\", { body: { email: email, password: password } });",
+              "  return { email: email, password: password, id: reg.json && reg.json.id, token: lg.json && lg.json.token };",
+              "}",
+              "",
+              "(async function () {",
+              "  const a = await call(\"POST\", \"/api/login\", { body: { email: \"admin@eshop.com\", password: \"Admin123!\" } });",
+              "  const u = await call(\"POST\", \"/api/login\", { body: { email: \"test@eshop.com\", password: \"Test1234!\" } });",
+              "  pm.test(\"00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)\", function () {",
+              "    pm.expect(a.code, \"login admin: \" + a.text.slice(0, 100)).to.equal(200);",
+              "    pm.expect(u.code, \"login test: \" + u.text.slice(0, 100)).to.equal(200);",
+              "  });",
+              "  if (a.code !== 200 || u.code !== 200) { console.log(\"Dừng: khởi động lại server rồi chạy lại.\"); return; }",
+              "  const ctx = { call: call, newUser: newUser, ADMIN: a.json.token, USER: u.json.token, RUN: RUN, BASE: BASE };",
+              "  try {",
+              "    await aiTests(ctx);",
+              "  } catch (e) {",
+              "    pm.test(\"LỖI SCRIPT CỦA AI (không phải lỗi hệ thống): \" + e.message, function () { throw e; });",
+              "  }",
+              "})();",
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

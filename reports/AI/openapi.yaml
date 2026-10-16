@@ -1,0 +1,1252 @@
+openapi: 3.0.3
+info:
+  title: EShop API
+  version: 1.0.0
+  description: |
+    Đặc tả OpenAPI cho backend EShop (Node.js/Express + SQLite).
+
+    Nguồn: `api_specification.md` của repo, README (SRS), code backend, và response thật
+    thu được khi chạy Postman collection ngày 13/10/2026.
+
+    Nguyên tắc của file này: mô tả **hành vi MONG ĐỢI** theo đặc tả (ví dụ response không được lộ
+    mật khẩu, id không tồn tại phải trả 404, API quản trị phải chặn người dùng thường).
+    Những chỗ hệ thống thật đang lệch đặc tả được ghi ở trường mở rộng `x-known-deviations`
+    của từng operation (tương ứng các lỗi B1-B8 trong Postman_Test_Report.md).
+
+    Các mã lỗi 400/401/403/404 và nội dung `{error}` được suy ra từ code backend và cách ứng dụng
+    mobile đọc lỗi. Những chỗ này có đánh dấu `CẦN XÁC NHẬN` và phải đối chiếu bằng response lỗi thật.
+servers:
+  - url: http://localhost:3000
+    description: Máy cục bộ (chạy bằng node server.js)
+tags:
+  - name: Auth
+  - name: Users
+  - name: Products
+  - name: Categories
+  - name: Cart
+  - name: Orders
+  - name: Coupons
+  - name: Admin
+
+paths:
+  /api/register:
+    post:
+      tags: [Auth]
+      summary: Đăng ký tài khoản
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithId'
+              example:
+                message: User registered successfully
+                id: 3
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập, nhận JWT
+      security: []
+      x-known-deviations:
+        - "B1: response thật có user.password (mật khẩu chữ thường), cùng login_attempts, locked_until, reset_token"
+        - "Chưa kiểm chứng: mỗi lần đăng nhập sai cộng 2 lần thử thay vì 1 và khóa tạm thời"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Sai email hoặc mật khẩu (CẦN XÁC NHẬN mã trạng thái)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Tài khoản đang bị khóa tạm thời sau nhiều lần đăng nhập sai (CẦN XÁC NHẬN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Yêu cầu mã đặt lại mật khẩu
+      description: Theo đặc tả, mã được trả thẳng trong response (không gửi qua email).
+      security: []
+      x-known-deviations:
+        - "Quan sát: resetToken chỉ gồm 4 chữ số và nằm ngay trong response"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Đã tạo mã đặt lại
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message, resetToken]
+                properties:
+                  message:
+                    type: string
+                  resetToken:
+                    type: string
+                    example: '5246'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/reset-password:
+    post:
+      tags: [Auth]
+      summary: Đặt lại mật khẩu bằng mã
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, resetToken, newPassword]
+              properties:
+                email:
+                  type: string
+                  format: email
+                resetToken:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 1
+      responses:
+        '200':
+          description: Đặt lại thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/users/me:
+    get:
+      tags: [Users]
+      summary: Xem hồ sơ cá nhân
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "B2: response thật lộ password và reset_token (cùng login_attempts, locked_until)"
+      responses:
+        '200':
+          description: Hồ sơ của người dùng đang đăng nhập
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    put:
+      tags: [Users]
+      summary: Cập nhật hồ sơ cá nhân
+      description: Chỉ cho phép đổi name, shipping_address, phone.
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "Chưa kiểm chứng: code đọc trường role từ body, có thể tự nâng quyền"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                shipping_address:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Đã cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Profile updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/products:
+    get:
+      tags: [Products]
+      summary: Danh sách sản phẩm, có thể tìm theo tên
+      security: []
+      x-known-deviations:
+        - "Chưa kiểm chứng: tham số search được nối trực tiếp vào câu SQL (SQL injection) và lỗi trả HTML thay vì JSON"
+      parameters:
+        - name: search
+          in: query
+          required: false
+          description: Chuỗi tìm theo tên sản phẩm
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Mảng sản phẩm
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      tags: [Products]
+      summary: Thêm sản phẩm (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      x-known-deviations:
+        - "B8: gọi không có token vẫn tạo được sản phẩm (200)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Đã tạo sản phẩm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithId'
+              example:
+                message: Product created
+                id: 6
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/products/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Products]
+      summary: Chi tiết sản phẩm
+      security: []
+      x-known-deviations:
+        - "B3: với id chẵn (ví dụ 2) price trả về dạng chuỗi"
+        - "B7: id không tồn tại trả 200 và {} thay vì 404"
+      responses:
+        '200':
+          description: Sản phẩm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Products]
+      summary: Cập nhật sản phẩm (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Đã cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Product updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Products]
+      summary: Xóa sản phẩm (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      responses:
+        '200':
+          description: Đã xóa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Product deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/categories:
+    get:
+      tags: [Categories]
+      summary: Danh sách danh mục
+      security: []
+      responses:
+        '200':
+          description: Mảng danh mục
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags: [Categories]
+      summary: Thêm danh mục (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryInput'
+      responses:
+        '200':
+          description: Đã tạo danh mục
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithId'
+              example:
+                message: Category created
+                id: 4
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/categories/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    put:
+      tags: [Categories]
+      summary: Cập nhật danh mục (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryInput'
+      responses:
+        '200':
+          description: Đã cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Category updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Categories]
+      summary: Xóa danh mục (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      responses:
+        '200':
+          description: Đã xóa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Category deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/cart:
+    get:
+      tags: [Cart]
+      summary: Xem giỏ hàng của người dùng đang đăng nhập
+      description: Giỏ hàng lưu trong bộ nhớ của server, mất khi server khởi động lại. Ứng dụng mobile không gọi endpoint này.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Mảng sản phẩm trong giỏ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Cart]
+      summary: Thêm sản phẩm vào giỏ
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "Chưa kiểm chứng: price do client gửi lên và được tin, không đối chiếu với giá trong cơ sở dữ liệu"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+      responses:
+        '200':
+          description: Đã thêm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Added to cart
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/checkout:
+    post:
+      tags: [Orders]
+      summary: Thanh toán, tạo đơn hàng
+      description: |
+        Đặc tả ghi body gồm `total_amount` và `shipping_address`. Ứng dụng mobile lại gửi
+        `items`, `total_amount`, `coupon_id` và không gửi `shipping_address`.
+        Backend chấp nhận cả hai; đơn tạo từ payload của mobile có `shipping_address` là null.
+        QUYẾT ĐỊNH CẦN CHỐT: `shipping_address` bắt buộc hay tùy chọn.
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "Quan sát: payload của mobile (không có shipping_address) vẫn được chấp nhận"
+        - "Chưa kiểm chứng: backend tin total_amount do client gửi thay vì tự tính lại"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+            examples:
+              theoDacTa:
+                summary: Theo api_specification.md
+                value:
+                  total_amount: 30000000
+                  shipping_address: 123 Test
+              theoMobile:
+                summary: Đúng payload ứng dụng mobile gửi
+                value:
+                  items:
+                    - id: 1
+                      name: iPhone 15 Pro Max
+                      price: 30000000
+                      quantity: 1
+                  total_amount: 30000000
+                  coupon_id: null
+      responses:
+        '200':
+          description: Đã tạo đơn
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message, orderId]
+                properties:
+                  message:
+                    type: string
+                  orderId:
+                    type: integer
+              example:
+                message: Checkout successful
+                orderId: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/orders/my-orders:
+    get:
+      tags: [Orders]
+      summary: Lịch sử đơn hàng của người dùng đang đăng nhập
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Mảng đơn hàng, mới nhất ở đầu
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/orders/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Orders]
+      summary: Chi tiết một đơn hàng
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "B6: gọi không có token vẫn trả 200 và dữ liệu đơn"
+        - "Chưa kiểm chứng: không kiểm tra đơn có thuộc người dùng đang gọi hay không"
+      responses:
+        '200':
+          description: Đơn hàng (không có danh sách món hàng)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/orders/{id}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    put:
+      tags: [Orders]
+      summary: Hủy đơn hàng
+      description: Chỉ hủy được khi đơn chưa giao.
+      security:
+        - bearerAuth: []
+      x-known-deviations:
+        - "Chưa kiểm chứng: code chỉ chặn delivered và canceled, đơn đang shipping vẫn hủy được"
+      responses:
+        '200':
+          description: Đã hủy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Order canceled successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/apply-coupon:
+    post:
+      tags: [Coupons]
+      summary: Áp dụng mã giảm giá cho tổng tiền
+      security: []
+      x-known-deviations:
+        - "B4: mã phần trăm tính sai. SAVE10 với 1.000.000 trả discount_amount = -9000000, final_amount = 10000000"
+        - "Chưa kiểm chứng: số tiền tối thiểu so sánh bằng > thay vì >="
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyCouponRequest'
+      responses:
+        '200':
+          description: Áp dụng thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyCouponResponse'
+              example:
+                success: true
+                coupon_id: 1
+                discount_amount: 100000
+                final_amount: 900000
+                message: Áp dụng thành công! Giảm 10%
+        '400':
+          description: Mã không hợp lệ, hết hạn, chưa đạt mức tối thiểu hoặc đã dùng hết lượt (CẦN XÁC NHẬN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/coupon-usage:
+    post:
+      tags: [Coupons]
+      summary: Ghi nhận đã dùng một mã giảm giá
+      description: Không có trong api_specification.md nhưng ứng dụng mobile gọi sau khi checkout có dùng mã.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [coupon_id]
+              properties:
+                coupon_id:
+                  type: integer
+      responses:
+        '200':
+          description: Đã ghi nhận
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Usage recorded
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/coupons:
+    get:
+      tags: [Coupons]
+      summary: Danh sách mã giảm giá (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      responses:
+        '200':
+          description: Mảng mã giảm giá
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coupon'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/users:
+    get:
+      tags: [Admin]
+      summary: Danh sách toàn bộ người dùng (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      x-known-deviations:
+        - "B5: người dùng thường (role user) vẫn nhận 200 và toàn bộ danh sách người dùng"
+      responses:
+        '200':
+          description: Mảng người dùng, không chứa mật khẩu
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    delete:
+      tags: [Admin]
+      summary: Xóa người dùng (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      responses:
+        '200':
+          description: Đã xóa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: User deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/admin/orders:
+    get:
+      tags: [Admin]
+      summary: Danh sách đơn hàng toàn hệ thống (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      x-known-deviations:
+        - "Chưa kiểm chứng bằng token user thường, nhưng middleware chỉ kiểm tra token chứ không kiểm tra role (xem B5)"
+      responses:
+        '200':
+          description: Mảng đơn hàng kèm tên người đặt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/orders/{id}/status:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    put:
+      tags: [Admin]
+      summary: Cập nhật trạng thái đơn hàng (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      x-known-deviations:
+        - "Chưa kiểm chứng: cho phép chuyển trạng thái không hợp lý, ví dụ canceled sang delivered"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: '#/components/schemas/OrderStatus'
+      responses:
+        '200':
+          description: Đã cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Order status updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/admin/import-products:
+    post:
+      tags: [Admin]
+      summary: Nhập hàng loạt sản phẩm (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [products]
+              properties:
+                products:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Kết quả nhập
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message, inserted, errors]
+                properties:
+                  message:
+                    type: string
+                  inserted:
+                    type: integer
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                message: 'Import hoàn tất: 1/1 sản phẩm được thêm'
+                inserted: 1
+                errors: []
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/coupons:
+    post:
+      tags: [Admin]
+      summary: Tạo mã giảm giá (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CouponInput'
+      responses:
+        '200':
+          description: Đã tạo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageWithId'
+              example:
+                message: Coupon created
+                id: 5
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/coupons/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    delete:
+      tags: [Admin]
+      summary: Xóa mã giảm giá (admin)
+      security:
+        - bearerAuth: []
+      x-required-role: admin
+      responses:
+        '200':
+          description: Đã xóa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Coupon deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT lấy từ POST /api/login. Payload gồm id, role, iat.
+        Không có token: 401 {"error":"Unauthorized"}. Token sai hoặc hết hạn: 403 {"error":"Forbidden"}.
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+
+  responses:
+    BadRequest:
+      description: Dữ liệu gửi lên không hợp lệ (CẦN XÁC NHẬN mã trạng thái và nội dung bằng response lỗi thật)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Thiếu token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Unauthorized
+    Forbidden:
+      description: Token không hợp lệ, hoặc không đủ quyền (CẦN XÁC NHẬN nội dung khi đủ token nhưng sai role)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Forbidden
+    NotFound:
+      description: Không tìm thấy tài nguyên (CẦN XÁC NHẬN nội dung)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    Message:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    MessageWithId:
+      type: object
+      required: [message, id]
+      properties:
+        message:
+          type: string
+        id:
+          type: integer
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      required: [message, token, user]
+      properties:
+        message:
+          type: string
+          example: Login successful
+        token:
+          type: string
+          description: JWT
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      description: |
+        Hồ sơ người dùng. Theo mong đợi KHÔNG chứa password và reset_token
+        (hệ thống thật đang trả cả hai, xem B1 và B2).
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin]
+        shipping_address:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+
+    AdminUser:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin]
+        login_attempts:
+          type: integer
+        locked_until:
+          type: string
+          nullable: true
+        shipping_address:
+          type: string
+          nullable: true
+
+    Product:
+      type: object
+      required: [id, name, price, description, imageUrl, category_id]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          minimum: 0
+          description: Đơn vị VND. Hệ thống thật trả chuỗi với một số id (B3).
+          example: 30000000
+        description:
+          type: string
+        imageUrl:
+          type: string
+        category_id:
+          type: integer
+
+    ProductInput:
+      type: object
+      required: [name, price, category_id]
+      description: CẦN XÁC NHẬN trường nào bắt buộc bằng cách gửi thiếu từng trường
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        description:
+          type: string
+        imageUrl:
+          type: string
+        category_id:
+          type: integer
+
+    Category:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    CategoryInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    CartItem:
+      type: object
+      required: [id, name, price, quantity]
+      properties:
+        id:
+          type: integer
+          description: Id của sản phẩm
+        name:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
+          minimum: 1
+
+    CheckoutRequest:
+      type: object
+      required: [total_amount]
+      properties:
+        total_amount:
+          type: number
+          minimum: 0
+        shipping_address:
+          type: string
+          description: Có trong đặc tả, ứng dụng mobile không gửi
+        items:
+          type: array
+          description: Chỉ ứng dụng mobile gửi. Chưa rõ backend có dùng hay không.
+          items:
+            $ref: '#/components/schemas/CartItem'
+        coupon_id:
+          type: integer
+          nullable: true
+          description: Chỉ ứng dụng mobile gửi
+
+    OrderStatus:
+      type: string
+      enum: [pending, confirmed, shipping, delivered, canceled]
+
+    Order:
+      type: object
+      required: [id, user_id, total_amount, status, created_at]
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        total_amount:
+          type: number
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        shipping_address:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          description: Định dạng YYYY-MM-DD HH:MM:SS, không có múi giờ (không phải ISO 8601)
+          example: '2026-10-13 12:25:29'
+
+    AdminOrder:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          required: [user_name]
+          properties:
+            user_name:
+              type: string
+
+    ApplyCouponRequest:
+      type: object
+      required: [code, total_amount]
+      properties:
+        code:
+          type: string
+        total_amount:
+          type: number
+          minimum: 0
+        user_id:
+          type: integer
+          nullable: true
+          description: Ứng dụng mobile gửi user.id, hoặc null khi chưa đăng nhập
+
+    ApplyCouponResponse:
+      type: object
+      required: [success, coupon_id, discount_amount, final_amount, message]
+      properties:
+        success:
+          type: boolean
+        coupon_id:
+          type: integer
+        discount_amount:
+          type: number
+          minimum: 0
+        final_amount:
+          type: number
+          minimum: 0
+        message:
+          type: string
+
+    Coupon:
+      type: object
+      required: [id, code, type, discount_value, min_order_amount, expired_at]
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        type:
+          type: string
+          enum: [percent, fixed]
+        discount_value:
+          type: number
+          description: Với percent, 10 nghĩa là 10%. Với fixed, là số tiền VND.
+        min_order_amount:
+          type: number
+        expired_at:
+          type: string
+          example: '2099-12-31'
+        is_active:
+          type: integer
+          enum: [0, 1]
+        max_uses_per_user:
+          type: integer
+
+    CouponInput:
+      type: object
+      required: [code, type, discount_value, min_order_amount, expired_at, max_uses_per_user]
+      properties:
+        code:
+          type: string
+        type:
+          type: string
+          enum: [percent, fixed]
+        discount_value:
+          type: number
+        min_order_amount:
+          type: number
+        expired_at:
+          type: string
+          example: '2027-12-31'
+        max_uses_per_user:
+          type: integer
+          minimum: 1
