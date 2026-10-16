@@ -3,7 +3,7 @@
 **Môn học:** Kiểm thử phần mềm (Software Testing) — FIT@HCMUS  
 **Chủ đề:** T06 · API & Contract Testing  
 **Nhóm thực hiện:** Nhóm 11 (FIT@HCMUS)  
-**Thành viên:** Nguyễn Quốc Kỳ (Phụ trách Karate, K1–K3), Hà Quốc Kiên, Nguyễn Hoàng Anh Tú  
+**Thành viên:** Nguyễn Quốc Kỳ (MSSV: 23120138 — Phụ trách Karate, K1–K3), Hà Quốc Kiên, Nguyễn Hoàng Anh Tú  
 **Công cụ AI sử dụng:** Google Antigravity (Gemini 3.8 Flash)  
 **Môi trường:** Linux (Ubuntu) · Antigravity Agent Runtime  
 

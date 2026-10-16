@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhật Ký Git Commit Cá Nhân — Nguyễn Quốc Kỳ | FIT@HCMUS</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --success: #15803d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        /* Institutional Header */
+        .header-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 32px 40px;
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .inst-title {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge.highlight {
+            background: #22c55e;
+            color: #052e16;
+            border-color: #4ade80;
+        }
+
+        /* Commit Type Badges */
+        .tag-feat { background: #dcfce7; color: #15803d; border-color: #86efac; }
+        .tag-docs { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+        .tag-chore { background: #fef9c3; color: #a16207; border-color: #fde047; }
+        .tag-merge { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+        .tag-test { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+        .tag-other { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+
+        /* Action Toolbar */
+        .toolbar {
+            background: #f1f5f9;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+
+        .toolbar-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-dark);
+            background: white;
+            color: var(--text-main);
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 40px;
+        }
+
+        /* Metric Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            border-top: 4px solid var(--primary);
+        }
+
+        .stat-card.feat { border-top-color: #22c55e; }
+        .stat-card.docs { border-top-color: #0284c7; }
+        .stat-card.other { border-top-color: #a855f7; }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 16px 0 32px 0;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-dark);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        thead th {
+            background: #1e3a8a;
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            border: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            background: white;
+            transition: background 0.15s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            color: #1e293b;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .col-num { width: 50px; text-align: center; color: var(--text-muted); font-weight: 600; }
+        .col-hash { width: 110px; }
+        .col-date { width: 160px; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 0.85rem; }
+        .col-tag { width: 90px; text-align: center; }
+        .col-msg { }
+
+        .hash-badge {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: #1e3a8a;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .msg-title {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            margin-bottom: 4px;
+        }
+
+        /* Commit Stat Details */
+        .commit-stat-details {
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+
+        .stat-summary {
+            cursor: pointer;
+            color: var(--primary-light);
+            font-size: 0.8rem;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .stat-summary:hover {
+            text-decoration: underline;
+        }
+
+        .stat-content {
+            margin-top: 6px;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            overflow-x: auto;
+            line-height: 1.45;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            padding: 24px 40px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Print Optimization */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+            }
+
+            .toolbar {
+                display: none !important;
+            }
+
+            .header-bar {
+                background: #1e3a8a !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 20px;
+            }
+
+            .commit-stat-details > * {
+                display: block !important;
+            }
+
+            thead th {
+                background: #1e3a8a !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-bar">
+        <div class="inst-title">ĐẠI HỌC KHOA HỌC TỰ NHIÊN - ĐHQG TP.HCM · KHOA CÔNG NGHỆ THÔNG TIN</div>
+        <div class="doc-title">Nhật Ký Git Commit Cá Nhân (Personal Git Commit Log)</div>
+        <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 0;">Minh chứng quá trình làm việc, phát triển kịch bản kiểm thử Karate và đóng góp mã nguồn dự án EShop</p>
+        <div class="badges">
+            <span class="badge highlight">✓ Thành viên: Nguyễn Quốc Kỳ</span>
+            <span class="badge highlight">MSSV: 23120138</span>
+            <span class="badge">Git Author: Nguyen Quoc Ky &lt;nqky2407@gmail.com&gt;</span>
+            <span class="badge">Ánh xạ: Nguyen Quoc Ky ➔ 23120138 - Nguyễn Quốc Kỳ</span>
+            <span class="badge">Tuần thực hành: 02</span>
+            <span class="badge">Chủ đề: T06 · API &amp; Contract Testing (Nhóm 11)</span>
+            <span class="badge">Nhánh làm việc: QuocKy-Phase2 ➔ main</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-info">
+            Tài liệu trực quan dùng cho Giảng viên (Human) đọc và đánh giá
+        </div>
+        <div class="toolbar-buttons">
+            <button class="btn" onclick="toggleAllStats(true)">📂 Mở rộng Diff</button>
+            <button class="btn" onclick="toggleAllStats(false)">📁 Thu gọn Diff</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Xuất PDF / In</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Tổng số Commits</div>
+            </div>
+            <div class="stat-card feat">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Tính Năng / Test (feat)</div>
+            </div>
+            <div class="stat-card docs">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Tài Liệu &amp; Guide (docs)</div>
+            </div>
+            <div class="stat-card other">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Merge &amp; Chores</div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e3a8a; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <span>📋 Danh Sách Chi Tiết Các Commits Đã Đóng Góp</span>
+        </h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th class="col-hash">Commit</th>
+                    <th class="col-date">Thời Gian</th>
+                    <th class="col-tag">Loại</th>
+                    <th class="col-msg">Thông Điệp Commit &amp; File Thay Đổi</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td class="col-num">1</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: f620bd4f302a9e78cce9c43cdca55f7295a0e8e1">f620bd4</span>
+            </td>
+            <td class="col-date">2026-10-16 20:34</td>
+            <td class="col-tag"><span class="badge tag-merge">merge</span></td>
+            <td class="col-msg">
+                <div class="msg-title">Merge branch &#x27;QuocKy-Phase2&#x27;</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.gitignore                                         |    5 +-
+ .../00-requirements/weekly-report-requirements.md  |   13 +
+ .../research/Phase2_Karate_Implementation_Plan.md  |  127 +-
+ .../weekly-reports/week-02/AI Usage Declaration.md | 3768 ++++++++++++++++++++
+ tests/karate/README.md                             |  157 +-
+ .../src/test/java/eshop/auth-cart-checkout.feature |  103 +
+ tests/karate/src/test/java/eshop/products.feature  |   44 +
+ tests/karate/src/test/java/logback-test.xml        |    2 +-
+ 8 files changed, 4179 insertions(+), 40 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">2</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: 4d558038148e13a271537db00d7b1d4dd466cd81">4d55803</span>
+            </td>
+            <td class="col-date">2026-10-15 20:16</td>
+            <td class="col-tag"><span class="badge tag-docs">docs</span></td>
+            <td class="col-msg">
+                <div class="msg-title">docs(karate): test suite execution guide</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../weekly-reports/week-02/AI Usage Declaration.md | 1067 +++++++++++++++++++-
+ tests/karate/README.md                             |  157 ++-
+ 2 files changed, 1214 insertions(+), 10 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">3</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: 0d3fde931b709149d42c001c77b9fa4978c0077f">0d3fde9</span>
+            </td>
+            <td class="col-date">2026-10-15 20:12</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(karate): add auth-cart-checkout.feature for e2e stateful workflow (K3)</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../weekly-reports/week-02/AI Usage Declaration.md | 796 ++++++++++++++++++++-
+ .../src/test/java/eshop/auth-cart-checkout.feature | 103 +++
+ 2 files changed, 897 insertions(+), 2 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">4</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: 58cb2327cf31f86408fb87c713ff0ee4f97967be">58cb232</span>
+            </td>
+            <td class="col-date">2026-10-15 09:48</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(karate): add products.feature for data-driven tests (K2)</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../weekly-reports/week-02/AI Usage Declaration.md | 583 ++++++++++++++++++++-
+ tests/karate/src/test/java/eshop/products.feature  |  13 +
+ 2 files changed, 594 insertions(+), 2 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">5</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: 002a5cd1d8e7e82f78acbc00d0a6f9eae951a070">002a5cd</span>
+            </td>
+            <td class="col-date">2026-10-15 09:34</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(karate): add products.feature for smoke tests (K1)</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../weekly-reports/week-02/AI Usage Declaration.md | 627 ++++++++++++++++++++-
+ tests/karate/src/test/java/eshop/products.feature  |  31 +
+ 2 files changed, 656 insertions(+), 2 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">6</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: 563a22ba34fa407126c75616f5b2f9b211bf4e59">563a22b</span>
+            </td>
+            <td class="col-date">2026-10-15 09:11</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(karate): initial and setup karate project</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../00-requirements/weekly-report-requirements.md  |  13 +
+ .../weekly-reports/week-02/AI Usage Declaration.md | 711 +++++++++++++++++++++
+ tests/karate/src/test/java/logback-test.xml        |   2 +-
+ 3 files changed, 725 insertions(+), 1 deletion(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">7</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: c9583f8cca627f9c97bea8a05efb80bc22421c1f">c9583f8</span>
+            </td>
+            <td class="col-date">2026-10-15 07:56</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(karate): create a implementation plan for Karate tasks</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.gitignore                                         |   5 +-
+ .../research/Phase2_Karate_Implementation_Plan.md  | 127 ++++++++++++++++-----
+ 2 files changed, 101 insertions(+), 31 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">8</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: cbec9d0147a94383b9d8a8105029f0a92b322c84">cbec9d0</span>
+            </td>
+            <td class="col-date">2026-10-14 23:54</td>
+            <td class="col-tag"><span class="badge tag-docs">docs</span></td>
+            <td class="col-msg">
+                <div class="msg-title">docs(root): update landing page README and repository guide</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>README.md                                  | 308 +++--------------------------
+ REPOSITORY_STRUCTURE.md                    | 144 ++++++++++++++
+ specs/system_requirements_specification.md | 288 +++++++++++++++++++++++++++
+ 3 files changed, 464 insertions(+), 276 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">9</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: dfefabc42cd402b51bf8d26ae2f88d15c03d60d7">dfefabc</span>
+            </td>
+            <td class="col-date">2026-10-14 23:53</td>
+            <td class="col-tag"><span class="badge tag-feat">feat</span></td>
+            <td class="col-msg">
+                <div class="msg-title">feat(tests): scaffold test suites for postman, pact, karate, and ai-agent</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>tests/ai-agent/README.md                           |  6 +++
+ tests/ai-agent/executions/.gitkeep                 |  0
+ tests/ai-agent/prompts/.gitkeep                    |  0
+ tests/ai-agent/skills/api-test-design/SKILL.md     |  9 ++++
+ tests/karate/README.md                             |  8 ++++
+ tests/karate/pom.xml                               | 54 ++++++++++++++++++++++
+ tests/karate/src/test/java/eshop/EshopTest.java    | 10 ++++
+ .../karate/src/test/java/eshop/generated/.gitkeep  |  0
+ tests/karate/src/test/java/karate-config.js        | 13 ++++++
+ tests/karate/src/test/java/logback-test.xml        | 12 +++++
+ tests/pact/README.md                               |  6 +++
+ tests/pact/breaking-change/.gitkeep                |  0
+ tests/pact/consumer/.gitkeep                       |  0
+ tests/pact/pacts/.gitkeep                          |  0
+ tests/pact/provider/.gitkeep                       |  0
+ tests/postman/README.md                            | 11 +++++
+ tests/postman/collections/.gitkeep                 |  0
+ tests/postman/data/.gitkeep                        |  0
+ tests/postman/environments/.gitkeep                |  0
+ 19 files changed, 129 insertions(+)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">10</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: c70391823fc21fa7b8411218b75bf344beb3bc22">c703918</span>
+            </td>
+            <td class="col-date">2026-10-14 23:51</td>
+            <td class="col-tag"><span class="badge tag-docs">docs</span></td>
+            <td class="col-msg">
+                <div class="msg-title">docs(deliverables): organize seminar requirements, research reports, and meeting logs</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.../FITHCMUS-SeminarRequirements.md                |  47 ++
+ .../00-requirements/T06_Topic_Specification.md     |  97 ++++
+ .../00-requirements/requirement-analysis.md        |  88 ++++
+ deliverables/01-slides/README.md                   |   4 +
+ .../research/Phase2_Karate_Implementation_Plan.md  | 149 ++++++
+ .../02-reports/research/ai-agent-skills-survey.md  | 145 ++++++
+ .../api-contract-testing-tools-research.md         | 150 ++++++
+ .../research/theory-api-contract-testing.md        | 256 +++++++++
+ .../02-reports/research/tool-research-overview.md  | 314 +++++++++++
+ .../02-reports/research/tools-comparison-matrix.md | 209 ++++++++
+ deliverables/03-demo-videos/demo-links.md          |  14 +
+ deliverables/03-demo-videos/demo-script.md         | 575 +++++++++++++++++++++
+ deliverables/04-exercises/lab-guide.md             |   8 +
+ deliverables/04-exercises/starter-files/.gitkeep   |   0
+ .../05-management/board-snapshots/.gitkeep         |   0
+ .../meeting-minutes/meeting1-content.md            | 127 +++++
+ .../meeting-minutes/meeting1-overview.md           | 142 +++++
+ .../05-management/meeting-minutes/meeting1-prep.md | 244 +++++++++
+ deliverables/05-management/task-assignment.md      |  66 +++
+ 19 files changed, 2635 insertions(+)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">11</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: afb31f429d7b1ebf4d90ed7a35da6d9c2d5730e9">afb31f4</span>
+            </td>
+            <td class="col-date">2026-10-14 23:50</td>
+            <td class="col-tag"><span class="badge tag-docs">docs</span></td>
+            <td class="col-msg">
+                <div class="msg-title">docs(specs): relocate api specification to specs directory</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>api_specification.md =&gt; specs/api_specification.md | 0
+ specs/eshop.openapi.yaml                           | 9 +++++++++
+ 2 files changed, 9 insertions(+)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+
+        <tr>
+            <td class="col-num">12</td>
+            <td class="col-hash">
+                <span class="hash-badge" title="Full Hash: b52c01ecccfb8729a993b2dbe8acd6fb51c4b5ce">b52c01e</span>
+            </td>
+            <td class="col-date">2026-10-14 23:35</td>
+            <td class="col-tag"><span class="badge tag-chore">chore</span></td>
+            <td class="col-msg">
+                <div class="msg-title">chore(sut): sanitize gitignore and fix run_servers script paths</div>
+                
+            <details class="commit-stat-details">
+                <summary class="stat-summary">Xem các file thay đổi (Diff Stat)</summary>
+                <pre class="stat-content"><code>.gitignore     | 183 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ run_servers.sh |  59 +++++++++++++++++--
+ 2 files changed, 237 insertions(+), 5 deletions(-)</code></pre>
+            </details>
+            
+            </td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Trích xuất trực tiếp từ Git Repository (Commit History của tác giả Nguyen Quoc Ky &lt;nqky2407@gmail.com&gt;).<br/>
+        Nhóm 11 (FIT@HCMUS): Nguyễn Quốc Kỳ (MSSV: 23120138 - Phụ trách Karate), Hà Quốc Kiên, Nguyễn Hoàng Anh Tú.
+    </div>
+</div>
+
+<script>
+    function toggleAllStats(open) {
+        const allStats = document.querySelectorAll('.commit-stat-details');
+        allStats.forEach(d => d.open = open);
+    }
+</script>
+
+</body>
+</html>

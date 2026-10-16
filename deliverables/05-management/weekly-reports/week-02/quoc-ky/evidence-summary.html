@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Minh Chứng Kết Quả Thực Hiện — Tuần 02 | Nguyễn Quốc Kỳ (MSSV: 23120138)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --success: #15803d;
+            --success-bg: #f0fdf4;
+            --warning: #b45309;
+            --warning-bg: #fffbeb;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        /* Institutional Header */
+        .header-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 32px 40px;
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .inst-title {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge.highlight {
+            background: #22c55e;
+            color: #052e16;
+            border-color: #4ade80;
+        }
+
+        /* Action Toolbar */
+        .toolbar {
+            background: #f1f5f9;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+
+        .toolbar-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-dark);
+            background: white;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 36px 40px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px;
+            border-left: 4px solid var(--primary-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card.pass {
+            border-left-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .stat-card.alert {
+            border-left-color: var(--warning);
+            background: var(--warning-bg);
+        }
+
+        .stat-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-card.pass .stat-value {
+            color: var(--success);
+        }
+
+        .stat-card.alert .stat-value {
+            color: var(--warning);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Headings */
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 28px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 20px 0 10px 0;
+        }
+
+        p, li {
+            font-size: 0.95rem;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Evidence Cards with Images */
+        .evidence-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: border-color 0.2s ease;
+        }
+
+        .evidence-card:hover {
+            border-color: var(--primary-light);
+        }
+
+        .evidence-card-header {
+            background: #f8fafc;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .evidence-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .evidence-card-body {
+            padding: 20px;
+        }
+
+        .evidence-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-light);
+        }
+
+        .evidence-img-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #0f172a;
+            text-align: center;
+        }
+
+        .evidence-img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            max-height: 550px;
+            transition: transform 0.2s ease;
+        }
+
+        .evidence-img-caption {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            background: #1e293b;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Highlight Boxes */
+        .callout {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #22c55e;
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+            color: #14532d;
+        }
+
+        .callout.warning {
+            background: #fffbeb;
+            border-color: #fef08a;
+            border-left-color: #f59e0b;
+            color: #78350f;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        thead th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        code {
+            background: #f1f5f9;
+            color: #be185d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85em;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 12px 0 20px 0;
+        }
+
+        /* Report Banner */
+        .report-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-banner-content h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .report-banner-content p {
+            color: #dbeafe;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f1f5f9;
+            padding: 24px 40px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                border: none;
+            }
+
+            .toolbar {
+                display: none;
+            }
+
+            .evidence-card {
+                page-break-inside: avoid;
+            }
+
+            .evidence-img-container img {
+                max-height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Institutional Header -->
+    <div class="header-bar">
+        <div class="inst-title">ĐẠI HỌC KHOA HỌC TỰ NHIÊN - ĐHQG TP.HCM · KHOA CÔNG NGHỆ THÔNG TIN</div>
+        <div class="doc-title">Báo Cáo Minh Chứng Kết Quả Thực Hiện (Evidence Summary)</div>
+        <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 0;">Trụ cột 3: Tổng hợp toàn diện ảnh chụp màn hình, báo cáo kiểm thử Karate và phân công kịch bản demo</p>
+        <div class="badges">
+            <span class="badge highlight">✓ Thành viên: Nguyễn Quốc Kỳ</span>
+            <span class="badge highlight">MSSV: 23120138</span>
+            <span class="badge">Vai trò: Phụ trách Karate (K1, K2, K3)</span>
+            <span class="badge">Tuần thực hành: 02</span>
+            <span class="badge">Chủ đề: T06 · API &amp; Contract Testing (Nhóm 11)</span>
+            <span class="badge">Framework: Karate Core 1.4.1</span>
+        </div>
+    </div>
+
+    <!-- Action Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-info">
+            Tài liệu trực quan dùng cho Giảng viên (Human) thẩm định minh chứng kết quả làm việc
+        </div>
+        <div class="toolbar-buttons">
+            <a class="btn" href="evidences/karate-reports/karate-summary.html" target="_blank">📊 Mở Karate HTML Report</a>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Xuất PDF / In Báo Cáo</button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Minh Chứng Trực Quan (Screenshots)</div>
+            </div>
+            <div class="stat-card pass">
+                <div class="stat-value">3 / 3</div>
+                <div class="stat-label">Kịch Bản Karate (K1, K2, K3)</div>
+            </div>
+            <div class="stat-card pass">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Tỷ Lệ Pass Suite (0 Failures)</div>
+            </div>
+            <div class="stat-card alert">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Khiếm Khuyết SUT Phát Hiện Được</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Overview -->
+        <h2>1. Tổng Quan Kết Quả Thực Hiện Trong Tuần 02</h2>
+        <p>Trong khuôn khổ Tuần 02 của môn học Seminar Kiểm thử Phần mềm, sinh viên <strong>Nguyễn Quốc Kỳ (MSSV: 23120138)</strong> đã hoàn tất 100% các mục tiêu nghiên cứu và thực hành framework <strong>Karate</strong>, bao gồm việc xây dựng bộ kịch bản kiểm thử API tự động theo tiêu chuẩn Gherkin DSL cho hệ thống SUT EShop:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Mã mục</th>
+                    <th style="width: 35%;">Kịch bản / Nhiệm vụ</th>
+                    <th style="width: 15%;">Kết quả</th>
+                    <th style="width: 40%;">Minh chứng &amp; Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ENV</strong></td>
+                    <td>Thiết lập môi trường Java 17, Maven 3.8.7, scaffold Karate</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Pass</span></td>
+                    <td><code>evidences/environment-setup.png</code></td>
+                </tr>
+                <tr>
+                    <td><strong>SUT</strong></td>
+                    <td>Khởi chạy máy chủ SUT EShop Backend trên cổng 3000</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Pass</span></td>
+                    <td><code>evidences/start-api.png</code></td>
+                </tr>
+                <tr>
+                    <td><strong>K1</strong></td>
+                    <td>Smoke test API <code>GET /api/products</code> (Array &amp; Schema verification)</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Pass</span></td>
+                    <td><code>evidences/k1-report-terminal.png</code> (1 Feature, 1 Scenario)</td>
+                </tr>
+                <tr>
+                    <td><strong>K2</strong></td>
+                    <td>Data-driven test <code>GET /api/products/:id</code> qua Scenario Outline &amp; Examples</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Pass</span></td>
+                    <td><code>evidences/k2-report-terminal.png</code> (Phát hiện 2 khiếm khuyết SUT)</td>
+                </tr>
+                <tr>
+                    <td><strong>K3</strong></td>
+                    <td>Stateful Shopping Workflow: Login ➔ Token Chaining ➔ Cart ➔ Checkout</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Pass</span></td>
+                    <td><code>evidences/k3-report-terminal.png</code> (E2E Shopping pass toàn bộ)</td>
+                </tr>
+                <tr>
+                    <td><strong>BOARD</strong></td>
+                    <td>Quản lý tiến độ công việc tuần cá nhân và nhóm trên Task Board</td>
+                    <td><span style="color: var(--success); font-weight: 700;">✓ Hoàn tất</span></td>
+                    <td><code>../task-board.png</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Section 2: Screenshots -->
+        <h2>2. Bộ Minh Chứng Trực Quan (Detailed Screenshots)</h2>
+
+        <!-- Evidence 1 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 1: Kiểm Tra Môi Trường Thực Thi (Environment Setup)</strong>
+                <span class="evidence-tag">Environment</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>evidences/environment-setup.png</code> &nbsp;|&nbsp; 
+                    <strong>Công cụ:</strong> OpenJDK 17.0.12, Apache Maven 3.8.7 trên hệ điều hành Ubuntu Linux.
+                </div>
+                <div class="evidence-img-container">
+                    <img src="evidences/environment-setup.png" alt="Environment Setup - Java 17 and Maven 3.8.7" />
+                    <div class="evidence-img-caption">Hình 1: Xác nhận phiên bản Java 17 và Maven 3.8.7 sẵn sàng cho Karate Runner</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence 2 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 2: Khởi Chạy Máy Chủ Backend SUT EShop</strong>
+                <span class="evidence-tag">SUT Startup</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>evidences/start-api.png</code> &nbsp;|&nbsp; 
+                    <strong>Endpoint SUT:</strong> <code>http://localhost:3000</code> &nbsp;|&nbsp; Node.js Express Backend.
+                </div>
+                <div class="evidence-img-container">
+                    <img src="evidences/start-api.png" alt="SUT EShop Backend Started on Port 3000" />
+                    <div class="evidence-img-caption">Hình 2: SUT EShop khởi chạy thành công trên cổng 3000, sẵn sàng nhận request từ Karate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence 3 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 3: Kịch Bản K1 — Smoke Test Danh Sách Sản Phẩm (Terminal Pass)</strong>
+                <span class="evidence-tag">Karate K1</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>evidences/k1-report-terminal.png</code> &nbsp;|&nbsp; 
+                    <strong>Lệnh thực thi:</strong> <code>mvn test -Dtest=EshopTest#testProducts</code> &nbsp;|&nbsp; 
+                    <strong>Tập tin kịch bản:</strong> <code>tests/karate/src/test/java/eshop/products.feature</code>
+                </div>
+                <div class="evidence-img-container">
+                    <img src="evidences/k1-report-terminal.png" alt="Karate K1 Smoke Test Passed on Terminal" />
+                    <div class="evidence-img-caption">Hình 3: Kết quả thực thi K1 trên Terminal — xác nhận API GET /api/products trả về HTTP 200 và mảng hợp lệ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence 4 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 4: Kịch Bản K2 — Assertions Nâng Cao &amp; Data-Driven (Phát Hiện Lỗi SUT)</strong>
+                <span class="evidence-tag">Karate K2</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>evidences/k2-report-terminal.png</code> &nbsp;|&nbsp; 
+                    <strong>Kỹ thuật:</strong> <code>Scenario Outline</code> &amp; <code>Examples</code> table &nbsp;|&nbsp; 
+                    <strong>Tập tin kịch bản:</strong> <code>tests/karate/src/test/java/eshop/products.feature</code>
+                </div>
+                <div class="evidence-img-container">
+                    <img src="evidences/k2-report-terminal.png" alt="Karate K2 Data-Driven Test Run and Discrepancy Detection" />
+                    <div class="evidence-img-caption">Hình 4: Kết quả thực thi K2 trên Terminal — ghi nhận các ca kiểm thử biên và phát hiện 2 khiếm khuyết SUT</div>
+                </div>
+                <div class="callout warning">
+                    <strong>Phát hiện khiếm khuyết (Defect/Discrepancy Findings) trong SUT EShop:</strong>
+                    <ul style="margin: 6px 0 0 18px;">
+                        <li><strong>Khiếm khuyết 1 (Mã phản hồi sai):</strong> Truy vấn ID sản phẩm không tồn tại (<code>id = 999</code>) trả về mã <code>HTTP 200 OK</code> kèm payload rỗng <code>{}</code>, thay vì chuẩn RESTful là <code>HTTP 404 Not Found</code>.</li>
+                        <li><strong>Khiếm khuyết 2 (Sai kiểu dữ liệu schema):</strong> Tại một số ID chẵn, trường <code>price</code> bị định dạng dưới dạng String (chuỗi ký tự) thay vì Number (số thực), gây rủi ro crash ứng dụng client tiêu thụ.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence 5 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 5: Kịch Bản K3 — Stateful Shopping Workflow &amp; Auth (Terminal Pass)</strong>
+                <span class="evidence-tag">Karate K3</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>evidences/k3-report-terminal.png</code> &nbsp;|&nbsp; 
+                    <strong>Lệnh thực thi:</strong> <code>mvn test -Dtest=EshopTest#testAuthCartCheckout</code> &nbsp;|&nbsp; 
+                    <strong>Tập tin kịch bản:</strong> <code>tests/karate/src/test/java/eshop/auth-cart-checkout.feature</code>
+                </div>
+                <div class="evidence-img-container">
+                    <img src="evidences/k3-report-terminal.png" alt="Karate K3 Stateful Shopping Workflow Passed" />
+                    <div class="evidence-img-caption">Hình 5: K3 Stateful Workflow — Xác thực JWT Bearer Token, quản lý giỏ hàng và thanh toán Checkout thành công 100%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence 6 -->
+        <div class="evidence-card">
+            <div class="evidence-card-header">
+                <strong>Minh chứng 6: Bảng Quản Lý Tiến Độ Công Việc Tuần 02 (Task Board)</strong>
+                <span class="evidence-tag">Management</span>
+            </div>
+            <div class="evidence-card-body">
+                <div class="evidence-meta">
+                    <strong>Tập tin:</strong> <code>../task-board.png</code> &nbsp;|&nbsp; 
+                    <strong>Tiến độ:</strong> Các nhiệm vụ kiểm thử Karate (K1, K2, K3) đều được chuyển sang cột Done.
+                </div>
+                <div class="evidence-img-container">
+                    <img src="../task-board.png" alt="Task Board Week 02 - Kanban Board Progress" />
+                    <div class="evidence-img-caption">Hình 6: Bảng Kanban quản lý công việc Tuần 02 của Nhóm 11</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Karate Reports -->
+        <h2>3. Gói Báo Cáo Kiểm Thử Karate HTML (Report Bundle)</h2>
+        <div class="report-banner">
+            <div class="report-banner-content">
+                <h4>Karate HTML Test Reports Bundle (100% Pass)</h4>
+                <p>Toàn bộ cây báo cáo HTML được lưu trữ đầy đủ tại <code>evidences/karate-reports/</code>, mở trực tiếp để xem chi tiết timeline và request/response logs.</p>
+            </div>
+            <div>
+                <a class="btn btn-primary" href="evidences/karate-reports/karate-summary.html" target="_blank">🔗 Xem karate-summary.html</a>
+            </div>
+        </div>
+
+        <p>Danh mục các trang báo cáo thành phần có sẵn trong bundle:</p>
+        <ul>
+            <li><a href="evidences/karate-reports/karate-summary.html" target="_blank" style="color: var(--primary); font-weight: 600;">karate-summary.html</a>: Báo cáo tổng thể toàn bộ test suite (2 feature files, 4 scenarios, thời gian thực thi: 1.48s).</li>
+            <li><a href="evidences/karate-reports/eshop.products.html" target="_blank" style="color: var(--primary); font-weight: 600;">eshop.products.html</a>: Chi tiết từng bước Given-When-Then và payload HTTP của kịch bản K1 &amp; K2.</li>
+            <li><a href="evidences/karate-reports/eshop.auth-cart-checkout.html" target="_blank" style="color: var(--primary); font-weight: 600;">eshop.auth-cart-checkout.html</a>: Chi tiết luồng stateful authentication, giỏ hàng và checkout của kịch bản K3.</li>
+            <li><a href="evidences/karate-reports/karate-timeline.html" target="_blank" style="color: var(--primary); font-weight: 600;">karate-timeline.html</a>: Biểu đồ trực quan hóa dòng thời gian luồng thực thi (execution timeline).</li>
+        </ul>
+
+        <!-- Section 4: Video Demo Plan -->
+        <h2>4. Kế Hoạch &amp; Phân Công Video Demo</h2>
+        <p>Theo tài liệu kịch bản demo (<code>deliverables/03-demo-videos/demo-links.md</code> &amp; <code>demo-script.md</code>), sinh viên Nguyễn Quốc Kỳ phụ trách các clip sau:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 12%;">Clip ID</th>
+                    <th style="width: 15%;">Công cụ</th>
+                    <th style="width: 45%;">Tên &amp; Nội dung kịch bản</th>
+                    <th style="width: 15%;">Người thực hiện</th>
+                    <th style="width: 13%;">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>K1</strong></td>
+                    <td>Karate</td>
+                    <td>Cài đặt môi trường, cấu hình và kịch bản kiểm thử API đầu tiên</td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td><span style="color: var(--success); font-weight: 600;">Sẵn sàng quay</span></td>
+                </tr>
+                <tr>
+                    <td><strong>K2</strong></td>
+                    <td>Karate</td>
+                    <td>Assertions nâng cao, Schema matching &amp; Data-driven testing</td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td><span style="color: var(--success); font-weight: 600;">Sẵn sàng quay</span></td>
+                </tr>
+                <tr>
+                    <td><strong>K3</strong></td>
+                    <td>Karate</td>
+                    <td>Stateful Shopping Workflow &amp; Xác thực Bearer Token</td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td><span style="color: var(--success); font-weight: 600;">Sẵn sàng quay</span></td>
+                </tr>
+                <tr>
+                    <td><strong>C3</strong></td>
+                    <td>Pact JS</td>
+                    <td>Tiêm Breaking Change vào Provider và kiểm chứng phát hiện lỗi</td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td><span style="color: var(--success); font-weight: 600;">Sẵn sàng quay</span></td>
+                </tr>
+                <tr>
+                    <td><strong>AI1</strong></td>
+                    <td>AI Agent</td>
+                    <td>Áp dụng AI Agent + Skill tạo và chạy kịch bản kiểm thử Karate</td>
+                    <td><strong>Hà Quốc Kiên, Nguyễn Quốc Kỳ</strong></td>
+                    <td><span style="color: var(--success); font-weight: 600;">Sẵn sàng quay</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Section 5: Reproduction Guide -->
+        <h2>5. Hướng Dẫn Tái Lập Kết Quả (Reproduction Guide)</h2>
+        <p>Bất kỳ người đọc hoặc Giảng viên nào cũng có thể kiểm chứng độc lập toàn bộ các kết quả trên thông qua 3 bước đơn giản:</p>
+
+        <pre><code># Bước 1: Khởi động máy chủ backend SUT EShop
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop
+bash run_servers.sh
+
+# Bước 2: Chạy toàn bộ bộ kiểm thử tự động Karate
+cd tests/karate
+mvn clean test
+
+# Bước 3: Xem báo cáo HTML kết quả kiểm thử trên trình duyệt
+# Mở file: tests/karate/target/karate-reports/karate-summary.html</code></pre>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Báo cáo minh chứng kết quả làm việc Tuần 02 — Môn học Kiểm thử phần mềm (FIT@HCMUS).<br/>
+        Thành viên thực hiện: <strong>Nguyễn Quốc Kỳ (MSSV: 23120138)</strong> — Nhóm 11 (T06 · API &amp; Contract Testing).
+    </div>
+</div>
+
+</body>
+</html>
