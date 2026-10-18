@@ -48,12 +48,12 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 > - Đăng nhập thành công trả về JWT Token. Token được lưu phía client và gửi kèm tất cả các yêu cầu có xác thực qua header `Authorization: Bearer <token>`.
 > - Trường email phải dùng `type="email"` (có validate HTML5 format).
 
-| Variable ID | Tên biến | Kiểu dữ liệu | Bắt buộc? | Bước nhảy ($\epsilon$) | Ràng buộc nghiệp vụ theo đặc tả | Giả định / Ghi chú |
+| Variable ID | Variable Name | Data Type | Mandatory? | Precision ($\epsilon$) | Specification Constraint (Quote) | Assumptions / Ambiguities |
 | :--- | :--- | :--- | :---: | :---: | :--- | :--- |
-| `VAR-02-01` | `email` | String | Có | 1 char | Định dạng email hợp lệ theo chuẩn HTML5; phải tồn tại trong CSDL. | Test trên user mặc định `test@eshop.com`. |
-| `VAR-02-02` | `password` | String | Có | 1 char | Mật khẩu khớp với tài khoản trong CSDL. | Mật khẩu chuẩn: `Test1234!`. |
-| `VAR-02-03` | `failed_attempts` | Integer | Hệ thống | 1 lần | Tăng đúng 1 sau mỗi lần sai; $\ge 3$ lần thì kích hoạt tạm khóa tài khoản. | Reset về 0 khi đăng nhập thành công. |
-| `VAR-02-04` | `lockout_time` | Seconds | Hệ thống | 1 giây | Thời gian tạm khóa đúng 30 giây tính từ thời điểm khóa. | Sau 30s mở khóa cho phép đăng nhập lại. |
+| `VAR-02-01` | `email` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* và *"Trường email phải dùng `type="email"` (có validate HTML5 format)."* (Đối chiếu FR-01: *"Email phải có định dạng hợp lệ (`user@domain.com`)"*) | Cần có tài khoản tồn tại trong CSDL (`test@eshop.com`); Trình duyệt validate format HTML5 trước khi submit; Backend `POST /api/login` cần validate tính hợp lệ. |
+| `VAR-02-02` | `password` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* (Đối chiếu FR-01: *"Tối thiểu 8 ký tự, có ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 ký tự đặc biệt"*) | Khớp với mật khẩu đã băm trong CSDL. Form đăng nhập không chặn mật khẩu yếu khi gõ, chỉ kiểm tra tính xác thực. Mật khẩu mẫu: `Test1234!`. |
+| `VAR-02-03` | `failed_attempts` | Integer | Hệ thống | 1 lần | Trích dẫn SRS FR-02: *"Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm lên đúng 1 đơn vị."* và *"Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây"* | Biến trạng thái đếm số lần sai liên tiếp theo từng tài khoản (`email`). Đăng nhập thành công trước khi đạt ngưỡng 3 lần sẽ reset bộ đếm về 0. |
+| `VAR-02-04` | `lockout_time` | Seconds | Hệ thống | 1 giây | Trích dẫn SRS FR-02: *"tài khoản bị tạm khóa 30 giây (môi trường demo). Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."* | Thời gian phạt tính từ lúc đăng nhập sai lần thứ 3 ($T = 30s$). Trong thời gian này, mọi thử nghiệm đăng nhập đều bị từ chối; sau 30s tài khoản tự động mở khóa. Thông báo lỗi phải trung tính để bảo mật. |
 
 ### 2.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables)
 | Partition ID | Biến / Điều kiện | Phân lớp tương đương | Phân loại | Giá trị đại diện | Hành vi mong đợi (Expected) |
