@@ -1145,24 +1145,140 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 | `VAR-17-07` | `auth_token_and_role` (Xác thực & Quyền hạn truy cập Admin) | Compound (JWT & Role) | Bắt buộc (Bảo mật) | N/A | Trích dẫn SRS Mục 5.3 & SEC-03: *"Tất cả các API Admin... phải có JWT Token hợp lệ... User phải có role là admin (`role = 'admin'`). Nếu user thông thường (`role = 'user'`) gọi API admin -> trả về HTTP 403 Forbidden."* | Precondition bảo mật: Chỉ tài khoản có `role = 'admin'` mới được phép thực hiện các thao tác Thêm (`POST /api/admin/coupons`), Xem danh sách quản trị (`GET /api/coupons`), và Xóa (`DELETE /api/admin/coupons/:id`). Gọi API không có Token $\to$ HTTP 401; gọi API bằng Token của User thường (`role = 'user'`) $\to$ HTTP 403 Forbidden. |
 | `VAR-17-08` | `target_coupon_id` (Định danh coupon cho thao tác Xóa) | Integer | Bắt buộc (Thao tác Xóa) | 1 đơn vị | Trích dẫn SRS FR-17: *"Admin có thể Thêm / Xem / Xóa mã giảm giá."*; API Spec §6.4: *"Xóa mã: `DELETE /api/admin/coupons/:id`"* | Tham số đường dẫn `:id` trong API xóa. Phải là số nguyên dương tương ứng với một coupon đang tồn tại trong bảng `coupons`. Nếu gửi ID không tồn tại (ví dụ: `id = 9999`) hoặc đã bị xóa trước đó, hệ thống phải xử lý an toàn (trả về HTTP 404 hoặc thông báo lỗi phù hợp). Trên giao diện Admin, cần kiểm tra xem thao tác Xóa có dialog xác nhận hay không (đối chiếu FR-07/FR-24). |
 
-### 4.2 Bước 2: Phân vùng tương đương (Single Fault Assumption)
-| Partition ID | Biến | Phân lớp tương đương | Loại | Giá trị đại diện | Hành vi mong đợi |
-| :--- | :--- | :--- | :---: | :--- | :--- |
-| `EP-17-01` | `code` | Mã hợp lệ và chưa tồn tại | VEP | `DISCOUNT2026` | Chấp nhận |
-| `EP-17-02` | `code` | Mã đã tồn tại trong CSDL | IEP | `SAVE10` | Báo lỗi trùng lặp mã |
-| `EP-17-03` | `code` | Mã để trống | IEP | `""` | Báo lỗi bắt buộc |
-| `EP-17-04` | `type` | Loại `percent` | VEP | `'percent'` | Áp dụng tính theo % |
-| `EP-17-05` | `type` | Loại `fixed` | VEP | `'fixed'` | Áp dụng trừ tiền cố định |
-| `EP-17-06` | `discount_value` | Giá trị dương hợp lệ | VEP | $10\%$ hoặc $50.000₫$ | Chấp nhận |
-| `EP-17-07` | `discount_value` | Giá trị bằng 0 | IEP | $0$ | Từ chối (phải $> 0$) |
-| `EP-17-08` | `discount_value` | Giá trị âm | IEP | $-10$ | Từ chối |
-| `EP-17-09` | `discount_value` | % vượt quá 100% | IEP | $101\%$ | Từ chối đối với `percent` |
-| `EP-17-10` | `min_order_amount` | Giá trị $\ge 0$ | VEP | $0₫, 100.000₫$ | Chấp nhận |
-| `EP-17-11` | `min_order_amount` | Giá trị âm | IEP | $-1₫$ | Từ chối (phải $\ge 0$) |
-| `EP-17-12` | `max_uses_per_user`| Số lần $\ge 1$ | VEP | $1, 5$ | Chấp nhận |
-| `EP-17-13` | `max_uses_per_user`| Số lần bằng 0 hoặc âm | IEP | $0$ | Từ chối (phải $\ge 1$) |
-| `EP-17-14` | `expired_at` | Ngày trong tương lai | VEP | $Ngày mai$ | Chấp nhận |
-| `EP-17-15` | `expired_at` | Ngày trong quá khứ | IEP | $Hôm qua$ | Từ chối hoặc cảnh báo |
+### 4.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables - Equivalence Partitioning)
+
+> **Nguyên tắc Giả định Đơn lỗi (Single Fault Assumption - ISTQB FL §4.2.1) & Phân Tách Phạm Vi:**
+> - **Phân tách 5 tầng kiểm thử độc lập (Tránh thổi phồng EP đầu vào):**
+>   1. **4.2.1 Pure Input Equivalence Partitions:** Phân vùng miền dữ liệu các trường nhập liệu form tạo mã giảm giá.
+>   2. **4.2.2 Access-Control & Authorization Partitions:** Phân vùng điều kiện xác thực và kiểm soát quyền truy cập Admin (SEC-03).
+>   3. **4.2.3 Target-Resource Partitions (CRUD Lifecycle):** Phân vùng tham số tài nguyên `:id` trong thao tác Xóa (Delete).
+>   4. **4.2.4 Business Rules & Coupon Behavior Scenarios (FR-09):** 14 kịch bản kiểm thử quy tắc tính toán, ngưỡng đơn, hạn dùng và lượt sử dụng khi áp dụng coupon tại Checkout.
+>   5. **4.2.5 Security & Robustness Probes:** Kiểm thử an toàn thông tin (XSS, SQLi) và độ bền vững trước dữ liệu cực hạn.
+> - **Nguyên tắc Đơn lỗi (Single-Fault Isolation):** Mỗi phân vùng không hợp lệ (IEP) chỉ kích hoạt đúng 1 điều kiện lỗi; toàn bộ các tham số còn lại bắt buộc phải được giữ ở giá trị hợp lệ cơ sở (Baseline).
+> - **Xử lý ràng buộc có điều kiện (Conditional Domain Modeling):** Miền giá trị của `discount_value` phụ thuộc chặt chẽ vào `type`:
+>   - Khi `type = 'percent'`: miền hợp lệ đề xuất là $(0, 100\%]$ (ràng buộc nghiệp vụ cần xác nhận).
+>   - Khi `type = 'fixed'`: miền hợp lệ là $V > 0$ (VNĐ nguyên dương).
+> - **Bộ Giá trị Hợp lệ Cơ sở (Standard Baseline for Coupon Creation):**
+>   - `code`: `"PROMO2026"` (chuỗi chữ số hợp lệ, chưa tồn tại trong CSDL)
+>   - `type`: `"percent"`
+>   - `discount_value`: `10` (10% $\in (0, 100\%]$)
+>   - `min_order_amount`: `100000` (100.000 ₫ $\ge 0$)
+>   - `max_uses_per_user`: `1` ($\ge 1$)
+>   - `expired_at`: `"2026-12-31"` (ngày trong tương lai)
+>   - `auth_token_and_role`: JWT Token hợp lệ của Quản trị viên (`role = 'admin'`).
+
+---
+
+#### 4.2.1 Bảng Phân Vùng Tương Đương Biến Đầu Vào Thuần Túy (Pure Input Equivalence Partitions)
+
+| Class ID | Variable / Constraint | Precondition | Domain / Partition Definition | Type | Representative Value | Expected Result | Specification Source & Status | Single-Fault Baseline & Rationale |
+| :--- | :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- |
+| `EP-17-01` | `code` | Baseline các trường khác hợp lệ | Mã mới, chưa tồn tại trong CSDL, đúng định dạng Alphanumeric | **VEP** | `"PROMO2026"` | Hệ thống chấp nhận, tạo bản ghi coupon mới trong CSDL với `is_active = 1` | SRS FR-17 / API Spec §6.4<br/>`[SRS Confirmed]` | Baseline chuẩn hợp lệ; kết hợp với các tham số hợp lệ để tạo coupon thành công. |
+| `EP-17-02` | `code` | Baseline các trường khác hợp lệ | Mã đã tồn tại sẵn trong CSDL (Duplicate code) | **IEP** | `"SAVE10"` | Hệ thống từ chối tạo mới; trả về lỗi vi phạm tính duy nhất (HTTP 400 hoặc 409 theo API contract); không sập lỗi SQLite 500 | SRS FR-17 (*"duy nhất"*); CSDL `UNIQUE(code)`<br/>`[SRS Confirmed]` | Cô lập lỗi trùng lặp mã; các trường khác giữ nguyên giá trị hợp lệ cơ sở. |
+| `EP-17-03` | `code` | Baseline các trường khác hợp lệ | Mã để trống / chuỗi rỗng (`""`) | **IEP** | `""` | Giao diện hiển thị validation lỗi required; API từ chối với HTTP 400 Bad Request | SRS FR-17 (*"Các trường bắt buộc"*); HTML `required`<br/>`[SRS Confirmed]` | Cô lập lỗi thiếu trường bắt buộc `code`. |
+| `EP-17-04` | `code` | Baseline các trường khác hợp lệ | Mã chỉ chứa toàn khoảng trắng (Whitespace-only) | **IEP** | `"     "` | Hệ thống tự động trim khoảng trắng và từ chối mã rỗng (HTTP 400); không lưu mã chỉ gồm dấu cách | Quy tắc validation dự kiến<br/>`[Needs clarification on Trim]` | Cô lập lỗi chuỗi rỗng ngụy trang bằng khoảng trắng. |
+| `EP-17-05` | `code` | Baseline các trường khác hợp lệ | Thiếu trường `code` hoàn toàn trong payload JSON | **IEP** | Payload khuyết `code` | API từ chối xử lý, trả về HTTP 400 Bad Request | API Spec §6.4 Schema<br/>`[API Contract Confirmed]` | Cô lập lỗi khuyết key trong JSON payload. |
+| `EP-17-06` | `code` | CSDL đã có `"SAVE10"` | Trùng mã chỉ khác chữ hoa/thường (Case-insensitive conflict) | **Conditional** | `"save10"` | Cần xác nhận hành vi: Nếu hệ thống case-insensitive thì từ chối trùng mã; nếu case-sensitive thì chấp nhận tạo mã riêng | Chưa quy định trong SRS<br/>`[Needs clarification]` | Kiểm tra quy tắc phân biệt chữ hoa/thường ở backend và CSDL. |
+| `EP-17-07` | `code` | Baseline các trường khác hợp lệ | Mã có khoảng trắng ở đầu hoặc cuối chuỗi | **Conditional** | `" SAVE10 "` | Cần xác nhận: Hệ thống tự động trim thành `"SAVE10"` hay lưu nguyên chuỗi khoảng trắng | Chưa quy định trong SRS<br/>`[Needs clarification on Normalization]` | Kiểm tra cơ chế tiền xử lý chuỗi (Sanitization / Trimming). |
+| `EP-17-08` | `code` | Baseline các trường khác hợp lệ | Độ dài chuỗi vượt quá giới hạn lưu trữ quy ước ($Len > 50$) | **Robustness** | Chuỗi dài 51 ký tự (`"P"*51`) | Cần xác nhận: Hệ thống từ chối chuỗi quá dài (HTTP 400) hay tự cắt ngắn hay chấp nhận lưu chuỗi lớn | Giả định thiết kế CSDL<br/>`[Assumption-based]` | Kiểm tra độ bền vững trước chuỗi đầu vào cực dài. |
+| `EP-17-09` | `type` | Baseline các trường khác hợp lệ | Loại giảm giá theo phần trăm (`'percent'`) | **VEP** | `'percent'` | Hệ thống chấp nhận; áp dụng công thức giảm giá theo tỷ lệ % đơn hàng | SRS FR-17 & FR-09<br/>`[SRS Confirmed]` | Baseline chuẩn cho loại phần trăm. |
+| `EP-17-10` | `type` | `discount_value = 50000` | Loại giảm giá theo số tiền cố định (`'fixed'`) | **VEP** | `'fixed'` | Hệ thống chấp nhận; áp dụng công thức trừ tiền mặt cố định ₫ | SRS FR-17 & FR-09<br/>`[SRS Confirmed]` | Baseline chuẩn cho loại số tiền cố định. |
+| `EP-17-11` | `type` | Baseline các trường khác hợp lệ | Giá trị không nằm trong danh mục enum cho phép | **IEP** | `'free_shipping'` (hoặc `'other'`) | API từ chối với HTTP 400 Bad Request (Invalid type enum) | SRS FR-17 (*"type (percent/fixed)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi gửi giá trị type không được hỗ trợ qua API bypass. |
+| `EP-17-12` | `type` | Baseline các trường khác hợp lệ | Loại là chuỗi rỗng (`type = ""`) | **IEP** | `""` | API từ chối với HTTP 400 Bad Request | SRS FR-17 (*"Các trường bắt buộc"*); API Spec<br/>`[API Contract Confirmed]` | Cô lập lỗi gửi chuỗi rỗng cho trường enum bắt buộc. |
+| `EP-17-13` | `type` | Baseline các trường khác hợp lệ | Loại mang giá trị `null` (`type = null`) | **IEP** | `null` | API từ chối với HTTP 400 Bad Request | API Spec §6.4 Schema<br/>`[API Contract Confirmed]` | Cô lập lỗi truyền giá trị null vào trường bắt buộc. |
+| `EP-17-14` | `type` | Baseline các trường khác hợp lệ | Thiếu trường `type` hoàn toàn trong payload JSON | **IEP** | Payload khuyết `type` | API từ chối với HTTP 400 Bad Request (hoặc gán mặc định nếu CSDL cho phép `DEFAULT 'percent'`) | SRS FR-17 (*"Các trường bắt buộc"*); SQLite `DEFAULT 'percent'`<br/>`[Needs clarification]` | Kiểm tra xem backend bắt buộc payload hay tự động fallback CSDL. |
+| `EP-17-15` | `discount_value` | `type = 'percent'` | Giá trị % hợp lệ trong khoảng chuẩn ($0 < V \le 100$) | **VEP** | `10` (tương ứng 10%) | Hệ thống chấp nhận; lưu giá trị và áp dụng giảm 10% tại Checkout | SRS FR-17 (*"dương"*); Quy tắc nghiệp vụ %<br/>`[SRS Confirmed & Business Rule]` | Baseline hợp lệ chuẩn cho loại percent. |
+| `EP-17-16` | `discount_value` | `type = 'fixed'` | Giá trị tiền mặt hợp lệ ($V > 0$ VNĐ) | **VEP** | `50000` (50.000 ₫) | Hệ thống chấp nhận; lưu giá trị và áp dụng trừ 50.000 ₫ tại Checkout | SRS FR-17 (*"dương"*); FR-09 (*"Loại fixed"*)\<br/>`[SRS Confirmed]` | Baseline hợp lệ chuẩn cho loại fixed. |
+| `EP-17-17` | `discount_value` | `type = 'percent'` hoặc `'fixed'` | Giá trị bằng 0 ($V = 0$) | **IEP** | `0` | Hệ thống từ chối; báo lỗi giá trị phải là số dương ($> 0$) | SRS FR-17 (*"discount_value (dương)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi vi phạm ràng buộc số dương (bằng 0). |
+| `EP-17-18` | `discount_value` | `type = 'percent'` hoặc `'fixed'` | Giá trị mang số âm ($V < 0$) | **IEP** | `-10` (percent) hoặc `-50000` (fixed) | Hệ thống từ chối; báo lỗi giá trị phải dương (HTTP 400), không để xảy ra nghịch lý tăng tiền đơn | SRS FR-17 (*"discount_value (dương)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi số âm; tránh lỗi tính toán làm tăng giá trị đơn hàng. |
+| `EP-17-19` | `discount_value` | `type = 'percent'` | Giá trị phần trăm vượt quá 100% ($V > 100$) | **Conditional IEP** | `101` (101%) hoặc `150` (150%) | Cần xác nhận: Hệ thống từ chối tạo mã (HTTP 400) do tỷ lệ giảm không thể vượt quá 100% giá trị đơn hàng | Quy tắc nghiệp vụ suy luận từ logic giảm giá<br/>`[Needs clarification / Business Rule]` | Chỉ áp dụng cho `type = percent`. Không áp dụng cho `type = fixed`. |
+| `EP-17-20` | `discount_value` | Baseline các trường khác hợp lệ | Giá trị là chuỗi rỗng (`discount_value = ""`) | **IEP** | `""` | Báo lỗi trường bắt buộc không được để trống (UI required / HTTP 400) | SRS FR-17 (*"Các trường bắt buộc"*); HTML `required`<br/>`[SRS Confirmed]` | Cô lập lỗi gửi chuỗi rỗng cho trường số bắt buộc. |
+| `EP-17-21` | `discount_value` | Baseline các trường khác hợp lệ | Giá trị mang giá trị `null` | **IEP** | `null` | API từ chối với HTTP 400 Bad Request | API Spec §6.4 Schema<br/>`[API Contract Confirmed]` | Cô lập lỗi truyền null cho trường số. |
+| `EP-17-22` | `discount_value` | Baseline các trường khác hợp lệ | Thiếu trường `discount_value` hoàn toàn trong payload | **IEP** | Payload khuyết `discount_value` | API từ chối với HTTP 400 Bad Request | SRS FR-17 (*"Các trường bắt buộc"*); API Spec<br/>`[SRS Confirmed]` | Cô lập lỗi thiếu key trong JSON payload. |
+| `EP-17-23` | `discount_value` | Baseline các trường khác hợp lệ | Giá trị chứa ký tự phi số (chữ cái / ký hiệu) | **IEP** | `"abc"` hoặc `"10%"` | Form chặn gõ chữ (`type="number"`); API trả về HTTP 400 Bad Request do sai kiểu dữ liệu số | Ràng buộc kiểu dữ liệu Number<br/>`[API Contract Confirmed]` | Cô lập lỗi sai kiểu dữ liệu số (Data type mismatch). |
+| `EP-17-24` | `discount_value` | `type = 'percent'` | Giá trị phần trăm là số thập phân ($V \in \mathbb{R} \setminus \mathbb{Z}$) | **Conditional** | `10.5` (tương ứng 10.5%) | Cần xác nhận: Hệ thống chấp nhận số thập phân hay chỉ cho phép số nguyên % | Chưa quy định trong SRS<br/>`[Needs clarification on Precision]` | Kiểm tra độ chính xác bước nhảy phần trăm. |
+| `EP-17-25` | `discount_value` | `type = 'fixed'` | Giá trị tiền cố định là số thập phân (có số lẻ hào/xu) | **Conditional** | `50000.5` ₫ | Cần xác nhận: Tiền tệ VND không có đơn vị xu lẻ; hệ thống làm tròn, tự cắt hay từ chối | Tiền tệ VND chuẩn không có phần thập phân<br/>`[Needs clarification]` | Kiểm tra tính nhất quán tiền tệ VND theo FR-21. |
+| `EP-17-26` | `min_order_amount`| Baseline các trường khác hợp lệ | Ngưỡng đơn hàng hợp lệ là số nguyên dương ($M > 0$) | **VEP** | `100000` (100.000 ₫) | Hệ thống chấp nhận tạo mã; coupon chỉ được dùng khi đơn hàng $\ge 100.000$ ₫ | SRS FR-17 (*"min_order_amount (>= 0)"*)<br/>`[SRS Confirmed]` | Baseline chuẩn hợp lệ cho ngưỡng đơn có điều kiện. |
+| `EP-17-27` | `min_order_amount`| Baseline các trường khác hợp lệ | Ngưỡng đơn hàng bằng đúng 0 ($M = 0$) | **VEP** | `0` (0 ₫) | Hệ thống chấp nhận tạo mã; coupon áp dụng cho mọi đơn hàng không phụ thuộc giá trị | SRS FR-17 (*"min_order_amount (>= 0)"*)<br/>`[SRS Confirmed]` | Giá trị biên dưới hợp lệ đặc biệt (không ràng buộc ngưỡng). |
+| `EP-17-28` | `min_order_amount`| Baseline các trường khác hợp lệ | Ngưỡng đơn hàng mang giá trị âm ($M < 0$) | **IEP** | `-1` hoặc `-10000` ₫ | Hệ thống từ chối; báo lỗi ngưỡng đơn hàng phải lớn hơn hoặc bằng 0 (HTTP 400) | SRS FR-17 (*"min_order_amount (>= 0)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi vi phạm bất đẳng thức toán học $\ge 0$. |
+| `EP-17-29` | `min_order_amount`| Baseline các trường khác hợp lệ | Thiếu trường `min_order_amount` hoặc truyền `null` | **Conditional** | Omitted hoặc `null` | Cần xác nhận: Form Admin mặc định là `0`, nhưng nếu gửi API khuyết trường thì backend tự gán 0 hay từ chối HTTP 400 | CSDL `DEFAULT 0` vs SRS *"bắt buộc"*<br/>`[Needs clarification]` | Xác minh sự khác biệt giữa UI default và API contract validation. |
+| `EP-17-30` | `min_order_amount`| Baseline các trường khác hợp lệ | Ngưỡng đơn hàng chứa ký tự phi số | **IEP** | `"invalid_amount"` | Form chặn gõ chữ; API trả về HTTP 400 Bad Request | Ràng buộc kiểu dữ liệu Number<br/>`[API Contract Confirmed]` | Cô lập lỗi sai kiểu dữ liệu số. |
+| `EP-17-31` | `max_uses_per_user`| Baseline các trường khác hợp lệ | Số lượt dùng hợp lệ là số nguyên $\ge 1$ | **VEP** | `1` (mặc định) hoặc `5` | Hệ thống chấp nhận tạo mã; mỗi user được dùng tối đa số lần này | SRS FR-17 (*"max_uses_per_user (>= 1)"*)<br/>`[SRS Confirmed]` | Baseline chuẩn hợp lệ cho giới hạn lượt dùng/người. |
+| `EP-17-32` | `max_uses_per_user`| Baseline các trường khác hợp lệ | Số lượt dùng bằng 0 ($U = 0$) | **IEP** | `0` | Hệ thống từ chối; báo lỗi số lượt dùng phải $\ge 1$ (nếu bằng 0 thì mã vô dụng) | SRS FR-17 (*"max_uses_per_user (>= 1)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi vi phạm ràng buộc tối thiểu là 1. |
+| `EP-17-33` | `max_uses_per_user`| Baseline các trường khác hợp lệ | Số lượt dùng mang giá trị âm ($U < 0$) | **IEP** | `-1` | Hệ thống từ chối; báo lỗi số lượt dùng phải là số nguyên $\ge 1$ | SRS FR-17 (*"max_uses_per_user (>= 1)"*)<br/>`[SRS Confirmed]` | Cô lập lỗi số nguyên âm. |
+| `EP-17-34` | `max_uses_per_user`| Baseline các trường khác hợp lệ | Số lượt dùng là số thập phân ($U \in \mathbb{R} \setminus \mathbb{Z}$) | **IEP** | `1.5` | Hệ thống từ chối; lượt dùng phải là số nguyên đếm được $\ge 1$ | SRS FR-17; Ràng buộc số đếm nguyên<br/>`[SRS Confirmed]` | Cô lập lỗi số thập phân cho đơn vị đếm lượt. |
+| `EP-17-35` | `max_uses_per_user`| Baseline các trường khác hợp lệ | Thiếu trường `max_uses_per_user` hoặc truyền `null` | **Conditional** | Omitted hoặc `null` | Cần xác nhận: Form Admin mặc định `1`, backend server.js có code `max_uses_per_user || 1` $\to$ kiểm tra API có chấp nhận fallback 1 hay yêu cầu bắt buộc | Code Backend line 474 vs SRS *"bắt buộc"*<br/>`[Needs clarification]` | Kiểm tra tính nhất quán giữa code SUT thực tế và SRS. |
+| `EP-17-36` | `expired_at` | Baseline các trường khác hợp lệ | Ngày hết hạn trong tương lai ($expired\_at > \text{now}$) | **VEP** | `"2026-12-31"` | Hệ thống chấp nhận; coupon tạo ra có thời hạn sử dụng hợp lệ | SRS FR-17 & FR-09 (*"Còn hạn sử dụng"*)\<br/>`[SRS Confirmed]` | Baseline chuẩn hợp lệ cho thời hạn coupon. |
+| `EP-17-37` | `expired_at` | Baseline các trường khác hợp lệ | Ngày hết hạn trong quá khứ ($expired\_at < \text{now}$) | **Conditional IEP** | `"2020-01-01"` | Cần xác nhận: Hệ thống từ chối tạo mã (HTTP 400) vì mã quá hạn không thể sử dụng; hay chấp nhận tạo nhưng gắn trạng thái hết hạn | SRS chỉ ghi C2 ở checkout; chưa cấm ở create form<br/>`[Needs clarification]` | Kiểm tra quy tắc nghiệp vụ khi tạo coupon với ngày quá khứ. |
+| `EP-17-38` | `expired_at` | Baseline các trường khác hợp lệ | Ngày hết hạn chính là ngày hiện tại ($expired\_at = \text{today}$) | **Conditional** | Ngày hôm nay | Cần xác nhận mốc thời gian cutoff: coupon hết hạn lúc `00:00:00` (đầu ngày) hay `23:59:59` (hết ngày) | Chưa quy định giờ trong SRS<br/>`[Needs clarification]` | Kiểm tra độ phân giải thời gian (Date vs DateTime). |
+| `EP-17-39` | `expired_at` | Baseline các trường khác hợp lệ | Ngày hết hạn để trống / chuỗi rỗng (`""`) | **IEP** | `""` | Giao diện báo lỗi trường bắt buộc; API từ chối với HTTP 400 Bad Request | SRS FR-17 (*"Các trường bắt buộc"*); HTML `required`<br/>`[SRS Confirmed]` | Cô lập lỗi thiếu trường bắt buộc ngày hết hạn. |
+| `EP-17-40` | `expired_at` | Baseline các trường khác hợp lệ | Ngày hết hạn sai định dạng ngày tháng (Malformed Date) | **IEP** | `"2026-13-45"` hoặc `"invalid-date"` | Hệ thống từ chối chuỗi ngày không hợp lệ; trả về HTTP 400 Bad Request | Ràng buộc định dạng chuẩn ISO Date<br/>`[API Contract Confirmed]` | Cô lập lỗi sai cú pháp thời gian. |
+
+---
+
+#### 4.2.2 Bảng Phân Vùng Điều Kiện Truy Cập & Phân Quyền (Access-Control & Authorization Partitions)
+
+> **Lưu ý phương pháp luận:** Nhóm này kiểm tra các điều kiện tiên quyết (Preconditions) về xác thực danh tính và phân quyền truy cập Admin (SEC-02, SEC-03, SRS Mục 5.3), được quản lý độc lập với các phân vùng dữ liệu coupon để không làm sai lệch số liệu đo lường độ bao phủ EP của form nhập liệu.
+
+| Class ID | Điều kiện kiểm thử | Endpoint & Thao tác | Type | Dữ liệu kiểm thử / Header | Kết quả mong đợi theo Đặc tả & Hợp đồng API | Căn cứ đặc tả & Trạng thái | Single-Fault Baseline & Ghi chú |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- |
+| `AUTH-17-01` | Token hợp lệ có quyền Admin (`role = 'admin'`) | `POST /api/admin/coupons`, `DELETE /api/admin/coupons/:id`, `GET /api/coupons` | **VEP** | Header: `Authorization: Bearer <Admin_JWT>` | Hệ thống xác thực thành công; cho phép thực thi toàn bộ các thao tác CRUD quản lý coupon | SRS Mục 5.3; SEC-03; API Spec §6<br/>`[SRS Confirmed]` | Dữ liệu coupon hoàn toàn hợp lệ; người dùng đăng nhập bằng tài khoản quản trị viên. |
+| `AUTH-17-02` | Không gửi Token xác thực (Anonymous / Unauthenticated) | `POST /api/admin/coupons` | **IEP** | Không có header `Authorization` | API lập tức từ chối, trả về mã trạng thái **HTTP 401 Unauthorized**; không thực hiện ghi dữ liệu | SRS Mục 5.3; SEC-02; API Spec §6<br/>`[SRS Confirmed]` | Dữ liệu coupon hợp lệ cơ sở; cô lập lỗi thiếu token xác thực. |
+| `AUTH-17-03` | Token hợp lệ nhưng thuộc User thông thường (`role = 'user'`) | `POST /api/admin/coupons` và `DELETE /api/admin/coupons/:id` | **IEP** | Header: `Authorization: Bearer <User_JWT>` | API từ chối với mã trạng thái **HTTP 403 Forbidden**; thông báo không có quyền thực hiện thao tác quản trị | SRS Mục 5.3; SEC-03 (*"Kiểm tra role='admin'"*)<br/>`[SRS Confirmed]` | Dữ liệu coupon hợp lệ cơ sở; cô lập lỗi vi phạm phân quyền người dùng (Privilege Escalation Probe). |
+| `AUTH-17-04` | Token giả mạo / sai chữ ký / đã hết hạn | `POST /api/admin/coupons` | **IEP** | Header: `Authorization: Bearer invalid.token.xyz` | API từ chối xác thực; trả về **HTTP 401 Unauthorized** hoặc **HTTP 403 Forbidden** | SEC-02 (JWT signature verification)<br/>`[API Contract Confirmed]` | Dữ liệu coupon hợp lệ cơ sở; cô lập lỗi token không hợp lệ. |
+| `AUTH-17-05` | Token hợp lệ nhưng payload thiếu trường `role` | `POST /api/admin/coupons` | **Security** | Header: JWT ký đúng nhưng payload `{ id: 1 }` (không có `role`) | API từ chối với **HTTP 403 Forbidden** do không chứng minh được quyền Admin | SEC-03 (*"kiểm tra role = 'admin' trong Token"*)\<br/>`[SRS Confirmed]` | Dữ liệu coupon hợp lệ cơ sở; kiểm tra cơ chế kiểm tra trường role an toàn của middleware. |
+
+---
+
+#### 4.2.3 Bảng Phân Vùng Thao Tác & Vòng Đời Tài Nguyên (Target-Resource & CRUD Lifecycle Partitions)
+
+> **Lưu ý phương pháp luận:** Nhóm này kiểm tra tham số tài nguyên `:id` trên đường dẫn endpoint `DELETE /api/admin/coupons/:id` và các kiểm thử chuyển đổi trạng thái vòng đời bản ghi coupon trong CSDL SQLite.
+
+| Class ID | Ràng buộc / Thao tác | Điều kiện tiền đề | Type | Tham số `:id` đại diện | Kết quả mong đợi theo Đặc tả & Hợp đồng API | Căn cứ đặc tả & Trạng thái | Single-Fault Baseline & Ghi chú |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- |
+| `RES-17-01` | Xóa coupon hợp lệ đang tồn tại | Coupon đang tồn tại trong bảng `coupons` | **VEP** | `id` hợp lệ (VD: coupon vừa tạo) | API trả về **HTTP 200 OK** kèm `{"message": "Coupon deleted"}`; bản ghi bị xóa khỏi bảng `coupons` | SRS FR-17 (*"Admin có thể Xóa mã"*); API Spec §6.4<br/>`[SRS Confirmed]` | Token Admin hợp lệ; thao tác xóa bản ghi coupon tồn tại thực tế. |
+| `RES-17-02` | Xóa coupon với ID không tồn tại | CSDL không chứa ID này | **IEP** | `id = 9999` | API trả về **HTTP 404 Not Found** (hoặc thông báo lỗi bản ghi không tồn tại); không báo lỗi crash server | API Spec §6.4<br/>`[Needs clarification on 404 contract]` | Token Admin hợp lệ; cô lập lỗi ID không có trong CSDL. |
+| `RES-17-03` | Xóa coupon với ID mang giá trị âm | Route param | **IEP** | `id = -1` | API từ chối với **HTTP 400 Bad Request**; khóa chính bảng CSDL luôn là số nguyên dương $\ge 1$ | Ràng buộc miền khóa chính CSDL<br/>`[API Contract Confirmed]` | Token Admin hợp lệ; cô lập lỗi ID mang giá trị âm. |
+| `RES-17-04` | Xóa coupon với ID bằng 0 | Route param | **IEP** | `id = 0` | API từ chối với **HTTP 400 Bad Request** hoặc **404 Not Found** | Ràng buộc miền khóa chính CSDL SQLite<br/>`[API Contract Confirmed]` | Token Admin hợp lệ; SQLite autoincrement bắt đầu từ 1. |
+| `RES-17-05` | Xóa coupon với ID sai kiểu dữ liệu (phi số) | Route param | **IEP** | `id = "abc"` | API từ chối với **HTTP 400 Bad Request** do lỗi binding kiểu dữ liệu tham số route | Ràng buộc kiểu dữ liệu số nguyên của ID<br/>`[API Contract Confirmed]` | Tách biệt hoàn toàn với trường hợp số âm `id = -1`. |
+| `RES-17-06` | Thao tác Xóa lặp lại cùng một ID (Idempotency Probe) | Coupon vừa bị xóa thành công ở `RES-17-01` | **State Probe** | Gửi lại `DELETE` cho cùng `id` đã xóa | Lần gửi thứ 2 phải trả về **HTTP 404 Not Found** do bản ghi không còn tồn tại; không báo thành công giả tạo | Nguyên tắc thiết kế REST API & Vòng đời CSDL<br/>`[Needs clarification]` | Kiểm tra tính nhất quán trạng thái sau khi xóa. |
+| `RES-17-07` | Xóa coupon đã có lịch sử người dùng sử dụng | Coupon ID đã phát sinh bản ghi trong bảng `coupon_usage` | **Data Integrity** | `id` của coupon đã được dùng ở đơn hàng cũ | Cần xác nhận thiết kế: Hệ thống xóa mềm (`soft delete` / `is_active = 0`) để giữ toàn vẹn lịch sử đơn hàng hay xóa cứng cascade | Ràng buộc toàn vẹn quan hệ CSDL SQLite<br/>`[Needs clarification on Soft Delete]` | Kiểm tra an toàn dữ liệu lịch sử tài chính đơn hàng. |
+
+---
+
+#### 4.2.4 Bảng Quy Tắc Nghiệp Vụ & Kiểm Thử Hành Vi Áp Dụng Coupon FR-09 (Business Rules & Coupon Behavior Scenarios)
+
+> **Lưu ý phương pháp luận:** 14 kịch bản dưới đây kiểm chứng việc thực thi logic nghiệp vụ và tính toán giảm giá của Coupon tại chức năng Checkout (FR-09 & FR-08), đảm bảo mã giảm giá do Admin tạo ra hoạt động chính xác trên toàn bộ vòng đời ứng dụng EShop.
+
+| ID Quy tắc | Hạng mục quy tắc nghiệp vụ | Điều kiện vận hành cụ thể | Dữ liệu / Kịch bản đại diện | Kết quả cần xác minh theo Đặc tả SRS | Căn cứ đặc tả SRS & Ghi chú |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `CPN-BR-01` | Công thức tính loại `percent` | Coupon `type = 'percent'`, giá trị giảm 10% | Đơn hàng tổng $1.000.000\text{ ₫}$, mã giảm 10% | Số tiền giảm tính đúng công thức: $1.000.000 \times 10 / 100 = 100.000\text{ ₫}$; Tổng thanh toán: $900.000\text{ ₫}$ | SRS FR-09: *"discount_amount = total * discount_value / 100"* |
+| `CPN-BR-02` | Công thức tính loại `fixed` | Coupon `type = 'fixed'`, giá trị giảm 50.000 ₫ | Đơn hàng tổng $1.000.000\text{ ₫}$, mã giảm 50k | Số tiền giảm tính đúng: $50.000\text{ ₫}$; Tổng thanh toán: $1.000.000 - 50.000 = 950.000\text{ ₫}$ | SRS FR-09: *"discount_amount = discount_value"* |
+| `CPN-BR-03` | Ràng buộc ngưỡng đơn hàng (Dưới ngưỡng) | Tổng đơn hàng nhỏ hơn `min_order_amount` | `min = 300.000 ₫`; Giỏ hàng hiện có $250.000\text{ ₫}$ | Hệ thống từ chối áp dụng mã; hiển thị thông báo đơn hàng chưa đạt giá trị tối thiểu (C3 vi phạm) | SRS FR-09 C3: *"Tổng đơn hàng >= min_order_amount"* |
+| `CPN-BR-04` | Ràng buộc ngưỡng đơn hàng (Bằng ngưỡng) | Tổng đơn hàng bằng đúng `min_order_amount` | `min = 300.000 ₫`; Giỏ hàng hiện có đúng $300.000\text{ ₫}$ | Hệ thống chấp nhận áp dụng mã thành công (Thỏa mãn điều kiện toán học $\ge$) | SRS FR-09 C3 (Biên On-point của ngưỡng đơn) |
+| `CPN-BR-05` | Ràng buộc ngưỡng đơn hàng (Trên ngưỡng) | Tổng đơn hàng lớn hơn `min_order_amount` | `min = 300.000 ₫`; Giỏ hàng có $500.000\text{ ₫}$ | Hệ thống chấp nhận áp dụng mã thành công | SRS FR-09 C3 (In-point của ngưỡng đơn) |
+| `CPN-BR-06` | Ràng buộc thời hạn sử dụng (Quá hạn) | Ngày hiện tại sau ngày `expired_at` | Coupon mẫu `EXPIRED` (`expired_at = '2020-01-01'`) | Hệ thống từ chối áp dụng mã; thông báo mã giảm giá đã hết hạn sử dụng (C2 vi phạm) | SRS FR-09 C2: *"Ngày hiện tại phải trước expired_at"* |
+| `CPN-BR-07` | Ràng buộc trạng thái hoạt động | Coupon có cờ `is_active = 0` | Coupon bị vô hiệu hóa trong CSDL (`is_active = 0`) | Hệ thống từ chối áp dụng mã; thông báo mã không còn hoạt động (C1 vi phạm) | SRS FR-09 C1: *"Mã phải có trong CSDL và đang hoạt động (is_active = 1)"* |
+| `CPN-BR-08` | Ràng buộc lượt dùng / người (Còn lượt) | User đã dùng mã ít hơn `max_uses_per_user` | `max = 2`; bảng `coupon_usage` ghi nhận user đã dùng 1 lần | Hệ thống chấp nhận áp dụng mã cho lần thanh toán thứ 2 (C5 thỏa mãn: $1 < 2$) | SRS FR-09 C5: *"Số lần đã dùng của user < max_uses_per_user"* |
+| `CPN-BR-09` | Ràng buộc lượt dùng / người (Hết lượt) | User đã dùng mã bằng đúng `max_uses_per_user` | `max = 1`; bảng `coupon_usage` ghi nhận user đã dùng 1 lần | Hệ thống từ chối áp dụng mã; thông báo người dùng đã sử dụng hết lượt cho phép (C5 vi phạm: $1 \not< 1$) | SRS FR-09 C5 (Biên On-point của lượt dùng) |
+| `CPN-BR-10` | Giá trị giảm cố định lớn hơn tổng đơn | Coupon `fixed` có giá trị giảm vượt tổng tiền hàng | Giỏ hàng $30.000\text{ ₫}$; áp dụng coupon `fixed = 50.000 ₫` | Cần xác minh: Hệ thống giảm tối đa về $0\text{ ₫}$ hay bị tính ra tổng tiền âm? (Quy tắc an toàn tài chính) | Chưa quy định trong SRS<br/>`[Needs clarification / Defect Hotspot]` |
+| `CPN-BR-11` | Giảm giá % sinh ra số thập phân | Đơn giá lẻ kết hợp tỷ lệ % sinh ra số xu lẻ | Đơn hàng $125.555\text{ ₫}$, giảm 10% $\to 12.555,5\text{ ₫}$ | Cần xác minh quy tắc làm tròn: làm tròn lên, làm tròn xuống hay giữ nguyên? Phù hợp tiền tệ VND | Tiền tệ VND không dùng xu lẻ<br/>`[Needs clarification]` |
+| `CPN-BR-12` | Xác nhận lưu trữ CSDL khi tạo thành công | Tạo mới coupon thành công từ Admin UI / API | `code = "PROMO2026"`, `type = "percent"`, `val = 10` | Bản ghi CSDL được lưu đầy đủ 6 trường; `code` được chuẩn hóa chữ hoa; `is_active` mặc định bằng 1 | SRS FR-17 & Database Schema |
+| `CPN-BR-13` | Trạng thái sau khi xóa coupon | Coupon vừa bị Admin xóa qua API `DELETE` | Coupon `SAVE10` bị Admin xóa khỏi hệ thống | Bản ghi không còn xuất hiện trong `GET /api/coupons`; người dùng nhập mã tại Checkout nhận thông báo mã không tồn tại | Kiểm thử tính nhất quán toàn diện (Cross-functional consistency) |
+| `CPN-BR-14` | Concurrency / Trùng mã khi gửi đồng thời | Hai Admin cùng gửi request tạo cùng 1 `code` đồng thời | 2 request `POST` cùng gửi payload `code = "FLASH50"` trong cùng 100ms | Đúng 1 request thành công (200/201), request thứ 2 bị từ chối do vi phạm UNIQUE; CSDL chỉ có duy nhất 1 bản ghi | Kiểm thử an toàn đồng thời (Race condition probe) |
+
+---
+
+#### 4.2.5 Kiểm Thử An Toàn & Độ Bền Vững (Security & Robustness Probes)
+
+> **Lưu ý phương pháp luận:** Nhóm này đại diện cho các kịch bản kiểm thử phi chức năng (Non-functional Security & Stress Probes) nhằm bảo vệ hệ thống trước các cuộc tấn công tiêm nhiễm mã độc và xử lý tải dữ liệu bất thường.
+
+| Class ID | Loại kiểm thử an toàn | Dữ liệu đầu vào thăm dò (Probe Payload) | Mục tiêu kiểm chứng | Kết quả mong đợi theo Tiêu chuẩn An toàn (SEC) |
+| :--- | :--- | :--- | :--- | :--- |
+| `SEC-17-01` | Cross-Site Scripting (Stored XSS Probe) | `code = "<script>alert('XSS')</script>"` | Kiểm tra việc render mã coupon trên bảng quản trị Admin Web | Giao diện escape thẻ HTML an toàn (SEC-04); hiển thị nguyên văn chuỗi văn bản, tuyệt đối không thực thi script alert |
+| `SEC-17-02` | SQL Injection (Param Query Probe) | `code = "SAVE' OR '1'='1"` | Kiểm tra an toàn câu lệnh truy vấn SQLite tại backend | Hệ thống sử dụng Parameterized Query (SEC-05); chuỗi được coi là giá trị tìm kiếm thông thường, không phá vỡ cú pháp SQL |
+| `SEC-17-03` | Robustness / Tràn số nguyên JS | `min_order_amount = 10^16` ($10.000.000.000.000.000$) | Kiểm tra độ bền bỉ khi nhập số vượt `Number.MAX_SAFE_INTEGER` | Hệ thống xử lý an toàn không treo máy; không biến thành `Infinity` hoặc sinh ra lỗi làm sập tiến trình Node.js |
+| `SEC-17-04` | Malformed JSON Payload | Payload JSON thiếu ngoặc, sai format hoặc chứa trường rác | Kiểm tra khả năng xử lý ngoại lệ của middleware Express | Server trả về HTTP 400 Bad Request rõ ràng, không văng lỗi stack trace `500 Internal Server Error` ra client |
 
 ### 4.3 Bước 3: Phân tích giá trị biên (BVA)
 | Boundary ID | Biến | Điều kiện biên | Mode BVA | On-point | Off-point | In-point |
