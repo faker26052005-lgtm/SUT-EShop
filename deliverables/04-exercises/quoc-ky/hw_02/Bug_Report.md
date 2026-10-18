@@ -16,11 +16,11 @@
 ### 1.1 Thống Kê Theo Mức Độ Nghiêm Trọng (Severity) & Phân Hệ
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 1 | 2 | 0 | 0 | **3** |
+| **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 2 | 0 | 0 | **4** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 1 | 1 | 0 | **2** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **2** | **5** | **2** | **0** | **9** |
+| **TỔNG CỘNG** | | | **3** | **5** | **2** | **0** | **10** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -28,6 +28,7 @@
 | `BUG-FR02-01` | Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai | FR-02 | `TC_FR02_03` | Major | [Issue #4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4) | Open |
 | `BUG-FR02-02` | Khóa tài khoản sớm tại lần thử sai thứ 2 với thời gian phạt 180s thay vì 30s | FR-02 | `TC_FR02_04` | Critical | [Issue #5](https://github.com/faker26052005-lgtm/SUT-EShop/issues/5) | Open |
 | `BUG-FR02-03` | Bộ đếm số lần đăng nhập sai nhảy vọt lên 4 thay vì 3 tại lần thử sai thứ 3 | FR-02 | `TC_FR02_06` | Major | [Issue #6](https://github.com/faker26052005-lgtm/SUT-EShop/issues/6) | Open |
+| `BUG-FR02-04` | Đăng nhập bằng mật khẩu đúng trong khi đang bị khóa vẫn thành công và tự gỡ khóa | FR-02 | `TC_FR02_07` | Critical | [Issue #7](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7) | Open |
 | `BUG-FR07-01` | Bấm nút giảm (-) tại số lượng 1 tự xóa sản phẩm không có dialog xác nhận | FR-07 | `TC_FR07_03` | Major | [Issue #14](https://github.com/ttbhanh/eshop-sut/issues/14) | Open |
 | `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
@@ -258,6 +259,97 @@
 - **Khắc phục:** Sửa phép cộng thành tăng 1 đơn vị:
   ```javascript
   const newAttempts = user.login_attempts + 1;
+  ```
+
+---
+
+#### [BUG-FR02-04] Đăng nhập bằng mật khẩu đúng trong khi đang bị khóa vẫn thành công và tự gỡ khóa
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR02-04` |
+| **Tiêu đề Bug** | `[FR-02][Backend API / Security] Correct password bypasses active account lockout and clears lockout state` |
+| **Chức năng (Feature)** | FR-02: Đăng nhập & Khóa tài khoản (Pool A) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v18.19 • Linux |
+| **Mức độ (Severity)** | **Critical** (Lỗ hổng bảo mật nghiêm trọng: Bỏ qua cơ chế khóa tài khoản và tự giải phóng trạng thái phạt) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR02_07`](Main_Report.md#tc_fr02_07) (Thử đăng nhập bằng mật khẩu đúng trong thời gian khóa) |
+| **GitHub Issue Link** | [Issue #7: [BUG] [FR-02][Backend API / Security] Correct password bypasses active account lockout and clears lockout state](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- Tài khoản người dùng `test@eshop.com` đang trong thời gian bị tạm khóa (`locked_until` có giá trị trong tương lai).
+- SUT backend đang chạy tại `http://localhost:3000`.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Kiểm tra CSDL SQLite để xác nhận mốc `locked_until` của tài khoản `test@eshop.com` đang có hiệu lực trong tương lai.
+2. Gửi yêu cầu đăng nhập với email `test@eshop.com` và mật khẩu đúng `Test1234!` trong thời gian tài khoản đang bị khóa:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@eshop.com","password":"Test1234!"}'
+   ```
+3. Truy vấn lại CSDL SQLite để kiểm tra xem tài khoản có bị gỡ khóa sớm hay không:
+   ```bash
+   SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "email": "test@eshop.com",
+  "password": "Test1234!"
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-02):**
+> *Trích dẫn SRS FR-02 (Mục 3):* "Trong thời gian tài khoản bị tạm khóa, mọi yêu cầu đăng nhập (kể cả khi nhập đúng thông tin) đều bị hệ thống từ chối."
+- Endpoint `POST /api/login` trả về HTTP `403 Forbidden` (`{"error": "Tài khoản đã bị khóa. Vui lòng thử lại sau."}`).
+- Tuyệt đối không cấp JWT token cho phiên làm việc.
+- Trong CSDL SQLite, trường `locked_until` phải giữ nguyên, không được tự ý xóa hoặc mở khóa sớm.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/login` trả về HTTP `200 OK` (`{"message": "Login successful"}`).
+- Cấp JWT token hợp lệ và cho phép người dùng đăng nhập thành công vào hệ thống.
+- Trong CSDL SQLite, trường `locked_until` bị xóa về `NULL`, chấm dứt thời gian phạt khóa tài khoản ngay lập tức.
+- HTTP Status Code: `200 OK`
+- Database Mutation: `locked_until` = null (mở khóa trái phép)
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp bằng chứng terminal & database:*  
+  ![Minh chứng lỗi vượt khóa khi nhập đúng mật khẩu](./screenshots/BUG_FR02_04_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/7](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 40–52.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  if (user.locked_until && new Date() < new Date(user.locked_until)) {
+    return res
+      .status(403)
+      .json({ error: "Tài khoản đã bị khóa. Vui lòng thử lại sau." });
+  }
+
+  if (user.password === password) {
+    db.run(
+      "UPDATE users SET login_attempts = 0, locked_until = NULL WHERE id = ?",
+      [user.id],
+    );
+    const token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY);
+    res.json({ message: "Login successful", token, user });
+  }
+  ```
+- **Nguyên nhân:**
+  1. Khi chuỗi `locked_until` trong SQLite không có hậu tố `Z`, JavaScript diễn giải theo giờ Local (GMT+7), làm lệch 7 giờ so với `new Date()` (UTC), khiến điều kiện `new Date() < new Date(user.locked_until)` bị sai (false).
+  2. Khi vượt qua điều kiện kiểm tra, khối `if (user.password === password)` lập tức thực thi câu lệnh SQL xóa `locked_until = NULL`, làm sụp đổ hoàn toàn cơ chế khóa bảo mật.
+- **Khắc phục:** Chuẩn hóa so sánh múi giờ UTC hoặc ép định dạng ISO, và chặn hoàn toàn nhánh reset khi đang trong thời gian khóa:
+  ```javascript
+  const lockedTime = user.locked_until ? new Date(user.locked_until.includes('T') ? user.locked_until : user.locked_until.replace(' ', 'T') + 'Z') : null;
+  if (lockedTime && new Date() < lockedTime) {
+    return res
+      .status(403)
+      .json({ error: "Tài khoản đã bị khóa. Vui lòng thử lại sau." });
+  }
   ```
 
 ---
