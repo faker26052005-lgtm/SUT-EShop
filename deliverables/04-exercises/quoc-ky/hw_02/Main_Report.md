@@ -502,35 +502,52 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 | `VAR-07-08` | `button_delete_action` & `dialog_confirmation` (Nút Xóa & Dialog xác nhận) | Boolean (Confirm / Cancel) | Tương tác | N/A | Trích dẫn SRS FR-07: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."* | Bấm nút "Xóa" bắt buộc phải hiển thị dialog xác nhận. Nếu người dùng chọn Hủy (`Cancel`), giữ nguyên sản phẩm trong giỏ; chỉ khi chọn Đồng ý (`Confirm`), sản phẩm mới bị xóa khỏi giỏ và tính lại tổng tiền. |
 | `VAR-07-09` | `continue_shopping_navigation` (Nút Tiếp tục mua sắm) | Action / Route | Tương tác | N/A | Trích dẫn SRS FR-07: *"Có nút Tiếp tục mua sắm để quay về trang chủ."* | Nút bấm hoặc liên kết điều hướng phải đưa người dùng quay trở lại trang chủ (`/`) một cách an toàn mà không làm mất trạng thái giỏ hàng. |
 
-### 3.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables)
+#### 3.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables)
 
-> **Nguyên tắc Giả định Đơn lỗi (Single Fault Assumption - ISTQB FL §4.2.1):**
-> Khi kiểm thử một phân vùng không hợp lệ (IEP), chỉ duy nhất 1 điều kiện hoặc biến đầu vào mang giá trị lỗi; toàn bộ các tham số còn lại phải được giữ ở giá trị hợp lệ cơ sở (Baseline) nhằm cô lập nguyên nhân từ chối và ngăn chặn hiện tượng che giấu lỗi (error masking).
+> **Nguyên tắc Giả định Đơn lỗi (Single Fault Assumption - ISTQB FL §4.2.1) & Tách bạch Phạm vi Kiểm thử:**
+> - **Phân tách rõ ràng 3 lớp khái niệm:** Để đảm bảo số liệu đo lường độ bao phủ EP mang ý nghĩa chuẩn xác và không bị thổi phồng, thiết kế phân tách rõ giữa: (1) Các phân vùng tương đương biến đầu vào thực thụ (Input EPs); (2) Các quy tắc nghiệp vụ, chuyển trạng thái và kịch bản tương tác (State & Interaction Rules); và (3) Các điểm kiểm chứng giao diện / giả thuyết khiếm khuyết (Assertions & Defect Probes).
+> - **Nguyên tắc Single-Fault Isolation:** Khi kiểm thử một phân vùng không hợp lệ (IEP), chỉ duy nhất 1 điều kiện hoặc biến mang giá trị sai; toàn bộ các tham số còn lại bắt buộc phải giữ ở giá trị hợp lệ cơ sở (Baseline).
+> - **Căn cứ đặc tả:** Căn cứ duy nhất là SRS FR-07 và FR-06. Số lượng $Q$ là số nguyên dương $Q \ge 1$ (không tự ý đặt cận trên 99 khi SRS không quy định).
 
-| Class ID | Variable / Constraint | Domain / Sub-condition | Type (VEP / IEP) | Representative Value | Single-Fault Baseline / Rationale |
+#### 3.2.1 Bảng Phân Vùng Tương Đương Biến Đầu Vào (Pure Input Equivalence Partitions)
+
+| Class ID | Variable / Input | Domain / Sub-condition | Type (VEP / IEP) | Representative Value | Single-Fault Baseline / Rationale |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `EP-07-01` | `product_id` | Thêm sản phẩm hợp lệ mới chưa có trong giỏ hàng | VEP | `id = 1` (iPhone 15 Pro Max) | Giỏ hàng ban đầu chưa có sản phẩm ID 1. Hệ thống tạo thêm đúng 1 dòng mới trong bảng giỏ hàng với số lượng ban đầu $Q=1$. |
-| `EP-07-02` | `product_id` | Thêm sản phẩm trùng lặp đã tồn tại sẵn trong giỏ | VEP | `id = 1` (đã có $Q=1$ trong giỏ) | Giỏ hàng đã có sản phẩm ID 1 ($Q=1$). Khi thêm tiếp, hệ thống cộng dồn $Q = 1 + 1 = 2$ trên cùng dòng sản phẩm, tuyệt đối không tạo dòng mới theo SRS FR-07. |
-| `EP-07-03` | `product_id` | Mã sản phẩm không tồn tại trong CSDL | IEP | `id = 9999` (hoặc chuỗi không hợp lệ) | Request thêm sản phẩm với ID giả định. Cô lập lỗi mã sản phẩm; hệ thống từ chối xử lý, không chèn bản ghi rác vào giỏ. |
-| `EP-07-04` | `quantity` | Số lượng nguyên dương hợp lệ ($1 \le Q \le 99$) | VEP | $Q = 2$ | Sản phẩm hợp lệ trong giỏ. Cập nhật thành công số lượng, thành tiền tự động tính lại $Subtotal = Price \times 2$. |
-| `EP-07-05` | `quantity` | Số lượng bằng 0 ($Q = 0$) | IEP | $Q = 0$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi vi phạm quy tắc số nguyên dương $\ge 1$; hệ thống chặn cập nhật hoặc kích hoạt dialog xác nhận xóa, không được lưu $Q=0$. |
+| `EP-07-01` | `product_id` | Mã sản phẩm hợp lệ và tồn tại trong CSDL | VEP | `id = 1` (iPhone 15 Pro Max) | Giỏ hàng ban đầu chưa có sản phẩm ID 1. Hệ thống tạo thêm đúng 1 dòng mới trong bảng giỏ hàng với số lượng ban đầu. |
+| `EP-07-02` | `product_id` | Mã sản phẩm đúng định dạng số nhưng không tồn tại trong CSDL | IEP | `id = 9999` | Gửi request thêm sản phẩm với ID không tồn tại. Cô lập lỗi ID không có trong CSDL; hệ thống từ chối hoặc trả về lỗi 404/400. |
+| `EP-07-03` | `product_id` | Mã sản phẩm sai định dạng / sai kiểu dữ liệu (Malformed ID) | IEP | `id = "abc"` (hoặc `-1`) | Request gửi qua API `POST /api/cart` hoặc route. Cô lập lỗi sai kiểu dữ liệu (String/Negative thay vì positive integer); hệ thống từ chối dữ liệu rác. |
+| `EP-07-04` | `quantity` | Số lượng nguyên dương hợp lệ ($Q \in \mathbb{Z}, Q \ge 1$) | VEP | $Q = 2$ | Sản phẩm hợp lệ trong giỏ. Đặc tả SRS FR-06/FR-07 quy định: *"chỉ nhận số nguyên dương, tối thiểu là 1"*, không đặt cận trên 99 hay giới hạn tồn kho. Cập nhật số lượng và tính lại thành tiền. |
+| `EP-07-05` | `quantity` | Số lượng bằng 0 ($Q = 0$) | IEP | $Q = 0$ | Sản phẩm hợp lệ trong giỏ. Cô lập vi phạm quy tắc số nguyên dương tối thiểu là 1; hệ thống từ chối hoặc yêu cầu xác nhận xóa, không được lưu $Q=0$. |
 | `EP-07-06` | `quantity` | Số lượng là số nguyên âm ($Q < 0$) | IEP | $Q = -1$ (hoặc $-5$) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi số âm; hệ thống từ chối hoặc tự động phục hồi về 1, không làm âm tổng tiền giỏ hàng. |
-| `EP-07-07` | `quantity` | Để trống ô nhập số lượng (Chuỗi rỗng `""`) | IEP | $Q = \text{""}$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi bỏ trống trường bắt buộc; hệ thống chặn submit hoặc tự động khôi phục giá trị hợp lệ trước đó. |
-| `EP-07-08` | `quantity` | Ký tự phi số (Chữ cái, ký tự đặc biệt) | IEP | $Q = \text{"abc"}$ hoặc $\text{"@#\$"}$ | Sản phẩm hợp lệ trong giỏ. Input `type="number"` hoặc validator chặn ký tự chữ, không để xảy ra lỗi tính toán `NaN`. |
-| `EP-07-09` | `quantity` | Số thập phân / số thực không nguyên | IEP | $Q = 1.5$ (hoặc $2.5$) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi vi phạm quy tắc "chỉ nhận số nguyên dương" (FR-06/FR-07); từ chối dấu chấm/phẩy thập phân. |
-| `EP-07-10` | `quantity` | Số nguyên cực lớn vượt ngưỡng an toàn (Tràn số) | IEP | $Q = 10^9$ (1 tỷ đơn vị) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi tràn số học; hệ thống xử lý an toàn không treo ứng dụng hoặc tràn bộ đệm JavaScript. |
-| `EP-07-11` | `subtotal` & `unit_price` | Thành tiền tự động khớp công thức $Price \times Q$ | VEP | $Price = 30.000.000\text{ ₫}$, $Q = 2 \to 60.000.000\text{ ₫}$ | Sản phẩm iPhone 15 Pro Max hợp lệ. Kiểm tra tính đúng đắn số học của từng dòng sản phẩm. |
-| `EP-07-12` | `total_amount` | Tổng tiền bằng tổng các thành tiền $\sum Subtotal$ | VEP | SP1 ($60.000.000\text{ ₫}$) + SP2 ($6.000.000\text{ ₫}$) $\to 66.000.000\text{ ₫}$ | Giỏ hàng chứa 2 dòng sản phẩm hợp lệ khác nhau. Kiểm tra phép tính cộng dồn tổng tiền toàn bộ giỏ hàng. |
-| `EP-07-13` | `total_label` | Nhãn hiển thị chính xác chuỗi "Tổng cộng" | VEP | Label hiển thị: `"Tổng cộng"` | Giỏ hàng có sản phẩm. Tuân thủ tuyệt đối quy định SRS FR-07: *"Tổng tiền hiển thị nhãn chính xác: 'Tổng cộng' (không phải 'Tổng tạm tính')"*. |
-| `EP-07-14` | `total_label` | Nhãn hiển thị sai thành "Tổng tạm tính" | IEP | Label hiển thị: `"Tổng tạm tính"` (hoặc `"Subtotal"`) | Giỏ hàng có sản phẩm. Kiểm tra phát hiện vi phạm đặc tả giao diện (candidate defect probe). |
-| `EP-07-15` | `cart_state` | Giỏ hàng có sản phẩm ($Items \ge 1$) | VEP | $Items = 1$ hoặc $Items = 2$ | Hiển thị đầy đủ bảng danh mục các cột: Sản phẩm, Đơn giá, Số lượng, Thành tiền, Thao tác; cùng tổng tiền và nút thanh toán. |
-| `EP-07-16` | `cart_state` | Giỏ hàng trống hoàn toàn ($Items = 0$) | VEP | $Items = 0$ | Giỏ hàng rỗng. Ẩn bảng sản phẩm; bắt buộc hiển thị đồng thời cả hình minh họa (illustration) và thông báo giỏ hàng trống rõ ràng. |
-| `EP-07-17` | `button_decrement_action` | Bấm nút `-` khi số lượng lớn hơn 1 ($Q > 1$) | VEP | $Q = 2 \xrightarrow{\text{click } -} Q = 1$ | Sản phẩm có $Q=2$ trong giỏ. Số lượng giảm đúng 1 đơn vị, thành tiền và tổng tiền lập tức cập nhật lại. |
-| `EP-07-18` | `button_decrement_action` | Bấm nút `-` khi số lượng chạm biên tối thiểu $Q = 1$ | VEP | $Q = 1 \xrightarrow{\text{click } -} \text{Dialog xác nhận}$ | Sản phẩm có $Q=1$ trong giỏ. Chặn không cho giảm âm về 0; nếu xem là thao tác xóa thì bắt buộc phải hiện dialog xác nhận trước khi xóa. |
-| `EP-07-19` | `button_delete_action` | Bấm nút "Xóa" $\to$ Xác nhận Đồng ý (Confirm) | VEP | Click Xóa $\to$ Click "OK / Đồng ý" trên dialog | Sản phẩm hợp lệ trong giỏ. Hiển thị dialog xác nhận; khi người dùng xác nhận, dòng sản phẩm bị xóa khỏi giỏ và cập nhật lại tổng tiền. |
-| `EP-07-20` | `button_delete_action` | Bấm nút "Xóa" $\to$ Hủy bỏ thao tác (Cancel) | VEP | Click Xóa $\to$ Click "Hủy / Cancel" trên dialog | Sản phẩm hợp lệ trong giỏ. Hiển thị dialog xác nhận; khi người dùng hủy, sản phẩm vẫn được bảo toàn nguyên vẹn trong giỏ hàng. |
-| `EP-07-21` | `button_delete_action` | Bấm nút "Xóa" nhưng hệ thống xóa trực tiếp không hỏi | IEP | Click Xóa $\to$ Không xuất hiện dialog nào | Sản phẩm hợp lệ trong giỏ. Phát hiện vi phạm đặc tả SRS FR-07 *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện"*. |
-| `EP-07-22` | `continue_shopping_navigation` | Bấm nút "Tiếp tục mua sắm" | VEP | Click button/link "Tiếp tục mua sắm" | Trang giỏ hàng. Trình duyệt chuyển hướng an toàn về trang chủ (`/`) mà không làm mất trạng thái giỏ hàng. |
+| `EP-07-07` | `quantity` | Chuỗi rỗng / để trống ô số lượng | IEP | $Q = \text{""}$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi thiếu giá trị bắt buộc; hệ thống chặn submit hoặc khôi phục giá trị hợp lệ trước đó. |
+| `EP-07-08` | `quantity` | Chuỗi chỉ chứa khoảng trắng (Whitespace-only) | IEP | $Q = \text{"   "}$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi chuỗi rỗng ngụy trang; hệ thống chặn submit hoặc trim và báo lỗi. |
+| `EP-07-09` | `quantity` | Ký tự phi số (Chữ cái, ký hiệu đặc biệt) | IEP | $Q = \text{"abc"}$ hoặc $\text{"@#\$"}$ | Sản phẩm hợp lệ trong giỏ. Input `type="number"` hoặc validator chặn ký tự chữ, không để xảy ra lỗi tính toán `NaN`. |
+| `EP-07-10` | `quantity` | Số thập phân / số thực không nguyên | IEP | $Q = 1.5$ (hoặc $2.5$) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi vi phạm quy tắc "chỉ nhận số nguyên dương" (FR-06/FR-07); từ chối dấu chấm/phẩy thập phân. |
+| `EP-07-11` | `quantity` | Bị bỏ khuyết hoặc giá trị `null` trong payload API | IEP | `quantity: null` hoặc omitted | Gửi request `POST /api/cart` không truyền `quantity` hoặc truyền `null`. Cô lập lỗi khuyết trường bắt buộc; backend trả về lỗi 400. |
+| `EP-07-12` | `quantity` | Số nguyên cực lớn kiểm thử độ bền số học (Robustness / Stress) | IEP (Stress) | $Q = 10^9$ (1 tỷ đơn vị) | Sản phẩm hợp lệ trong giỏ. Kiểm tra độ bền hệ thống, không để tràn số nguyên JavaScript hoặc biến thành `Infinity`. |
+
+#### 3.2.2 Bảng Phân Tích Quy Tắc Nghiệp Vụ, Trạng Thái & Tương Tác (Business Rules, State & Interaction Scenarios)
+
+| Rule / State ID | Hạng mục | Quy tắc nghiệp vụ & Hành vi tương tác | Phân loại | Dữ liệu / Kịch bản đại diện | Kết quả mong đợi theo Đặc tả SRS |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| `RULE-07-01` | Trùng sản phẩm | Thêm sản phẩm đã tồn tại sẵn trong giỏ hàng | Business Rule | Giỏ đã có SP1 ($Q=1$). Thêm tiếp SP1 với $Q_{add}=1$. | Tăng số lượng thành $Q = 1 + 1 = 2$ trên cùng dòng sản phẩm; tuyệt đối **không tạo dòng mới** (SRS FR-07). |
+| `RULE-07-02` | Thành tiền dòng | Tính toán Thành tiền cho từng dòng sản phẩm | Calculation Rule | SP1: Đơn giá $30.000.000\text{ ₫}$, Số lượng $2$ | Công thức: $Subtotal = unit\_price \times quantity = 60.000.000\text{ ₫}$. Cập nhật tức thời khi đổi số lượng. |
+| `RULE-07-03` | Tổng tiền giỏ | Tính toán Tổng tiền toàn bộ giỏ hàng | Calculation Rule | SP1 ($Subtotal = 60.000.000\text{ ₫}$) + SP2 ($Subtotal = 6.000.000\text{ ₫}$) | Công thức: $Total = \sum Subtotal = 66.000.000\text{ ₫}$. |
+| `STATE-07-01` | Trạng thái giỏ | Giỏ hàng có sản phẩm ($Items \ge 1$) | Valid State | Giỏ có 1 hoặc nhiều mặt hàng | Hiển thị bảng chi tiết gồm đủ 5 cột: Sản phẩm, Đơn giá, Số lượng, Thành tiền, Thao tác; cùng tổng tiền và nút thanh toán. |
+| `STATE-07-02` | Trạng thái giỏ | Giỏ hàng trống hoàn toàn ($Items = 0$) | Valid State | Giỏ rỗng ($0$ sản phẩm) | Ẩn bảng sản phẩm; bắt buộc hiển thị đồng thời cả **hình minh họa** (illustration) và thông báo giỏ hàng trống rõ ràng. |
+| `ACTION-07-01` | Nút `-` | Bấm nút `-` khi số lượng lớn hơn 1 ($Q > 1$) | Interaction | Đang có $Q=2$, click nút `-` | Số lượng giảm đúng 1 đơn vị ($Q = 1$), thành tiền và tổng tiền lập tức cập nhật lại. |
+| `ACTION-07-02` | Nút `-` | Bấm nút `-` khi số lượng chạm biên tối thiểu ($Q = 1$) | State Transition / Ambiguity | Đang có $Q=1$, click nút `-` | **Ghi nhận độ mơ hồ đặc tả:** SRS FR-07 không nêu rõ nút `-` sẽ bị vô hiệu hóa (disabled) để giữ $Q \ge 1$ hay sẽ kích hoạt dialog xác nhận xóa sản phẩm. Hệ thống tuyệt đối không được tự ý xóa không hỏi hoặc giảm âm. |
+| `ACTION-07-03` | Nút "Xóa" | Bấm nút "Xóa" $\to$ Xác nhận Đồng ý (Confirm) | Interaction / Modal | Click Xóa $\to$ Click "OK / Confirm" trên dialog | Hiển thị dialog xác nhận; khi bấm OK, dòng sản phẩm bị xóa khỏi giỏ và cập nhật lại tổng tiền. |
+| `ACTION-07-04` | Nút "Xóa" | Bấm nút "Xóa" $\to$ Hủy bỏ thao tác (Cancel) | Interaction / Modal | Click Xóa $\to$ Click "Cancel / Hủy" trên dialog | Hiển thị dialog xác nhận; khi bấm Cancel, sản phẩm vẫn được bảo toàn nguyên vẹn trong giỏ hàng. |
+| `ACTION-07-05` | Điều hướng | Bấm nút "Tiếp tục mua sắm" | Navigation | Click link/button "Tiếp tục mua sắm" | Trình duyệt chuyển hướng an toàn về trang chủ (`/`), giỏ hàng được bảo toàn. |
+
+#### 3.2.3 Bảng Điểm Kiểm Chứng Giao Diện & Giả Thuyết Khiếm Khuyết SUT (UI Assertions & Defect Probes)
+
+| Assertion ID | Hạng mục kiểm chứng | Yêu cầu bắt buộc của SRS FR-07 | Dấu hiệu vi phạm (Potential SUT Defect) | Phương pháp kiểm chứng |
+| :--- | :--- | :--- | :--- | :--- |
+| `ASSERT-07-01` | Nhãn Tổng tiền | Tổng tiền hiển thị nhãn chính xác: **"Tổng cộng"** (không phải "Tổng tạm tính"). | Giao diện hiển thị nhãn `"Tổng tạm tính:"` hoặc `"Subtotal"`. | Quan sát văn bản hiển thị cạnh số tiền tổng ở footer giỏ hàng. |
+| `ASSERT-07-02` | Dialog xác nhận xóa | Nút Xóa sản phẩm phải có **dialog xác nhận** trước khi thực hiện. | Bấm nút Xóa thì sản phẩm biến mất ngay lập tức mà không xuất hiện bất kỳ dialog xác nhận nào. | Click nút Xóa tại dòng sản phẩm và kiểm tra sự xuất hiện của popup/dialog xác nhận. |
+| `ASSERT-07-03` | Hình minh họa giỏ trống | Giỏ hàng trống phải có **hình minh họa** và thông báo rõ ràng. | Giao diện giỏ hàng trống chỉ có dòng chữ thông báo mà hoàn toàn không có thẻ hình ảnh (`<img>`/SVG minh họa). | Xóa hết sản phẩm trong giỏ và kiểm tra cây DOM xem có thẻ ảnh minh họa hay không. |
 
 ### 3.3 Bước 3: Phân tích giá trị biên (BVA)
 | Boundary ID | Biến / Điều kiện | Ranh giới | Phương pháp | On-point | Off-point | In-point |
