@@ -479,22 +479,28 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 
 ## 3. TÍNH NĂNG B (POOL B): FR-07 – GIỎ HÀNG (SHOPPING CART)
 
-### 3.1 Bước 1: Nhận diện biến đầu vào & Ràng buộc
-> **Trích dẫn đặc tả SRS FR-07:**
-> - Hiển thị danh sách sản phẩm với các cột: Sản phẩm, Đơn giá, Số lượng (có nút +/- để chỉnh), Thành tiền, Thao tác.
+### 3.1 Bước 1: Nhận diện biến đầu vào & Ràng buộc (Step 1 Deliverables)
+> **Trích dẫn đặc tả SRS FR-07 (Giỏ hàng):**
+> - Hiển thị danh sách sản phẩm với các cột: **Sản phẩm**, **Đơn giá**, **Số lượng** (có nút +/- để chỉnh), **Thành tiền**, **Thao tác**.
 > - Thêm cùng một sản phẩm vào giỏ sẽ tăng số lượng, không tạo dòng mới.
-> - Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện.
-> - Có nút Tiếp tục mua sắm để quay về trang chủ.
-> - Tổng tiền hiển thị nhãn chính xác: "Tổng cộng" (không phải "Tổng tạm tính").
+> - Nút **Xóa sản phẩm** phải có dialog xác nhận trước khi thực hiện.
+> - Có nút **Tiếp tục mua sắm** để quay về trang chủ.
+> - Tổng tiền hiển thị nhãn chính xác: **"Tổng cộng"** (không phải "Tổng tạm tính").
 > - Giỏ hàng trống phải có hình minh họa và thông báo rõ ràng.
+>
+> *(Đối chiếu SRS FR-06: "Có ô nhập Số lượng (chỉ nhận số nguyên dương, tối thiểu là 1). Nút Thêm vào giỏ hàng — sau khi bấm hiển thị phản hồi trực quan"; SRS FR-08: "Tổng tiền thanh toán được tính tự động từ giỏ hàng và không cho phép người dùng chỉnh sửa trực tiếp.")*
 
-| Variable ID | Tên biến | Kiểu dữ liệu | Bắt buộc? | Bước nhảy ($\epsilon$) | Ràng buộc nghiệp vụ theo đặc tả |
-| :--- | :--- | :--- | :---: | :---: | :--- |
-| `VAR-07-01` | `quantity` | Integer | Có | 1 | Số nguyên dương $\ge 1$; không vượt quá tồn kho `stock_quantity`. |
-| `VAR-07-02` | `unit_price` | Integer / ₫ | Hệ thống | 1 ₫ | Đơn giá sản phẩm lấy từ CSDL (số dương). |
-| `VAR-07-03` | `subtotal` | Integer / ₫ | Hệ thống | 1 ₫ | $Subtotal = unit\_price \times quantity$. |
-| `VAR-07-04` | `action_decrement`| Click | Tương tác | N/A | Bấm nút `-` khi `quantity = 1` $\to$ Cần kích hoạt dialog xác nhận xóa hay khóa chặn? |
-| `VAR-07-05` | `cart_state` | Boolean | Hệ thống | N/A | Trống (`empty`) vs Có hàng (`items > 0`). |
+| Variable ID | Variable Name | Data Type | Mandatory? | Precision ($\epsilon$) | Specification Constraint (Quote) | Assumptions / Ambiguities |
+| :--- | :--- | :--- | :---: | :---: | :--- | :--- |
+| `VAR-07-01` | `product_id` (hoặc sản phẩm trong giỏ) | Integer | Có | 1 | Trích dẫn SRS FR-07: *"Hiển thị danh sách sản phẩm với các cột: Sản phẩm..."* và *"Thêm cùng một sản phẩm vào giỏ sẽ tăng số lượng, không tạo dòng mới."* | Sản phẩm phải tồn tại trong CSDL (`products` table). Phân biệt 2 tình huống: thêm sản phẩm mới (chưa có trong giỏ $\to$ tạo dòng mới) và thêm sản phẩm trùng lặp (đã có trong giỏ $\to$ cộng dồn số lượng vào dòng hiện tại). |
+| `VAR-07-02` | `quantity` (Số lượng sản phẩm) | Integer | Có | 1 đơn vị | Trích dẫn SRS FR-07: *"Số lượng (có nút +/- để chỉnh)"* (Đối chiếu FR-06: *"Có ô nhập Số lượng (chỉ nhận số nguyên dương, tối thiểu là 1)"*) | Số nguyên dương $quantity \ge 1$. Đặc tả SRS không định nghĩa số lượng tối đa hay ràng buộc tồn kho (`stock_quantity`) trong CSDL (bảng `products` thực tế không có cột tồn kho). Cần kiểm tra cận biên số học, nhập số 0, số âm, số thập phân hoặc chuỗi phi số. |
+| `VAR-07-03` | `unit_price` (Đơn giá sản phẩm) | Integer / ₫ | Hệ thống | 1 ₫ | Trích dẫn SRS FR-07: *"cột: Sản phẩm, Đơn giá..."* | Lấy trực tiếp từ bảng `products.price` trong CSDL; là số nguyên dương $> 0$. Người dùng không được phép chỉnh sửa đơn giá trên giao diện giỏ hàng. |
+| `VAR-07-04` | `subtotal` (Thành tiền từng dòng) | Integer / ₫ | Hệ thống | 1 ₫ | Trích dẫn SRS FR-07: *"cột: ... Thành tiền"* | Công thức tính toán: $Subtotal = unit\_price \times quantity$. Cập nhật tức thời (reactive) khi thay đổi số lượng. |
+| `VAR-07-05` | `total_amount` & `total_label` (Tổng tiền & Nhãn hiển thị) | Compound (Integer & String) | Hệ thống | 1 ₫ / Text | Trích dẫn SRS FR-07: *"Tổng tiền hiển thị nhãn chính xác: 'Tổng cộng' (không phải 'Tổng tạm tính')."* | Tổng tiền bằng tổng các thành tiền: $Total = \sum Subtotal$. Nhãn văn bản hiển thị cạnh số tiền tổng bắt buộc phải là `"Tổng cộng"`; bất kỳ nhãn nào như `"Tổng tạm tính"` hay `"Subtotal"` đều bị coi là lỗi vi phạm đặc tả. |
+| `VAR-07-06` | `cart_state` (Trạng thái giỏ hàng) | Categorical | Hệ thống | N/A | Trích dẫn SRS FR-07: *"Giỏ hàng trống phải có hình minh họa và thông báo rõ ràng."* | Trạng thái hiển thị gồm 2 miền: Trống ($Items = 0$) và Có sản phẩm ($Items \ge 1$). Khi giỏ trống, hệ thống bắt buộc phải hiển thị đồng thời cả hình minh họa (illustration image) và câu thông báo rõ ràng. |
+| `VAR-07-07` | `button_decrement_action` (Thao tác nút `-` tại biên số lượng) | Interaction / Action | Tương tác | N/A | Trích dẫn SRS FR-07: *"Số lượng (có nút +/- để chỉnh)"* và *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."* | Khi $quantity > 1$, bấm `-` giảm 1 đơn vị. Khi $quantity = 1$, bấm `-` là điểm biên chuyển đổi trạng thái: hệ thống cần disable nút hoặc nếu xem là hành vi xóa sản phẩm thì bắt buộc phải kích hoạt dialog xác nhận xóa, không được tự ý xóa mà không hỏi hoặc giảm về 0 / số âm. |
+| `VAR-07-08` | `button_delete_action` & `dialog_confirmation` (Nút Xóa & Dialog xác nhận) | Boolean (Confirm / Cancel) | Tương tác | N/A | Trích dẫn SRS FR-07: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."* | Bấm nút "Xóa" bắt buộc phải hiển thị dialog xác nhận. Nếu người dùng chọn Hủy (`Cancel`), giữ nguyên sản phẩm trong giỏ; chỉ khi chọn Đồng ý (`Confirm`), sản phẩm mới bị xóa khỏi giỏ và tính lại tổng tiền. |
+| `VAR-07-09` | `continue_shopping_navigation` (Nút Tiếp tục mua sắm) | Action / Route | Tương tác | N/A | Trích dẫn SRS FR-07: *"Có nút Tiếp tục mua sắm để quay về trang chủ."* | Nút bấm hoặc liên kết điều hướng phải đưa người dùng quay trở lại trang chủ (`/`) một cách an toàn mà không làm mất trạng thái giỏ hàng. |
 
 ### 3.2 Bước 2: Phân vùng tương đương
 | Partition ID | Biến / Điều kiện | Phân lớp tương đương | Phân loại | Giá trị đại diện | Hành vi mong đợi |
