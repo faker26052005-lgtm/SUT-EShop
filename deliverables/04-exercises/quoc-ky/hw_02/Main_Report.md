@@ -998,9 +998,94 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
   - *State Preservation:* Dữ liệu sản phẩm trong giỏ hàng vẫn được lưu giữ nguyên vẹn, không bị mất khi quay lại `/cart`.
 - **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
 
-### 3.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
-- Bao phủ 100% các phân vùng số lượng âm, 0, hợp lệ, vượt kho, giỏ rỗng, nhãn tổng tiền.
-- Bao phủ đầy đủ On/Off/In cho cả biên dưới và biên trên tồn kho.
+### 3.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ (Step 5 Deliverables)
+
+> **Mục tiêu Kiểm chứng Độ bao phủ (ISTQB FL §4.2.1 & §4.2.2):**
+> Xác nhận toàn bộ 100% các phân vùng biến đầu vào (VEP/IEP), các quy tắc nghiệp vụ/chuyển trạng thái, các điểm kiểm chứng khiếm khuyết giao diện, và các điểm biên On/Off/In đều được kiểm thử trực tiếp bởi ít nhất một kịch bản trong ma trận 20 Test Cases.
+
+---
+
+#### 3.5.1 Bảng Độ Bao Phủ Phân Vùng Tương Đương Biến Đầu Vào (Pure Input EP Coverage)
+
+| Class ID | Variable / Input | Type | Mô tả phân vùng tương đương | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `EP-07-01` | `product_id` | **VEP** | Mã sản phẩm hợp lệ và tồn tại trong CSDL | `TC_FR07_01` | **Covered** |
+| `EP-07-02` | `product_id` | **IEP** | Mã sản phẩm đúng định dạng số nhưng không tồn tại trong CSDL (`id = 9999`) | `TC_FR07_03` | **Covered** |
+| `EP-07-03` | `product_id` | **IEP** | Mã sản phẩm sai định dạng / sai kiểu dữ liệu (`id = "abc"` hoặc `-1`) | `TC_FR07_04` | **Covered** |
+| `EP-07-04` | `quantity` | **VEP** | Số lượng nguyên dương hợp lệ ($Q \in \mathbb{Z}, Q \ge 1$) | `TC_FR07_01`, `TC_FR07_02`, `TC_FR07_12` | **Covered** |
+| `EP-07-05` | `quantity` | **IEP** | Số lượng bằng 0 ($Q = 0$) | `TC_FR07_05` | **Covered** |
+| `EP-07-06` | `quantity` | **IEP** | Số lượng là số nguyên âm ($Q < 0$) | `TC_FR07_06` | **Covered** |
+| `EP-07-07` | `quantity` | **IEP** | Chuỗi rỗng / để trống trường số lượng (`""`) | `TC_FR07_07` | **Covered** |
+| `EP-07-08` | `quantity` | **IEP** | Chuỗi chỉ chứa toàn khoảng trắng (`"   "`) | `TC_FR07_07` | **Covered** |
+| `EP-07-09` | `quantity` | **IEP** | Ký tự phi số (Chữ cái, ký hiệu đặc biệt) | `TC_FR07_08` | **Covered** |
+| `EP-07-10` | `quantity` | **IEP** | Số thập phân / số thực không nguyên ($Q = 1.5$) | `TC_FR07_09` | **Covered** |
+| `EP-07-11` | `quantity` | **IEP** | Bị bỏ khuyết hoặc giá trị `null` trong payload API | `TC_FR07_10` | **Covered** |
+| `EP-07-12` | `quantity` | **IEP** | Số nguyên cực lớn kiểm thử độ bền số học ($Q = 10^9$) | `TC_FR07_11` | **Covered** |
+
+---
+
+#### 3.5.2 Bảng Độ Bao Phủ Quy Tắc Nghiệp Vụ, Trạng Thái & Tương Tác (State, Rule & Interaction Coverage)
+
+| Rule / State ID | Hạng mục | Mô tả quy tắc & kịch bản tương tác | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :--- | :--- | :---: |
+| `RULE-07-01` | Trùng sản phẩm | Thêm SP trùng lặp phải cộng dồn số lượng, không tạo dòng mới | `TC_FR07_02` | **Covered** |
+| `RULE-07-02` | Thành tiền dòng | Công thức số học $Subtotal = unit\_price \times quantity$ | `TC_FR07_01`, `TC_FR07_02`, `TC_FR07_12` | **Covered** |
+| `RULE-07-03` | Tổng tiền giỏ | Công thức tổng tiền toàn giỏ $Total = \sum Subtotal$ | `TC_FR07_01`, `TC_FR07_12` | **Covered** |
+| `STATE-07-01` | Trạng thái giỏ | Giỏ hàng có sản phẩm ($Items \ge 1$), hiển thị đủ 5 cột | `TC_FR07_01`, `TC_FR07_12` | **Covered** |
+| `STATE-07-02` | Trạng thái giỏ | Giỏ hàng trống ($Items = 0$), hiển thị cả thông báo và hình minh họa | `TC_FR07_17` | **Covered** |
+| `ACTION-07-01` | Nút `-` | Bấm nút `-` khi $Q > 1 \to$ giảm số lượng 1 đơn vị, tính lại tiền | `TC_FR07_13` | **Covered** |
+| `ACTION-07-02` | Nút `-` | Bấm nút `-` tại ranh giới $Q = 1 \to$ disable hoặc dialog xác nhận xóa | `TC_FR07_14` | **Covered** |
+| `ACTION-07-03` | Nút "Xóa" | Bấm Xóa $\to$ Xác nhận OK $\to$ Xóa sản phẩm khỏi giỏ, tính lại tiền | `TC_FR07_15` | **Covered** |
+| `ACTION-07-04` | Nút "Xóa" | Bấm Xóa $\to$ Xác nhận Cancel $\to$ Giữ nguyên vẹn sản phẩm | `TC_FR07_16` | **Covered** |
+| `ACTION-07-05` | Điều hướng | Bấm nút "Tiếp tục mua sắm" $\to$ Chuyển về trang chủ (`/`), bảo toàn giỏ | `TC_FR07_20` | **Covered** |
+
+---
+
+#### 3.5.3 Bảng Độ Bao Phủ Điểm Kiểm Chứng Giao Diện & Giả Thuyết Khiếm Khuyết (UI Assertions Coverage)
+
+| Assertion ID | Hạng mục kiểm chứng | Yêu cầu bắt buộc của SRS FR-07 | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :--- | :--- | :---: |
+| `ASSERT-07-01` | Nhãn Tổng tiền | Tổng tiền hiển thị nhãn chính xác: **"Tổng cộng"** (không phải "Tổng tạm tính") | `TC_FR07_18` | **Covered** |
+| `ASSERT-07-02` | Dialog xác nhận xóa | Nút Xóa sản phẩm phải có **dialog xác nhận** trước khi thực hiện | `TC_FR07_19` | **Covered** |
+| `ASSERT-07-03` | Hình minh họa giỏ trống | Giỏ hàng trống phải có **hình minh họa** và thông báo rõ ràng | `TC_FR07_17` | **Covered** |
+
+---
+
+#### 3.5.4 Bảng Độ Bao Phủ Phân Tích Giá Trị Biên (Boundary Value Coverage - On/Off/In Points)
+
+| Boundary ID | Biến / Điều kiện | Điểm biên (Point Type) | Giá trị kiểm thử | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `BVA-07-01` | Biên dưới số lượng ($Q \ge 1$) | **On-point** | $Q = 1$ (Số lượng min hợp lệ) | `TC_FR07_01`, `TC_FR07_13`, `TC_FR07_14` | **Covered** |
+| | | **Off-point** | $Q = 0$ (Không hợp lệ, vi phạm $Q \ge 1$) | `TC_FR07_05` | **Covered** |
+| | | **In-point** | $Q = 2$ (Liền kề trong vùng hợp lệ) | `TC_FR07_02`, `TC_FR07_12` | **Covered** |
+| `BVA-07-02` | Ranh giới số lượng SP trong giỏ ($Items \ge 1 \leftrightarrow 0$) | **On-point** | $Items = 1$ (Còn đúng 1 SP, giỏ có hàng) | `TC_FR07_01`, `TC_FR07_16` | **Covered** |
+| | | **Off-point** | $Items = 0$ (Giỏ rỗng, chuyển giao diện) | `TC_FR07_17` | **Covered** |
+| | | **In-point** | $Items = 2$ (Nhiều SP, cộng dồn tổng tiền) | `TC_FR07_12`, `TC_FR07_15` | **Covered** |
+| `BVA-07-03` | Ranh giới chuyển tiếp nút `-` ($Q = 1 \to 0$) | **On-point** | Bấm nút `-` tại $Q = 1$ (Điểm chuyển tiếp) | `TC_FR07_14` | **Covered** |
+| | | **Off-point** | Giảm âm $Q \le 0$ (Hành vi sai, vi phạm SRS) | `TC_FR07_14` | **Covered** |
+| | | **In-point** | Bấm nút `-` tại $Q = 2 \to 1$ (Giảm hợp lệ) | `TC_FR07_13` | **Covered** |
+| `BVA-07-04` | Ranh giới số nguyên vs số thực kề cận ($Q \in \mathbb{Z}^+$) | **On-point** | $Q = 1.0$ (Số nguyên chuẩn xác) | `TC_FR07_01` | **Covered** |
+| | | **Off-point** | $Q = 1.5$ (hoặc $0.9/1.1$, số thập phân bị từ chối) | `TC_FR07_09` | **Covered** |
+| | | **In-point** | $Q = 2.0$ (Số nguyên hợp lệ tiếp theo) | `TC_FR07_02` | **Covered** |
+| `BVA-07-05` | Giới hạn an toàn số nguyên JS (`MAX_SAFE_INTEGER`) | **On-point** | $Q = 9.007.199.254.740.991$ | `TC_FR07_11` | **Covered** |
+| | | **Off-point** | $Q = 9.007.199.254.740.992$ (Vượt ngưỡng) | `TC_FR07_11` | **Covered** |
+| | | **In-point** | $Q = 10^9$ (Số cực lớn trong ngưỡng) | `TC_FR07_11` | **Covered** |
+
+---
+
+#### 3.5.5 Bảng Tổng Hợp Chỉ Số Độ Bao Phủ (Coverage Summary)
+
+| Chỉ số kiểm thử (Metric) | Tổng số nhận diện | Đã bao phủ (Covered) | Chưa bao phủ / Bị chặn | Tỷ lệ bao phủ (%) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Phân vùng hợp lệ (VEP)** | 2 | 2 | 0 | **100.0%** |
+| **Phân vùng không hợp lệ (IEP)** | 10 | 10 | 0 | **100.0%** |
+| **Tổng số phân vùng tương đương biến (Input EPs)** | 12 | 12 | 0 | **100.0%** |
+| **Quy tắc nghiệp vụ & Trạng thái (Rules & States)** | 5 | 5 | 0 | **100.0%** |
+| **Kịch bản tương tác & Điều hướng (Actions & Navigation)** | 5 | 5 | 0 | **100.0%** |
+| **Điểm kiểm chứng giao diện & Khiếm khuyết (Assertions)** | 3 | 3 | 0 | **100.0%** |
+| **Giá trị biên (On / Off / In Points)** | 15 | 15 | 0 | **100.0%** |
+| **Tổng số kịch bản kiểm thử (Test Cases)** | 20 | 20 | 0 | **100.0%** |
+| **Bảo đảm Giả định Đơn lỗi (Single-Fault Isolation)** | 10 / 10 IEPs | 10 | 0 | **100.0%** |
 
 ### 3.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT
 - **Khoảng trống AI:** AI thường chỉ test trường hợp gõ số mà bỏ qua việc click nút bấm `+` và `-`, đặc biệt là sự kiện chuyển tiếp trạng thái khi click `-` tại mốc 1 đơn vị.
