@@ -448,10 +448,32 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 | **Bảo đảm Giả định Đơn lỗi (Single-Fault Isolation)** | 13 / 13 IEPs | 13 | 0 | **100.0%** |
 
 ### 2.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT (Step 6 Deliverables)
-- **Khoảng trống AI (AI Gap Analysis):** Khi thiết kế ban đầu, AI thường chỉ tạo trường hợp "sai 3 lần" nhưng quên kịch bản "nhập đúng ở lần thứ 3 thì bộ đếm có được reset hay không", và thường bỏ qua điểm biên thời gian vi sai $\epsilon=1s$ ($29s$ vs $31s$).
-- **Giả thuyết lỗi SUT (Defect Hypotheses):**
-  - Backend SQLite chưa lưu trữ trường `failed_login_attempts` hoặc không có cơ chế `locked_until` $\to$ Tài khoản không hề bị khóa dù nhập sai 10 lần.
-  - Phản hồi API trả về `401 Unauthorized` có kèm message `"Mật khẩu không đúng"` hoặc `"Email không tồn tại"` $\to$ Vi phạm điều khoản bảo mật "không để lộ chi tiết nguyên nhân" của SRS FR-02.
+
+> **Mục đích:** Cung cấp minh chứng cho **Mục 6 Task 3 (AI Gap Analysis)** và làm luận cứ cho **Mục 10 (AI Critique)** của bài tập HW02, phân tách rạch ròi giữa kịch bản kiểm thử theo đặc tả và các giả thuyết khiếm khuyết nội bộ hệ thống.
+
+#### 6.1. Bảng Phân Tích Khoảng Trống Kiểm Thử Của AI (AI Gap Analysis)
+
+| Hạng mục / Điều kiện kiểm thử | Nguyên nhân AI bỏ sót hoặc gặp khó khăn | Hiệu chỉnh của con người (Human Fix Applied) | Căn cứ Tiêu chuẩn & Kỹ thuật Kiểm thử |
+| :--- | :--- | :--- | :--- |
+| **Chuỗi khoảng trắng (Whitespace-only Strings)** | Mô hình AI mặc định coi chuỗi rỗng (`""`) là đủ cho phân vùng không hợp lệ; bỏ qua trường hợp chuỗi chỉ chứa dấu cách (`"     "`) có thể ngụy trang vượt qua validation lỏng lẻo. | Bổ sung phân vùng `EP-02-04` và `EP-02-09` kèm các test case kiểm tra cơ chế trim/reject (`TC_FR02_16`, `TC_FR02_21`). | **ISTQB FL §4.2.1:** Phân chia triệt để các lớp tương đương của dữ liệu chuỗi (Null vs Empty vs Whitespace). |
+| **Tuần tự chuyển trạng thái & Reset bộ đếm ($N \to 0$)** | AI thiết kế kiểm thử theo tư duy tĩnh (Stateless input mapping), chỉ xét các giá trị riêng lẻ ($N=1, 2, 3$) mà bỏ quên kiểm chứng chuỗi tương tác thời gian (Temporal sequence). | Thiết lập kịch bản `TC_FR02_05` (`BVA-02-04-ON`): đăng nhập đúng sau 2 lần sai để xác nhận biến trạng thái `login_attempts` phải được reset về 0. | **ISTQB FL §4.2.4 & §4.2.1:** Kiểm thử chuyển đổi trạng thái kết hợp phân vùng điều kiện tuần tự. |
+| **Thăm dò Reset Timer trong thời gian khóa ($0 \le t < 30s$)** | Do SRS chỉ nêu thời gian khóa 30 giây mà không mô tả hành vi khi có request sai trong lúc khóa, AI mặc định chỉ trả về 403 mà không đánh giá nguy cơ timer bị reset kéo dài vô cớ. | Bổ sung kịch bản thăm dò `TC_FR02_08` (`EP-02-13b`) để xác nhận lần thử sai trong lúc đang khóa không được phép reset lại đồng hồ đếm 30s ban đầu. | **Exploratory State Testing:** Kiểm tra tính toàn vẹn của máy trạng thái và bộ đếm thời gian phạt. |
+| **Cận trên độ dài chuỗi (Email & Password Max Length)** | Đặc tả SRS không ghi rõ độ dài tối đa cho Email/Password; AI có xu hướng dừng lại ở việc không test cận trên (Open-ended boundary). | Con người chủ động truy nguyên chuẩn RFC 5321 (Email $\le 254$ ký tự) và chuẩn an toàn OWASP ASVS (Password $\le 255$ ký tự để chống DoS băm mật khẩu); bổ sung `BVA-02-05` và `BVA-02-06`. | **ISTQB FL §4.2.2 & RFC 5321 / OWASP ASVS:** Bổ sung các giá trị biên kỹ thuật dựa trên tiêu chuẩn quốc tế khi đặc tả ngầm định. |
+| **Trạng thái tài khoản Bị cấm / Vô hiệu hóa (Banned/Inactive)** | Khi người dùng đề xuất kiểm thử trạng thái banned/inactive, AI cần kiểm chứng chéo với tài liệu SRS và cấu trúc CSDL thực tế thay vì tự tiện bịa đặt kịch bản nghiệp vụ. | Con người và AI rà soát mã nguồn CSDL SQLite (`backend/database.js`), xác nhận bảng `users` không có trường `status`/`banned`; chuyển trạng thái này sang mục Khoảng trống Đặc tả. | **Nguyên tắc "Đặc tả là căn cứ duy nhất":** Không tự ý bịa đặt trạng thái hệ thống khi SRS không hỗ trợ. |
+
+---
+
+#### 6.2. Danh Sách Giả Thuyết Khiếm Khuyết Thăm Dò Trên SUT (Candidate Defect Hypotheses)
+
+> *Ghi chú: Toàn bộ các giả thuyết dưới đây được gắn nhãn `[Exploratory - Unconfirmed Hypothesis - Requires SUT execution]` và sẽ được kiểm chứng thực tế trong Giai đoạn 3 trên hệ thống EShop đang chạy.*
+
+| Hypothesis ID | Khu vực kiểm thử (Target Area) | Mô tả giả thuyết lỗi (Description) | Kỳ vọng theo đặc tả (Spec Expected) | Dự đoán hành vi thực tế (Hypothesized Actual) | Bước kiểm chứng trên SUT (Verification Step) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `HYP-02-01` | Backend API (`server.js:54`) | Bộ đếm số lần sai tăng sai bước nhảy ($+2$ thay vì $+1$) | SRS FR-02: *"Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm lên đúng 1 đơn vị."* | Backend thực hiện phép tính `newAttempts = user.login_attempts + 2` $\to$ Nhập sai lần 1 đã nhảy lên 2, sai lần 2 đã chạm mốc 4 và khóa ngay lập tức! | Thực thi `TC_FR02_03` & `TC_FR02_04`, kiểm tra trực tiếp cột `login_attempts` trong file `database.sqlite` sau lần sai thứ 1. |
+| `HYP-02-02` | Backend Lockout (`server.js:57`) | Thời gian khóa thực tế sai lệch nghiêm trọng so với đặc tả demo | SRS FR-02: *"Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây (môi trường demo)."* | Mã nguồn backend gán `Date.now() + 180000` (180 giây = 3 phút)! Người dùng bị khóa tới 3 phút thay vì 30 giây. | Thực thi `TC_FR02_10` tại mốc $t = 30s$; nếu backend vẫn trả về HTTP 403 đến phút thứ 3 thì giả thuyết được xác nhận. |
+| `HYP-02-03` | Frontend UI (`Login.jsx:30, 40`) | Sai thuộc tính `type` của ô input Email và Password | SRS FR-02: *"Trường email phải dùng `type="email"` (có validate HTML5 format)."* Mật khẩu phải ẩn ký tự (`type="password"`). | Input email dùng `type="text"` (mất validate HTML5); input password dùng `type="text"` làm lộ mật khẩu dạng bản rõ (plaintext) trên màn hình! | Mở DevTools Elements trên `http://localhost:5173/login`, inspect thẻ `<input>` của trường Email và Password. |
+| `HYP-02-04` | Frontend UI (`Login.jsx:24`) | Tiêu đề giao diện Đăng nhập bị hiển thị sai thành "Đăng Ký" | Giao diện đăng nhập phải hiển thị tiêu đề nhất quán: "Đăng Nhập" hoặc "Sign In". | Mã nguồn React hardcode: `<h2 ...>Đăng Ký</h2>` tại trang Login gây hoang mang cho người dùng. | Mở `http://localhost:5173/login` trên trình duyệt và quan sát thẻ `<h2>` đầu trang. |
+| `HYP-02-05` | Backend State (`server.js:48, 54`) | Bộ đếm thử sai không được tự động giải phóng sau khi hết hạn 30s | Sau khi hết 30s khóa, nếu người dùng thử lại sai 1 lần thì phải tính là lần sai thứ 1 ($N=1$). | CSDL không tự reset `login_attempts` khi hết hạn. Nếu người dùng nhập sai tiếp, `newAttempts = 3 + 2 = 5` và lập tức bị khóa tiếp lần 2 chỉ sau đúng 1 lần thử sai! | Thực thi `TC_FR02_12` sau khi hết thời gian khóa lần 1; quan sát số lần thử cần thiết để kích hoạt khóa lần 2. |
 
 ---
 
