@@ -56,19 +56,31 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 | `VAR-02-04` | `lockout_time` | Seconds | Hệ thống | 1 giây | Trích dẫn SRS FR-02: *"tài khoản bị tạm khóa 30 giây (môi trường demo). Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."* | Thời gian phạt tính từ lúc đăng nhập sai lần thứ 3 ($T = 30s$). Trong thời gian này, mọi thử nghiệm đăng nhập đều bị từ chối; sau 30s tài khoản tự động mở khóa. Thông báo lỗi phải trung tính để bảo mật. |
 
 ### 2.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables)
-| Partition ID | Biến / Điều kiện | Phân lớp tương đương | Phân loại | Giá trị đại diện | Hành vi mong đợi (Expected) |
+
+> **Nguyên tắc Giả định Đơn lỗi (Single Fault Assumption - ISTQB FL §4.2.1):**
+> Khi kiểm thử một phân vùng không hợp lệ (IEP), chỉ duy nhất 1 điều kiện hoặc biến đầu vào mang giá trị lỗi; toàn bộ các tham số còn lại phải được giữ ở giá trị hợp lệ cơ sở (Baseline) nhằm cô lập nguyên nhân từ chối và ngăn chặn hiện tượng che giấu lỗi (error masking).
+
+| Class ID | Variable / Constraint | Domain / Sub-condition | Type (VEP / IEP) | Representative Value | Single-Fault Baseline / Rationale |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `EP-02-01` | `email` | Email hợp lệ và tồn tại | VEP | `test@eshop.com` | Chấp nhận xử lý |
-| `EP-02-02` | `email` | Email không đúng định dạng RFC/HTML5 | IEP | `testeshop.com` | Client/Server từ chối định dạng |
-| `EP-02-03` | `email` | Email để trống | IEP | `""` | Báo lỗi trường bắt buộc |
-| `EP-02-04` | `email` | Email không tồn tại trong hệ thống | IEP | `notfound@eshop.com` | Báo lỗi thông tin đăng nhập |
-| `EP-02-05` | `password` | Mật khẩu chính xác | VEP | `Test1234!` | Đăng nhập thành công, cấp JWT |
-| `EP-02-06` | `password` | Mật khẩu không chính xác | IEP | `WrongPass1!` | Tăng bộ đếm sai thêm 1 |
-| `EP-02-07` | `password` | Mật khẩu để trống | IEP | `""` | Báo lỗi trường bắt buộc |
-| `EP-02-08` | `failed_attempts` | Số lần sai dưới ngưỡng ($N < 3$) | VEP | $N = 1, 2$ | Cho phép tiếp tục thử |
-| `EP-02-09` | `failed_attempts` | Số lần sai đạt/vượt ngưỡng ($N \ge 3$) | IEP | $N = 3, 4$ | Kích hoạt tạm khóa 30 giây |
-| `EP-02-10` | `lockout_time` | Trong thời gian tạm khóa ($t \le 30s$) | IEP | $t = 15s$ | Từ chối đăng nhập, giữ khóa |
-| `EP-02-11` | `lockout_time` | Đã hết thời gian tạm khóa ($t > 30s$) | VEP | $t = 35s$ | Cho phép đăng nhập lại |
+| `EP-02-01` | `email` | Định dạng hợp lệ và tài khoản tồn tại trong CSDL | VEP | `test@eshop.com` | Baseline hợp lệ chuẩn; kết hợp với mật khẩu hợp lệ để đăng nhập thành công. |
+| `EP-02-02` | `email` | Định dạng không hợp lệ theo HTML5/RFC (thiếu `@`, ký tự cấm) | IEP | `testeshop.com` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi do cú pháp email; HTML5/UI validate chặn submit trước khi gửi API. |
+| `EP-02-03` | `email` | Chuỗi rỗng / để trống trường bắt buộc | IEP | `""` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi thiếu trường bắt buộc email. |
+| `EP-02-04` | `email` | Chuỗi chỉ chứa khoảng trắng (Whitespace-only) | IEP | `"     "` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi chuỗi rỗng ngụy trang; HTML5 trim/pattern hoặc backend từ chối. |
+| `EP-02-05` | `email` | Định dạng hợp lệ nhưng tài khoản không tồn tại | IEP | `notfound@eshop.com` | `password = "Test1234!"` (hợp lệ). Kiểm tra phản hồi bảo mật chung, không làm lộ thông tin tài khoản chưa tồn tại. |
+| `EP-02-06` | `password` | Mật khẩu khớp chính xác với tài khoản | VEP | `Test1234!` | `email = "test@eshop.com"`. Đáp ứng đầy đủ thông tin xác thực, cấp JWT token. |
+| `EP-02-07` | `password` | Mật khẩu sai / không khớp CSDL | IEP | `WrongPass1!` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi sai mật khẩu; hệ thống tăng bộ đếm thất bại đúng 1 đơn vị. |
+| `EP-02-08` | `password` | Mật khẩu để trống | IEP | `""` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi thiếu trường bắt buộc mật khẩu. |
+| `EP-02-09` | `password` | Mật khẩu chỉ chứa khoảng trắng (Whitespace-only) | IEP | `"    "` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi chuỗi rỗng ngụy trang cho password; hệ thống từ chối xác thực. |
+| `EP-02-10` | `failed_attempts` | Số lần đăng nhập sai dưới ngưỡng ($1 \le N \le 2$), sau đó nhập đúng | VEP | $N = 1$ hoặc $N = 2 \to$ nhập đúng `Test1234!` | Tài khoản `test@eshop.com`. Kiểm tra sequence: đăng nhập đúng sau $1$ hoặc $2$ lần sai phải thành công và reset $N \to 0$. |
+| `EP-02-11` | `failed_attempts` | Số lần sai đạt hoặc vượt ngưỡng lần đầu ($N \ge 3$) | IEP | $N = 3$ | Nhập sai liên tiếp 3 lần trên cùng tài khoản `test@eshop.com`. Kích hoạt tạm khóa 30 giây lần đầu. |
+| `EP-02-12` | `failed_attempts` | Chu kỳ khóa lặp lại (Second lockout cycle sau khi hết lần 1) | IEP | Hết khóa 1 $\to$ sai tiếp 3 lần | Tài khoản `test@eshop.com`. Kiểm tra thời gian phạt lần 2 có bị lũy tiến (escalate/backoff) hay giữ nguyên 30s theo SRS. |
+| `EP-02-13a` | `lockout_time` | Đang trong thời gian tạm khóa ($0 \le t < 30s$) – Nhập đúng pass | IEP | $t = 15s$ / pass đúng `Test1234!` | Tài khoản đang bị khóa. Dù người dùng nhập đúng mật khẩu vẫn bị từ chối (HTTP 403); không mở khóa sớm. |
+| `EP-02-13b` | `lockout_time` | Đang trong thời gian tạm khóa ($0 \le t < 30s$) – Nhập sai pass | IEP | $t = 15s$ / pass sai `WrongPass!` | Tài khoản đang bị khóa. Từ chối đăng nhập; kiểm tra xem lần thử sai này có reset lại bộ đếm 30s (timer reset) hay không. |
+| `EP-02-14` | `lockout_time` | Đã hết thời gian tạm khóa ($t \ge 30s$) | VEP | $t = 31s$ | Tài khoản tự động giải tỏa tạm khóa; nhập đúng mật khẩu `Test1234!` đăng nhập thành công. |
+
+> **Xác nhận về Trạng thái Tài khoản (Account Status: Banned / Inactive):**
+> - **Đối chiếu Đặc tả SRS:** Tài liệu SRS (`specs/system_requirements_specification.md`) và CSDL SUT (`users` table: `id, name, email, password, role, login_attempts, locked_until, reset_token, shipping_address, phone`) **hoàn toàn không hỗ trợ** trạng thái tài khoản bị cấm (`banned`) hay vô hiệu hóa (`inactive`).
+> - **Kết luận phân loại:** Trạng thái duy nhất điều khiển quyền truy cập tài khoản trong FR-02 là **Tạm khóa do đăng nhập sai (`locked_until`)**. Tình huống tài khoản bị cấm/vô hiệu hóa sẽ được ghi nhận vào phần **Khoảng trống Đặc tả & Giả thuyết Khám phá (Step 6 Gap Analysis)** thay vì lớp tương đương nghiệp vụ bắt buộc.
 
 ### 2.3 Bước 3: Phân tích giá trị biên (Step 3 Deliverables)
 | Boundary ID | Biến / Điều kiện | Ranh giới | Phương pháp | On-point | Off-point | In-point (3-value) |
