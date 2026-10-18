@@ -1087,12 +1087,36 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 | **Tổng số kịch bản kiểm thử (Test Cases)** | 20 | 20 | 0 | **100.0%** |
 | **Bảo đảm Giả định Đơn lỗi (Single-Fault Isolation)** | 10 / 10 IEPs | 10 | 0 | **100.0%** |
 
-### 3.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT
-- **Khoảng trống AI:** AI thường chỉ test trường hợp gõ số mà bỏ qua việc click nút bấm `+` và `-`, đặc biệt là sự kiện chuyển tiếp trạng thái khi click `-` tại mốc 1 đơn vị.
-- **Giả thuyết lỗi SUT:**
-  - Nhãn hiển thị vẫn để mặc định là "Tổng tạm tính" (Subtotal) thay vì "Tổng cộng".
-  - Bấm nút `-` khi số lượng là 1 sẽ xóa ngay sản phẩm mà không hề hiện Dialog xác nhận theo yêu cầu SRS.
-  - Cho phép người dùng gõ số lượng âm vào ô input trên giao diện web.
+### 3.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT (Step 6 Deliverables)
+
+> **Mục đích:** Cung cấp minh chứng thực tế cho **Mục 6 Task 3 (AI Gap Analysis)** và làm cơ sở biện luận cho **Mục 10 (AI Critique)** của báo cáo HW02. Phân tách rạch ròi giữa các thiếu sót do suy luận AI và các khiếm khuyết nội bộ thực tế trong mã nguồn SUT EShop.
+
+---
+
+#### 3.6.1 Bảng Phân Tích Khoảng Trống Kiểm Thử Của AI (AI Gap Analysis)
+
+| Hạng mục / Vấn đề phát sinh | Nguyên nhân AI bỏ sót hoặc gặp khó khăn | Hiệu chỉnh của con người (Human Fix Applied) | Căn cứ Tiêu chuẩn & Kỹ thuật Kiểm thử |
+| :--- | :--- | :--- | :--- |
+| **Gộp lẫn các khái niệm kiểm thử vào một bảng EP duy nhất** | AI có xu hướng gộp chung mọi khía cạnh (miền đầu vào, công thức tính toán `subtotal`/`total`, hành vi click nút `+/-`, lỗi giao diện "Tổng tạm tính", mất dialog xóa) vào bảng `EP-07-xx`, làm loãng và thổi phồng tỷ lệ bao phủ EP. | Con người yêu cầu bóc tách thành 3 bảng chuyên biệt: (1) Pure Input EPs; (2) State & Interaction Scenarios; (3) UI Assertions & Defect Probes. | **ISTQB FL §4.2.1:** Phân vùng tương đương chỉ áp dụng cho miền dữ liệu đầu vào/đầu ra, không áp dụng cho lỗi hệ thống hay kịch bản tương tác. |
+| **Tự ý áp đặt cận trên không có căn cứ ($Q \le 99$)** | AI bị ảnh hưởng bởi thói quen thiết kế thương mại điện tử thông thường (thường giới hạn số lượng mua $\le 99$ hoặc theo tồn kho), tự ý bịa đặt điều kiện $1 \le Q \le 99$. | Con người rà soát đặc tả SRS FR-06 & FR-07 (chỉ yêu cầu $Q \ge 1$) và kiểm tra CSDL SQLite (`products` table không có cột `stock_quantity`); yêu cầu sửa thành $Q \in \mathbb{Z}, Q \ge 1$ (cận trên mở). | **Nguyên tắc "Đặc tả là căn cứ duy nhất":** Tuyệt đối không tự ý bịa đặt ràng buộc nghiệp vụ khi SRS không đề cập. |
+| **Gộp chung mã sản phẩm không tồn tại với ID sai định dạng** | AI ban đầu gộp `id = 9999` (ID số không tồn tại trong DB) và `id = "abc"` (ID sai kiểu dữ liệu) vào cùng một lớp `EP-07-03`. | Tách thành 2 lớp riêng: `EP-07-02` (ID đúng định dạng nhưng không có trong DB $\to$ kiểm tra tầng Data/Service) và `EP-07-03` (ID sai định dạng $\to$ kiểm tra tầng Controller/Routing). | **ISTQB FL §4.2.1:** Phân tách các điều kiện lỗi có cơ chế xử lý và điểm thất bại độc lập để tránh che giấu lỗi. |
+| **Bỏ sót các phân vùng khuyết/null ở tầng API payload** | AI tập trung vào giao diện Web UI với input số học mà bỏ qua kiểm thử trực tiếp endpoint REST API `POST /api/cart` khi payload bị khuyết trường hoặc truyền `quantity: null`. | Con người bổ sung phân vùng `EP-07-11` (Bỏ khuyết/null trường bắt buộc trong payload JSON API). | **API Contract Testing & Robustness:** Kiểm thử tính toàn vẹn dữ liệu ở cả tầng API Backend và Frontend Client. |
+| **Chưa làm rõ tính mơ hồ của nút `-` tại mốc tối thiểu $Q=1$** | SRS FR-07 không quy định rõ khi $Q=1$ bấm nút `-` thì nút sẽ bị disable hay sẽ kích hoạt dialog xóa sản phẩm. AI có xu hướng tự chọn một hành vi duy nhất làm chuẩn. | Con người chỉ đạo ghi nhận đây là điểm mơ hồ đặc tả (Ambiguity Point), chấp nhận cả hai phương án an toàn (disable nút hoặc confirm delete) và định vị hành vi sai là giảm âm hoặc tự ý xóa không hỏi. | **ISTQB FL §1.4.3 & §4.2:** Phát hiện và tài liệu hóa các điểm mơ hồ trong đặc tả yêu cầu phần mềm. |
+
+---
+
+#### 3.6.2 Danh Sách Giả Thuyết Khiếm Khuyết Thăm Dò Trên SUT EShop (Candidate Defect Hypotheses)
+
+> *Ghi chú: Toàn bộ các giả thuyết dưới đây được gắn nhãn `[Exploratory - Unconfirmed Hypothesis - Requires SUT execution]` và sẽ được kiểm chứng thực tế trong Giai đoạn 3 trên hệ thống EShop đang chạy.*
+
+| Hypothesis ID | Khu vực kiểm thử (Target Area) | Mô tả giả thuyết lỗi (Description) | Kỳ vọng theo đặc tả (Spec Expected) | Dự đoán hành vi thực tế (Hypothesized Actual) | Bước kiểm chứng trên SUT (Verification Step) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `HYP-07-01` | Frontend UI (`Cart.jsx:63`) | Nhãn Tổng tiền bị hardcode hiển thị sai thành "Tổng tạm tính:" | SRS FR-07 Item 5: *"Tổng tiền hiển thị nhãn chính xác: 'Tổng cộng' (không phải 'Tổng tạm tính')."* | Trong mã nguồn `Cart.jsx:63`, lập trình viên hardcode: `<div ...>Tổng tạm tính: ...</div>`. Giao diện hiển thị sai nhãn quy định. | Mở `http://localhost:5173/cart` khi giỏ có sản phẩm; quan sát nhãn văn bản cạnh số tiền tổng ở footer giỏ hàng. |
+| `HYP-07-02` | Frontend Interaction (`Cart.jsx:50-55`) | Nút Xóa sản phẩm xóa trực tiếp không có Dialog xác nhận | SRS FR-07 Item 3: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."* | Trong `Cart.jsx:51`, sự kiện `onClick={() => removeFromCart(index)}` được gọi ngay lập tức, không có `window.confirm` hay Modal Dialog nào. | Tại trang `/cart`, nhấn nút "Xóa" tại một dòng sản phẩm; kiểm tra xem sản phẩm có bị xóa ngay mà không xuất hiện dialog nào hay không. |
+| `HYP-07-03` | Frontend UI (`Cart.jsx:20-27`) | Màn hình Giỏ hàng trống hoàn toàn thiếu hình ảnh minh họa | SRS FR-07 Item 6: *"Giỏ hàng trống phải có hình minh họa và thông báo rõ ràng."* | Trong `Cart.jsx:20-27`, code chỉ có thẻ `<h2>` chứa thông báo chữ và thẻ `<Link>`, không hề có thẻ `<img>` hay SVG vector minh họa nào. | Xóa hết sản phẩm trong giỏ để đưa về rỗng; kiểm tra cây DOM xem có bất kỳ thẻ hình ảnh minh họa nào hay không. |
+| `HYP-07-04` | State & Business Logic (`CartContext.jsx:8-10`, `server.js:293`) | Thêm sản phẩm trùng lặp tạo dòng mới thay vì cộng dồn số lượng | SRS FR-07 Item 2: *"Thêm cùng một sản phẩm vào giỏ sẽ tăng số lượng, không tạo dòng mới."* | Code `CartContext.jsx:9` dùng `setCart([...cart, { ...product, quantity }])` (push phần tử mới vào mảng mà không kiểm tra trùng ID); `server.js:293` cũng dùng `push(req.body)`. | Mở `/products/1`, nhấn "Thêm vào giỏ hàng" 2 lần; mở `/cart` và kiểm tra bảng hiển thị có bị tách thành 2 dòng riêng biệt hay không. |
+| `HYP-07-05` | Missing Interactive Feature (`Cart.jsx:47`) | Cột Số lượng trong bảng giỏ hàng thiếu hoàn toàn nút `+` và `-` | SRS FR-07 Item 1: *"Số lượng (có nút +/- để chỉnh)"*. | Trong `Cart.jsx:47`, code chỉ hiển thị text thụ động: `<td>{item.quantity}</td>`, hoàn toàn không có nút bấm `+` hay `-` để người dùng điều chỉnh số lượng. | Truy cập `/cart` khi giỏ có hàng; kiểm tra cột Số lượng xem có 2 nút `+` và `-` tương tác hay không. |
+| `HYP-07-06` | Frontend Interaction (`ProductDetail.jsx:21-25`) | Nút "Thêm vào giỏ hàng" bị vô hiệu hóa ở lần nhấp chuột đầu tiên (Seeded Bug) | SRS FR-06 / FR-07: Bấm "Thêm vào giỏ hàng" phải thêm sản phẩm vào giỏ và hiển thị phản hồi trực quan ngay từ lần bấm đầu tiên. | Trong `ProductDetail.jsx:22-25`, mã nguồn cố ý chặn lần bấm đầu: `if (clickCount === 0) { setClickCount(1); return; }` khiến lần bấm đầu tiên hoàn toàn không có tác dụng! | Truy cập `/products/1`, click "Thêm vào giỏ hàng" lần thứ 1; quan sát thấy badge giỏ hàng không thay đổi; chỉ khi click lần thứ 2 giỏ mới nhận hàng. |
 
 ---
 
