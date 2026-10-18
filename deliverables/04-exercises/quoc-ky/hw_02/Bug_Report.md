@@ -25,7 +25,7 @@
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| `BUG-FR02-01` | Tài khoản không bị khóa sau 3 lần đăng nhập sai liên tiếp | FR-02 | `TC_FR02_05` | Critical | [Issue #12](https://github.com/ttbhanh/eshop-sut/issues/12) | Open |
+| `BUG-FR02-01` | Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai | FR-02 | `TC_FR02_03` | Major | [Issue #11](https://github.com/ttbhanh/eshop-sut/issues/11) | Open |
 | `BUG-FR02-02` | Thông báo lỗi tiết lộ thông tin mật khẩu sai thay vì thông báo chung | FR-02 | `TC_FR02_02` | Major | [Issue #13](https://github.com/ttbhanh/eshop-sut/issues/13) | Open |
 | `BUG-FR07-01` | Bấm nút giảm (-) tại số lượng 1 tự xóa sản phẩm không có dialog xác nhận | FR-07 | `TC_FR07_03` | Major | [Issue #14](https://github.com/ttbhanh/eshop-sut/issues/14) | Open |
 | `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
@@ -40,54 +40,70 @@
 
 ### 2.1 Các lỗi thuộc Pool A: FR-02 – Đăng nhập & Khóa tài khoản
 
-#### [BUG-FR02-01] Tài khoản không bị khóa sau 3 lần đăng nhập sai liên tiếp
+#### [BUG-FR02-01] Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR02-01` |
-| **Tiêu đề Bug** | `[FR-02][Web] Account lockout mechanism fails to trigger after 3 consecutive invalid login attempts` |
+| **Tiêu đề Bug** | `[FR-02][Backend API / SQLite DB] Failure counter increments by 2 instead of 1 upon invalid login attempt` |
 | **Chức năng (Feature)** | FR-02: Đăng nhập & Khóa tài khoản (Pool A) |
-| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v18.19 • Chrome 124 • Linux |
-| **Mức độ (Severity)** | **Critical** (Lỗ hổng bảo mật Brute-force/Credential stuffing) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v18.19 • Linux |
+| **Mức độ (Severity)** | **Major** (Sai lệch ngưỡng bảo mật khiến tài khoản bị khóa sớm ngoài ý muốn) |
 | **Mức ưu tiên (Priority)**| **High (P1)** |
-| **Test Case phát hiện** | `TC_FR02_05` (BVA On-point $N = 3$) |
-| **GitHub Issue Link** | [Issue #12: [FR-02] Account not locked after 3 failed logins](https://github.com/ttbhanh/eshop-sut/issues/12) |
+| **Test Case phát hiện** | [`TC_FR02_03`](Main_Report.md#tc_fr02_03) (Thử sai lần 1 $N = 1$) |
+| **GitHub Issue Link** | [Issue #11: [BUG] [FR-02][Backend API / SQLite DB] Failure counter increments by 2 instead of 1 upon invalid login attempt](https://github.com/ttbhanh/eshop-sut/issues/11) |
 | **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
 **1. Tiền điều kiện (Preconditions):**
-- Tài khoản người dùng đã tồn tại: `test@eshop.com` / `Test1234!`.
-- Bộ đếm `failed_attempts` ban đầu bằng 0 (tài khoản bình thường).
+- Tài khoản người dùng `test@eshop.com` tồn tại trong SQLite database với `login_attempts = 0`, `locked_until = NULL`.
+- Backend server đang chạy tại `http://localhost:3000`.
 
 **2. Các bước tái hiện (Steps to Reproduce):**
-1. Mở trình duyệt truy cập `http://localhost:5173/login`.
-2. Nhập Email: `test@eshop.com`.
-3. Lần 1: Nhập Mật khẩu sai: `WrongPass1!` $\to$ Bấm "Đăng nhập".
-4. Lần 2: Nhập Mật khẩu sai: `WrongPass2!` $\to$ Bấm "Đăng nhập".
-5. Lần 3: Nhập Mật khẩu sai: `WrongPass3!` $\to$ Bấm "Đăng nhập".
-6. Lần 4: Nhập Mật khẩu đúng: `Test1234!` $\to$ Bấm "Đăng nhập".
+1. Gửi yêu cầu đăng nhập với email hợp lệ `test@eshop.com` và mật khẩu không chính xác `WrongPass1!`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@eshop.com","password":"WrongPass1!"}'
+   ```
+2. Truy vấn SQLite kiểm tra giá trị cột `login_attempts` của tài khoản `test@eshop.com`:
+   ```bash
+   SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';
+   ```
 
 **3. Dữ liệu thử nghiệm (Test Data):**
-- Email: `test@eshop.com`
-- Passwords: `WrongPass1!`, `WrongPass2!`, `WrongPass3!` (sai), `Test1234!` (đúng).
+```json
+{
+  "email": "test@eshop.com",
+  "password": "WrongPass1!"
+}
+```
 
 **4. Kết quả mong đợi (Expected Result theo SRS FR-02):**
-> *Trích dẫn SRS:* "Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây (môi trường demo). Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."
-- Tại lần thử 3, hệ thống phải kích hoạt trạng thái tạm khóa 30 giây.
-- Tại lần thử 4 (dù mật khẩu đúng), hệ thống vẫn phải từ chối đăng nhập và báo tài khoản đang bị tạm khóa.
+> *Trích dẫn SRS FR-02 (Item 2):* "Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm số lần đăng nhập sai liên tiếp lên đúng 1 đơn vị."
+- Endpoint `POST /api/login` trả về HTTP `401 Unauthorized`.
+- Trong CSDL SQLite, trường `login_attempts` phải tăng từ `0` lên **đúng `1`** ($N=1$). Trường `locked_until` tiếp tục giữ nguyên là `NULL`.
 
 **5. Kết quả thực tế (Actual Result):**
-- Tại lần thử 3, hệ thống vẫn chỉ báo lỗi sai mật khẩu.
-- Tại lần thử 4 với mật khẩu đúng, hệ thống cho phép đăng nhập thành công ngay lập tức và cấp JWT Token mà không hề tạm khóa.
+- Endpoint `POST /api/login` trả về HTTP `401 Unauthorized` (`{"error":"Invalid email or password"}`).
+- Tuy nhiên trong SQLite CSDL, trường `login_attempts` tăng từ `0` lên **`2`** ($N=2$) chỉ sau đúng 1 lần thử sai duy nhất. Điều này vi phạm quy tắc đếm tuần tự của SRS và khiến tài khoản bị khóa chỉ sau 2 lần thử sai thay vì 3 lần.
+- HTTP Status Code: `401 Unauthorized`
+- Database Mutation: `login_attempts` = 2, `locked_until` = null
 
-**6. Bằng chứng kiểm thử (Screenshots):**
-- *Ảnh chụp trên giao diện SUT:*  
-  ![Lỗi đăng nhập sai lần 3 không bị khóa](./screenshots/bug_fr02_01_actual.png)
-- *Ảnh chụp GitHub Issue đã tạo:*  
-  ![GitHub Issue #12](./screenshots/bug_fr02_01_github_issue.png)
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp bằng chứng terminal & database:*  
+  ![Lỗi bộ đếm tăng 2 sau 1 lần thử sai](./screenshots/BUG_FR02_01_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/ttbhanh/eshop-sut/issues/11](https://github.com/ttbhanh/eshop-sut/issues/11)
 
-**7. Phân tích nguyên nhân & Khắc phục:**
-- **Nguyên nhân:** Backend Express controller (`backend/src/controllers/authController.js`) chưa cài đặt logic đếm số lần sai trong database hoặc bộ nhớ cache để phạt lockout.
-- **Khắc phục:** Thêm trường `failed_login_attempts` và `locked_until` vào bảng `users`. Trả về HTTP 429 khi đang trong 30 giây phạt.
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 54.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  const newAttempts = user.login_attempts + 2;
+  ```
+- **Khắc phục:** Sửa phép cộng thành tăng 1 đơn vị:
+  ```javascript
+  const newAttempts = user.login_attempts + 1;
+  ```
 
 ---
 
