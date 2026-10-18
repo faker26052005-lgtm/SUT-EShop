@@ -116,7 +116,7 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 
 | TC ID | Test Case Objective ($\text{Action} + \text{Function} + \text{Condition}$) | Phân loại | Mã EP bao phủ | Mã BVA bao phủ | Dữ liệu đầu vào & Baseline | Kết quả cốt lõi (Core Expected) | Trạng thái |
 | :--- | :--- | :---: | :---: | :---: | :--- | :--- | :---: |
-| `TC_FR02_01` | Verify login authentication with valid registered credentials on Web & API | Positive (VEP) | `EP-02-01`, `EP-02-06` | `BVA-02-03-IN` | `test@eshop.com` / `Test1234!` ($Len=9$) | HTTP 200, JWT token, redirect `/` | *Chờ thực thi* |
+| `TC_FR02_01` | Verify login authentication with valid registered credentials on Web & API | Positive (VEP) | `EP-02-01`, `EP-02-06` | `BVA-02-03-IN` | `test@eshop.com` / `Test1234!` ($Len=9$) | HTTP 200, JWT token, redirect `/` | **Pass** |
 | `TC_FR02_02` | Verify login authentication with boundary password length exactly 8 chars | Positive (BVA) | `EP-02-01`, `EP-02-06` | `BVA-02-03-ON` | `test@eshop.com` / `Pass123!` ($Len=8$) | HTTP 200, xác thực thành công | *Chờ thực thi* |
 | `TC_FR02_03` | Validate consecutive failure counter increment on attempt N=1 (Below threshold) | Negative (IEP) | `EP-02-07` | `BVA-02-04-IN` | `test@eshop.com` / `WrongPass1!` | HTTP 401, `login_attempts = 1`, chưa khóa | *Chờ thực thi* |
 | `TC_FR02_04` | Validate consecutive failure counter increment on attempt N=2 (Boundary Off-point) | Negative (BVA) | `EP-02-07` | `BVA-02-01-OFF`, `BVA-02-04-ON` | `test@eshop.com` / `WrongPass2!` | HTTP 401, `login_attempts = 2`, chưa khóa | *Chờ thực thi* |
