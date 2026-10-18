@@ -137,7 +137,7 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 | `TC_FR02_19` | Validate generic error response when submitting non-existent email (Single Fault) | Negative (IEP) | `EP-02-05` | N/A (Account) | `notfound@eshop.com` / `Test1234!` | HTTP 401, không lộ email chưa tồn tại | **Pass** |
 | `TC_FR02_20` | Validate rejection of empty password field on Web Client & API (Single Fault) | Negative (IEP) | `EP-02-08` | N/A (Required) | `test@eshop.com` / `""` | HTML5 `required` tooltip / HTTP 400 | **Pass** |
 | `TC_FR02_21` | Validate rejection of password containing only whitespace characters (Single Fault) | Negative (IEP) | `EP-02-09` | N/A (Whitespace) | `test@eshop.com` / `"    "` | HTTP 401 Unauthorized, tăng đếm sai | **Pass** |
-| `TC_FR02_22` | Validate rejection of password below minimum 8 chars length at Len=7 (Single Fault) | Negative (BVA) | `EP-02-07` | `BVA-02-03-OFF` ($Len=7$) | `test@eshop.com` / `Pass12!` ($Len=7$) | HTTP 401 Unauthorized, tăng đếm sai | *Chờ thực thi* |
+| `TC_FR02_22` | Validate rejection of password below minimum 8 chars length at Len=7 (Single Fault) | Negative (BVA) | `EP-02-07` | `BVA-02-03-OFF` ($Len=7$) | `test@eshop.com` / `Pass12!` ($Len=7$) | HTTP 401 Unauthorized, tăng đếm sai | **Pass** |
 | `TC_FR02_23` | Validate handling of password exceeding OWASP max length at Len=256 (Single Fault) | Negative (BVA) | `EP-02-09b` | `BVA-02-06-OFF` ($Len=256$) | `test@eshop.com` / Pass 256 chars | HTTP 401/400, không bị treo CPU DoS | *Chờ thực thi* |
 | `TC_FR02_24` | Verify acceptance of password with maximum safe OWASP length of 255 chars | Positive (BVA) | `EP-02-06` | `BVA-02-06-ON` ($Len=255$) | `test@eshop.com` / Pass 255 chars | HTTP 200 OK, băm và khớp thành công | *Chờ thực thi* |
 
