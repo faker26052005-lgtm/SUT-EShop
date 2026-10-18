@@ -2385,13 +2385,31 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 
 
 
-### 5.3 Bước 3: Phân tích giá trị biên chuyển đổi trạng thái (State Transition BVA)
-| Transition ID | Điểm chuyển giao trạng thái | Bản chất biên | Kỳ vọng hệ thống (SRS) |
-| :--- | :--- | :--- | :--- |
-| `BVA-20-01` | `confirmed` $\to$ `canceled` | Biên hợp lệ cuối cùng cho User hủy | Cho phép hủy, cập nhật trạng thái sang `canceled` |
-| `BVA-20-02` | `confirmed` $\to$ `shipping` | Ranh giới cấm User hủy đơn | Khi Admin chuyển sang `shipping`, User lập tức mất quyền hủy |
-| `BVA-20-03` | `shipping` $\to$ `canceled` (bởi User) | Điểm ngoài biên (Invalid transition) | Trả về HTTP 400/403 kèm thông báo không được phép hủy |
-| `BVA-20-04` | `delivered` $\to$ `canceled` | Final state boundary | Tuyệt đối không cho phép đổi trạng thái |
+### 5.3 Bước 3: Phân tích giá trị biên (Step 3 Deliverables - Boundary Value Analysis - BVA)
+
+> **Cơ sở Lý luận & Phương Pháp Luận Phân Tích Giá Trị Biên (ISTQB FL §4.2.2):**
+> - **Áp dụng kỹ thuật 3-Value BVA:** Đối với các miền giá trị có thứ tự và ranh giới xác định, kỹ thuật 3-Value BVA được áp dụng nhằm bao phủ toàn diện 3 điểm kiểm thử: **On-point** (nằm ngay trên ranh giới), **Off-point** (điểm liền kề ngoài ranh giới), và **In-point** (điểm liền kề bên trong ranh giới).
+> - **Xác định bước nhảy đơn vị đo lường ($\epsilon$):**
+>   - Tham số định danh `:id`: $\epsilon = 1$ (số nguyên dương).
+>   - Thứ tự tiến trình vòng đời đơn hàng: $\epsilon = 1\text{ bước chuyển}$ (`pending` $\to$ `confirmed` $\to$ `shipping` $\to$ `delivered`).
+>   - Số lần gửi yêu cầu hủy ($N_{\text{cancel}}$): $\epsilon = 1\text{ lần}$.
+>   - Số lượng request đồng thời ($k_{\text{req}}$): $\epsilon = 1\text{ request}$.
+> - **Phân tách ranh giới số học vs Ranh giới trạng thái & tiến trình:**
+>   - BVA số học được áp dụng cho tham số đường dẫn `:id`.
+>   - BVA tiến trình (State Machine Boundary) được áp dụng cho ranh giới quyền tự hủy của User và ranh giới trạng thái kết thúc (Terminal States).
+
+#### 5.3.1 Bảng Phân Tích Giá Trị Biên Dữ Liệu & Ranh Giới Chuyển Đổi Trạng Thái (Order BVA Table)
+
+| Boundary ID | Variable / Boundary Field | Quy tắc ranh giới (Boundary Rule) | BVA Method | On-point (Giá trị / Phân loại) | Off-point (Giá trị / Phân loại) | In-point (Giá trị / Phân loại) | Rationale & Hành vi Kỳ Vọng theo Đặc Tả |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- |
+| `ORD-BVA-01` | `target_order_id`<br/>*(Biên dưới ID đơn hàng)* | ID phải là số nguyên dương: $id \ge 1$<br/>($\epsilon = 1$) | 3-Value BVA | `id = 1`<br/>*(Valid On-point)* | `id = 0`<br/>*(Invalid Off-point)* | `id = 2`<br/>*(Valid In-point)* | - **On (1):** Đơn hàng nhỏ nhất hợp lệ $\to$ HTTP 200 OK (nếu đơn tồn tại và thuộc User).<br/>- **Off (0):** Không thuộc miền ID hợp lệ $\to$ HTTP 404 Not Found, CSDL giữ nguyên.<br/>- **In (2):** Đơn hàng liền kề hợp lệ $\to$ HTTP 200 OK. |
+| `ORD-BVA-02` | `target_order_id`<br/>*(Biên trên lưu trữ SQLite 64-bit)* | Ngưỡng số nguyên signed 64-bit SQLite:<br/>$id \le 2^{63}-1$<br/>($\epsilon = 1$) | 3-Value BVA | `id = 9223372036854775807`<br/>*(Valid On-point / Robustness)* | `id = 9223372036854775808`<br/>*(Invalid Off-point / Overflow)* | `id = 9223372036854775806`<br/>*(Valid In-point / Robustness)* | - **On ($2^{63}-1$):** Cận trên kiểu INTEGER SQLite $\to$ HTTP 404 Not Found (không có bản ghi nhưng không crash).<br/>- **Off ($2^{63}$):** Tràn số nguyên signed 64-bit $\to$ Hệ thống xử lý an toàn (HTTP 404/400), không crash SQLite process.<br/>- **In ($2^{63}-2$):** Số nguyên lớn an toàn $\to$ HTTP 404. |
+| `ORD-BVA-03` | `order_state_eligibility`<br/>*(Ranh giới quyền User tự hủy đơn)* | User chỉ được tự hủy khi đơn $\in \{\text{pending}, \text{confirmed}\}$. Khi sang `shipping`, User mất hoàn toàn quyền tự hủy.<br/>($\epsilon = 1\text{ trạng thái}$) | 3-Value BVA | `status = 'confirmed'`<br/>*(Valid On-point)* | `status = 'shipping'`<br/>*(Invalid Off-point)* | `status = 'pending'`<br/>*(Valid In-point)* | - **On (`confirmed`):** Ranh giới hợp lệ cuối cùng cho User tự hủy $\to$ HTTP 200 OK, CSDL chuyển sang `canceled`, Mobile UI cập nhật "Đã hủy".<br/>- **Off (`shipping`):** Ngay khi đơn chuyển sang giao hàng, User bị tước quyền tự hủy $\to$ Mobile UI ẩn nút Hủy; Backend API từ chối với HTTP 400 Bad Request, giữ nguyên `shipping`.<br/>- **In (`pending`):** Trạng thái khởi đầu hợp lệ $\to$ HTTP 200 OK. |
+| `ORD-BVA-04` | `final_state_delivered`<br/>*(Ranh giới trạng thái kết thúc giao hàng)* | `delivered` là trạng thái kết thúc (Final State) — cấm chuyển sang bất kỳ trạng thái nào khác.<br/>(SRS FR-10) | 2-Value BVA | `status = 'delivered'`<br/>*(Invalid On-point)* | `status = 'confirmed'`<br/>*(Valid Off-point)* | N/A | - **On (`delivered`):** Đơn đã hoàn tất giao hàng $\to$ Bấm hủy/gửi API bị chặn hoàn toàn: HTTP 400 Bad Request (`Cannot cancel this order.`), CSDL giữ nguyên `delivered`.<br/>- **Off (`confirmed`):** Trạng thái chưa hoàn tất cho phép hủy $\to$ HTTP 200 OK. |
+| `ORD-BVA-05` | `cancellation_frequency`<br/>*(Ranh giới hủy lặp lại - Double Cancel)* | Mỗi đơn hàng chỉ được chuyển sang `canceled` đúng 1 lần ($N_{\text{cancel}} = 1$). Khi đã ở `canceled`, cấm hủy tiếp.<br/>($\epsilon = 1\text{ lần}$) | 2-Value BVA | $N_{\text{cancel}} = 1$<br/>*(Valid On-point)* | $N_{\text{cancel}} = 2$<br/>*(Invalid Off-point)* | N/A | - **On ($N=1$):** Yêu cầu hủy lần 1 khi đơn đang `pending` $\to$ Thành công, HTTP 200 OK, CSDL chuyển `status = 'canceled'`.<br/>- **Off ($N=2$):** Gửi tiếp yêu cầu hủy lần 2 khi đơn đã là `canceled` $\to$ Bị từ chối: HTTP 400 Bad Request (`Cannot cancel this order.`), CSDL giữ nguyên không cập nhật dư thừa. |
+| `ORD-BVA-06` | `concurrency_requests`<br/>*(Ranh giới xử lý đồng thời - Race Condition)* | Gửi request hủy đồng thời tại cùng thời điểm ($k_{\text{req}}$, $\epsilon = 1\text{ request}$) | 2-Value BVA | $k_{\text{req}} = 1$<br/>*(Valid On-point)* | $k_{\text{req}} = 2$<br/>*(Off-point Concurrency)* | N/A | - **On ($k=1$):** Request đơn lẻ bình thường $\to$ HTTP 200 OK.<br/>- **Off ($k=2$):** 2 request đồng thời $\to$ **Exactly-Once Oracle:** Đúng 1 request nhận HTTP 200, request kia nhận HTTP 400; CSDL cập nhật đúng 1 lần, không gây lỗi khóa chết SQLite (Deadlock) hay tác dụng phụ trùng lặp. |
+| `ORD-BVA-07` | `ui_tap_frequency`<br/>*(Ranh giới chạm nút Hủy trên Mobile UI)* | Thao tác chạm nút "Hủy đơn" trên màn hình cảm ứng Mobile ($\epsilon = 1\text{ lần chạm}$) | 2-Value BVA | $1\text{ lần chạm}$<br/>*(Valid On-point)* | $2\text{ lần chạm liên tiếp (Rapid Double-tap)}$<br/>*(Robustness Off-point)* | N/A | - **On ($1\text{ tap}$):** Hiển thị đúng 1 hộp thoại xác nhận `Alert.alert`.<br/>- **Off ($2\text{ taps}$ liên tiếp $< 200ms$):** Nút bị vô hiệu hóa / debounce an toàn, không mở 2 hộp thoại xác nhận đè nhau hay gửi 2 request API trùng lặp. |
+
 
 ### 5.4 Bước 4: Thiết kế kịch bản kiểm thử
 | TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước thực hiện | Test Data | Mã EP/BVA | Kết quả mong đợi (SRS) | Trạng thái |
