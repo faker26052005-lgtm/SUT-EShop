@@ -1,0 +1,9 @@
+dd_case,dd_id,dd_expected_status,dd_name_contains
+P01 iPhone,1,200,iPhone
+P02 Samsung,2,200,Samsung
+P03 MacBook,3,200,MacBook
+P04 AirPods,4,200,AirPods
+P05 Keychron,5,200,Keychron
+P06 id không tồn tại,99999,404,
+P07 id âm,-1,404,
+P08 id không phải số,abc,404,

@@ -5,16 +5,18 @@ info:
   description: |
     Đặc tả OpenAPI cho backend EShop (Node.js/Express + SQLite).
 
-    Nguồn: `api_specification.md` của repo, README (SRS), code backend, và response thật
+    Nguồn: `api_specification.md` của repo, README (SRS: các mã FR và SEC), code backend `server.js`, và response thật
     thu được khi chạy Postman collection ngày 13/10/2026.
 
     Nguyên tắc của file này: mô tả **hành vi MONG ĐỢI** theo đặc tả (ví dụ response không được lộ
     mật khẩu, id không tồn tại phải trả 404, API quản trị phải chặn người dùng thường).
     Những chỗ hệ thống thật đang lệch đặc tả được ghi ở trường mở rộng `x-known-deviations`
-    của từng operation (tương ứng các lỗi B1-B8 trong Postman_Test_Report.md).
+    của từng operation (tương ứng các lỗi B1 đến B33 trong Postman_Test_Report.md; mã test như U07, Q04 là test trong eshop_api_all_tests.postman_collection.json).
 
-    Các mã lỗi 400/401/403/404 và nội dung `{error}` được suy ra từ code backend và cách ứng dụng
-    mobile đọc lỗi. Những chỗ này có đánh dấu `CẦN XÁC NHẬN` và phải đối chiếu bằng response lỗi thật.
+    Mã lỗi và thông điệp lỗi được ghi theo response thật thu được ở thư mục Errors của Postman
+    collection (ca E1 đến E26, ngày 14/10/2026) và từ bộ test tổng hợp (118 assertion, ngày 15/10/2026). Lỗi luôn có dạng `{"error": "<thông điệp>"}`,
+    Content-Type `application/json`. Các lỗi mà hệ thống thật KHÔNG trả (do thiếu kiểm tra dữ liệu
+    đầu vào) vẫn được khai báo ở đây theo hành vi mong đợi, và ghi ở `x-known-deviations`.
 servers:
   - url: http://localhost:3000
     description: Máy cục bộ (chạy bằng node server.js)
@@ -34,6 +36,9 @@ paths:
       tags: [Auth]
       summary: Đăng ký tài khoản
       security: []
+      x-known-deviations:
+        - 'B9: email đã tồn tại vẫn trả 200 và tạo thêm tài khoản (A08, E5)'
+        - 'B10: body rỗng vẫn trả 200 và tạo tài khoản; không kiểm tra định dạng email và độ mạnh mật khẩu (A09, E6; FR-01)'
       requestBody:
         required: true
         content:
@@ -51,7 +56,11 @@ paths:
                 message: User registered successfully
                 id: 3
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Thiếu trường bắt buộc hoặc email đã tồn tại (hành vi mong đợi; hệ thống thật không kiểm tra, xem B9 và B10)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/login:
     post:
@@ -59,8 +68,8 @@ paths:
       summary: Đăng nhập, nhận JWT
       security: []
       x-known-deviations:
-        - "B1: response thật có user.password (mật khẩu chữ thường), cùng login_attempts, locked_until, reset_token"
-        - "Chưa kiểm chứng: mỗi lần đăng nhập sai cộng 2 lần thử thay vì 1 và khóa tạm thời"
+        - 'B1: response thật có user.password (mật khẩu chữ thường, SEC-01), cùng login_attempts, locked_until, reset_token (A02)'
+        - 'B27: khóa sau 2 lần sai trong 3 phút, bộ đếm tăng 2 mỗi lần sai; SRS FR-02 yêu cầu khóa từ lần sai thứ 3, trong 30 giây, bộ đếm tăng đúng 1 (A06)'
       requestBody:
         required: true
         content:
@@ -77,17 +86,21 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
-          description: Sai email hoặc mật khẩu (CẦN XÁC NHẬN mã trạng thái)
+          description: Sai email hoặc mật khẩu (cùng một thông điệp cho cả hai trường hợp, đã xác nhận E1 đến E3)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid email or password
         '403':
-          description: Tài khoản đang bị khóa tạm thời sau nhiều lần đăng nhập sai (CẦN XÁC NHẬN)
+          description: Tài khoản đang bị khóa tạm thời sau nhiều lần đăng nhập sai (đã xác nhận E4)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              example:
+                error: Tài khoản đã bị khóa. Vui lòng thử lại sau.
 
   /api/forgot-password:
     post:
@@ -96,7 +109,9 @@ paths:
       description: Theo đặc tả, mã được trả thẳng trong response (không gửi qua email).
       security: []
       x-known-deviations:
-        - "Quan sát: resetToken chỉ gồm 4 chữ số và nằm ngay trong response"
+        - 'B28: resetToken chỉ có 4 chữ số và nằm ngay trong response; SRS FR-03 và SEC-07 yêu cầu 6 chữ số (A11)'
+        - 'Quan sát: email không tồn tại trả 404 User not found, cho phép dò email đã đăng ký (E7)'
+        - 'Chưa kiểm thử: mã OTP không có thời hạn (SEC-07)'
       requestBody:
         required: true
         content:
@@ -121,9 +136,17 @@ paths:
                     type: string
                   resetToken:
                     type: string
-                    example: '5246'
+                    example: '524618'
+                    pattern: ^[0-9]{6}$
+                    description: Mã OTP 6 chữ số (FR-03, SEC-07). Hệ thống thật trả 4 chữ số (B28).
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Email không tồn tại (đã xác nhận E7)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: User not found
 
   /api/reset-password:
     post:
@@ -154,7 +177,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Mã hoặc email không đúng (đã xác nhận E8)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid token or email
 
   /api/users/me:
     get:
@@ -163,7 +192,7 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "B2: response thật lộ password và reset_token (cùng login_attempts, locked_until)"
+        - 'B2: response thật lộ password và reset_token, cùng login_attempts và locked_until (U02, U03)'
       responses:
         '200':
           description: Hồ sơ của người dùng đang đăng nhập
@@ -182,7 +211,9 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "Chưa kiểm chứng: code đọc trường role từ body, có thể tự nâng quyền"
+        - 'B15: body có role vẫn được ghi, người dùng tự nâng thành admin (U07; SEC-06)'
+        - 'B16: trường không gửi bị ghi đè thành null, ví dụ chỉ gửi name thì shipping_address và phone mất (U06)'
+        - 'B30: số điện thoại không hợp lệ (ví dụ 9999) vẫn được lưu (U08; FR-04 yêu cầu bắt đầu bằng 0, 10 đến 11 chữ số)'
       requestBody:
         required: true
         content:
@@ -196,6 +227,9 @@ paths:
                   type: string
                 phone:
                   type: string
+                  pattern: ^0[0-9]{9,10}$
+                  description: Bắt đầu bằng số 0, có 10 đến 11 chữ số (FR-04). Hệ thống thật không kiểm tra (B30).
+              additionalProperties: false
       responses:
         '200':
           description: Đã cập nhật
@@ -216,7 +250,7 @@ paths:
       summary: Danh sách sản phẩm, có thể tìm theo tên
       security: []
       x-known-deviations:
-        - "Chưa kiểm chứng: tham số search được nối trực tiếp vào câu SQL (SQL injection) và lỗi trả HTML thay vì JSON"
+        - "B17: tham số search được nối trực tiếp vào câu SQL; dấu ' gây lỗi 500 trả HTML, chuỗi ' OR 1=1 -- trả toàn bộ sản phẩm (P08, P09; SEC-05)"
       parameters:
         - name: search
           in: query
@@ -240,7 +274,10 @@ paths:
         - bearerAuth: []
       x-required-role: admin
       x-known-deviations:
-        - "B8: gọi không có token vẫn tạo được sản phẩm (200)"
+        - 'B8: gọi không có token vẫn tạo được sản phẩm (P10)'
+        - 'B11: body rỗng hoặc thiếu trường vẫn tạo được sản phẩm (P12, P13)'
+        - 'B31: giá âm vẫn tạo được sản phẩm (P19; FR-15 yêu cầu giá lớn hơn 0)'
+        - 'Chưa kiểm thử: tên dài hơn 255 ký tự, danh mục không tồn tại (FR-15)'
       requestBody:
         required: true
         content:
@@ -257,6 +294,12 @@ paths:
               example:
                 message: Product created
                 id: 6
+        '400':
+          description: Thiếu trường bắt buộc (hành vi mong đợi; hệ thống thật không kiểm tra, xem B11)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -270,8 +313,8 @@ paths:
       summary: Chi tiết sản phẩm
       security: []
       x-known-deviations:
-        - "B3: với id chẵn (ví dụ 2) price trả về dạng chuỗi"
-        - "B7: id không tồn tại trả 200 và {} thay vì 404"
+        - 'B3: với id chẵn (ví dụ 2) price trả về dạng chuỗi (P04)'
+        - 'B7: id không tồn tại trả 200 và {} thay vì 404 (P05)'
       responses:
         '200':
           description: Sản phẩm
@@ -287,6 +330,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B8: gọi không có token vẫn cập nhật được (P16)'
+        - 'B12: id không tồn tại vẫn trả 200 Product updated thay vì 404 (P15)'
       requestBody:
         required: true
         content:
@@ -314,6 +360,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B8: gọi không có token vẫn xóa được (P17)'
+        - 'B12: id không tồn tại vẫn trả 200 Product deleted thay vì 404 (P18)'
       responses:
         '200':
           description: Đã xóa
@@ -350,6 +399,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường (role user) vẫn tạo được danh mục (C04)'
+        - 'B11: body rỗng vẫn tạo danh mục (C05; FR-14 yêu cầu tên bắt buộc)'
       requestBody:
         required: true
         content:
@@ -380,6 +432,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B12: id không tồn tại vẫn trả 200 Category updated thay vì 404 (C07)'
+        - 'B24: suy ra từ code, chỉ kiểm tra token, không kiểm tra role'
       requestBody:
         required: true
         content:
@@ -407,6 +462,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn xóa được danh mục (C09)'
+        - 'B12: id không tồn tại vẫn trả 200 Category deleted thay vì 404 (C08)'
       responses:
         '200':
           description: Đã xóa
@@ -430,6 +488,8 @@ paths:
       description: Giỏ hàng lưu trong bộ nhớ của server, mất khi server khởi động lại. Ứng dụng mobile không gọi endpoint này.
       security:
         - bearerAuth: []
+      x-known-deviations:
+        - 'B20: giỏ hàng không bị xóa sau khi thanh toán (K05; FR-08)'
       responses:
         '200':
           description: Mảng sản phẩm trong giỏ
@@ -449,7 +509,9 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "Chưa kiểm chứng: price do client gửi lên và được tin, không đối chiếu với giá trong cơ sở dữ liệu"
+        - 'B18: body rỗng vẫn được chấp nhận (K03)'
+        - 'B19: price do client gửi được lưu nguyên, không đối chiếu với giá sản phẩm (K04)'
+        - 'B25: thêm cùng một sản phẩm tạo dòng mới thay vì tăng quantity (K02b; FR-07)'
       requestBody:
         required: true
         content:
@@ -482,8 +544,9 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "Quan sát: payload của mobile (không có shipping_address) vẫn được chấp nhận"
-        - "Chưa kiểm chứng: backend tin total_amount do client gửi thay vì tự tính lại"
+        - 'B13: giỏ hàng trống hoặc total_amount sai lệch giỏ hàng vẫn tạo được đơn (O03, O04; FR-08 yêu cầu backend tự tính lại tổng tiền)'
+        - 'Quan sát: payload của mobile (không có shipping_address) vẫn được chấp nhận (O05)'
+        - 'Quan sát: backend chỉ đọc total_amount và shipping_address, không đọc và không lưu items hoặc coupon_id'
       requestBody:
         required: true
         content:
@@ -505,7 +568,7 @@ paths:
                       price: 30000000
                       quantity: 1
                   total_amount: 30000000
-                  coupon_id: null
+                  coupon_id:
       responses:
         '200':
           description: Đã tạo đơn
@@ -523,7 +586,11 @@ paths:
                 message: Checkout successful
                 orderId: 1
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Giỏ hàng trống hoặc dữ liệu không hợp lệ (hành vi mong đợi; hệ thống thật không kiểm tra, xem B13)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -558,8 +625,8 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "B6: gọi không có token vẫn trả 200 và dữ liệu đơn"
-        - "Chưa kiểm chứng: không kiểm tra đơn có thuộc người dùng đang gọi hay không"
+        - 'B6: không cần token và không kiểm tra chủ đơn, xem được đơn của người khác (O07, O08)'
+        - 'Đã xác nhận: id không tồn tại trả 404 Order not found (O09)'
       responses:
         '200':
           description: Đơn hàng (không có danh sách món hàng)
@@ -584,7 +651,8 @@ paths:
       security:
         - bearerAuth: []
       x-known-deviations:
-        - "Chưa kiểm chứng: code chỉ chặn delivered và canceled, đơn đang shipping vẫn hủy được"
+        - 'B21: đơn đang shipping vẫn hủy được; SRS FR-10 và FR-20 chỉ cho hủy khi pending hoặc confirmed (O20)'
+        - 'Đã xác nhận: chỉ chủ đơn hủy được (O11), hủy đơn đã hủy trả 400 (O13)'
       responses:
         '200':
           description: Đã hủy
@@ -607,10 +675,13 @@ paths:
     post:
       tags: [Coupons]
       summary: Áp dụng mã giảm giá cho tổng tiền
-      security: []
+      security:
+        - bearerAuth: []
       x-known-deviations:
-        - "B4: mã phần trăm tính sai. SAVE10 với 1.000.000 trả discount_amount = -9000000, final_amount = 10000000"
-        - "Chưa kiểm chứng: số tiền tối thiểu so sánh bằng > thay vì >="
+        - 'B4: mã phần trăm tính sai. SAVE10 với 1.000.000 trả discount_amount = -9000000, final_amount = 10000000 (Q01, Q02)'
+        - 'B14: đơn có giá trị đúng bằng mức tối thiểu bị từ chối, tức so sánh bằng > thay vì >= (Q04; FR-09 C3)'
+        - 'B23: bỏ user_id khỏi body thì không kiểm tra lượt dùng (Q13; FR-09 C5)'
+        - 'B26: không yêu cầu đăng nhập (Q08b; FR-09 C4). api_specification.md ghi endpoint này không cần token và ứng dụng mobile hiện không gửi token; hai tài liệu mâu thuẫn nhau'
       requestBody:
         required: true
         content:
@@ -631,12 +702,33 @@ paths:
                 final_amount: 900000
                 message: Áp dụng thành công! Giảm 10%
         '400':
-          description: Mã không hợp lệ, hết hạn, chưa đạt mức tối thiểu hoặc đã dùng hết lượt (CẦN XÁC NHẬN)
+          description: Mã hết hạn hoặc đơn chưa đạt giá trị tối thiểu (đã xác nhận E18, E19). Đã dùng hết lượt cũng trả 400 (đã xác nhận Q12).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                hetHan:
+                  value:
+                    error: Mã giảm giá đã hết hạn
+                chuaDuToiThieu:
+                  value:
+                    error: Đơn hàng chưa đủ giá trị tối thiểu 300,000 ₫ để áp dụng mã này
+        '404':
+          description: Mã không tồn tại hoặc đã bị vô hiệu hóa (đã xác nhận E17)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Mã giảm giá không tồn tại hoặc đã bị vô hiệu hóa
 
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      description: |
+        Theo SRS FR-09 điều kiện C4, người dùng phải đăng nhập. `api_specification.md` lại ghi endpoint này không cần token và ứng dụng mobile hiện không gửi token; hai tài liệu mâu thuẫn nhau (xem B26). Cần hỏi giảng viên.
   /api/coupon-usage:
     post:
       tags: [Coupons]
@@ -675,6 +767,8 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn xem được danh sách mã giảm giá (Q16)'
       responses:
         '200':
           description: Mảng mã giảm giá
@@ -697,7 +791,7 @@ paths:
         - bearerAuth: []
       x-required-role: admin
       x-known-deviations:
-        - "B5: người dùng thường (role user) vẫn nhận 200 và toàn bộ danh sách người dùng"
+        - 'B5: người dùng thường (role user) vẫn nhận 200 và toàn bộ danh sách người dùng (D02; FR-12, SEC-03)'
       responses:
         '200':
           description: Mảng người dùng, không chứa mật khẩu
@@ -721,6 +815,10 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn xóa được người dùng khác (D10)'
+        - 'B12: id không tồn tại vẫn trả 200 User deleted thay vì 404 (D12)'
+        - 'B33: admin xóa được chính tài khoản đang đăng nhập và tài khoản đó không đăng nhập lại được (D14; FR-19)'
       responses:
         '200':
           description: Đã xóa
@@ -745,7 +843,7 @@ paths:
         - bearerAuth: []
       x-required-role: admin
       x-known-deviations:
-        - "Chưa kiểm chứng bằng token user thường, nhưng middleware chỉ kiểm tra token chứ không kiểm tra role (xem B5)"
+        - 'B24: người dùng thường vẫn xem được đơn toàn hệ thống (D05)'
       responses:
         '200':
           description: Mảng đơn hàng kèm tên người đặt
@@ -770,7 +868,9 @@ paths:
         - bearerAuth: []
       x-required-role: admin
       x-known-deviations:
-        - "Chưa kiểm chứng: cho phép chuyển trạng thái không hợp lý, ví dụ canceled sang delivered"
+        - 'B22: đơn canceled vẫn chuyển được sang delivered (O14; FR-10: canceled là trạng thái kết thúc)'
+        - 'B24: người dùng thường vẫn đổi được trạng thái đơn (O22)'
+        - 'Đã xác nhận: chuyển trạng thái không hợp lệ bị từ chối 400 (O15, O16, O18)'
       requestBody:
         required: true
         content:
@@ -791,7 +891,13 @@ paths:
               example:
                 message: Order status updated
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Chuyển trạng thái không hợp lệ (đã xác nhận E26)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid state transition from pending to abc
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -806,6 +912,9 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn import được sản phẩm (D09)'
+        - 'B32: không rollback toàn bộ khi có dòng lỗi và không kiểm tra price dương; dòng hợp lệ vẫn được lưu, dòng price âm cũng được lưu (D13; FR-16)'
       requestBody:
         required: true
         content:
@@ -851,6 +960,10 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn tạo được mã giảm giá (Q17)'
+        - 'B11: body rỗng vẫn tạo được mã (Q18; FR-17 yêu cầu các trường bắt buộc)'
+        - 'B29: tạo mã trùng code trả 500 kèm thông điệp lỗi của cơ sở dữ liệu (Q19)'
       requestBody:
         required: true
         content:
@@ -883,6 +996,8 @@ paths:
       security:
         - bearerAuth: []
       x-required-role: admin
+      x-known-deviations:
+        - 'B24: người dùng thường vẫn xóa được mã giảm giá (Q20)'
       responses:
         '200':
           description: Đã xóa
@@ -920,7 +1035,7 @@ components:
 
   responses:
     BadRequest:
-      description: Dữ liệu gửi lên không hợp lệ (CẦN XÁC NHẬN mã trạng thái và nội dung bằng response lỗi thật)
+      description: Dữ liệu gửi lên không hợp lệ. Nội dung `error` là thông điệp cụ thể của từng tình huống
       content:
         application/json:
           schema:
@@ -934,7 +1049,7 @@ components:
           example:
             error: Unauthorized
     Forbidden:
-      description: Token không hợp lệ, hoặc không đủ quyền (CẦN XÁC NHẬN nội dung khi đủ token nhưng sai role)
+      description: Token không hợp lệ (đã xác nhận E10), hoặc có token nhưng không đủ quyền (hành vi mong đợi; hệ thống thật chưa kiểm tra role, xem B5)
       content:
         application/json:
           schema:
@@ -942,11 +1057,13 @@ components:
           example:
             error: Forbidden
     NotFound:
-      description: Không tìm thấy tài nguyên (CẦN XÁC NHẬN nội dung)
+      description: Không tìm thấy tài nguyên
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            error: Order not found
 
   schemas:
     Error:
@@ -1077,13 +1194,17 @@ components:
     ProductInput:
       type: object
       required: [name, price, category_id]
-      description: CẦN XÁC NHẬN trường nào bắt buộc bằng cách gửi thiếu từng trường
+      description: |
+        Theo mong đợi, name, price và category_id là bắt buộc. Hệ thống thật không kiểm tra trường nào:
+        body rỗng hoặc thiếu bất kỳ trường nào vẫn tạo được sản phẩm (B11, E21 đến E25).
       properties:
         name:
           type: string
         price:
           type: number
           minimum: 0
+          exclusiveMinimum: true
+          description: Giá lớn hơn 0 (FR-15). Hệ thống thật chấp nhận cả giá âm (B31).
         description:
           type: string
         imageUrl:
