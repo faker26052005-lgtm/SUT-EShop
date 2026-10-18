@@ -2277,19 +2277,38 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 
 ## 5. TÍNH NĂNG D (POOL D - MOBILE): FR-20 & FR-10 – HỦY ĐƠN HÀNG THEO TRẠNG THÁI
 
-### 5.1 Bước 1: Nhận diện biến & Miền trạng thái đơn hàng
-> **Trích dẫn đặc tả SRS FR-10 & FR-20:**
-> - Đơn hàng có 5 trạng thái: `pending` $\to$ `confirmed` $\to$ `shipping` $\to$ `delivered`, và trạng thái hủy `canceled`.
-> - User chỉ được phép tự hủy đơn khi đơn ở trạng thái `pending` hoặc `confirmed`.
-> - Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy – chỉ Admin mới thao tác được.
-> - Trạng thái `delivered` và `canceled` là trạng thái kết thúc (Final States) – không được phép chuyển sang bất kỳ trạng thái nào khác.
-> - Mọi chuyển đổi không hợp lệ phải trả về lỗi với thông báo phù hợp.
+### 5.1 Bước 1: Nhận diện biến đầu vào & Ràng buộc (Step 1 Deliverables)
+> **Trích dẫn đặc tả SRS FR-10 (Trạng thái Đơn hàng - Order State Machine):**
+> - Đơn hàng có **5 trạng thái** và phải tuân theo sơ đồ chuyển đổi:
+>   `pending` --[Admin xác nhận]--> `confirmed` --[Admin giao hàng]--> `shipping` --[Admin hoàn tất]--> `delivered`
+>   `pending` --[User/Admin hủy]--> `canceled`
+>   `confirmed` --[User/Admin hủy]--> `canceled`
+> - **Ràng buộc trạng thái kết thúc (Final States):**
+>   - Trạng thái `delivered` và `canceled` là **trạng thái kết thúc** — không được phép chuyển sang bất kỳ trạng thái nào khác.
+>   - Khi đơn hàng đã ở trạng thái `shipping`, **User không được phép tự hủy** — chỉ Admin mới có thể thao tác.
+>   - Mọi chuyển đổi không hợp lệ phải trả về lỗi với thông báo phù hợp.
+> 
+> **Trích dẫn đặc tả SRS FR-20 (Tính năng Mobile - React Native):**
+> - *"Đầy đủ các chức năng: Xem sản phẩm, Đăng nhập, Đăng xuất, Đăng ký, Giỏ hàng, Thanh toán, Hồ sơ, Lịch sử đơn hàng."*
+> - *"Chức năng Hủy đơn hàng tuân theo đúng State Machine ở FR-10 (chỉ được hủy khi `pending` hoặc `confirmed`)."*
+> 
+> *(Đối chiếu Đặc tả Hệ thống & API liên quan:*
+> - *SRS FR-11: "Người dùng chỉ xem được đơn hàng của chính mình. Hiển thị: Mã đơn, Ngày đặt, Tổng tiền, Trạng thái hiện tại. Trạng thái phải được dịch sang tiếng Việt rõ ràng và phân biệt màu sắc."*
+> - *SRS FR-21 / FR-24: Tiêu chuẩn Giao diện & An toàn thao tác — Nút hủy/xóa phải dùng màu đỏ (`styles.smallRedButton`); thao tác hủy đơn có tính chất không thể đảo ngược nên cần có hộp thoại xác nhận (Confirmation Alert).*
+> - *API Spec §4.6: `PUT /api/orders/:id/cancel` — Chuyển trạng thái đơn hàng sang `canceled`. Yêu cầu `Authorization: Bearer <token>`.*
+> - *Frontend Mobile UI (`frontend-mobile/App.js`): Màn hình Profile hiển thị danh sách đơn hàng. Điều kiện hiển thị nút "Hủy đơn": `(o.status === "pending" || o.status === "confirmed")`. Khi bấm gọi `cancelOrder(o.id)` gửi request `PUT /api/orders/:id/cancel`.)*
 
-| Variable ID | Tên biến | Kiểu dữ liệu | Bắt buộc? | Miền giá trị cho phép |
-| :--- | :--- | :--- | :---: | :--- |
-| `VAR-20-01` | `current_order_status` | Enum | Có | `pending`, `confirmed`, `shipping`, `delivered`, `canceled` |
-| `VAR-20-02` | `user_role` | Enum | Có | `user` (Mobile App Client) |
-| `VAR-20-03` | `target_transition` | Action | Tương tác | Yêu cầu hủy: chuyển sang `canceled` |
+| Variable ID | Variable Name | Data Type | Mandatory? | Precision ($\epsilon$) | Specification Constraint (Quote) | Assumptions / Ambiguities |
+| :--- | :--- | :--- | :---: | :---: | :--- | :--- |
+| `VAR-20-01` | `current_order_status`<br/>*(Trạng thái hiện tại của đơn hàng)* | Enum / String | Có | N/A | Trích dẫn SRS FR-10: *"Đơn hàng có 5 trạng thái: `pending`, `confirmed`, `shipping`, `delivered`, `canceled`... User chỉ được phép tự hủy đơn khi đơn ở trạng thái `pending` hoặc `confirmed`. Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy... Trạng thái `delivered` và `canceled` là trạng thái kết thúc."* (Đối chiếu FR-20) | Thuộc tính trạng thái của đơn hàng trong CSDL trước khi thao tác hủy được thực hiện. Tập giá trị hữu hạn gồm đúng 5 trạng thái hợp lệ. Bất kỳ giá trị nào ngoài 5 trạng thái trên (ví dụ chuỗi rỗng `""`, `null`, `'processing'`, `'refunded'`) là không hợp lệ và phải bị từ chối từ cả Mobile UI lẫn Backend API. |
+| `VAR-20-02` | `target_order_id`<br/>*(Định danh đơn hàng cần hủy)* | Integer / Numeric | Có | 1 đơn vị | Trích dẫn API Spec §4.6: *"Hủy đơn hàng: `PUT /api/orders/:id/cancel` — Chuyển trạng thái đơn hàng sang `canceled`."* | Tham số đường dẫn URL `:id`. Phải là số nguyên dương hợp lệ ($id \ge 1$) và tồn tại trong bảng `orders` của CSDL. Nếu ID không tồn tại trong hệ thống (ví dụ `id = 99999`), ID âm (`-1`), ID bằng `0`, hoặc ID phi số (`"abc"`), hệ thống phải trả về lỗi phù hợp (HTTP 404 hoặc 400), không được làm crash tiến trình server. |
+| `VAR-20-03` | `auth_token`<br/>*(Token xác thực JWT của người dùng)* | String (JWT Bearer) | Bắt buộc (Bảo mật) | N/A | Trích dẫn SRS FR-12 & API Spec §4.6: Yêu cầu Header `Authorization: Bearer <token>`. | Chuỗi JWT Token hợp lệ cấp cho phiên đăng nhập của người dùng Mobile App. Nếu thiếu Token trong header (`Unauthenticated`) $\to$ hệ thống phải từ chối với HTTP 401 Unauthorized. Nếu Token bị giả mạo, sai chữ ký số hoặc đã hết hạn $\to$ HTTP 403 Forbidden hoặc 401 Unauthorized. |
+| `VAR-20-04` | `order_ownership`<br/>*(Quyền sở hữu đơn hàng - Chống IDOR)* | Boolean / Relation | Bắt buộc (Bảo mật) | N/A | Trích dẫn SRS FR-11: *"Người dùng chỉ xem được đơn hàng của chính mình."* (Nguyên tắc phân quyền dữ liệu người dùng) | Đơn hàng phải thuộc quyền sở hữu của chính người dùng đang đăng nhập (`order.user_id === req.user.id`). Nếu Người dùng A (có Token hợp lệ) cố tình gửi request `PUT /api/orders/:id/cancel` với `:id` thuộc về Người dùng B (tấn công IDOR), hệ thống phải từ chối (HTTP 403 hoặc 404) để bảo vệ đơn hàng của người khác. |
+| `VAR-20-05` | `user_role`<br/>*(Vai trò người dùng trong hệ thống)* | Enum | Có | N/A | Trích dẫn SRS FR-10: *"Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy — chỉ Admin mới có thể thao tác."* | Phân biệt vai trò của tác nhân thực hiện: Mobile App luôn gửi request với vai trò người dùng thông thường (`role = 'user'`). Admin có kênh quản trị riêng (`PUT /api/admin/orders/:id/status`). Khi `role = 'user'`, nếu gửi request hủy đơn đang ở `shipping`, hệ thống phải từ chối ngay lập tức (HTTP 400 hoặc 403). |
+| `VAR-20-06` | `cancellation_channel`<br/>*(Kênh kích hoạt thao tác hủy)* | Enum | Có | N/A | Trích dẫn SRS FR-20: *"Phân hệ Mobile... Chức năng Hủy đơn hàng tuân theo đúng State Machine ở FR-10"*. | Phân tách kiểm thử 2 kênh độc lập: (1) `mobile_ui`: kiểm thử sự hiển thị/ẩn/vô hiệu hóa của nút "Hủy đơn" trên giao diện React Native (`frontend-mobile/App.js`); (2) `direct_api`: gửi trực tiếp request `PUT /api/orders/:id/cancel` qua HTTP client để kiểm tra tính toàn vẹn của State Machine phía Backend (chống lỗi Client-Side-Only Validation). |
+| `VAR-20-07` | `cancellation_confirmation`<br/>*(Hộp thoại xác nhận hủy đơn trên UI)* | Boolean (Dialog Confirm) | Khuyến nghị UX/An toàn | N/A | Trích dẫn SRS FR-21 (Tiêu chuẩn Giao diện) & FR-24 (Nguyên tắc an toàn dữ liệu). | Thao tác hủy đơn là hành động phá hủy, không thể hoàn tác (`canceled` là trạng thái kết thúc). Giao diện Mobile App phải hiển thị hộp thoại xác nhận (`Alert.alert` với nút "Xác nhận" và "Hủy bỏ") trước khi phát lệnh hủy đến server nhằm ngăn chặn người dùng vô tình chạm nhầm nút. |
+| `VAR-20-08` | `inventory_restock_sync`<br/>*(Tác dụng phụ hoàn trả tồn kho khi hủy)* | State Side-effect | Nghiệp vụ phụ trợ | 1 sản phẩm | Trích dẫn SRS FR-07 / FR-08 / FR-10: Tồn kho sản phẩm (`products.stock`) bị giảm khi đặt hàng thành công. | Khi đơn hàng bị hủy hợp lệ ở trạng thái `pending` hoặc `confirmed`, số lượng sản phẩm trong đơn có được hoàn trả tự động lại vào kho (`stock = stock + quantity`) hay không? Đây là ràng buộc nghiệp vụ phụ trợ cần được quan sát và kiểm chứng trực tiếp trên CSDL SQLite. |
+
 
 ### 5.2 Bước 2: Phân vùng tương đương (State Domain Partitioning)
 | Partition ID | Miền trạng thái | Mô tả lớp tương đương | Phân loại | Hành vi của nút Hủy trên Mobile |
