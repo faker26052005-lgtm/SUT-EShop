@@ -502,16 +502,35 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 | `VAR-07-08` | `button_delete_action` & `dialog_confirmation` (Nút Xóa & Dialog xác nhận) | Boolean (Confirm / Cancel) | Tương tác | N/A | Trích dẫn SRS FR-07: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."* | Bấm nút "Xóa" bắt buộc phải hiển thị dialog xác nhận. Nếu người dùng chọn Hủy (`Cancel`), giữ nguyên sản phẩm trong giỏ; chỉ khi chọn Đồng ý (`Confirm`), sản phẩm mới bị xóa khỏi giỏ và tính lại tổng tiền. |
 | `VAR-07-09` | `continue_shopping_navigation` (Nút Tiếp tục mua sắm) | Action / Route | Tương tác | N/A | Trích dẫn SRS FR-07: *"Có nút Tiếp tục mua sắm để quay về trang chủ."* | Nút bấm hoặc liên kết điều hướng phải đưa người dùng quay trở lại trang chủ (`/`) một cách an toàn mà không làm mất trạng thái giỏ hàng. |
 
-### 3.2 Bước 2: Phân vùng tương đương
-| Partition ID | Biến / Điều kiện | Phân lớp tương đương | Phân loại | Giá trị đại diện | Hành vi mong đợi |
+### 3.2 Bước 2: Phân vùng tương đương (Step 2 Deliverables)
+
+> **Nguyên tắc Giả định Đơn lỗi (Single Fault Assumption - ISTQB FL §4.2.1):**
+> Khi kiểm thử một phân vùng không hợp lệ (IEP), chỉ duy nhất 1 điều kiện hoặc biến đầu vào mang giá trị lỗi; toàn bộ các tham số còn lại phải được giữ ở giá trị hợp lệ cơ sở (Baseline) nhằm cô lập nguyên nhân từ chối và ngăn chặn hiện tượng che giấu lỗi (error masking).
+
+| Class ID | Variable / Constraint | Domain / Sub-condition | Type (VEP / IEP) | Representative Value | Single-Fault Baseline / Rationale |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `EP-07-01` | `quantity` | Số lượng hợp lệ trong khoảng $[1, \text{Stock}]$ | VEP | $quantity = 2$ | Cập nhật số lượng và tính lại tiền |
-| `EP-07-02` | `quantity` | Số lượng bằng 0 | IEP | $quantity = 0$ | Không cho phép nhập hoặc hiện xác nhận xóa |
-| `EP-07-03` | `quantity` | Số lượng âm | IEP | $quantity = -1$ | Chặn không cho nhập/tự động điều chỉnh về 1 |
-| `EP-07-04` | `quantity` | Số lượng vượt quá tồn kho | IEP | $quantity = \text{Stock} + 5$ | Báo lỗi không đủ tồn kho |
-| `EP-07-05` | `quantity` | Số lượng là số thập phân | IEP | $quantity = 1.5$ | Từ chối ký tự `.` / `,` |
-| `EP-07-06` | `cart_state` | Giỏ hàng trống | VEP | 0 sản phẩm | Hiển thị hình minh họa và thông báo rõ ràng |
-| `EP-07-07` | `total_label` | Nhãn nhan đề tổng tiền | VEP | "Tổng cộng" | Hiển thị chính xác nhãn "Tổng cộng" |
+| `EP-07-01` | `product_id` | Thêm sản phẩm hợp lệ mới chưa có trong giỏ hàng | VEP | `id = 1` (iPhone 15 Pro Max) | Giỏ hàng ban đầu chưa có sản phẩm ID 1. Hệ thống tạo thêm đúng 1 dòng mới trong bảng giỏ hàng với số lượng ban đầu $Q=1$. |
+| `EP-07-02` | `product_id` | Thêm sản phẩm trùng lặp đã tồn tại sẵn trong giỏ | VEP | `id = 1` (đã có $Q=1$ trong giỏ) | Giỏ hàng đã có sản phẩm ID 1 ($Q=1$). Khi thêm tiếp, hệ thống cộng dồn $Q = 1 + 1 = 2$ trên cùng dòng sản phẩm, tuyệt đối không tạo dòng mới theo SRS FR-07. |
+| `EP-07-03` | `product_id` | Mã sản phẩm không tồn tại trong CSDL | IEP | `id = 9999` (hoặc chuỗi không hợp lệ) | Request thêm sản phẩm với ID giả định. Cô lập lỗi mã sản phẩm; hệ thống từ chối xử lý, không chèn bản ghi rác vào giỏ. |
+| `EP-07-04` | `quantity` | Số lượng nguyên dương hợp lệ ($1 \le Q \le 99$) | VEP | $Q = 2$ | Sản phẩm hợp lệ trong giỏ. Cập nhật thành công số lượng, thành tiền tự động tính lại $Subtotal = Price \times 2$. |
+| `EP-07-05` | `quantity` | Số lượng bằng 0 ($Q = 0$) | IEP | $Q = 0$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi vi phạm quy tắc số nguyên dương $\ge 1$; hệ thống chặn cập nhật hoặc kích hoạt dialog xác nhận xóa, không được lưu $Q=0$. |
+| `EP-07-06` | `quantity` | Số lượng là số nguyên âm ($Q < 0$) | IEP | $Q = -1$ (hoặc $-5$) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi số âm; hệ thống từ chối hoặc tự động phục hồi về 1, không làm âm tổng tiền giỏ hàng. |
+| `EP-07-07` | `quantity` | Để trống ô nhập số lượng (Chuỗi rỗng `""`) | IEP | $Q = \text{""}$ | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi bỏ trống trường bắt buộc; hệ thống chặn submit hoặc tự động khôi phục giá trị hợp lệ trước đó. |
+| `EP-07-08` | `quantity` | Ký tự phi số (Chữ cái, ký tự đặc biệt) | IEP | $Q = \text{"abc"}$ hoặc $\text{"@#\$"}$ | Sản phẩm hợp lệ trong giỏ. Input `type="number"` hoặc validator chặn ký tự chữ, không để xảy ra lỗi tính toán `NaN`. |
+| `EP-07-09` | `quantity` | Số thập phân / số thực không nguyên | IEP | $Q = 1.5$ (hoặc $2.5$) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi vi phạm quy tắc "chỉ nhận số nguyên dương" (FR-06/FR-07); từ chối dấu chấm/phẩy thập phân. |
+| `EP-07-10` | `quantity` | Số nguyên cực lớn vượt ngưỡng an toàn (Tràn số) | IEP | $Q = 10^9$ (1 tỷ đơn vị) | Sản phẩm hợp lệ trong giỏ. Cô lập lỗi tràn số học; hệ thống xử lý an toàn không treo ứng dụng hoặc tràn bộ đệm JavaScript. |
+| `EP-07-11` | `subtotal` & `unit_price` | Thành tiền tự động khớp công thức $Price \times Q$ | VEP | $Price = 30.000.000\text{ ₫}$, $Q = 2 \to 60.000.000\text{ ₫}$ | Sản phẩm iPhone 15 Pro Max hợp lệ. Kiểm tra tính đúng đắn số học của từng dòng sản phẩm. |
+| `EP-07-12` | `total_amount` | Tổng tiền bằng tổng các thành tiền $\sum Subtotal$ | VEP | SP1 ($60.000.000\text{ ₫}$) + SP2 ($6.000.000\text{ ₫}$) $\to 66.000.000\text{ ₫}$ | Giỏ hàng chứa 2 dòng sản phẩm hợp lệ khác nhau. Kiểm tra phép tính cộng dồn tổng tiền toàn bộ giỏ hàng. |
+| `EP-07-13` | `total_label` | Nhãn hiển thị chính xác chuỗi "Tổng cộng" | VEP | Label hiển thị: `"Tổng cộng"` | Giỏ hàng có sản phẩm. Tuân thủ tuyệt đối quy định SRS FR-07: *"Tổng tiền hiển thị nhãn chính xác: 'Tổng cộng' (không phải 'Tổng tạm tính')"*. |
+| `EP-07-14` | `total_label` | Nhãn hiển thị sai thành "Tổng tạm tính" | IEP | Label hiển thị: `"Tổng tạm tính"` (hoặc `"Subtotal"`) | Giỏ hàng có sản phẩm. Kiểm tra phát hiện vi phạm đặc tả giao diện (candidate defect probe). |
+| `EP-07-15` | `cart_state` | Giỏ hàng có sản phẩm ($Items \ge 1$) | VEP | $Items = 1$ hoặc $Items = 2$ | Hiển thị đầy đủ bảng danh mục các cột: Sản phẩm, Đơn giá, Số lượng, Thành tiền, Thao tác; cùng tổng tiền và nút thanh toán. |
+| `EP-07-16` | `cart_state` | Giỏ hàng trống hoàn toàn ($Items = 0$) | VEP | $Items = 0$ | Giỏ hàng rỗng. Ẩn bảng sản phẩm; bắt buộc hiển thị đồng thời cả hình minh họa (illustration) và thông báo giỏ hàng trống rõ ràng. |
+| `EP-07-17` | `button_decrement_action` | Bấm nút `-` khi số lượng lớn hơn 1 ($Q > 1$) | VEP | $Q = 2 \xrightarrow{\text{click } -} Q = 1$ | Sản phẩm có $Q=2$ trong giỏ. Số lượng giảm đúng 1 đơn vị, thành tiền và tổng tiền lập tức cập nhật lại. |
+| `EP-07-18` | `button_decrement_action` | Bấm nút `-` khi số lượng chạm biên tối thiểu $Q = 1$ | VEP | $Q = 1 \xrightarrow{\text{click } -} \text{Dialog xác nhận}$ | Sản phẩm có $Q=1$ trong giỏ. Chặn không cho giảm âm về 0; nếu xem là thao tác xóa thì bắt buộc phải hiện dialog xác nhận trước khi xóa. |
+| `EP-07-19` | `button_delete_action` | Bấm nút "Xóa" $\to$ Xác nhận Đồng ý (Confirm) | VEP | Click Xóa $\to$ Click "OK / Đồng ý" trên dialog | Sản phẩm hợp lệ trong giỏ. Hiển thị dialog xác nhận; khi người dùng xác nhận, dòng sản phẩm bị xóa khỏi giỏ và cập nhật lại tổng tiền. |
+| `EP-07-20` | `button_delete_action` | Bấm nút "Xóa" $\to$ Hủy bỏ thao tác (Cancel) | VEP | Click Xóa $\to$ Click "Hủy / Cancel" trên dialog | Sản phẩm hợp lệ trong giỏ. Hiển thị dialog xác nhận; khi người dùng hủy, sản phẩm vẫn được bảo toàn nguyên vẹn trong giỏ hàng. |
+| `EP-07-21` | `button_delete_action` | Bấm nút "Xóa" nhưng hệ thống xóa trực tiếp không hỏi | IEP | Click Xóa $\to$ Không xuất hiện dialog nào | Sản phẩm hợp lệ trong giỏ. Phát hiện vi phạm đặc tả SRS FR-07 *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện"*. |
+| `EP-07-22` | `continue_shopping_navigation` | Bấm nút "Tiếp tục mua sắm" | VEP | Click button/link "Tiếp tục mua sắm" | Trang giỏ hàng. Trình duyệt chuyển hướng an toàn về trang chủ (`/`) mà không làm mất trạng thái giỏ hàng. |
 
 ### 3.3 Bước 3: Phân tích giá trị biên (BVA)
 | Boundary ID | Biến / Điều kiện | Ranh giới | Phương pháp | On-point | Off-point | In-point |
