@@ -1,0 +1,124 @@
+# [BUG] [FR-02][Backend API / SQLite DB] Failure counter jumps to 4 instead of 3 upon reaching consecutive failure threshold
+
+### 1. Defect Metadata
+- **Bug ID:** `BUG-FR02-03`
+- **Discovered by Test Case:** [`TC_FR02_06`](../Main_Report.md#tc_fr02_06)
+- **Feature / Subsystem:** Login and Account Lockout (`FR-02`)
+- **Severity:** `Major`
+- **Priority:** `High (P1)`
+- **Reporter:** Nguyễn Quốc Kỳ (23120138)
+- **Environment:**
+  - OS: Linux x86_64
+  - Node.js: v18.19.1
+  - SUT URLs: Web `http://localhost:5173` | Admin `http://localhost:5174` | API `http://localhost:3000`
+  - Database: SQLite 3
+
+### 2. Preconditions
+- User account `test@eshop.com` has 2 accumulated failed login attempts in SQLite DB: `login_attempts = 2`, `locked_until = NULL`.
+- SUT backend server is running on `http://localhost:3000`.
+
+### 3. Steps to Reproduce
+1. Submit a 3rd consecutive failed login request with valid email `test@eshop.com` and invalid password `WrongPass3!`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@eshop.com","password":"WrongPass3!"}'
+   ```
+2. Query the SQLite database to inspect `login_attempts` and `locked_until` columns:
+   ```bash
+   SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';
+   ```
+
+### 4. Test Data / Payload
+```json
+{
+  "email": "test@eshop.com",
+  "password": "WrongPass3!"
+}
+```
+
+### 5. Expected Result (Authoritative SRS Citation)
+> *Quote from `specs/system_requirements_specification.md` (FR-02, Item 2 & 3):*
+> "Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm số lần đăng nhập sai liên tiếp lên đúng 1 đơn vị. Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây (môi trường demo)."
+- Tại lần thử sai thứ 3 ($N=3$, điểm On-point kích hoạt ngưỡng khóa):
+  - HTTP Status: `401 Unauthorized` hoặc `403 Forbidden`.
+  - Trong CSDL SQLite: `login_attempts` phải tăng từ `2` lên **đúng `3`** ($N=3$).
+  - Trường `locked_until` được gán mốc hết hạn đúng $T_{trigger} + 30\text{ giây}$.
+
+### 6. Actual Result (Observed on SUT)
+- Endpoint `POST /api/login` trả về HTTP `401 Unauthorized`.
+- Trong CSDL SQLite:
+  - `login_attempts` bị tăng vọt từ `2` lên **`4`** ($N=4$) do lỗi logic `user.login_attempts + 2`.
+  - `locked_until` được gán giá trị thời gian 180 giây (3 phút) sau đó thay vì 30 giây.
+- HTTP Status Code: `401 Unauthorized`
+- Database Mutation: `login_attempts` = 4, `locked_until` = `2026-10-18T17:49:37.416Z`
+
+### 7. Evidence & Visual Proof
+- **Screenshot:**
+  ![Minh chứng lỗi bộ đếm đạt 4 ở lần sai thứ 3](https://raw.githubusercontent.com/faker26052005-lgtm/SUT-EShop/QuocKy-HW02/deliverables/04-exercises/quoc-ky/hw_02/screenshots/BUG_FR02_03_actual.png)
+  *(File cục bộ: `screenshots/BUG_FR02_03_actual.png`)*
+- **Terminal / API Log:**
+```text
+quocky05@quocky-linux:~/academy/software-testing/seminar/SUT-EShop$ ~/.gemini/config/skills/test-execution-partner/scripts/db_helper.sh query "SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';"
+┌─────────┬────┬──────────────────┬────────────────┬──────────────┐
+│ (index) │ id │ email            │ login_attempts │ locked_until │
+├─────────┼────┼──────────────────┼────────────────┼──────────────┤
+│ 0       │ 2  │ 'test@eshop.com' │ 2              │ null         │
+└─────────┴────┴──────────────────┴────────────────┴──────────────┘
+
+quocky05@quocky-linux:~/academy/software-testing/seminar/SUT-EShop$ curl -i -s -X POST http://localhost:3000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@eshop.com","password":"WrongPass3!"}'
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 37
+ETag: W/"25-3YG4LRpkIFolV4uVOnUIRm2hZA0"
+Date: Sun, 18 Oct 2026 17:46:37 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"error":"Invalid email or password"}
+
+quocky05@quocky-linux:~/academy/software-testing/seminar/SUT-EShop$ ~/.gemini/config/skills/test-execution-partner/scripts/db_helper.sh query "SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';"
+┌─────────┬────┬──────────────────┬────────────────┬────────────────────────────┐
+│ (index) │ id │ email            │ login_attempts │ locked_until               │
+├─────────┼────┼──────────────────┼────────────────┼────────────────────────────┤
+│ 0       │ 2  │ 'test@eshop.com' │ 4              │ '2026-10-18T17:49:37.416Z' │
+└─────────┴────┴──────────────────┴────────────────┴────────────────────────────┘
+```
+
+### 8. Root Cause Analysis (Code Inspection)
+- **Suspect File:** `backend/server.js`
+- **Line Numbers:** Line 54
+- **Flawed Code Snippet:**
+```javascript
+} else {
+  const newAttempts = user.login_attempts + 2;
+  let lockedUntil = null;
+  if (newAttempts >= 3) {
+    lockedUntil = new Date(Date.now() + 180000).toISOString();
+  }
+  db.run(
+    "UPDATE users SET login_attempts = ?, locked_until = ? WHERE id = ?",
+    [newAttempts, lockedUntil, user.id],
+  );
+  res.status(401).json({ error: "Invalid email or password" });
+}
+```
+- **Proposed Fix:**
+```javascript
+} else {
+  const newAttempts = user.login_attempts + 1;
+  let lockedUntil = null;
+  if (newAttempts >= 3) {
+    lockedUntil = new Date(Date.now() + 30000).toISOString();
+  }
+  db.run(
+    "UPDATE users SET login_attempts = ?, locked_until = ? WHERE id = ?",
+    [newAttempts, lockedUntil, user.id],
+  );
+  res.status(401).json({ error: "Invalid email or password" });
+}
+```
