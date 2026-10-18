@@ -2086,9 +2086,161 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 - **7. Teardown & Clean-up:** Xóa mã `RACE50`.
 
 
-### 4.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
-- Bao phủ đầy đủ toàn bộ các điều kiện bất đẳng thức toán học $V > 0, V \le 100\%, M \ge 0, U \ge 1$.
-- 100% test cases âm tuân thủ chặt chẽ Single Fault Assumption.
+### 4.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ (Step 5 Deliverables - Traceability & Coverage Verification)
+
+> **Mục tiêu Kiểm chứng Độ bao phủ (ISTQB FL v4.0 §4.2):**
+> 1. **Bao phủ Phân vùng Tương đương (EP Coverage):** Đảm bảo 100% các phân vùng tương đương (VEP, IEP, Conditional, Robustness) được định nghĩa ở Bước 2 đều có ít nhất một kịch bản kiểm thử bao phủ trực tiếp.
+> 2. **Bao phủ Điểm biên (BVA Coverage):** Đảm bảo 100% các điểm biên 3-Value BVA (On-point, Off-point, In-point) được định nghĩa ở Bước 3 đều có kịch bản tương ứng để phát hiện lỗi lệch biên ($\pm \epsilon$).
+> 3. **Bảo đảm Giả định Đơn lỗi (Single Fault Assumption):** 100% kịch bản Negative (IEP, Boundary Off-point, Security) chỉ kích hoạt duy nhất một điều kiện bất thường; toàn bộ các tham số còn lại tuân thủ nghiêm ngặt Baseline hợp lệ cơ sở để tránh hiện tượng che giấu khiếm khuyết (Fault Masking).
+
+---
+
+#### 4.5.1 Bảng Độ Bao Phủ Phân Vùng Tương Đương Biến Đầu Vào Thuần Túy (Pure Input EP Coverage)
+
+| Class ID | Variable / Field | Miền giá trị / Mô tả phân vùng tương đương | Phân loại | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :--- | :---: | :--- | :---: |
+| `EP-17-01` | `code` | Mã hợp lệ chữ số Alphanumeric, chưa có trong DB | VEP | `TC_FR17_01`, `TC_FR17_02`, `TC_FR17_07` | **Covered** |
+| `EP-17-02` | `code` | Mã trùng lặp đã tồn tại trong CSDL (Duplicate code) | IEP | `TC_FR17_10` | **Covered** |
+| `EP-17-03` | `code` | Mã để trống / chuỗi rỗng (`""`) | IEP | `TC_FR17_11` | **Covered** |
+| `EP-17-04` | `code` | Mã chỉ chứa toàn khoảng trắng (`"     "`) | IEP | `TC_FR17_12` | **Covered** |
+| `EP-17-05` | `code` | Khuyết trường `code` hoàn toàn trong payload JSON | IEP | `TC_FR17_11` | **Covered** |
+| `EP-17-06` | `code` | Trùng mã chỉ khác chữ hoa/thường hoặc chứa mã độc | Conditional | `TC_FR17_35` | **Covered** |
+| `EP-17-07` | `code` | Mã có khoảng trắng ở đầu hoặc cuối (`" SAVE10 "`) | Conditional | `TC_FR17_12` | **Covered** |
+| `EP-17-08` | `code` | Độ dài chuỗi vượt ngưỡng quy ước ($Len > 50$) | Robustness | `TC_FR17_07` | **Covered** |
+| `EP-17-09` | `type` | Loại giảm giá theo phần trăm (`'percent'`) | VEP | `TC_FR17_01` | **Covered** |
+| `EP-17-10` | `type` | Loại giảm giá theo số tiền cố định (`'fixed'`) | VEP | `TC_FR17_02` | **Covered** |
+| `EP-17-11` | `type` | Giá trị enum không hỗ trợ (`'free_shipping'`) | IEP | `TC_FR17_13` | **Covered** |
+| `EP-17-12` | `type` | Loại là chuỗi rỗng (`type = ""`) | IEP | `TC_FR17_13` | **Covered** |
+| `EP-17-13` | `type` | Loại mang giá trị `null` (`type = null`) | IEP | `TC_FR17_13` | **Covered** |
+| `EP-17-14` | `type` | Khuyết trường `type` hoàn toàn trong payload | IEP | `TC_FR17_13` | **Covered** |
+| `EP-17-15` | `discount_value` | Giá trị % hợp lệ trong khoảng chuẩn ($0 < V \le 100$) | VEP | `TC_FR17_01`, `TC_FR17_03`, `TC_FR17_04` | **Covered** |
+| `EP-17-16` | `discount_value` | Giá trị tiền mặt hợp lệ ($V > 0$ VNĐ) | VEP | `TC_FR17_02` | **Covered** |
+| `EP-17-17` | `discount_value` | Giá trị bằng 0 ($V = 0$) | IEP | `TC_FR17_14`, `TC_FR17_17` | **Covered** |
+| `EP-17-18` | `discount_value` | Giá trị mang số âm ($V < 0$) | IEP | `TC_FR17_15` | **Covered** |
+| `EP-17-19` | `discount_value` | Giá trị phần trăm vượt quá 100% ($V > 100$) | Conditional IEP | `TC_FR17_16` | **Covered** |
+| `EP-17-20` | `discount_value` | Giá trị là chuỗi rỗng (`discount_value = ""`) | IEP | `TC_FR17_14` | **Covered** |
+| `EP-17-21` | `discount_value` | Giá trị mang giá trị `null` | IEP | `TC_FR17_14` | **Covered** |
+| `EP-17-22` | `discount_value` | Khuyết trường `discount_value` trong payload | IEP | `TC_FR17_14` | **Covered** |
+| `EP-17-23` | `discount_value` | Giá trị chứa ký tự phi số (`"abc"`, `"10%"`) | IEP | `TC_FR17_15` | **Covered** |
+| `EP-17-24` | `discount_value` | Giá trị % là số thập phân (`10.5%`) | Conditional | `TC_FR17_01` | **Covered** |
+| `EP-17-25` | `discount_value` | Giá trị tiền fixed là số thập phân (`50000.5` ₫) | Conditional | `TC_FR17_02` | **Covered** |
+| `EP-17-26` | `min_order_amount` | Ngưỡng đơn hàng hợp lệ là số nguyên dương ($M > 0$) | VEP | `TC_FR17_01`, `TC_FR17_02` | **Covered** |
+| `EP-17-27` | `min_order_amount` | Ngưỡng đơn hàng bằng đúng 0 ($M = 0$) | VEP | `TC_FR17_05` | **Covered** |
+| `EP-17-28` | `min_order_amount` | Ngưỡng đơn hàng mang giá trị âm ($M < 0$) | IEP | `TC_FR17_18` | **Covered** |
+| `EP-17-29` | `min_order_amount` | Khuyết trường `min_order_amount` hoặc truyền `null` | Conditional | `TC_FR17_05` | **Covered** |
+| `EP-17-30` | `min_order_amount` | Ngưỡng đơn hàng chứa ký tự phi số | IEP | `TC_FR17_18` | **Covered** |
+| `EP-17-31` | `max_uses_per_user` | Số lượt dùng hợp lệ là số nguyên $\ge 1$ | VEP | `TC_FR17_01`, `TC_FR17_06` | **Covered** |
+| `EP-17-32` | `max_uses_per_user` | Số lượt dùng bằng 0 ($U = 0$) | IEP | `TC_FR17_19` | **Covered** |
+| `EP-17-33` | `max_uses_per_user` | Số lượt dùng mang giá trị âm ($U < 0$) | IEP | `TC_FR17_20` | **Covered** |
+| `EP-17-34` | `max_uses_per_user` | Số lượt dùng là số thập phân ($U = 1.5$) | IEP | `TC_FR17_20` | **Covered** |
+| `EP-17-35` | `max_uses_per_user` | Khuyết trường `max_uses_per_user` hoặc `null` | Conditional | `TC_FR17_06` | **Covered** |
+| `EP-17-36` | `expired_at` | Ngày hết hạn trong tương lai ($expired\_at > \text{now}$) | VEP | `TC_FR17_01`, `TC_FR17_02` | **Covered** |
+| `EP-17-37` | `expired_at` | Ngày hết hạn trong quá khứ ($expired\_at < \text{now}$) | Conditional IEP | `TC_FR17_21`, `TC_FR17_31` | **Covered** |
+| `EP-17-38` | `expired_at` | Ngày hết hạn chính là ngày hiện tại ($\text{today}$) | Conditional | `TC_FR17_21` | **Covered** |
+| `EP-17-39` | `expired_at` | Ngày hết hạn để trống / chuỗi rỗng (`""`) | IEP | `TC_FR17_21` | **Covered** |
+| `EP-17-40` | `expired_at` | Ngày hết hạn sai định dạng ngày tháng (Malformed Date) | IEP | `TC_FR17_21` | **Covered** |
+
+---
+
+#### 4.5.2 Bảng Độ Bao Phủ Phân Quyền & Vòng Đời Tài Nguyên (Access-Control & Resource Lifecycle Coverage)
+
+| Class ID | Điều kiện kiểm thử / Ràng buộc thao tác | Type | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :---: |
+| `AUTH-17-01` | Token hợp lệ có quyền Admin (`role = 'admin'`) | VEP | `TC_FR17_01`, `TC_FR17_02`, `TC_FR17_08`, `TC_FR17_09` | **Covered** |
+| `AUTH-17-02` | Không gửi Token xác thực (Anonymous / Unauthenticated) | IEP | `TC_FR17_22` | **Covered** |
+| `AUTH-17-03` | Token hợp lệ nhưng thuộc User thường (`role = 'user'`) | IEP (SEC-03) | `TC_FR17_23` | **Covered** |
+| `AUTH-17-04` | Token giả mạo / sai chữ ký / hết hạn | IEP (SEC-02) | `TC_FR17_22` | **Covered** |
+| `AUTH-17-05` | Token hợp lệ nhưng payload thiếu trường `role` | Security | `TC_FR17_23` | **Covered** |
+| `RES-17-01` | Xóa coupon hợp lệ đang tồn tại trong CSDL | VEP | `TC_FR17_09` | **Covered** |
+| `RES-17-02` | Xóa coupon với ID không tồn tại (`id = 9999`) | IEP | `TC_FR17_24` | **Covered** |
+| `RES-17-03` | Xóa coupon với ID mang giá trị âm (`id = -1`) | IEP | `TC_FR17_25` | **Covered** |
+| `RES-17-04` | Xóa coupon với ID bằng 0 | IEP | `TC_FR17_25` | **Covered** |
+| `RES-17-05` | Xóa coupon với ID sai kiểu dữ liệu phi số (`id = "abc"`) | IEP | `TC_FR17_26` | **Covered** |
+| `RES-17-06` | Thao tác Xóa lặp lại cùng một ID (Idempotency Probe) | State Probe | `TC_FR17_09`, `TC_FR17_24` | **Covered** |
+| `RES-17-07` | Xóa coupon đã có lịch sử người dùng sử dụng | Data Integrity | `TC_FR17_09` | **Covered** |
+
+---
+
+#### 4.5.3 Bảng Độ Bao Phủ Quy Tắc Nghiệp Vụ & An Toàn Thông Tin (Business Rules & Security Coverage)
+
+| ID Quy tắc | Phân loại | Nội dung quy tắc nghiệp vụ / Kịch bản thăm dò | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :---: | :--- | :--- | :---: |
+| `CPN-BR-01` | Business Rule | Công thức tính giảm giá loại `percent` tại Checkout ($Total \times V / 100$) | `TC_FR17_27` | **Covered** |
+| `CPN-BR-02` | Business Rule | Công thức tính giảm giá loại `fixed` tại Checkout ($Total - V$) | `TC_FR17_28` | **Covered** |
+| `CPN-BR-03` | Business Rule | Ràng buộc ngưỡng đơn hàng: Dưới ngưỡng ($Total < min\_order\_amount$) $\to$ từ chối | `TC_FR17_29` | **Covered** |
+| `CPN-BR-04` | Business Rule | Ràng buộc ngưỡng đơn hàng: Bằng ngưỡng ($Total = min\_order\_amount$) $\to$ chấp nhận | `TC_FR17_30` | **Covered** |
+| `CPN-BR-05` | Business Rule | Ràng buộc ngưỡng đơn hàng: Trên ngưỡng ($Total > min\_order\_amount$) $\to$ chấp nhận | `TC_FR17_27`, `TC_FR17_28` | **Covered** |
+| `CPN-BR-06` | Business Rule | Ràng buộc thời hạn sử dụng: Áp dụng mã đã hết hạn $\to$ từ chối (C2 vi phạm) | `TC_FR17_31` | **Covered** |
+| `CPN-BR-07` | Business Rule | Ràng buộc trạng thái: Coupon bị vô hiệu hóa (`is_active = 0`) $\to$ từ chối | `TC_FR17_09`, `TC_FR17_31` | **Covered** |
+| `CPN-BR-08` | Business Rule | Ràng buộc lượt dùng / người: Còn lượt ($used < max\_uses\_per\_user$) $\to$ chấp nhận | `TC_FR17_33` | **Covered** |
+| `CPN-BR-09` | Business Rule | Ràng buộc lượt dùng / người: Hết lượt ($used = max\_uses\_per\_user$) $\to$ từ chối | `TC_FR17_32` | **Covered** |
+| `CPN-BR-10` | Financial Safety | Giảm giá tiền mặt cố định lớn hơn tổng đơn ($discount > Total$) $\to$ chặn thanh toán $\ge 0\text{ ₫}$ | `TC_FR17_34` | **Covered** |
+| `CPN-BR-11` | Business Rule | Giảm giá % sinh ra số thập phân lẻ $\to$ kiểm tra quy tắc làm tròn tiền tệ VND | `TC_FR17_27` | **Covered** |
+| `CPN-BR-12` | DB Integrity | Tạo thành công lưu đầy đủ 6 trường, chuẩn hóa chữ hoa, `is_active = 1` | `TC_FR17_01`, `TC_FR17_02` | **Covered** |
+| `CPN-BR-13` | Lifecycle | Coupon đã xóa biến mất khỏi danh sách quản trị và bị từ chối tại Checkout | `TC_FR17_09` | **Covered** |
+| `CPN-BR-14` | Concurrency | Race condition: Tạo đồng thời 2 mã trùng nhau trong < 100ms $\to$ chỉ 1 thành công | `TC_FR17_36` | **Covered** |
+| `SEC-17-01` | Security Probe | Stored Cross-Site Scripting (XSS) probe qua mã coupon hiển thị trên bảng Admin | `TC_FR17_35` | **Covered** |
+| `SEC-17-02` | Security Probe | SQL Injection probe qua trường mã và tham số đường dẫn route | `TC_FR17_26`, `TC_FR17_35` | **Covered** |
+| `SEC-17-03` | Robustness | Tràn số nguyên JavaScript (`Number.MAX_SAFE_INTEGER`) tại các trường số tiền | `TC_FR17_18` | **Covered** |
+| `SEC-17-04` | Robustness | Payload JSON dị dạng (Malformed JSON) $\to$ Express error middleware bắt lỗi HTTP 400 | `TC_FR17_13`, `TC_FR17_26` | **Covered** |
+
+---
+
+#### 4.5.4 Bảng Độ Bao Phủ Phân Tích Giá Trị Biên 3-Value (Boundary Value Coverage - On/Off/In Points)
+
+| Boundary ID | Biến / Điều kiện kiểm thử biên | Điểm biên (Point Type) | Giá trị kiểm thử cụ thể | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `BVA-17-01` | Độ dài mã coupon ($Len \ge 1$) | **On-point** | $Len = 1$ (`code = "A"`) | `TC_FR17_07` | **Covered** |
+| | | **Off-point** | $Len = 0$ (`code = ""`) | `TC_FR17_11` | **Covered** |
+| | | **In-point** | $Len = 2$ (`code = "AB"`) | `TC_FR17_01` | **Covered** |
+| `BVA-17-02` | Độ dài mã coupon quy ước ($Len \le 50$) | **On-point** | $Len = 50$ (Mã dài đúng 50 ký tự) | `TC_FR17_01` | **Covered** |
+| | | **Off-point** | $Len = 51$ (Mã dài 51 ký tự) | `TC_FR17_07` | **Covered** |
+| | | **In-point** | $Len = 49$ (Mã dài 49 ký tự) | `TC_FR17_01` | **Covered** |
+| `BVA-17-03` | Giá trị giảm phần trăm ($V > 0\%$) | **On-point** | $V = 0\%$ (Vi phạm ràng buộc số dương) | `TC_FR17_14` | **Covered** |
+| | | **Off-point** | $V = 1\%$ (Số phần trăm dương nhỏ nhất) | `TC_FR17_04` | **Covered** |
+| | | **In-point** | $V = 2\%$ (Kề cận trong vùng hợp lệ) | `TC_FR17_01` | **Covered** |
+| `BVA-17-04` | Trần giá trị phần trăm ($V \le 100\%$) | **On-point** | $V = 100\%$ (Giảm tối đa 100% đơn hàng) | `TC_FR17_03` | **Covered** |
+| | | **Off-point** | $V = 101\%$ (Vượt 100%, không hợp lệ) | `TC_FR17_16` | **Covered** |
+| | | **In-point** | $V = 99\%$ (Kề cận dưới 100%, hợp lệ) | `TC_FR17_01` | **Covered** |
+| `BVA-17-05` | Giá trị giảm tiền mặt ($V > 0\text{ ₫}$) | **On-point** | $V = 0\text{ ₫}$ (Vi phạm số tiền dương) | `TC_FR17_17` | **Covered** |
+| | | **Off-point** | $V = 1\text{ ₫}$ (Số tiền dương nhỏ nhất) | `TC_FR17_02` | **Covered** |
+| | | **In-point** | $V = 2\text{ ₫}$ (Kề cận trong vùng hợp lệ) | `TC_FR17_02` | **Covered** |
+| `BVA-17-06` | Ngưỡng đơn tối thiểu ($M \ge 0\text{ ₫}$) | **On-point** | $M = 0\text{ ₫}$ (Không giới hạn ngưỡng đơn) | `TC_FR17_05` | **Covered** |
+| | | **Off-point** | $M = -1\text{ ₫}$ (Số âm vi phạm $M \ge 0$) | `TC_FR17_18` | **Covered** |
+| | | **In-point** | $M = 1\text{ ₫}$ (Ngưỡng tối thiểu dương nhỏ nhất) | `TC_FR17_01` | **Covered** |
+| `BVA-17-07` | Lượt dùng tối đa / người ($U \ge 1$) | **On-point** | $U = 1\text{ lượt}$ (Mỗi user dùng 1 lần) | `TC_FR17_06` | **Covered** |
+| | | **Off-point** | $U = 0\text{ lượt}$ (Vi phạm $U \ge 1$) | `TC_FR17_19` | **Covered** |
+| | | **In-point** | $U = 2\text{ lượt}$ (Kề cận trong vùng hợp lệ) | `TC_FR17_33` | **Covered** |
+| `BVA-17-08` | Ranh giới hạn dùng khi tạo ($expired\_at \ge \text{today}$) | **On-point** | $expired\_at = \text{today}$ (Hạn là hôm nay) | `TC_FR17_21` | **Covered** |
+| | | **Off-point** | $expired\_at = \text{yesterday}$ (Ngày quá khứ) | `TC_FR17_21` | **Covered** |
+| | | **In-point** | $expired\_at = \text{tomorrow}$ (Ngày mai) | `TC_FR17_01` | **Covered** |
+| `BVA-17-09` | Ngưỡng đơn Checkout ($Total \ge M=300.000\text{ ₫}$) | **On-point** | $Total = 300.000\text{ ₫}$ (Đạt đúng ngưỡng) | `TC_FR17_30` | **Covered** |
+| | | **Off-point** | $Total = 299.999\text{ ₫}$ (Thiếu 1 ₫, từ chối) | `TC_FR17_29` | **Covered** |
+| | | **In-point** | $Total = 300.001\text{ ₫}$ (Vượt ngưỡng 1 ₫) | `TC_FR17_27` | **Covered** |
+| `BVA-17-10` | Lượt dùng Checkout ($used < U=2\text{ lượt}$) | **On-point** | $used = 2\text{ lần}$ ($2 \not< 2 \to$ hết lượt) | `TC_FR17_32` | **Covered** |
+| | | **Off-point** | $used = 1\text{ lần}$ ($1 < 2 \to$ lượt cuối) | `TC_FR17_33` | **Covered** |
+| | | **In-point** | $used = 3\text{ lần}$ ($3 \not< 2 \to$ vượt giới hạn) | `TC_FR17_32` | **Covered** |
+| `BVA-17-11` | Biên tài chính khấu trừ ($discount \le Total=50.000\text{ ₫}$) | **On-point** | $discount = 50.000\text{ ₫}$ (Đơn thanh toán 0 ₫) | `TC_FR17_34` | **Covered** |
+| | | **Off-point** | $discount = 50.001\text{ ₫}$ (Vượt 1 ₫ $\to$ chặn $\ge 0\text{ ₫}$) | `TC_FR17_34` | **Covered** |
+| | | **In-point** | $discount = 49.999\text{ ₫}$ (Đơn còn trả đúng 1 ₫) | `TC_FR17_28` | **Covered** |
+
+---
+
+#### 4.5.5 Bảng Tổng Hợp Chỉ Số Độ Bao Phủ (Coverage Summary Metrics)
+
+| Chỉ số kiểm thử (Coverage Metric) | Tổng số nhận diện | Đã bao phủ (Covered) | Chưa bao phủ / Bị chặn | Tỷ lệ bao phủ (%) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Phân vùng hợp lệ (VEP - Pure Input)** | 6 | 6 | 0 | **100.0%** |
+| **Phân vùng không hợp lệ (IEP - Pure Input)** | 26 | 26 | 0 | **100.0%** |
+| **Phân vùng có điều kiện & Bền vững (Conditional/Robustness)** | 8 | 8 | 0 | **100.0%** |
+| **Tổng số phân vùng tương đương biến đầu vào (Pure Input EPs)** | **40** | **40** | **0** | **100.0%** |
+| **Phân vùng kiểm soát truy cập & Phân quyền (AUTH)** | 5 | 5 | 0 | **100.0%** |
+| **Phân vùng vòng đời thao tác tài nguyên CRUD (RES)** | 7 | 7 | 0 | **100.0%** |
+| **Quy tắc nghiệp vụ & Kịch bản Checkout FR-09 (CPN-BR)** | 14 | 14 | 0 | **100.0%** |
+| **Kiểm thử an toàn thông tin & Độ bền bỉ (SEC Probes)** | 4 | 4 | 0 | **100.0%** |
+| **Tổng số điểm phân tích giá trị biên (3-Value BVA Points)** | **33** | **33** | **0** | **100.0%** |
+| **Tổng số kịch bản kiểm thử độc lập đã thiết kế (Test Cases)** | **36** | **36** | **0** | **100.0%** |
+| **Tuân thủ Giả định Đơn lỗi (Single-Fault Isolation)** | 26 / 26 IEPs | 26 | 0 | **100.0%** |
 
 ### 4.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT
 - **Khoảng trống AI:** AI thường không phân biệt ngữ cảnh giữa `percent` và `fixed` khi xét biên `discount_value` (với `fixed` thì có thể lên hàng triệu đồng, nhưng `percent` bị chặn cứng ở 100%).
