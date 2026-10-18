@@ -5,7 +5,7 @@
 > **MSSV:** 23120138 – **Lớp:** 23CLC02  
 > **Bài tập:** HW02 – Domain Testing & Boundary Value Analysis  
 > **Hệ thống thử nghiệm (SUT):** EShop (Web, Admin, Mobile, Backend REST API)  
-> **Repository GitHub của nhóm:** [Nhóm 11 – EShop Seminar & Testing](https://github.com/ttbhanh/eshop-sut)  
+> **Repository GitHub của nhóm:** [Nhóm 11 – EShop Seminar & Testing](https://github.com/faker26052005-lgtm/SUT-EShop)  
 > **Tài liệu đối chiếu đặc tả:** [`specs/system_requirements_specification.md`](../../specs/system_requirements_specification.md)  
 > **Ngày báo cáo:** 18/10/2026
 
@@ -25,7 +25,7 @@
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| `BUG-FR02-01` | Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai | FR-02 | `TC_FR02_03` | Major | [Issue #11](https://github.com/ttbhanh/eshop-sut/issues/11) | Open |
+| `BUG-FR02-01` | Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai | FR-02 | `TC_FR02_03` | Major | [Issue #4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4) | Open |
 | `BUG-FR02-02` | Thông báo lỗi tiết lộ thông tin mật khẩu sai thay vì thông báo chung | FR-02 | `TC_FR02_02` | Major | [Issue #13](https://github.com/ttbhanh/eshop-sut/issues/13) | Open |
 | `BUG-FR07-01` | Bấm nút giảm (-) tại số lượng 1 tự xóa sản phẩm không có dialog xác nhận | FR-07 | `TC_FR07_03` | Major | [Issue #14](https://github.com/ttbhanh/eshop-sut/issues/14) | Open |
 | `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
@@ -51,7 +51,7 @@
 | **Mức độ (Severity)** | **Major** (Sai lệch ngưỡng bảo mật khiến tài khoản bị khóa sớm ngoài ý muốn) |
 | **Mức ưu tiên (Priority)**| **High (P1)** |
 | **Test Case phát hiện** | [`TC_FR02_03`](Main_Report.md#tc_fr02_03) (Thử sai lần 1 $N = 1$) |
-| **GitHub Issue Link** | [Issue #11: [BUG] [FR-02][Backend API / SQLite DB] Failure counter increments by 2 instead of 1 upon invalid login attempt](https://github.com/ttbhanh/eshop-sut/issues/11) |
+| **GitHub Issue Link** | [Issue #4: [BUG] [FR-02][Backend API / SQLite DB] Failure counter increments by 2 instead of 1 upon invalid login attempt](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4) |
 | **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
 **1. Tiền điều kiện (Preconditions):**
@@ -92,7 +92,7 @@
 **6. Bằng chứng kiểm thử (Screenshots & Logs):**
 - *Ảnh chụp bằng chứng terminal & database:*  
   ![Lỗi bộ đếm tăng 2 sau 1 lần thử sai](./screenshots/BUG_FR02_01_actual.png)
-- *Đường dẫn GitHub Issue:* [https://github.com/ttbhanh/eshop-sut/issues/11](https://github.com/ttbhanh/eshop-sut/issues/11)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4)
 
 **7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
 - **Vị trí lỗi:** File `backend/server.js`, dòng 54.
