@@ -385,9 +385,67 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 - **5. Teardown & Clean-up:** Khôi phục `login_attempts = 0` nếu cần.
 
 ### 2.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ (Step 5 Deliverables)
-- **Tỷ lệ bao phủ VEP:** $100\%$ ($5/5$ phân vùng VEP đã có Test Case).
-- **Tỷ lệ bao phủ IEP:** $100\%$ ($6/6$ phân vùng IEP với đơn lỗi Single Fault).
-- **Tỷ lệ bao phủ BVA:** $100\%$ (Đầy đủ On/Off/In cho cả 2 ranh giới số lần và thời gian).
+
+> **Mục tiêu kiểm định:** Xác minh tính toàn diện của bộ kiểm thử bằng cách ánh xạ 100% các phân vùng tương đương (VEP / IEP) và các giá trị biên (On / Off / In) tới ít nhất một kịch bản kiểm thử cụ thể.
+
+#### 5.1. Bảng Độ Bao Phủ Phân Vùng Tương Đương (Equivalence Partition Coverage)
+
+| Class ID | Variable / Field | Type | Mô tả phân vùng tương đương | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `EP-02-01` | `email` | **VEP** | Email đúng định dạng và tài khoản tồn tại trong CSDL | `TC_FR02_01`, `TC_FR02_02`, `TC_FR02_18` | **Covered** |
+| `EP-02-02` | `email` | **IEP** | Email không đúng định dạng cú pháp HTML5/RFC (thiếu `@`) | `TC_FR02_14` | **Covered** |
+| `EP-02-03` | `email` | **IEP** | Email để trống / chuỗi rỗng (`""`) | `TC_FR02_15` | **Covered** |
+| `EP-02-04` | `email` | **IEP** | Email chỉ chứa toàn khoảng trắng (`"     "`) | `TC_FR02_16` | **Covered** |
+| `EP-02-04b`| `email` | **IEP** | Email vượt độ dài tối đa chuẩn RFC 5321 ($Len > 254$) | `TC_FR02_17` | **Covered** |
+| `EP-02-05` | `email` | **IEP** | Email đúng cú pháp nhưng chưa đăng ký trong CSDL | `TC_FR02_19` | **Covered** |
+| `EP-02-06` | `password` | **VEP** | Mật khẩu khớp chính xác với tài khoản trong CSDL | `TC_FR02_01`, `TC_FR02_02`, `TC_FR02_05`, `TC_FR02_24` | **Covered** |
+| `EP-02-07` | `password` | **IEP** | Mật khẩu sai / không khớp CSDL | `TC_FR02_03`, `TC_FR02_04`, `TC_FR02_06`, `TC_FR02_22` | **Covered** |
+| `EP-02-08` | `password` | **IEP** | Mật khẩu để trống / chuỗi rỗng (`""`) | `TC_FR02_20` | **Covered** |
+| `EP-02-09` | `password` | **IEP** | Mật khẩu chỉ chứa toàn khoảng trắng (`"    "`) | `TC_FR02_21` | **Covered** |
+| `EP-02-09b`| `password` | **IEP** | Mật khẩu vượt độ dài an toàn OWASP ASVS ($Len > 255$) | `TC_FR02_23` | **Covered** |
+| `EP-02-10` | `failed_attempts` | **VEP** | Thử sai dưới ngưỡng ($1 \le N \le 2$), nhập đúng $\to$ reset về 0 | `TC_FR02_05` | **Covered** |
+| `EP-02-11` | `failed_attempts` | **IEP** | Số lần sai đạt/vượt ngưỡng ($N \ge 3$) $\to$ kích hoạt khóa | `TC_FR02_06`, `TC_FR02_13` | **Covered** |
+| `EP-02-12` | `failed_attempts` | **IEP** | Chu kỳ khóa lặp lại lần 2 (Second lockout cycle) | `TC_FR02_12` | **Covered** |
+| `EP-02-13a` | `lockout_time` | **IEP** | Trong thời gian tạm khóa ($0 \le t < 30s$) – Thử pass đúng | `TC_FR02_07`, `TC_FR02_09` | **Covered** |
+| `EP-02-13b` | `lockout_time` | **IEP** | Trong thời gian tạm khóa ($0 \le t < 30s$) – Thử pass sai (timer probe) | `TC_FR02_08` | **Covered** |
+| `EP-02-14` | `lockout_time` | **VEP** | Hết thời gian tạm khóa ($t \ge 30s$) – Tự động mở khóa | `TC_FR02_10`, `TC_FR02_11` | **Covered** |
+
+---
+
+#### 5.2. Bảng Độ Bao Phủ Phân Tích Giá Trị Biên (Boundary Value Coverage)
+
+| Boundary ID | Biến / Điều kiện | Điểm biên (Point Type) | Giá trị kiểm thử | Covered by TC ID(s) | Trạng thái (Status) |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `BVA-02-01` | Ngưỡng số lần thử sai ($N \ge 3$) | **On-point** | $N = 3$ (Kích hoạt khóa) | `TC_FR02_06`, `TC_FR02_12` | **Covered** |
+| | | **Off-point** | $N = 2$ (Chưa bị khóa) | `TC_FR02_04` | **Covered** |
+| | | **In-point** | $N = 4$ (Đang bị khóa) | `TC_FR02_13` | **Covered** |
+| `BVA-02-02` | Thời gian tạm khóa ($t \ge 30s$) | **On-point** | $t = 30s$ (Ranh giới mở khóa) | `TC_FR02_10` | **Covered** |
+| | | **Off-point** | $t = 29s$ (Vẫn bị khóa) | `TC_FR02_07`, `TC_FR02_09` | **Covered** |
+| | | **In-point** | $t = 31s$ (Đã mở khóa) | `TC_FR02_11` | **Covered** |
+| `BVA-02-03` | Độ dài mật khẩu min ($Len \ge 8$) | **On-point** | $Len = 8$ (`Pass123!`) | `TC_FR02_02` | **Covered** |
+| | | **Off-point** | $Len = 7$ (`Pass12!`) | `TC_FR02_22` | **Covered** |
+| | | **In-point** | $Len = 9$ (`Test1234!`) | `TC_FR02_01` | **Covered** |
+| `BVA-02-04` | Sequence reset ($N = 1, 2$) | **On-point** | $N = 2 \to$ Đúng (Reset 0) | `TC_FR02_04`, `TC_FR02_05` | **Covered** |
+| | | **Off-point** | $N = 3 \to$ Sai (Khóa 30s) | `TC_FR02_06` | **Covered** |
+| | | **In-point** | $N = 1 \to$ Sai ($N$ tăng 1) | `TC_FR02_03` | **Covered** |
+| `BVA-02-05` | Email max RFC ($Len \le 254$) | **On-point** | $Len = 254$ (Max hợp lệ) | `TC_FR02_18` | **Covered** |
+| | | **Off-point** | $Len = 255$ (Vượt chuẩn RFC) | `TC_FR02_17` | **Covered** |
+| | | **In-point** | $Len = 253$ (Cận biên trong) | `TC_FR02_01` | **Covered** |
+| `BVA-02-06` | Pass max OWASP ($Len \le 255$) | **On-point** | $Len = 255$ (Max an toàn) | `TC_FR02_24` | **Covered** |
+| | | **Off-point** | $Len = 256$ (Vượt ngưỡng an toàn) | `TC_FR02_23` | **Covered** |
+| | | **In-point** | $Len = 254$ (Cận biên trong) | `TC_FR02_01` | **Covered** |
+
+---
+
+#### 5.3. Bảng Tổng Hợp Chỉ Số Độ Bao Phủ (Coverage Summary)
+
+| Chỉ số kiểm thử (Metric) | Tổng số nhận diện | Đã bao phủ (Covered) | Chưa bao phủ / Bị chặn | Tỷ lệ bao phủ (%) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Phân vùng hợp lệ (VEP)** | 4 | 4 | 0 | **100.0%** |
+| **Phân vùng không hợp lệ (IEP)** | 13 | 13 | 0 | **100.0%** |
+| **Giá trị biên (On / Off / In Points)** | 18 | 18 | 0 | **100.0%** |
+| **Tổng số kịch bản kiểm thử (Test Cases)** | 24 | 24 | 0 | **100.0%** |
+| **Bảo đảm Giả định Đơn lỗi (Single-Fault Isolation)** | 13 / 13 IEPs | 13 | 0 | **100.0%** |
 
 ### 2.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT (Step 6 Deliverables)
 - **Khoảng trống AI (AI Gap Analysis):** Khi thiết kế ban đầu, AI thường chỉ tạo trường hợp "sai 3 lần" nhưng quên kịch bản "nhập đúng ở lần thứ 3 thì bộ đếm có được reset hay không", và thường bỏ qua điểm biên thời gian vi sai $\epsilon=1s$ ($29s$ vs $31s$).
