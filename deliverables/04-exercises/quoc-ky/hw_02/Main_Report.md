@@ -143,40 +143,90 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 
 ---
 
-#### 2.4.2 Hồ Sơ Đặc Tả Chi Tiết Các Kịch Bản Kiểm Thử Phức Tạp & Chuyển Trạng Thái (Detailed Test Specification Cards)
+#### 2.4.2 Hồ Sơ Đặc Tả Chi Tiết Từng Kịch Bản Kiểm Thử (Detailed Test Specification Cards for All 24 Test Cases)
 
-Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, Objective, Environment, Test Data, Procedure, Multi-tier Validation Points, Teardown) cho các nhóm kịch bản phức tạp:
+Tuân thủ nghiêm ngặt chuẩn mực [**Comprehensive Guide: How to Write Test Cases**](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Comprehensive%20Guide_%20How%20to%20Write%20Test%20Cases.md) và nguyên tắc **100% Card Coverage** của quy trình Kiểm thử Miền (Domain Testing), dưới đây là hồ sơ đặc tả chi tiết 6 phân đoạn vận hành (Tracking Information, Test Objective, Pre-conditions & Environment, Test Data, Step-by-Step Procedure, Multi-tier Validation Points, Teardown & Clean-up) cho toàn bộ 24 kịch bản kiểm thử độc lập:
 
-##### Nhóm 1: Xác thực Cơ sở & Reset Bộ Đếm Thử Sai (Baseline & Counter Reset Sequence)
+---
+
+##### Phân Nhóm 1: Xác Thực Cơ Sở & Kiểm Chứng Biên Độ Dài Hợp Lệ (Baseline & Valid Length Boundaries)
 
 ###### Test Case `TC_FR02_01`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_01` | **Priority:** High (P1) | **Target Component:** Web Client (`:5173`) & Backend API (`POST /api/login`)
   - **Traceability:** SRS FR-02 (Item 1, 4), API Spec §1.2 | **Coverage IDs:** `EP-02-01`, `EP-02-06`, `BVA-02-03-IN`
+  - **Single-Fault Isolation:** N/A (Positive baseline test case).
 - **2. Test Objective:** Verify user login authentication with valid registered credentials on Web Client & REST API.
 - **3. Pre-conditions & Environment:**
-  - Hệ thống EShop đang chạy (`backend: 3000`, `frontend-web: 5173`).
-  - Tài khoản `test@eshop.com` tồn tại trong SQLite với mật khẩu `Test1234!`.
+  - Hệ thống EShop đang chạy bình thường (`backend: 3000`, `frontend-web: 5173`).
+  - Tài khoản `test@eshop.com` tồn tại trong CSDL SQLite với mật khẩu hợp lệ `Test1234!`.
   - Trạng thái CSDL ban đầu: `login_attempts = 0`, `locked_until = NULL`.
   - Client chưa lưu token đăng nhập (`localStorage.getItem('token') === null`).
 - **4. Test Data:** `email = "test@eshop.com"`, `password = "Test1234!"`
 - **5. Step-by-Step Procedure:**
-  1. Truy cập trình duyệt đến trang đăng nhập `http://localhost:5173/login`.
-  2. Nhập `test@eshop.com` vào ô "Email" (hoặc "Username").
-  3. Nhập `Test1234!` vào ô "Mật khẩu".
+  1. Mở trình duyệt và truy cập trang đăng nhập `http://localhost:5173/login`.
+  2. Nhập `test@eshop.com` vào trường "Email".
+  3. Nhập `Test1234!` vào trường "Mật khẩu".
   4. Nhấn nút "Sign In" (gửi yêu cầu `POST /api/login`).
 - **6. Multi-tier Validation Points (Expected Results):**
-  - *UI / Client:* Trình duyệt tự động chuyển hướng về trang chủ `http://localhost:5173/`. Header hiển thị thông tin người dùng và nút "Đăng xuất". Không xuất hiện thông báo lỗi màu đỏ.
+  - *UI / Client:* Trình duyệt tự động chuyển hướng về trang chủ `http://localhost:5173/`. Header hiển thị thông tin người dùng và nút "Đăng xuất". Không xuất hiện thông báo lỗi.
   - *API / Network:* Endpoint `POST /api/login` trả về mã trạng thái `200 OK`. Response JSON chứa: `message: "Login successful"`, chuỗi `token` định dạng JWT hợp lệ, và đối tượng `user` (`email: "test@eshop.com"`, `role: "user"`).
   - *Client Storage:* `localStorage.getItem('token')` được gán chuỗi JWT không rỗng.
   - *Database State:* Trường `login_attempts` giữ nguyên giá trị `0`, `locked_until` là `NULL`.
-- **7. Teardown & Clean-up:** Xóa `localStorage.removeItem('token')` trên trình duyệt để đưa phiên làm việc về trạng thái ẩn danh.
+- **7. Teardown & Clean-up:** Xóa token khỏi `localStorage` (`localStorage.removeItem('token')`) trên trình duyệt để đưa phiên làm việc về trạng thái ẩn danh.
+
+###### Test Case `TC_FR02_02`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_02` | **Priority:** High (P1) | **Target Component:** Web Client & Backend API
+  - **Traceability:** SRS FR-01/02 (Ràng buộc độ dài mật khẩu tối thiểu 8 ký tự) | **Coverage IDs:** `EP-02-01`, `EP-02-06`, `BVA-02-03-ON` ($Len=8$)
+  - **Single-Fault Isolation:** N/A (Positive boundary test case).
+- **2. Test Objective:** Verify user login authentication with boundary password length exactly 8 chars on Web Client & REST API.
+- **3. Pre-conditions & Environment:**
+  - Tài khoản `test8char@eshop.com` đã được đăng ký trong CSDL SQLite với mật khẩu đúng 8 ký tự `Pass123!`.
+  - Trạng thái CSDL ban đầu: `login_attempts = 0`, `locked_until = NULL`.
+- **4. Test Data:** `email = "test8char@eshop.com"`, `password = "Pass123!"` ($Len = 8$)
+- **5. Step-by-Step Procedure:**
+  1. Truy cập `http://localhost:5173/login`.
+  2. Nhập `test8char@eshop.com` vào trường Email.
+  3. Nhập `Pass123!` vào trường Mật khẩu.
+  4. Nhấn nút "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Đăng nhập thành công, tự động chuyển hướng về trang chủ `/`.
+  - *API / Network:* HTTP Status trả về `200 OK`, response JSON trả về JWT token và thông tin user.
+  - *Client Storage:* `localStorage.getItem('token')` lưu trữ token JWT hợp lệ.
+  - *Database State:* `login_attempts` vẫn bằng `0`, `locked_until` là `NULL`.
+- **7. Teardown & Clean-up:** Xóa token khỏi `localStorage`.
+
+---
+
+##### Phân Nhóm 2: Thử Sai Dưới Ngưỡng, Đơn Lỗi & Phục Hồi Bộ Đếm (Failure Counter & Reset Sequence)
+
+###### Test Case `TC_FR02_03`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_03` | **Priority:** High (P1) | **Target Component:** Backend Failure Counter & Web Client
+  - **Traceability:** SRS FR-02 (Item 2: *"Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm lên đúng 1 đơn vị."*) | **Coverage IDs:** `EP-02-07`, `BVA-02-04-IN` ($N=1$)
+  - **Single-Fault Isolation:** Email hợp lệ chuẩn `test@eshop.com`; mật khẩu sai lần thứ 1 ($N=1$).
+- **2. Test Objective:** Validate consecutive failure counter increment on attempt N=1 (Below lockout threshold).
+- **3. Pre-conditions & Environment:**
+  - Tài khoản `test@eshop.com` ở trạng thái ban đầu (`login_attempts = 0`, `locked_until = NULL`).
+- **4. Test Data:** `email = "test@eshop.com"`, `password = "WrongPass1!"`
+- **5. Step-by-Step Procedure:**
+  1. Truy cập `http://localhost:5173/login`.
+  2. Nhập `test@eshop.com` vào trường Email.
+  3. Nhập mật khẩu sai lần 1: `WrongPass1!`.
+  4. Nhấn nút "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Hiển thị thông báo lỗi đăng nhập thất bại. Form vẫn mở bình thường, không hiện thông báo tài khoản bị khóa.
+  - *API / Network:* HTTP Status code trả về `401 Unauthorized`. Body JSON: `{"error": "Invalid email or password"}` (hoặc tương đương). Không cấp JWT token.
+  - *Database State:* `SELECT login_attempts, locked_until FROM users WHERE email='test@eshop.com'`: `login_attempts` tăng từ 0 lên **đúng 1** đơn vị ($N=1$); `locked_until` vẫn là `NULL`.
+  - *Security:* Thông báo lỗi trung tính, không tiết lộ mật khẩu sai hay email sai.
+- **7. Teardown & Clean-up:** Giữ nguyên trạng thái $N=1$ nếu chuẩn bị thực thi `TC_FR02_04`, hoặc reset về 0 bằng SQL: `UPDATE users SET login_attempts = 0 WHERE email = 'test@eshop.com'`.
 
 ###### Test Case `TC_FR02_04`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_04` | **Priority:** High (P1) | **Target Component:** Backend API & Web Client
   - **Traceability:** SRS FR-02 (Item 2, 3) | **Coverage IDs:** `EP-02-07`, `BVA-02-01-OFF` ($N=2$), `BVA-02-04-ON`
-  - **Single-Fault Isolation:** Email hợp lệ chuẩn `test@eshop.com`; biến lỗi duy nhất là mật khẩu sai lần thứ 2.
+  - **Single-Fault Isolation:** Email hợp lệ chuẩn `test@eshop.com`; biến lỗi duy nhất là mật khẩu sai lần thứ 2 ($N=2$).
 - **2. Test Objective:** Validate consecutive failure counter increment on attempt N=2 (Boundary Off-point before lockout).
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` vừa hoàn thành bước thử sai lần 1 (`login_attempts = 1`, `locked_until = NULL`).
@@ -186,16 +236,17 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
   2. Nhập mật khẩu sai lần 2: `WrongPass2!`.
   3. Nhấn "Sign In" (gửi request `POST /api/login`).
 - **6. Multi-tier Validation Points (Expected Results):**
-  - *UI / Client:* Hiển thị thông báo lỗi cảnh báo đăng nhập thất bại. Form vẫn cho phép tiếp tục nhập, không xuất hiện thông báo tài khoản bị khóa.
+  - *UI / Client:* Hiển thị thông báo lỗi cảnh báo đăng nhập thất bại. Form vẫn cho phép tiếp tục nhập, chưa xuất hiện thông báo tài khoản bị khóa.
   - *API / Network:* HTTP Status code trả về `401 Unauthorized`. Body JSON: `{"error": "Invalid email or password"}` (hoặc tương đương).
   - *Database State:* Truy vấn CSDL `SELECT login_attempts, locked_until FROM users WHERE email='test@eshop.com'`: `login_attempts` tăng từ 1 lên **đúng 2** đơn vị ($N=2$); `locked_until` vẫn là `NULL`.
-  - *Security:* Phản hồi lỗi trung tính, không tiết lộ số lần thử sai còn lại hay mật khẩu sai bao nhiêu ký tự.
+  - *Security:* Phản hồi lỗi trung tính, không tiết lộ số lần thử sai còn lại hay chi tiết nội bộ.
 - **7. Teardown & Clean-up:** Giữ nguyên trạng thái $N=2$ nếu chuẩn bị thực thi `TC_FR02_05` hoặc `TC_FR02_06`.
 
 ###### Test Case `TC_FR02_05`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_05` | **Priority:** High (P1) | **Target Component:** Backend API & Database State
-  - **Traceability:** SRS FR-02 (Quy tắc "liên tiếp" & Reset bộ đếm) | **Coverage IDs:** `EP-02-06`, `EP-02-10`, `BVA-02-04-ON`
+  - **Traceability:** SRS FR-02 (Quy tắc "liên tiếp" & Reset bộ đếm khi đăng nhập đúng) | **Coverage IDs:** `EP-02-06`, `EP-02-10`, `BVA-02-04-ON`
+  - **Single-Fault Isolation:** N/A (Positive recovery sequence).
 - **2. Test Objective:** Verify failure counter reset to 0 upon submitting correct password after N=2 consecutive failures.
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` đang tích lũy đúng 2 lần thử sai ($N=2$ từ `TC_FR02_04`), chưa bị khóa (`locked_until = NULL`).
@@ -211,32 +262,33 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 
 ---
 
-##### Nhóm 2: Kích Hoạt Khóa Tạm Thời & Thăm Dò Trong Thời Gian Khóa (Lockout Activation & Active Window Probes)
+##### Phân Nhóm 3: Kích Hoạt Khóa, Thăm Dò & Ranh Giới Thời Gian Khóa 30 Giây (Lockout Cycle & Timing Boundaries)
 
 ###### Test Case `TC_FR02_06`
 - **1. Tracking Information:**
-  - **TC ID:** `TC_FR02_06` | **Priority:** Critical (P0) | **Target Component:** Backend Security & Lockout Timer
-  - **Traceability:** SRS FR-02 (Item 2, 3) | **Coverage IDs:** `EP-02-07`, `EP-02-11`, `BVA-02-01-ON` ($N=3$), `BVA-02-04-OFF`
-  - **Single-Fault Isolation:** Email chuẩn `test@eshop.com`; mật khẩu sai liên tiếp lần thứ 3.
+  - **TC ID:** `TC_FR02_06` | **Priority:** Critical (P0) | **Target Component:** Backend Security & Lockout Guard
+  - **Traceability:** SRS FR-02 (Item 2, 3: *"Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây"*) | **Coverage IDs:** `EP-02-07`, `EP-02-11`, `BVA-02-01-ON` ($N=3$), `BVA-02-04-OFF`
+  - **Single-Fault Isolation:** Email chuẩn `test@eshop.com`; mật khẩu sai liên tiếp lần thứ 3 ($N=3$).
 - **2. Test Objective:** Validate account lockout activation upon reaching threshold N=3 consecutive failures (Boundary On-point).
 - **3. Pre-conditions & Environment:**
-  - Tài khoản `test@eshop.com` đang ở mốc $N=2$ lần sai liên tiếp.
+  - Tài khoản `test@eshop.com` đang ở mốc $N=2$ lần sai liên tiếp (`login_attempts = 2`).
 - **4. Test Data:** `email = "test@eshop.com"`, `password = "WrongPass3!"`
 - **5. Step-by-Step Procedure:**
   1. Nhập mật khẩu sai lần thứ 3: `WrongPass3!`.
-  2. Ghi nhận thời điểm gửi request: $T_{trigger} = \text{Date.now()}$.
+  2. Ghi nhận thời điểm gửi request: $T_{trigger} = 	ext{Date.now()}$.
   3. Nhấn "Sign In" (gửi `POST /api/login`).
 - **6. Multi-tier Validation Points (Expected Results):**
   - *UI / Client:* Hiển thị thông báo tài khoản bị tạm khóa (ví dụ: *"Tài khoản đã bị tạm khóa do nhập sai nhiều lần"*).
   - *API / Network:* Trả về HTTP `401 Unauthorized` hoặc `403 Forbidden`. Không trả về JWT token.
-  - *Database State:* `login_attempts` đạt mốc **3** ($N=3$); trường `locked_until` được gán giá trị thời gian bằng đúng **$T_{trigger} + 30\text{ giây}$** (sai số cho phép $\le 1$ giây của môi trường demo, trích dẫn SRS: *"tài khoản bị tạm khóa 30 giây"*).
+  - *Database State:* `login_attempts` đạt mốc **3** ($N=3$); trường `locked_until` được gán giá trị thời gian bằng đúng **$T_{trigger} + 30	ext{ giây}$** (sai số cho phép $\le 1$ giây của môi trường demo, trích dẫn SRS: *"tài khoản bị tạm khóa 30 giây"*).
   - *Security:* Thông báo lỗi không để lộ chi tiết cấu hình nội bộ hoặc thời gian khóa chính xác nếu hệ thống áp dụng thông báo an toàn.
-- **7. Teardown & Clean-up:** Duy trì mốc khóa để tiếp tục thực hiện chuỗi test `TC_FR02_07` $\to$ `TC_FR02_11`.
+- **7. Teardown & Clean-up:** Duy trì mốc khóa để tiếp tục thực hiện chuỗi test `TC_FR02_07` $	o$ `TC_FR02_11`.
 
 ###### Test Case `TC_FR02_07`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_07` | **Priority:** High (P1) | **Target Component:** Lockout Guard Middleware
   - **Traceability:** SRS FR-02 (Item 3) | **Coverage IDs:** `EP-02-13a`, `BVA-02-02-OFF` (Active window $0 \le t < 30s$)
+  - **Single-Fault Isolation:** Trạng thái tài khoản đang bị tạm khóa; thử đăng nhập bằng mật khẩu đúng.
 - **2. Test Objective:** Validate login rejection when submitting correct password during lockout period at elapsed time t=15s.
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` đang trong thời gian bị tạm khóa từ `TC_FR02_06`.
@@ -249,13 +301,14 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 - **6. Multi-tier Validation Points (Expected Results):**
   - *UI / Client:* Giao diện tiếp tục báo lỗi tài khoản đang bị khóa; tuyệt đối không cho phép đăng nhập hoặc chuyển hướng.
   - *API / Network:* HTTP Status code trả về **`403 Forbidden`**. JSON Error chứa thông báo về việc tài khoản đang bị tạm khóa.
-  - *Database State:* CSDL giữ nguyên mốc `locked_until` ban đầu; tài khoản không được mở khóa sớm.
+  - *Database State:* CSDL giữ nguyên mốc `locked_until` ban đầu; tài khoản không được mở khóa sớm dù nhập đúng mật khẩu.
 - **7. Teardown & Clean-up:** Tiếp tục giữ khóa để thực thi test `TC_FR02_08`.
 
 ###### Test Case `TC_FR02_08`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_08` | **Priority:** High (P1) | **Target Component:** Lockout Timer Integrity Probe
   - **Traceability:** SRS FR-02 | **Coverage IDs:** `EP-02-13b` (State Probe theo yêu cầu kiểm thử miền)
+  - **Single-Fault Isolation:** Mật khẩu sai trong khi tài khoản đang trong trạng thái tạm khóa.
 - **2. Test Objective:** Validate lockout timer non-reset behavior when submitting incorrect password at elapsed time t=15s.
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` đang bị khóa; thời gian trôi qua: $t = 15s$.
@@ -268,30 +321,28 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
   - *Database State:* **Không được phép cập nhật lại `locked_until` thành $t + 30s$ mới!** Mốc hết hạn khóa `locked_until` phải giữ nguyên mốc $T_{trigger} + 30s$ ban đầu. (Hệ thống không được phạt cộng dồn đè lên timer hiện có trừ khi có đặc tả rõ ràng).
 - **7. Teardown & Clean-up:** Giữ nguyên để kiểm tra điểm biên hết hạn 30s ở các TC tiếp theo.
 
----
-
-##### Nhóm 3: Kiểm Chứng Ranh Giới Hết Hạn Tạm Khóa & Mở Khóa Tự Động (Boundary Unlock Transitions)
-
 ###### Test Case `TC_FR02_09`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_09` | **Priority:** High (P1) | **Target Component:** Lockout Boundary Precision Check
   - **Traceability:** SRS FR-02 (Thời gian khóa 30 giây) | **Coverage IDs:** `EP-02-13a`, `BVA-02-02-OFF` ($t = 29s$)
+  - **Single-Fault Isolation:** Thời điểm thử đăng nhập nằm sát biên mở khóa 1 giây ($30 - 1 = 29s$).
 - **2. Test Objective:** Validate lockout rejection enforcement at boundary offset t=29s (1s before unlock threshold).
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` bị khóa tại thời điểm $T_0$.
   - Đợi đồng hồ đếm đúng 29 giây ($t = 29s$).
 - **4. Test Data:** `email = "test@eshop.com"`, `password = "Test1234!"`
 - **5. Step-by-Step Procedure:**
-  1. Tại đúng mốc $t = 29s$ (sai số $< 200\text{ms}$ bằng automated script hoặc quan sát timestamp), gửi request đăng nhập.
+  1. Tại đúng mốc $t = 29s$ (sai số $< 200	ext{ms}$ bằng automated script hoặc quan sát timestamp), gửi request đăng nhập với mật khẩu đúng `Test1234!`.
 - **6. Multi-tier Validation Points (Expected Results):**
   - *API / Network:* HTTP Status code trả về **`403 Forbidden`**.
-  - *Database State:* `Date.now() < new Date(user.locked_until)` vẫn thỏa mãn $\to$ Hệ thống chặn yêu cầu xác thực.
+  - *Database State:* `Date.now() < new Date(user.locked_until)` vẫn thỏa mãn $	o$ Hệ thống chặn yêu cầu xác thực.
 - **7. Teardown & Clean-up:** Chờ tiếp 1 giây để thực hiện `TC_FR02_10`.
 
 ###### Test Case `TC_FR02_10`
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_10` | **Priority:** Critical (P0) | **Target Component:** Lockout Boundary On-point Transition
   - **Traceability:** SRS FR-02 (Thời gian khóa 30 giây) | **Coverage IDs:** `EP-02-14`, `BVA-02-02-ON` ($t = 30s$)
+  - **Single-Fault Isolation:** N/A (Positive boundary transition).
 - **2. Test Objective:** Verify automatic account unlock transition at exact boundary expiration t=30s.
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` bị khóa tại $T_0$.
@@ -309,6 +360,7 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_11` | **Priority:** Normal (P2) | **Target Component:** Post-lockout Stability
   - **Traceability:** SRS FR-02 | **Coverage IDs:** `EP-02-14`, `BVA-02-02-IN` ($t = 31s$)
+  - **Single-Fault Isolation:** N/A (Positive post-boundary test case).
 - **2. Test Objective:** Verify login authentication success at boundary offset t=31s (1s after unlock threshold).
 - **3. Pre-conditions & Environment:**
   - Đã trôi qua 31 giây kể từ thời điểm tài khoản bị khóa ($t = 31s > 30s$).
@@ -324,6 +376,7 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR02_12` | **Priority:** Medium (P2) | **Target Component:** Lockout Policy Verification
   - **Traceability:** SRS FR-02 (Chu kỳ khóa lặp lại) | **Coverage IDs:** `EP-02-12`, `BVA-02-01-ON`
+  - **Single-Fault Isolation:** Thử sai liên tiếp 3 lần trong chu kỳ khóa thứ 2.
 - **2. Test Objective:** Validate lockout duration non-escalation behavior on repeated second lockout cycle.
 - **3. Pre-conditions & Environment:**
   - Tài khoản `test@eshop.com` vừa kết thúc chu kỳ khóa thứ nhất và đã được giải tỏa hoàn toàn.
@@ -336,9 +389,65 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
   - *Ghi chú đánh giá:* Nếu SUT tự động tăng lên 60s hay 180s mà không có trong SRS, đây là một điểm sai lệch cần ghi nhận vào Bug Report.
 - **7. Teardown & Clean-up:** Chạy script khôi phục CSDL SQLite: `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE email = 'test@eshop.com'`.
 
+###### Test Case `TC_FR02_13`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_13` | **Priority:** Medium (P2) | **Target Component:** Lockout State Guard
+  - **Traceability:** SRS FR-02 (Item 3) | **Coverage IDs:** `EP-02-11`, `BVA-02-01-IN` ($N=4$)
+  - **Single-Fault Isolation:** Tài khoản đang trong trạng thái bị tạm khóa; gửi tiếp lần thử sai thứ 4 ($N=4$).
+- **2. Test Objective:** Validate rejection of additional login attempt N=4 while already in lockout state.
+- **3. Pre-conditions & Environment:**
+  - Tài khoản `test@eshop.com` vừa đạt ngưỡng khóa 3 lần thử sai ($N=3$, `locked_until` đang hiệu lực).
+- **4. Test Data:** `email = "test@eshop.com"`, `password = "WrongPass4!"`
+- **5. Step-by-Step Procedure:**
+  1. Tại giao diện đăng nhập, tiếp tục nhập mật khẩu sai: `WrongPass4!`.
+  2. Nhấn nút "Sign In" (gửi `POST /api/login`).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Hiển thị thông báo tài khoản đang bị khóa; form tiếp tục chặn truy cập.
+  - *API / Network:* HTTP Status trả về `403 Forbidden` (hoặc `401 Unauthorized` có thông báo locked). Không sinh session/token.
+  - *Database State:* Trạng thái khóa được giữ nguyên; thời gian hết hạn khóa `locked_until` không bị xáo trộn.
+- **7. Teardown & Clean-up:** Chờ hết thời gian khóa hoặc reset CSDL bằng câu lệnh: `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE email = 'test@eshop.com'`.
+
 ---
 
-##### Nhóm 4: Phân Vùng Đơn Lỗi & Biên Chuỗi Độ Dài (Single-Fault & String Length Boundaries)
+##### Phân Nhóm 4: Phân Vùng Đơn Lỗi & Ranh Giới Biên Trường Email (Email Single-Fault & RFC Boundaries)
+
+###### Test Case `TC_FR02_14`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_14` | **Priority:** High (P1) | **Target Component:** Web Client HTML5 Validation & API Input Guard
+  - **Traceability:** SRS FR-02 (Item 5: *"Trường email phải dùng `type="email"` (có validate HTML5 format)"*) | **Coverage IDs:** `EP-02-02` (Email cú pháp không hợp lệ)
+  - **Single-Fault Isolation:** Mật khẩu hợp lệ chuẩn `Test1234!`; biến lỗi duy nhất là email thiếu ký tự `@`.
+- **2. Test Objective:** Validate rejection of invalid email format lacking '@' symbol on Web Client and REST API.
+- **3. Pre-conditions & Environment:** Form đăng nhập mở tại `http://localhost:5173/login`.
+- **4. Test Data:** `email = "testeshop.com"`, `password = "Test1234!"`
+- **5. Step-by-Step Procedure:**
+  1. Nhập `testeshop.com` (thiếu `@`) vào ô Email.
+  2. Nhập `Test1234!` vào ô Mật khẩu.
+  3. Nhấn "Sign In".
+  4. (Bypass test): Gửi trực tiếp payload JSON `{email: "testeshop.com", password: "Test1234!"}` tới `POST /api/login`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Trình duyệt hiển thị popup/tooltip HTML5 chuẩn: *"Please include an '@' in the email address..."*. Request HTTP không được phát đi từ form.
+  - *API / Network (nếu bypass UI):* Backend trả về `400 Bad Request` hoặc `422 Unprocessable Entity` với thông báo định dạng email không hợp lệ.
+  - *Database State:* Không có bản ghi nào bị thay đổi; bộ đếm thất bại của user không bị ảnh hưởng.
+- **7. Teardown & Clean-up:** Xóa nội dung trong trường email.
+
+###### Test Case `TC_FR02_15`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_15` | **Priority:** High (P1) | **Target Component:** Web Client Form & API Required Validation
+  - **Traceability:** SRS FR-02 (Item 1, 5) | **Coverage IDs:** `EP-02-03` (Email để trống)
+  - **Single-Fault Isolation:** Mật khẩu hợp lệ `Test1234!`; biến lỗi duy nhất là trường email rỗng.
+- **2. Test Objective:** Validate rejection of empty email field on Web Client & REST API.
+- **3. Pre-conditions & Environment:** Form đăng nhập mở tại `http://localhost:5173/login`.
+- **4. Test Data:** `email = ""` (chuỗi rỗng), `password = "Test1234!"`
+- **5. Step-by-Step Procedure:**
+  1. Để trống trường Email.
+  2. Nhập `Test1234!` vào trường Mật khẩu.
+  3. Nhấn "Sign In".
+  4. Gửi request trực tiếp qua Postman/cURL với `{email: "", password: "Test1234!"}` tới `POST /api/login`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Thuộc tính `required` của HTML5 kích hoạt cảnh báo *"Please fill out this field"*; nút submit bị chặn.
+  - *API / Network:* Backend trả về HTTP `400 Bad Request` với message báo thiếu trường bắt buộc (`"Email is required"` hoặc tương đương).
+  - *Database State:* Không có truy vấn SQL ghi nào được thực thi.
+- **7. Teardown & Clean-up:** Không yêu cầu hành động teardown.
 
 ###### Test Case `TC_FR02_16`
 - **1. Tracking Information:**
@@ -355,34 +464,164 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 - **6. Multi-tier Validation Points (Expected Results):**
   - *UI / Client:* Trình duyệt kích hoạt HTML5 validation yêu cầu điền trường hợp lệ hoặc form tự trim khoảng trắng và báo lỗi định dạng email. Không cho phép gửi request hợp lệ.
   - *API / Network (nếu bypass UI):* Backend trả về HTTP `400 Bad Request` hoặc `401 Unauthorized`.
+  - *Database State:* Không làm biến đổi CSDL.
 - **7. Teardown & Clean-up:** Xóa trắng ô input.
 
-###### Test Case `TC_FR02_17` & `TC_FR02_18` (Biên Độ Dài Email Chuẩn RFC 5321)
+###### Test Case `TC_FR02_17`
 - **1. Tracking Information:**
-  - **TC ID:** `TC_FR02_17` (Off-point: 255 chars) & `TC_FR02_18` (On-point: 254 chars)
-  - **Traceability:** RFC 5321 §4.5.3.1.3 & SRS FR-02 | **Coverage IDs:** `BVA-02-05-OFF`, `BVA-02-05-ON`, `EP-02-04b`
-  - **Single-Fault Isolation:** Giữ mật khẩu hợp lệ cơ sở; chỉ biến đổi độ dài chuỗi email.
-- **2. Test Objective:** Validate boundary rejection at Len=255 and acceptance at Len=254 for email inputs according to RFC 5321 standards.
-- **3. Test Data:**
-  - `TC_FR02_18` (On-point): Email dài đúng 254 ký tự: `"a"*243 + "@eshop.com"`.
-  - `TC_FR02_17` (Off-point): Email dài đúng 255 ký tự: `"a"*244 + "@eshop.com"`.
-- **4. Multi-tier Validation Points (Expected Results):**
-  - Với chuỗi 254 ký tự (`TC_FR02_18`): Hệ thống chấp nhận chuỗi đầu vào để xác thực (HTTP 200 nếu đã seed tài khoản, hoặc HTTP 401 do chưa có user nhưng không bị lỗi tràn buffer/bad request format).
-  - Với chuỗi 255 ký tự (`TC_FR02_17`): Hệ thống từ chối do vượt quá độ dài chuẩn email quốc tế RFC 5321 (HTTP 400 Bad Request hoặc chặn trên giao diện); không gây lỗi sập server `500 Internal Server Error`.
-- **5. Teardown & Clean-up:** Xóa sạch dữ liệu test.
+  - **TC ID:** `TC_FR02_17` | **Priority:** Medium (P2) | **Target Component:** Backend RFC Parser & Input Sanity
+  - **Traceability:** RFC 5321 §4.5.3.1.3 & SRS FR-02 | **Coverage IDs:** `EP-02-04b`, `BVA-02-05-OFF` ($Len=255$)
+  - **Single-Fault Isolation:** Mật khẩu chuẩn `Test1234!`; biến lỗi duy nhất là email vượt cận trên RFC 5321 (255 ký tự).
+- **2. Test Objective:** Validate boundary rejection of email input exceeding RFC 5321 max length at Len=255.
+- **3. Pre-conditions & Environment:** Mở form đăng nhập hoặc công cụ API client (cURL/Postman).
+- **4. Test Data:** `email = "a"*244 + "@eshop.com"` ($Len = 255$ chars), `password = "Test1234!"`
+- **5. Step-by-Step Procedure:**
+  1. Tạo chuỗi email dài đúng 255 ký tự: 244 ký tự `'a'` nối với `'@eshop.com'`.
+  2. Nhập email vào form đăng nhập hoặc gửi payload qua `POST /api/login`.
+  3. Quan sát mã phản hồi HTTP và hành vi của server.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Input tự động giới hạn độ dài (nếu có `maxlength`) hoặc báo lỗi chuỗi email không hợp lệ.
+  - *API / Network:* HTTP Status code trả về `400 Bad Request` hoặc `422 Unprocessable Entity`; **tuyệt đối không gây sập hệ thống (500 Internal Server Error)**.
+  - *Database State:* Không ghi nhận chuỗi quá dài gây lỗi tràn bộ đệm vào CSDL.
+- **7. Teardown & Clean-up:** Xóa dữ liệu test.
 
-###### Test Case `TC_FR02_22` & `TC_FR02_23` (Biên Độ Dài Mật Khẩu Min 8 & Max 255)
+###### Test Case `TC_FR02_18`
 - **1. Tracking Information:**
-  - **TC ID:** `TC_FR02_22` (Min Off-point: 7 chars) & `TC_FR02_23` (Max Off-point: 256 chars)
-  - **Traceability:** SRS FR-01/02 & OWASP ASVS | **Coverage IDs:** `BVA-02-03-OFF` ($Len=7$), `BVA-02-06-OFF` ($Len=256$)
-- **2. Test Objective:** Validate rejection of sub-minimum 7-char password and graceful handling of 256-char password exceeding OWASP limits.
-- **3. Test Data:**
-  - `TC_FR02_22`: `email = "test@eshop.com"`, `password = "Pass12!"` (7 ký tự, thiếu 1 ký tự so với quy tắc mật khẩu mạnh).
-  - `TC_FR02_23`: `email = "test@eshop.com"`, `password = "P"*254 + "1!"` (256 ký tự).
-- **4. Multi-tier Validation Points (Expected Results):**
-  - Với mật khẩu 7 ký tự (`TC_FR02_22`): HTTP 401 Unauthorized, tăng bộ đếm sai thêm 1 đơn vị.
-  - Với mật khẩu 256 ký tự (`TC_FR02_23`): Hệ thống xử lý an toàn, phản hồi trong thời gian $\le 1$ giây, không làm treo thread Node.js do tính toán băm chuỗi cực đại (chống Hash DoS).
-- **5. Teardown & Clean-up:** Khôi phục `login_attempts = 0` nếu cần.
+  - **TC ID:** `TC_FR02_18` | **Priority:** Medium (P2) | **Target Component:** Backend RFC Compatibility & Web Client
+  - **Traceability:** RFC 5321 §4.5.3.1.3 & SRS FR-02 | **Coverage IDs:** `EP-02-01`, `BVA-02-05-ON` ($Len=254$)
+  - **Single-Fault Isolation:** N/A (Positive boundary test case).
+- **2. Test Objective:** Verify acceptance of email with maximum allowable RFC 5321 length of exactly 254 chars.
+- **3. Pre-conditions & Environment:**
+  - Chuỗi email 254 ký tự: `"a"*243 + "@eshop.com"`.
+  - Tài khoản với email trên đã được tạo trong CSDL SQLite hoặc hệ thống cho phép xử lý xác thực bình thường.
+- **4. Test Data:** `email = "a"*243 + "@eshop.com"` ($Len = 254$ chars), `password = "Test1234!"`
+- **5. Step-by-Step Procedure:**
+  1. Nhập email 254 ký tự vào trường Email.
+  2. Nhập mật khẩu đúng `Test1234!`.
+  3. Nhấn "Sign In" (gửi `POST /api/login`).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Giao diện tiếp nhận chuỗi 254 ký tự bình thường, không bị cắt cụt hay vỡ layout.
+  - *API / Network:* Backend chấp nhận chuỗi định dạng RFC 5321; trả về HTTP `200 OK` (nếu đã seed tài khoản) hoặc `401 Unauthorized` (nếu chưa có trong DB nhưng cú pháp hợp lệ). Không trả về `400 Bad Request` do lỗi độ dài.
+  - *Database State:* Xử lý an toàn trên trường dữ liệu chuỗi của CSDL.
+- **7. Teardown & Clean-up:** Xóa tài khoản test 254 ký tự nếu đã tạo trong CSDL.
+
+###### Test Case `TC_FR02_19`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_19` | **Priority:** High (P1) | **Target Component:** Backend Authentication & User Enumeration Defense
+  - **Traceability:** SRS FR-02 (Item 3: *"Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."*) | **Coverage IDs:** `EP-02-05` (Email không tồn tại trong DB)
+  - **Single-Fault Isolation:** Mật khẩu chuẩn `Test1234!`; biến lỗi duy nhất là email chưa từng được đăng ký trong CSDL.
+- **2. Test Objective:** Validate generic error response when submitting non-existent email to prevent user enumeration.
+- **3. Pre-conditions & Environment:** Tài khoản `nonexistent_user_99@eshop.com` hoàn toàn không tồn tại trong CSDL SQLite.
+- **4. Test Data:** `email = "nonexistent_user_99@eshop.com"`, `password = "Test1234!"`
+- **5. Step-by-Step Procedure:**
+  1. Mở trang đăng nhập `http://localhost:5173/login`.
+  2. Nhập `nonexistent_user_99@eshop.com` vào trường Email.
+  3. Nhập `Test1234!` vào trường Mật khẩu.
+  4. Nhấn "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Hiển thị thông báo lỗi chung (ví dụ: *"Invalid email or password"* hoặc *"Sai email hoặc mật khẩu"*). Không hiển thị thông báo phân biệt như *"Email không tồn tại"*.
+  - *API / Network:* HTTP Status code trả về `401 Unauthorized`. Body phản hồi sử dụng cùng một thông điệp lỗi như khi nhập sai mật khẩu của tài khoản tồn tại.
+  - *Security:* Chống lộ thông tin nhận diện tài khoản (User Enumeration Defense) theo chuẩn OWASP ASVS và SRS FR-02.
+  - *Database State:* Không thêm hoặc sửa đổi bản ghi nào trong bảng `users`.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+##### Phân Nhóm 5: Phân Vùng Đơn Lỗi & Ranh Giới Biên Trường Mật Khẩu (Password Single-Fault & OWASP Boundaries)
+
+###### Test Case `TC_FR02_20`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_20` | **Priority:** High (P1) | **Target Component:** Web Client Form & API Required Validation
+  - **Traceability:** SRS FR-02 (Item 1) | **Coverage IDs:** `EP-02-08` (Mật khẩu để trống)
+  - **Single-Fault Isolation:** Email hợp lệ chuẩn `test@eshop.com`; biến lỗi duy nhất là để trống mật khẩu.
+- **2. Test Objective:** Validate rejection of empty password field on Web Client & REST API.
+- **3. Pre-conditions & Environment:** Form đăng nhập mở tại `http://localhost:5173/login`.
+- **4. Test Data:** `email = "test@eshop.com"`, `password = ""` (chuỗi rỗng)
+- **5. Step-by-Step Procedure:**
+  1. Nhập email hợp lệ: `test@eshop.com`.
+  2. Để trống ô Mật khẩu (`""`).
+  3. Nhấn nút "Sign In".
+  4. Gửi request trực tiếp: `POST /api/login` với body `{email: "test@eshop.com", password: ""}`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Thuộc tính `required` của trường password kích hoạt cảnh báo *"Please fill out this field"*; chặn không gửi request.
+  - *API / Network:* Backend trả về HTTP `400 Bad Request` với message `"Password is required"`.
+  - *Database State:* CSDL không thay đổi; `login_attempts` không tăng.
+- **7. Teardown & Clean-up:** Xóa nội dung trên form.
+
+###### Test Case `TC_FR02_21`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_21` | **Priority:** Medium (P2) | **Target Component:** Backend Password Validation
+  - **Traceability:** SRS FR-02 | **Coverage IDs:** `EP-02-09` (Mật khẩu toàn khoảng trắng)
+  - **Single-Fault Isolation:** Email hợp lệ chuẩn `test@eshop.com`; mật khẩu chỉ chứa dấu cách.
+- **2. Test Objective:** Validate rejection of password containing only whitespace characters on Web Client & API.
+- **3. Pre-conditions & Environment:** Tài khoản `test@eshop.com` có mật khẩu thực tế là `Test1234!`.
+- **4. Test Data:** `email = "test@eshop.com"`, `password = "    "` (4 dấu cách)
+- **5. Step-by-Step Procedure:**
+  1. Nhập `test@eshop.com` vào trường Email.
+  2. Nhập 4 khoảng trắng `"    "` vào trường Mật khẩu.
+  3. Nhấn "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Hiển thị thông báo đăng nhập thất bại.
+  - *API / Network:* HTTP Status trả về `401 Unauthorized` (không khớp băm mật khẩu); không cấp JWT token.
+  - *Database State:* `login_attempts` tăng thêm 1 đơn vị do xác thực thất bại.
+- **7. Teardown & Clean-up:** Reset `login_attempts = 0` nếu cần.
+
+###### Test Case `TC_FR02_22`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_22` | **Priority:** High (P1) | **Target Component:** Backend Authentication & Password Boundary
+  - **Traceability:** SRS FR-01/02 (Ràng buộc tối thiểu 8 ký tự) | **Coverage IDs:** `EP-02-07`, `BVA-02-03-OFF` ($Len=7$)
+  - **Single-Fault Isolation:** Email chuẩn `test@eshop.com`; mật khẩu sai do thiếu 1 ký tự dưới ngưỡng biên ($8 - 1 = 7$).
+- **2. Test Objective:** Validate rejection of password below minimum 8 chars length at boundary offset Len=7.
+- **3. Pre-conditions & Environment:** Tài khoản `test@eshop.com` yêu cầu mật khẩu chuẩn `Test1234!`.
+- **4. Test Data:** `email = "test@eshop.com"`, `password = "Pass12!"` ($Len = 7$)
+- **5. Step-by-Step Procedure:**
+  1. Nhập `test@eshop.com` vào ô Email.
+  2. Nhập mật khẩu 7 ký tự: `Pass12!`.
+  3. Nhấn "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Báo lỗi đăng nhập không thành công.
+  - *API / Network:* HTTP Status code trả về `401 Unauthorized`. Body thông báo sai thông tin xác thực.
+  - *Database State:* `login_attempts` tăng thêm 1 đơn vị.
+- **7. Teardown & Clean-up:** Reset `login_attempts = 0` nếu cần thiết.
+
+###### Test Case `TC_FR02_23`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_23` | **Priority:** High (P1) | **Target Component:** Backend Password Hasher & DoS Resilience
+  - **Traceability:** OWASP ASVS §2.1.7 & SRS FR-02 | **Coverage IDs:** `EP-02-09b`, `BVA-02-06-OFF` ($Len=256$)
+  - **Single-Fault Isolation:** Email chuẩn `test@eshop.com`; mật khẩu vượt quá ngưỡng an toàn tối đa 255 ký tự ($255 + 1 = 256$).
+- **2. Test Objective:** Validate graceful handling of password exceeding OWASP max length at boundary offset Len=256 without CPU DoS.
+- **3. Pre-conditions & Environment:** Hệ thống backend đang chạy bình thường; mở client API (cURL hoặc Postman).
+- **4. Test Data:** `email = "test@eshop.com"`, `password = "P"*254 + "1!"` ($Len = 256$ chars)
+- **5. Step-by-Step Procedure:**
+  1. Tạo chuỗi mật khẩu 256 ký tự.
+  2. Gửi request `POST /api/login` với body `{email: "test@eshop.com", password: "<256_chars>"}`.
+  3. Đo thời gian phản hồi của backend.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* Backend xử lý an toàn (thời gian phản hồi $\le 1.5$ giây); trả về HTTP `400 Bad Request` (chuỗi vượt độ dài tối đa) hoặc `401 Unauthorized`.
+  - *Security / Resilience:* Tuyệt đối không gây nghẽn luồng xử lý Node.js (Hash DoS Attack mitigation); không làm crash server (`500 Internal Server Error`).
+  - *Database State:* Không ghi nhận chuỗi bất thường vào SQLite.
+- **7. Teardown & Clean-up:** Không cần teardown.
+
+###### Test Case `TC_FR02_24`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR02_24` | **Priority:** Medium (P2) | **Target Component:** Backend Authentication & Boundary Capacity
+  - **Traceability:** OWASP ASVS §2.1.7 & SRS FR-02 | **Coverage IDs:** `EP-02-06`, `BVA-02-06-ON` ($Len=255$)
+  - **Single-Fault Isolation:** N/A (Positive boundary test case).
+- **2. Test Objective:** Verify acceptance of password with maximum safe OWASP length of exactly 255 chars.
+- **3. Pre-conditions & Environment:**
+  - Tài khoản `testmaxpass@eshop.com` được cấu hình trong CSDL SQLite với mật khẩu đúng 255 ký tự: `"P"*253 + "1!"`.
+  - Trạng thái tài khoản bình thường (`login_attempts = 0`, `locked_until = NULL`).
+- **4. Test Data:** `email = "testmaxpass@eshop.com"`, `password = "P"*253 + "1!"` ($Len = 255$ chars)
+- **5. Step-by-Step Procedure:**
+  1. Truy cập `http://localhost:5173/login`.
+  2. Nhập `testmaxpass@eshop.com` vào trường Email.
+  3. Nhập mật khẩu 255 ký tự vào trường Mật khẩu.
+  4. Nhấn nút "Sign In".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client:* Đăng nhập thành công, chuyển hướng về trang chủ `/`.
+  - *API / Network:* HTTP Status code trả về `200 OK`, cấp chuỗi JWT token hợp lệ.
+  - *Database State:* Hệ thống băm mật khẩu 255 ký tự và so khớp với chuỗi hash trong CSDL thành công. `login_attempts` giữ nguyên `0`.
+- **7. Teardown & Clean-up:** Xóa token khỏi `localStorage`.
 
 ### 2.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ (Step 5 Deliverables)
 
