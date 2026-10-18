@@ -8,7 +8,7 @@
     "instructor": "Dr. Lam Quang Vu / MSc. Tran Thi Bich Hanh",
     "default_model": "Google Antigravity (Gemini 3.8 Flash)"
   },
-  "last_updated": "2026-10-18T18:34:05.799538+07:00",
+  "last_updated": "2026-10-18T23:38:53.888488+07:00",
   "sessions": {
     "4594b723-f6c5-4754-9499-f2e6f717b947": {
       "conversation_id": "4594b723-f6c5-4754-9499-f2e6f717b947",
@@ -3072,6 +3072,331 @@
           "fix_for_artifact_id": null
         }
       ]
+    },
+    "7951c94e-8136-4c6c-81cb-660a6bf9dcfe": {
+      "conversation_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+      "session_start_local": "2026-10-18 21:36:48 +0700",
+      "turns": [
+        {
+          "global_id": 51,
+          "conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+          "turn_index": 1,
+          "created_at_utc": "2026-10-18T14:36:48Z",
+          "created_at_local": "2026-10-18 21:36:48 +0700",
+          "created_at_display": "21:36 18/10/2026 (+0700)",
+          "prompt": "I have just finished designing the test cases for four features of the EShop app.  Let's move on to the testing phase, following the workflow we outlined earlier. Before we start testing these four feature, please give me a detailed implementation plan for this phase.",
+          "assistant_responses": [
+            "I have created a detailed implementation plan for **Phase 3: Testing Execution & Defect Reporting** in the artifact [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md).\n\n### Key Highlights & Decisions for Your Review\n\n1. **Test Scope & Architecture:**\n   - Covers execution of all **97 designed test cases** across the 4 selected features (13 for **FR-02**, 20 for **FR-07**, 36 for **FR-17**, and 28 for **Mobile FR-20 & FR-10**).\n   - Combines an automated multi-tier verification harness (`tests/run_phase3_tests.js` for REST API, state machine transitions, and SQLite assertions) with targeted UI-level verification on Frontend Web (`:5173`), Admin (`:5174`), and Mobile App logic.\n   - Specifically probes all **candidate defect hypotheses** formulated in Step 6 (e.g., account lockout bypass, verbose error disclosures, cart quantity $1 \\to 0$ confirmation dialog absence, coupon negative amounts, and mobile cancel order state bypass on `shipping`).\n\n2. **Open Questions & Preferences:**\n   - **Database Baseline Isolation:** We plan to take a snapshot backup (`database.sqlite.baseline`) and reset or seed known states so tests are repeatable. Let me know if you would like any specific test accounts or presets preserved.\n   - **GitHub Issues Reporting:** For defect logging, would you prefer us to generate ready-to-post issue templates with screenshots locally first, or do you have the GitHub CLI (`gh`) configured to submit them directly to [ttbhanh/eshop-sut/issues](https://github.com/ttbhanh/eshop-sut/issues)?\n\nPlease review the plan in [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md) and let me know if you would like any adjustments or if we should proceed with execution."
+          ],
+          "tool_calls": [
+            {
+              "name": "list_dir",
+              "summary": "List workspace contents"
+            },
+            {
+              "name": "run_command",
+              "summary": "Git status and history"
+            },
+            {
+              "name": "view_file",
+              "summary": "View domain-testing-value-analysis skill"
+            },
+            {
+              "name": "find_by_name",
+              "summary": "Find files in seminar repository"
+            },
+            {
+              "name": "view_file",
+              "summary": "View HW02 WORKFLOW.md"
+            },
+            {
+              "name": "view_file",
+              "summary": "View HW02 guide and summary"
+            },
+            {
+              "name": "view_file",
+              "summary": "View Main_Report.md start"
+            },
+            {
+              "name": "grep_search",
+              "summary": "Grep headings in Main_Report.md"
+            },
+            {
+              "name": "view_file",
+              "summary": "View end of Main_Report.md"
+            },
+            {
+              "name": "view_file",
+              "summary": "View Bug_Report.md"
+            },
+            {
+              "name": "view_file",
+              "summary": "View HW02 README.md"
+            },
+            {
+              "name": "list_dir",
+              "summary": "List SUT-EShop contents"
+            },
+            {
+              "name": "view_file",
+              "summary": "View run_servers script"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check backend server status"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check git status"
+            },
+            {
+              "name": "run_command",
+              "summary": "Git commit log"
+            },
+            {
+              "name": "view_file",
+              "summary": "View HW02 instructions start"
+            },
+            {
+              "name": "view_file",
+              "summary": "View HW02 instructions end"
+            },
+            {
+              "name": "view_file",
+              "summary": "View AI Audit Report start"
+            },
+            {
+              "name": "run_command",
+              "summary": "List backend directory files"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check running server processes"
+            },
+            {
+              "name": "run_command",
+              "summary": "Curl backend products endpoint"
+            },
+            {
+              "name": "run_command",
+              "summary": "Curl admin frontend"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check port 5174"
+            },
+            {
+              "name": "run_command",
+              "summary": "List existing screenshots"
+            },
+            {
+              "name": "write_to_file",
+              "summary": "Create Phase 3 implementation plan"
+            }
+          ],
+          "classification": "artifact",
+          "artifact_id": 28,
+          "fix_for_artifact_id": null
+        },
+        {
+          "global_id": 52,
+          "conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+          "turn_index": 2,
+          "created_at_utc": "2026-10-18T14:57:34Z",
+          "created_at_local": "2026-10-18 21:57:34 +0700",
+          "created_at_display": "21:57 18/10/2026 (+0700)",
+          "prompt": "I want a detailed instruction for each feature testing. Let's them based on the main report that follows all the requirements below:\n- Cover all the test cases of the feature\n- How to verify the result\n- How to update the main report\n- At each bug test case, what I need to provide you to fill the content of Bug_Report? Should we need to create a skill?",
+          "assistant_responses": [
+            "Dưới đây là **bản hướng dẫn chi tiết toàn diện cho giai đoạn Thực thi Kiểm thử (Testing Execution Phase)** của cả 4 chức năng, bám sát toàn bộ dữ liệu đã thiết kế trong [`Main_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Main_Report.md), chuẩn **ISTQB FL v4.0** và tiêu chí chấm điểm **FIT@HCMUS HW02**.\n\n---\n\n## 1. Hướng Dẫn Kiểm Thử Chi Tiết Cho Từng Chức Năng (Cover 100% Test Cases)\n\n### Chức Năng A: FR-02 – Đăng Nhập & Khóa Tài Khoản (24 Test Cases)\n\n*Mục tiêu:* Kiểm thử cơ chế xác thực, chuỗi reset bộ đếm thử sai, kích hoạt khóa tạm thời $N \\ge 3$, ranh giới thời gian phạt $30s$ ($29s, 30s, 31s$), và các phân vùng đơn lỗi (Single-fault) trên email/mật khẩu.\n\n| Nhóm Kiểm Thử | Danh sách TC ID | Thao tác thực hiện & Dữ liệu đầu vào | Điểm kiểm chứng (Verification Oracle) |\n| :--- | :--- | :--- | :--- |\n| **Xác thực Cơ sở & Biên Mật khẩu** | `TC_FR02_01`<br/>`TC_FR02_02`<br/>`TC_FR02_18`<br/>`TC_FR02_24` | 1. Mở `http://localhost:5173/login`<br/>2. Đăng nhập với `test@eshop.com` / `Test1234!` ($Len=9$).<br/>3. Thử mật khẩu biên đúng 8 ký tự (`Pass123!`).<br/>4. Thử email biên 254 ký tự và password biên 255 ký tự. | **UI:** Thông báo \"Đăng nhập thành công\", chuyển hướng `/`.<br/>**API:** `POST /api/login` trả về HTTP `200 OK`, có `token` JWT.<br/>**Storage:** Token được lưu trong `localStorage.token`. |\n| **Chuỗi Đếm Thử Sai & Reset** | `TC_FR02_03`<br/>`TC_FR02_04`<br/>`TC_FR02_05` | 1. Nhập sai lần 1 (`WrongPass1!`) $\\to$ quan sát.<br/>2. Nhập sai lần 2 (`WrongPass2!`) $\\to$ quan sát.<br/>3. Nhập đúng mật khẩu (`Test1234!`) $\\to$ đăng nhập. | **Lần 1 & 2:** HTTP `401 Unauthorized`. Chưa khóa.<br/>**Lần 3 (đúng):** HTTP `200 OK`, đăng nhập thành công. Bộ đếm `login_attempts` trong CSDL được reset về 0. |\n| **Kích Hoạt Khóa Tạm Thời ($N=3$)** | `TC_FR02_06`<br/>`TC_FR02_13` | 1. Nhập sai liên tiếp 3 lần trên cùng tài khoản `test@eshop.com`.<br/>2. Thử tiếp lần thứ 4 ($N=4$) khi đang bị khóa. | **Lần 3:** Hệ thống kích hoạt khóa 30s. HTTP `401` hoặc `403`.<br/>**Lần 4:** HTTP `403 Forbidden`, từ chối đăng nhập. *(Kiểm chứng giả thuyết HYP-02-01: Nếu hệ thống không khóa $\\to$ **BUG**)*. |\n| **Ranh Giới Thời Gian Khóa 30s** | `TC_FR02_07`<br/>`TC_FR02_08`<br/>`TC_FR02_09`<br/>`TC_FR02_10`<br/>`TC_FR02_11`<br/>`TC_FR02_12` | 1. Tại $t=15s$, nhập đúng pass $\\to$ kiểm tra có mở sớm không.<br/>2. Tại $t=15s$, nhập sai pass $\\to$ kiểm tra timer có bị reset lại 30s không.<br/>3. Tại $t=29s$ (sát biên), nhập đúng pass $\\to$ kiểm tra còn khóa không.<br/>4. Tại $t=30s$ & $t=31s$, nhập đúng pass $\\to$ kiểm tra tự động mở khóa.<br/>5. Sau khi mở khóa, sai tiếp 3 lần $\\to$ kiểm tra chu kỳ khóa lần 2. | **$t=15s, 29s$:** HTTP `403 Forbidden`, từ chối đăng nhập.<br/>**$t=30s, 31s$:** Tự động giải phóng tạm khóa, HTTP `200 OK`.<br/>**Chu kỳ 2:** Khóa đúng 30s (không bị tăng lũy tiến thời gian). |\n| **Phân Vùng Đơn Lỗi (Single-Fault)** | `TC_FR02_14` đến `TC_FR02_17`<br/>`TC_FR02_19` đến `TC_FR02_23` | Giữ 1 trường hợp lệ, trường còn lại mang giá trị lỗi:<br/>- Email thiếu `@`, email rỗng `\"\"`, email toàn khoảng trắng, email $>254$ ký tự.<br/>- Email không tồn tại (`notfound@eshop.com`).<br/>- Password rỗng `\"\"`, password toàn khoảng trắng, password 7 ký tự (`Pass12!`), password $>255$ ký tự. | **Client UI:** HTML5 validate chặn submit trước khi gửi.<br/>**Backend API:** HTTP `400 Bad Request` hoặc `401 Unauthorized`.<br/>**Security:** Không tiết lộ chi tiết lỗi (ví dụ không báo \"Mật khẩu sai\" mà chỉ báo \"Email hoặc mật khẩu không chính xác\"). *(Nếu lộ $\\to$ **BUG-FR02-02**)*. |\n\n---\n\n### Chức Năng B: FR-07 – Giỏ Hàng (20 Test Cases)\n\n*Mục tiêu:* Kiểm thử thao tác giỏ hàng, biên số lượng ($0, 1, 2, \\text{stock}$), quy tắc chuyển đổi $1 \\to 0$, tính toán thành tiền ($Price \\times Quantity$) và kiểm tra nhãn hiển thị.\n\n| Nhóm Kiểm Thử | Danh sách TC ID | Thao tác thực hiện & Dữ liệu đầu vào | Điểm kiểm chứng (Verification Oracle) |\n| :--- | :--- | :--- | :--- |\n| **Thêm Sản Phẩm & Trùng Lặp** | `TC_FR07_01`<br/>`TC_FR07_02`<br/>`TC_FR07_03`<br/>`TC_FR07_04` | 1. Giỏ rỗng $\\to$ thêm SP 1 (iPhone 15, 30tr, $Q=1$).<br/>2. Thêm tiếp SP 1 lần nữa.<br/>3. Gửi request thêm SP `id=9999` (không tồn tại) và `id=\"abc\"`. | **TC01:** Tạo đúng 1 dòng trong giỏ, Thành tiền = 30.000.000 ₫.<br/>**TC02:** Số lượng tăng $1 \\to 2$ trên dòng đó (không sinh dòng mới), Thành tiền = 60.000.000 ₫.<br/>**TC03/04:** Báo lỗi không tìm thấy SP hoặc HTTP `400`. |\n| **Ràng Buộc & Biên Ô Nhập Số Lượng** | `TC_FR07_05` đến `TC_FR07_11` | Trên trang giỏ hàng (`/cart`), sửa trực tiếp ô số lượng:<br/>- Sửa thành $Q=0$, $Q=-1$, chuỗi rỗng `\"\"`, ký tự chữ `\"abc\"`, số thập phân $Q=1.5$, số cực lớn $10^9$.<br/>- Gửi API thêm giỏ hàng thiếu trường `quantity`. | **UI/Input:** Chặn không cho nhập số âm, số thập phân, ký tự chữ; không làm xuất hiện lỗi `NaN`.<br/>**API:** HTTP `400 Bad Request`. Không lưu số lượng âm hoặc $0$ vào giỏ. |\n| **Tính Toán & Thao Tác Nút Bấm** | `TC_FR07_12`<br/>`TC_FR07_13`<br/>`TC_FR07_14` | 1. Có SP1 ($Q=2$, giá 30tr) + SP2 ($Q=1$, giá 6tr).<br/>2. Bấm nút `-` khi đang có $Q=2$.<br/>3. Bấm nút `-` khi đang có $Q=1$ (Ranh giới chuyển đổi $1 \\to 0$). | **TC12:** Tổng tiền = 66.000.000 ₫ ($\\sum Subtotal$).<br/>**TC13:** $Q$ giảm về 1, Thành tiền giảm về 30tr.<br/>**TC14:** Nút `-` bị disabled HOẶC bật dialog xác nhận xóa. *(Nếu tự động xóa mất sản phẩm không hỏi $\\to$ **BUG-FR07-01**)*. |\n| **Xóa Sản Phẩm & Trạng Thái Giỏ Rỗng** | `TC_FR07_15`<br/>`TC_FR07_16`<br/>`TC_FR07_17`<br/>`TC_FR07_19` | 1. Bấm nút \"Xóa\" tại SP1 $\\to$ Bấm \"Đồng ý\".<br/>2. Bấm nút \"Xóa\" $\\to$ Bấm \"Hủy bỏ\".<br/>3. Xóa sản phẩm cuối cùng trong giỏ ($Items: 1 \\to 0$). | **TC15/19:** Bắt buộc phải có hộp thoại xác nhận trước khi xóa.<br/>**TC16:** Bấm Hủy bỏ thì sản phẩm vẫn giữ nguyên.<br/>**TC17:** Bắt buộc hiển thị cả **hình minh họa** và thông báo giỏ hàng rỗng. |\n| **Nhãn Giao Diện & Điều Hướng** | `TC_FR07_18`<br/>`TC_FR07_20` | 1. Quan sát nhãn tổng tiền ở footer trang giỏ hàng.<br/>2. Bấm nút \"Tiếp tục mua sắm\". | **TC18:** Nhãn bắt buộc phải là `\"Tổng cộng\"`. *(Nếu hiển thị `\"Tổng tạm tính\"` $\\to$ **BUG-FR07-02**)*.<br/>**TC20:** Chuyển hướng về `/`, giỏ hàng bảo toàn nguyên vẹn. |\n\n---\n\n### Chức Năng C: FR-17 – Quản Lý Mã Giảm Giá (36 Test Cases)\n\n*Mục tiêu:* Kiểm thử CRUD Coupon trên Admin, các bất đẳng thức toán học (`min_order_amount >= 0`, `max_uses_per_user >= 1`, `discount_value > 0`), biên `percent` ($0\\%, 1\\%, 100\\%, 101\\%$), biên ngày `expired_at`, bảo mật phân quyền và áp dụng tại Checkout.\n\n| Nhóm Kiểm Thử | Danh sách TC ID | Thao tác thực hiện & Dữ liệu đầu vào | Điểm kiểm chứng (Verification Oracle) |\n| :--- | :--- | :--- | :--- |\n| **CRUD Hợp Lệ & Biên Cho Phép** | `TC_FR17_01` đến `TC_FR17_09` | 1. Đăng nhập Admin (`admin@eshop.com` / `Admin1234!`), vào trang Mã Giảm Giá (`:5174/coupons`).<br/>2. Tạo mã `percent` ($10\\%$, $1\\%$, $100\\%$).<br/>3. Tạo mã `fixed` (50.000 ₫).<br/>4. Tạo mã biên: `min_order_amount = 0`, `max_uses = 1`, `code` 1 ký tự (`\"A\"`).<br/>5. Xem danh sách và Xóa mã vừa tạo. | **UI:** Tạo thành công, xuất hiện trên bảng.<br/>**API:** HTTP `200` hoặc `201 Created`. `DELETE` trả về HTTP `200`.<br/>**DB:** Bản ghi được thêm vào / xóa khỏi bảng `coupons`. |\n| **Từ Chối Vi Phạm Ràng Buộc (Single-Fault)** | `TC_FR17_10` đến `TC_FR17_21` | Trên form tạo Coupon, lần lượt nhập các giá trị sai đơn lỗi:<br/>- Mã trùng lặp với mã đã có trong DB (`SAVE10`).<br/>- Mã rỗng `\"\"`, mã toàn khoảng trắng.<br/>- `type = \"free_shipping\"` (sai enum).<br/>- `val = 0`, `val = -10`, `val = 101%` (vượt 100%).<br/>- `min_order_amount = -1` (Biên âm Off-point).<br/>- `max_uses_per_user = 0` hoặc `-1`.<br/>- `expired_at` là ngày trong quá khứ (`2020-01-01`). | **UI:** Báo lỗi validation trên từng ô nhập.<br/>**API:** HTTP `400 Bad Request` hoặc `409 Conflict`.<br/>*(Kiểm chứng giả thuyết: Nếu hệ thống cho phép tạo mã trùng lặp $\\to$ **BUG-FR17-02**; nếu chấp nhận `min_order_amount = -1` $\\to$ **BUG-FR17-01**)*. |\n| **Bảo Mật & Phân Quyền (RBAC)** | `TC_FR17_22`<br/>`TC_FR17_23`<br/>`TC_FR17_35` | 1. Gửi request tạo/xóa coupon không kèm Token.<br/>2. Gửi request với Token của user thường (`role = 'user'`).<br/>3. Tạo mã chứa thẻ HTML `<script>alert('XSS')</script>`. | **TC22:** HTTP `401 Unauthorized`.<br/>**TC23:** HTTP `403 Forbidden` (SEC-03).<br/>**TC35:** HTML escaping (SEC-04), hiển thị dạng text an toàn, không chạy script. |\n| **Xóa Mã Bất Thường (Resource IDs)** | `TC_FR17_24`<br/>`TC_FR17_25`<br/>`TC_FR17_26` | Gửi request `DELETE /api/admin/coupons/:id` với `:id = 9999` (không tồn tại), `:id = -1`, `:id = \"abc\"`. | HTTP `404 Not Found` hoặc `400 Bad Request`. Không gây crash tiến trình server (500). |\n| **Áp Dụng Coupon Tại Checkout** | `TC_FR17_27` đến `TC_FR17_34`<br/>`TC_FR17_36` | 1. Đơn 1.000.000 ₫ áp mã 10% $\\to$ giảm 100k, thanh toán 900k.<br/>2. Đơn 1.000.000 ₫ áp mã 50k $\\to$ giảm 50k, thanh toán 950k.<br/>3. Mã yêu cầu min 300k: Đơn 299.999 ₫ bị từ chối; Đơn 300.000 ₫ được chấp nhận.<br/>4. Áp mã hết hạn $\\to$ từ chối.<br/>5. Mã giới hạn 1 lần: dùng lần 2 bị từ chối.<br/>6. Đơn 30k áp mã fixed 50k $\\to$ tổng tiền về 0 ₫ (không âm). | **API/UI:** Tính toán chiết khấu chính xác theo công thức.<br/>**Validation:** Từ chối khi vi phạm C1-C5 (min order, hết hạn, hết lượt).<br/>**Financial safety:** Không làm phát sinh tổng tiền âm. |\n\n---\n\n### Chức Năng D: Mobile FR-20 & FR-10 – Hủy Đơn Hàng & State Machine (28 Test Cases)\n\n*Mục tiêu:* Kiểm thử chuyển đổi trạng thái đơn hàng (Order State Machine), kiểm thử giao diện Mobile vs Backend API, kiểm chứng lỗ hổng Client-side-only bypass trên trạng thái `shipping`, tính bất biến của trạng thái kết thúc (`canceled` và `delivered`), và các an toàn Mobile UI.\n\n| Nhóm Kiểm Thử | Danh sách TC ID | Thao tác thực hiện & Dữ liệu đầu vào | Điểm kiểm chứng (Verification Oracle) |\n| :--- | :--- | :--- | :--- |\n| **Chuyển Trạng Thái Hợp Lệ** | `TC_MOB_01`<br/>`TC_MOB_02`<br/>`TC_MOB_03`<br/>`TC_MOB_04` | 1. User hủy đơn ở trạng thái `pending` (Đơn 101).<br/>2. User hủy đơn ở trạng thái `confirmed` (Đơn 102).<br/>3. Hủy đơn có ID biên $1$ và $2$. | **API:** HTTP `200 OK`.<br/>**DB:** `orders.status` cập nhật `'canceled'`.<br/>**UI Mobile:** Nhãn chuyển sang \"Đã hủy\". *(Nếu hủy thành công nhưng giao diện không tự refresh $\\to$ **BUG-FR20-02**)*. |\n| **Chặn Hủy Trạng Thái Bị Cấm (State Machine)** | `TC_MOB_05`<br/>`TC_MOB_06`<br/>`TC_MOB_07`<br/>`TC_MOB_08` | 1. Đơn 103 đang ở `shipping`: Trên Mobile nút Hủy bị ẩn $\\to$ Dùng curl/Postman gửi trực tiếp `PUT /api/orders/103/cancel` kèm JWT User 1.<br/>2. Gửi request hủy đơn đã giao (`delivered`) và đơn đã hủy trước đó (`canceled`). | **TC05 (Trọng tâm):** Theo SRS FR-10, đơn `shipping` cấm hủy $\\to$ Phải trả về HTTP `400 Bad Request`. *(Nếu backend trả `200 OK` và đổi trạng thái sang `canceled` $\\to$ **BUG-FR20-01: Lỗ hổng Bypass Client-side**)*.<br/>**TC06/07:** HTTP `400 Bad Request`. |\n| **Biên Tham Số & ID Bất Thường** | `TC_MOB_09` đến `TC_MOB_16` | Gửi `PUT /api/orders/:id/cancel` với `:id = 0`, `:id = -1`, `:id = \"abc\"`, `:id = 101.5`, `:id = 2^63` (tràn số), `:id = 99999` (không tồn tại), body chèn trường lạ `{\"status\": \"delivered\"}`. | HTTP `404 Not Found` hoặc `400 Bad Request`. Server không bị crash exception. Body lạ không được ghi đè trạng thái. |\n| **Bảo Mật Xác Thực & Tấn Công IDOR** | `TC_MOB_17` đến `TC_MOB_22`<br/>`TC_MOB_26` | 1. Gửi request không có token, token giả mạo, token hết hạn.<br/>2. **Tấn công IDOR:** Dùng token User 1 để hủy đơn của User 2.<br/>3. Thử tấn công SQL Injection vào `:id`. | **TC17:** HTTP `401 Unauthorized`.<br/>**TC18/19:** HTTP `403 Forbidden`.<br/>**TC20 (IDOR):** HTTP `404 Not Found` (không tìm thấy đơn của user). Đơn của User 2 giữ nguyên `pending`.<br/>**TC22:** CSDL an toàn, không rò rỉ dữ liệu. |\n| **Trải Nghiệm & An Toàn Mobile UI** | `TC_MOB_23`<br/>`TC_MOB_24`<br/>`TC_MOB_25` | 1. Trên màn hình Mobile, bấm vào nút đỏ \"Hủy đơn\".<br/>2. Chạm nhanh liên tiếp 2 lần (Double-tap $< 200ms$) vào nút Hủy.<br/>3. Gửi 2 request hủy đồng thời (Race condition). | **TC23:** Bắt buộc phải hiện `Alert.alert` hỏi xác nhận. *(Nếu bấm là hủy ngay không hỏi $\\to$ Defect)*.<br/>**TC24:** Có debounce, không phát 2 request trùng.<br/>**TC25:** Exactly-once (chỉ 1 request thành công). |\n| **Quan Sát Tác Dụng Phụ (Side-effects)** | `TC_MOB_27`<br/>`TC_MOB_28` | 1. Hủy đơn hàng có chứa 2 sản phẩm A $\\to$ kiểm tra bảng `products.stock`.<br/>2. Hủy đơn hàng có áp dụng mã coupon $\\to$ kiểm tra xem mã có khôi phục lượt dùng không. | Ghi nhận quan sát thực tế (Observation Oracle) để làm rõ câu hỏi mở trong báo cáo. |\n\n---\n\n## 2. Phương Pháp Kiểm Chứng Kết Quả (How to Verify)\n\nChúng ta áp dụng mô hình **Kiểm chứng Đa tầng (Multi-tier Verification)** để không bỏ sót bất kỳ lỗi ngầm nào:\n\n```mermaid\nflowchart LR\n    A[\"Tầng Giao Diện (UI Layer)<br/>Form, Alert, Toast, Button state\"] --> B[\"Tầng Mạng (Network / API)<br/>HTTP Status (200, 400, 401, 403, 404), Body\"]\n    B --> C[\"Tầng Cơ Sở Dữ Liệu (SQLite)<br/>Bảng users, cart, coupons, orders\"]\n    C --> D[\"Đánh giá Pass / Fail<br/>Đối chiếu với Đặc tả SRS gốc\"]\n```\n\n1. **Tầng Giao diện (UI/Client):**\n   - Mở Chrome DevTools (F12) $\\to$ tab Console & Elements.\n   - Kiểm tra HTML5 validation tooltip, thông báo toast popup, dialog xác nhận (`window.confirm` hoặc `Alert.alert`).\n2. **Tầng API & Network:**\n   - Kiểm tra tab Network trong DevTools hoặc xem kết quả trả về từ terminal (curl / automated runner).\n   - So sánh mã HTTP status: đúng duy nhất 1 mã mong đợi (ví dụ `401` khi thiếu token, `403` khi bị cấm/khóa, `400` khi vi phạm dữ liệu/state machine).\n3. **Tầng Cơ sở Dữ liệu (Database SQLite):**\n   - Truy vấn trực tiếp file SQLite bằng lệnh command:\n     ```bash\n     sqlite3 SUT-EShop/backend/database.sqlite \"SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';\"\n     sqlite3 SUT-EShop/backend/database.sqlite \"SELECT id, status FROM orders WHERE id=103;\"\n     sqlite3 SUT-EShop/backend/database.sqlite \"SELECT id, code, discount_value, min_order_amount FROM coupons;\"\n     ```\n   - Xác nhận: Dữ liệu thực sự thay đổi khi `Pass` và **hoàn toàn nguyên vẹn (rollback/unchanged)** khi gặp kịch bản `Negative`.\n4. **Công Cụ Tự Động Hóa Hỗ Trợ:**\n   - Tôi sẽ tạo kịch bản `tests/run_phase3_tests.js` để tự động hóa 100% các ca kiểm thử tầng API và CSDL cho bạn, in ra bảng kết quả màu sắc kèm mã lỗi cụ thể chỉ trong vài giây.\n\n---\n\n## 3. Cách Cập Nhật Báo Cáo Chính (`Main_Report.md`)\n\nSau khi chạy xong các test cases của mỗi chức năng, `Main_Report.md` được cập nhật theo quy tắc sau:\n\n1. **Cập nhật cột \"Trạng thái\" trong Ma trận truy vết (Overview Matrix):**\n   - Đổi giá trị `*Chờ thực thi*` thành một trong hai trạng thái:\n     - **`Pass`**: Kết quả thực tế khớp 100% với đặc tả SRS.\n     - **`Fail (BUG-ID)`**: Phát hiện sai lệch so với SRS (kèm mã định danh Bug, ví dụ `Fail (BUG-FR02-01)`).\n2. **Cập nhật Bảng Tổng kết Thực thi (Section 6.2 - Execution Log):**\n   - Điền số liệu tổng hợp cuối cùng:\n     - Tổng số Test Cases đã thiết kế: **108**\n     - Số Test Cases ĐẠT (Passed): *(ví dụ: 100)*\n     - Số Test Cases THẤT BẠI (Failed): *(ví dụ: 8)*\n     - Số Test Cases BỊ CHẶN (Blocked): **0**\n\n---\n\n## 4. Khi Phát Hiện Bug: Bạn Cần Cung Cấp Gì Cho Tôi Để Điền `Bug_Report.md`?\n\nKhi một Test Case bị `Fail` (sai lệch so với SRS), bạn chỉ cần gửi cho tôi các thông tin cốt lõi sau (hoặc tôi có thể tự động bắt qua script chạy test):\n\n### Thông tin bạn cung cấp:\n1. **TC ID phát hiện lỗi:** (Ví dụ: `TC_FR02_06` hoặc `TC_MOB_05`).\n2. **Hành vi thực tế bạn quan sát được (Actual Result):**\n   - *Ví dụ:* \"Nhập sai lần 3 mà hệ thống vẫn báo sai mật khẩu như bình thường, không hề khóa 30 giây.\"\n   - Hoặc: \"Gửi PUT cancel trên đơn shipping mà backend vẫn trả về HTTP 200 và đổi trạng thái sang canceled.\"\n3. **Ảnh chụp màn hình minh chứng (Screenshot):**\n   - Chụp màn hình lỗi (hoặc màn hình console/terminal) và lưu vào thư mục `SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/screenshots/` (ví dụ `bug_fr02_01_actual.png`).\n4. **Mã GitHub Issue đã tạo trên repo nhóm (nếu có):**\n   - *Ví dụ:* `Issue #12: https://github.com/ttbhanh/eshop-sut/issues/12`. *(Nếu bạn chưa tạo, tôi sẽ tạo sẵn template issue hoàn chỉnh để bạn chỉ việc copy/paste lên GitHub).*\n\n### Tôi sẽ tự động điền đầy đủ hồ sơ Bug 7 mục theo chuẩn ISTQB vào `Bug_Report.md`:\n- **Bug ID** chuẩn mực (`BUG-FR02-01`, `BUG-FR07-01`,...).\n- **Tiêu đề Bug chuyên nghiệp** theo chuẩn công nghiệp (`[FR-02][Web] Account lockout mechanism fails to trigger...`).\n- **Mức độ nghiêm trọng (Severity)** & **Mức ưu tiên (Priority)** (Critical / Major / Medium).\n- **Tiền điều kiện & Dữ liệu kiểm thử cụ thể**.\n- **Các bước tái hiện (Steps to Reproduce)** từng bước 1, 2, 3...\n- **Đối chiếu Kết quả mong đợi (Trích dẫn nguyên văn SRS)** vs **Kết quả thực tế**.\n- **Chèn link ảnh chụp màn hình**.\n- **Phân tích nguyên nhân gốc rễ trong mã nguồn (Root Cause Analysis)** (chỉ rõ tên file và dòng code bị lỗi trong `server.js` hoặc component frontend) kèm đoạn code sửa mẫu (**Proposed Fix**).\n\n---\n\n## 5. Trả Lời Câu Hỏi: \"Chúng Ta Có Cần Tạo Thêm Một Skill Không?\"\n\n### Đánh giá theo Tiêu chí chấm điểm HW02:\n- **Yêu cầu đề bài (Mục 7 & Mục 15):** Điểm tối đa cho mục **Agent Skills** là **10 điểm**.\n- **Hiện trạng:** Bạn đã xây dựng và tích hợp **2 Agent Skills** hoàn chỉnh:\n  1. `domain-testing-value-analysis`: Hỗ trợ toàn bộ quy trình thiết kế Black-box Test 6 bước (EP, BVA, Test Case, Traceability, Gap Analysis).\n  2. `hw-ai-audit`: Tự động hóa kiểm toán và trích xuất lịch sử tương tác AI theo chuẩn `[AI-02]`.\n\n### Đề xuất giải pháp (Khuyến nghị):\n> [!TIP]\n> **Khuyến nghị: NÊN tạo thêm một script / sub-tool chuyên dụng `hw-bug-logger` (hoặc mở rộng thành 1 skill nhỏ)** với các lý do sau:\n> 1. **Tạo ấn tượng vượt trội (Beyond Expectation):** Việc có một Agent Skill/CLI chuyên dụng cho việc **Thực thi & Tự động ghi nhận Defect (Defect Logging & GitHub Issue Formatting)** sẽ giúp bài nộp của bạn trở thành bài mẫu xuất sắc nhất (10/10 điểm kỹ năng mà không ai có thể trừ điểm).\n> 2. **Tiết kiệm thời gian tối đa:** Thay vì phải gõ tay từng file Markdown khi bắt được bug, skill này sẽ nhận `TC ID` + ảnh chụp $\\to$ tự động tra cứu mã nguồn SUT, phân tích nguyên nhân tại file code cụ thể, sinh vé lỗi 7 mục vào `Bug_Report.md`, sinh nội dung Issue cho GitHub, và tự động đổi `Main_Report.md` từ `*Chờ thực thi*` sang `Fail (BUG-ID)`.\n\n---\n\n## 6. Kế Hoạch Bắt Đầu Ngay\n\nNếu bạn đồng ý với hướng dẫn trên, quy trình thực hiện sẽ như sau:\n1. **Bước 1:** Khởi động Backend (:3000), Web (:5173), Admin (:5174) và tạo bản snapshot CSDL `database.sqlite.baseline`.\n2. **Bước 2:** Chạy kiểm thử **Feature A (FR-02)** trước tiên (13 kịch bản chính và các kịch bản biên đơn lỗi) $\\to$ đối chiếu SRS $\\to$ xác minh 2 lỗi của FR-02 (`BUG-FR02-01` và `BUG-FR02-02`).\n3. **Bước 3:** Cập nhật `Main_Report.md`, ghi nhận `Bug_Report.md`, và commit Git theo đúng quy định.\n\nBạn có muốn bắt đầu ngay với **Feature A: FR-02** không?"
+          ],
+          "tool_calls": [
+            {
+              "name": "view_file",
+              "summary": "View FR-02 Overview Matrix"
+            },
+            {
+              "name": "view_file",
+              "summary": "View FR-07 Overview Matrix"
+            },
+            {
+              "name": "grep_search",
+              "summary": "Find Section 4.4.1"
+            },
+            {
+              "name": "view_file",
+              "summary": "View FR-17 Overview Matrix"
+            },
+            {
+              "name": "grep_search",
+              "summary": "Find Section 5.4.1"
+            },
+            {
+              "name": "view_file",
+              "summary": "View FR-20 Overview Matrix"
+            }
+          ],
+          "classification": "student_fix",
+          "artifact_id": null,
+          "fix_for_artifact_id": 28
+        },
+        {
+          "global_id": 53,
+          "conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+          "turn_index": 3,
+          "created_at_utc": "2026-10-18T15:56:58Z",
+          "created_at_local": "2026-10-18 22:56:58 +0700",
+          "created_at_display": "22:56 18/10/2026 (+0700)",
+          "prompt": "Let’s create a skill to support me throughout the testing phase. It should meet these requirements:\n- Act as my testing partner for one feature at a time.\n- Guide me through the feature’s test cases one by one. For each test case, provide its preconditions, steps, test data, and expected result. I will execute it and report the actual result. Review each actual result and update the test report accordingly.\n- Compare each actual result I provide with the expected result, and tell me whether the test passed, failed, or is blocked.\n- For each confirmed bug, create a GitHub issue using a consistent template. Please provide the template.\n- Do not consider testing complete until all test cases for the feature have been executed and their results recorded.\n- Suggest improvements to make the testing process more effective.\nFirst, create a detailed implementation plan for this skill based on these requirements.",
+          "assistant_responses": [
+            "I have created a detailed implementation plan for the **`test-execution-partner`** skill in the artifact [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md).\n\n### Key Decisions & Highlights for Your Review\n\n1. **Interactive Pair-Testing Protocol:**\n   - Guides you through one feature at a time, presenting one test case per turn with its preconditions, step-by-step procedure, concrete test data, multi-tier expected result (UI / API / DB), and ready-to-run verification snippets (`curl` / `sqlite3`).\n   - Compares your observed actual results against the SRS specification to determine `PASS`, `FAIL`, or `BLOCKED`.\n   - Automatically synchronizes outcomes into the 3,100+ line [`Main_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Main_Report.md).\n\n2. **Standardized Defect & GitHub Issue Management:**\n   - Includes a standardized 8-section GitHub Issue and Defect Ticket template (metadata, preconditions, steps to reproduce, test data, expected vs. actual, screenshots/logs, and code root-cause analysis with proposed fix).\n   - Generates ready-to-post GitHub Issue Markdown (and optionally supports `gh issue create` CLI submission).\n   - Automatically appends formatted defect tickets to [`Bug_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Bug_Report.md).\n\n3. **Enforced 100% Completion Gatekeeper:**\n   - Tracks a live progress bar at each step (e.g., `[14/24] (58.3%)`) and actively prevents switching features or wrapping up until all designed test cases for the active feature have been recorded.\n\n4. **Testing Improvements:**\n   - Introduces a Python report-sync helper (`sync_reports.py`) to safely update Markdown tables without formatting errors.\n   - Adds a one-second database snapshot/reset utility (`db_helper.sh`) to prevent test side-effect contamination.\n   - Provides an optional Fast-Forward API pre-check mode for headless boundary/format test cases to maximize efficiency.\n\nPlease review the plan in [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md). Once you approve, I will begin implementing the skill files and helper utilities."
+          ],
+          "tool_calls": [
+            {
+              "name": "write_to_file",
+              "summary": "Write test-execution-partner implementation plan"
+            }
+          ],
+          "classification": "artifact",
+          "artifact_id": 29,
+          "fix_for_artifact_id": null
+        },
+        {
+          "global_id": 54,
+          "conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+          "turn_index": 4,
+          "created_at_utc": "2026-10-18T16:28:04Z",
+          "created_at_local": "2026-10-18 23:28:04 +0700",
+          "created_at_display": "23:28 18/10/2026 (+0700)",
+          "prompt": "proceed the implementation plan with\n- gh for create issue\n- each testing process per feature which works on separate chat.",
+          "assistant_responses": [
+            "The **`test-execution-partner`** Agent Skill has been implemented and verified. All details, test outputs, and templates are documented in the [Walkthrough](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/walkthrough.md).\n\n---\n\n### What Has Been Created & Configured\n\n1. **Skill Definition & Protocol ([`SKILL.md`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/SKILL.md)):**\n   - Configured globally in `~/.gemini/config/skills/test-execution-partner/`.\n   - **One Feature Per Chat:** Tracks progress dynamically from disk using `sync_reports.py status --feature <ID>` so you can run each feature in a separate chat without state conflicts.\n   - **Step-by-Step Delivery:** Presents one test case at a time with preconditions, numbered steps, concrete test data, multi-tier expected result (UI, API, DB), and quick-run `curl` / `sqlite` snippets.\n   - **Rigorous Verdicts:** Compares your reported actual result against the SRS specification to declare **`PASS`**, **`FAIL` (Defect)**, or **`BLOCKED`**.\n   - **100% Completion Gatekeeper:** Actively prevents switching or finishing a feature until all test cases have recorded outcomes.\n\n2. **GitHub Issue & Defect Templates:**\n   - **GitHub Issue Template ([`github_issue_template.md`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/resources/github_issue_template.md)):** Standardized 8-section Markdown format (Metadata, Preconditions, Steps to Reproduce, Test Data, Expected vs. Actual with SRS quotes, Screenshot/Log embeds, Root Cause Analysis in code, and Proposed Fix).\n   - **GitHub CLI Integration ([`create_issue.sh`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/scripts/create_issue.sh)):** Uses `gh issue create -R ttbhanh/eshop-sut` to automatically file issues to the group repository upon your confirmation.\n   - **Defect Ticket Template ([`defect_ticket_template.md`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/resources/defect_ticket_template.md)):** 7-section template to append verified defects directly to [`Bug_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Bug_Report.md).\n\n3. **Report Synchronization & Database Tools:**\n   - **[`sync_reports.py`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/scripts/sync_reports.py):** Programmatically parses and updates test statuses (`**Pass**`, `**Fail (BUG-ID)**`, `**Blocked**`) in [`Main_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Main_Report.md), and synchronizes summary metrics in both `Main_Report.md` and [`README.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/README.md).\n   - **[`db_helper.sh`](file:///home/quocky05/.gemini/config/skills/test-execution-partner/scripts/db_helper.sh):** One-command snapshot (`backup`) and fast restore (`restore`) of `database.sqlite` between test suites.\n\n---\n\n### Standardized GitHub Issue Template\n\nWhen a defect is identified, the skill formats the issue body as follows:\n\n```markdown\n# [BUG] [FR-02][Web] Account lockout mechanism fails to trigger after 3 consecutive failed logins\n\n### 1. Defect Metadata\n- **Bug ID:** `BUG-FR02-01`\n- **Discovered by Test Case:** [`TC_FR02_06`](Main_Report.md#TC_FR02_06)\n- **Feature / Subsystem:** Login & Account Lockout (`FR-02`)\n- **Severity:** `Critical` (Authentication Security / Brute-force risk)\n- **Priority:** `P0 (Urgent)`\n- **Reporter:** Nguyễn Quốc Kỳ (23120138)\n- **Environment:** Linux x86_64 • Node v18.19 • Web http://localhost:5173 • API http://localhost:3000 • SQLite 3\n\n### 2. Preconditions\n- Registered user exists: `test@eshop.com` / `Test1234!`.\n- Initial `login_attempts` = 0.\n\n### 3. Steps to Reproduce\n1. Navigate to `http://localhost:5173/login`.\n2. Attempt failed login #1 with `WrongPass1!`.\n3. Attempt failed login #2 with `WrongPass2!`.\n4. Attempt failed login #3 with `WrongPass3!`.\n5. Observe system response and attempt login #4 with correct password `Test1234!`.\n\n### 4. Test Data / Payload\n```json\n{ \"email\": \"test@eshop.com\", \"password\": \"WrongPass3!\" }\n```\n\n### 5. Expected Result (Authoritative SRS Citation)\n> *Quote from `specs/system_requirements_specification.md` (FR-02):*\n> \"Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây (môi trường demo). Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân.\"\n- System must activate 30-second lockout on attempt #3 and reject login #4.\n\n### 6. Actual Result (Observed on SUT)\n- Attempt #3 returns standard 401 without lockout.\n- Attempt #4 with valid credentials succeeds immediately, granting JWT token without enforcing lockout.\n\n### 7. Evidence & Visual Proof\n- **Screenshot:** `screenshots/bug_fr02_01_actual.png`\n- **Terminal / API Log:** (HTTP status code and response payload)\n\n### 8. Root Cause Analysis (Code Inspection)\n- **Suspect File:** `SUT-EShop/backend/server.js` (lines 80–115)\n- **Flawed Code:** Controller lacks logic to persist failed login counts and compute `locked_until`.\n- **Proposed Fix:** Add `login_attempts` increment and `locked_until` datetime check before password verification.\n```\n\n---\n\n### How to Start Testing Your First Feature\n\nYou can test right here or in a separate chat:\n1. **To start Feature A (FR-02) here:** Simply say:  \n   > *\"Start testing FR-02\"*\n2. **To test in a separate chat:** Open a new chat in this workspace and send:  \n   > *\"I want to test feature FR-02 using the test-execution-partner skill.\"*\n\nWhich feature would you like to start testing first?"
+          ],
+          "tool_calls": [
+            {
+              "name": "run_command",
+              "summary": "Check GitHub CLI auth"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check git remotes"
+            },
+            {
+              "name": "run_command",
+              "summary": "List issues on ttbhanh/eshop-sut"
+            },
+            {
+              "name": "view_file",
+              "summary": "View hw-ai-audit SKILL.md"
+            },
+            {
+              "name": "write_to_file",
+              "summary": "Create github_issue_template.md"
+            },
+            {
+              "name": "run_command",
+              "summary": "Create test-execution-partner directory structure"
+            },
+            {
+              "name": "run_command",
+              "summary": "Write github issue template"
+            },
+            {
+              "name": "run_command",
+              "summary": "Write defect ticket template"
+            },
+            {
+              "name": "run_command",
+              "summary": "Write db_helper.sh script"
+            },
+            {
+              "name": "run_command",
+              "summary": "Test db_helper.sh"
+            },
+            {
+              "name": "view_file",
+              "summary": "Check sqlite driver in database.js"
+            },
+            {
+              "name": "run_command",
+              "summary": "Test Node sqlite query"
+            },
+            {
+              "name": "run_command",
+              "summary": "Update db_helper.sh with Node sqlite3"
+            },
+            {
+              "name": "run_command",
+              "summary": "Test db_helper status command"
+            },
+            {
+              "name": "run_command",
+              "summary": "Write sync_reports.py script"
+            },
+            {
+              "name": "run_command",
+              "summary": "Test sync_reports status for FR-02"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check test counts for FR-07, FR-17, FR-20"
+            },
+            {
+              "name": "run_command",
+              "summary": "Write create_issue.sh script"
+            },
+            {
+              "name": "run_command",
+              "summary": "Create test-execution-partner SKILL.md"
+            },
+            {
+              "name": "run_command",
+              "summary": "List test-execution-partner files"
+            },
+            {
+              "name": "write_to_file",
+              "summary": "Create walkthrough.md"
+            }
+          ],
+          "classification": "student_fix",
+          "artifact_id": null,
+          "fix_for_artifact_id": 29
+        },
+        {
+          "global_id": 55,
+          "conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+          "turn_index": 5,
+          "created_at_utc": "2026-10-18T16:35:21Z",
+          "created_at_local": "2026-10-18 23:35:21 +0700",
+          "created_at_display": "23:35 18/10/2026 (+0700)",
+          "prompt": "use the ai-audit skill to audit this session.",
+          "assistant_responses": [],
+          "tool_calls": [
+            {
+              "name": "view_file",
+              "summary": "View hw-ai-audit procedure"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check audit store file"
+            },
+            {
+              "name": "run_command",
+              "summary": "Check audit engine help"
+            },
+            {
+              "name": "run_command",
+              "summary": "Scan turns into audit store"
+            },
+            {
+              "name": "run_command",
+              "summary": "List turns in json"
+            }
+          ],
+          "classification": "log_only",
+          "artifact_id": null,
+          "fix_for_artifact_id": null
+        }
+      ]
     }
   },
   "audited_artifacts": [
@@ -3425,6 +3750,32 @@
       "verdict": "VALID",
       "reasoning": "FIT@HCMUS HW02 Section 6.3 & Section 10: Rigorous gap analysis differentiating AI reasoning deficiencies from SUT source code defects, identifying client-side-only bypass (server.js:329) and terminal state violations (server.js:550).",
       "student_fix": "None"
+    },
+    {
+      "artifact_id": 28,
+      "artifact_label": "Phase 3 Testing Execution & Defect Reporting Plan",
+      "source_turn_id": 51,
+      "source_conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+      "tool_info": "Google Antigravity (Gemini 3.8 Flash)",
+      "timestamp_display": "21:36 18/10/2026 (+0700)",
+      "prompt_verbatim": "I have just finished designing the test cases for four features of the EShop app.  Let's move on to the testing phase, following the workflow we outlined earlier. Before we start testing these four feature, please give me a detailed implementation plan for this phase.",
+      "ai_output_verbatim": "I have created a detailed implementation plan for **Phase 3: Testing Execution & Defect Reporting** in the artifact [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md).\n\n### Key Highlights & Decisions for Your Review\n\n1. **Test Scope & Architecture:**\n   - Covers execution of all **97 designed test cases** across the 4 selected features (13 for **FR-02**, 20 for **FR-07**, 36 for **FR-17**, and 28 for **Mobile FR-20 & FR-10**).\n   - Combines an automated multi-tier verification harness (`tests/run_phase3_tests.js` for REST API, state machine transitions, and SQLite assertions) with targeted UI-level verification on Frontend Web (`:5173`), Admin (`:5174`), and Mobile App logic.\n   - Specifically probes all **candidate defect hypotheses** formulated in Step 6 (e.g., account lockout bypass, verbose error disclosures, cart quantity $1 \\to 0$ confirmation dialog absence, coupon negative amounts, and mobile cancel order state bypass on `shipping`).\n\n2. **Open Questions & Preferences:**\n   - **Database Baseline Isolation:** We plan to take a snapshot backup (`database.sqlite.baseline`) and reset or seed known states so tests are repeatable. Let me know if you would like any specific test accounts or presets preserved.\n   - **GitHub Issues Reporting:** For defect logging, would you prefer us to generate ready-to-post issue templates with screenshots locally first, or do you have the GitHub CLI (`gh`) configured to submit them directly to [ttbhanh/eshop-sut/issues](https://github.com/ttbhanh/eshop-sut/issues)?\n\nPlease review the plan in [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md) and let me know if you would like any adjustments or if we should proceed with execution.",
+      "verdict": "INCOMPLETE",
+      "reasoning": "ISTQB FL v4.0 §5.6 (Defect Management) & FIT@HCMUS HW02 Section 6: AI initial plan lacked feature-by-feature multi-tier verification oracles (UI/API/DB), did not specify exact inputs required for defect logging, and omitted explicit partner automation.",
+      "student_fix": "Student intervened in Turn #52, mandating complete coverage of all 108 test cases across the 4 features, detailed verification oracles per layer, defect reporting criteria, and proposing a dedicated testing skill.<br/>• **Student Follow-up (Turn #52):** Student mandated exhaustive feature-by-feature testing guidelines covering all 108 test cases, multi-tier verification rules, defect data requirements, and proposed building an interactive test execution partner skill."
+    },
+    {
+      "artifact_id": 29,
+      "artifact_label": "Test Execution Partner Agent Skill Implementation Plan",
+      "source_turn_id": 53,
+      "source_conv_id": "7951c94e-8136-4c6c-81cb-660a6bf9dcfe",
+      "tool_info": "Google Antigravity (Gemini 3.8 Flash)",
+      "timestamp_display": "22:56 18/10/2026 (+0700)",
+      "prompt_verbatim": "Let’s create a skill to support me throughout the testing phase. It should meet these requirements:\n- Act as my testing partner for one feature at a time.\n- Guide me through the feature’s test cases one by one. For each test case, provide its preconditions, steps, test data, and expected result. I will execute it and report the actual result. Review each actual result and update the test report accordingly.\n- Compare each actual result I provide with the expected result, and tell me whether the test passed, failed, or is blocked.\n- For each confirmed bug, create a GitHub issue using a consistent template. Please provide the template.\n- Do not consider testing complete until all test cases for the feature have been executed and their results recorded.\n- Suggest improvements to make the testing process more effective.\nFirst, create a detailed implementation plan for this skill based on these requirements.",
+      "ai_output_verbatim": "I have created a detailed implementation plan for the **`test-execution-partner`** skill in the artifact [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md).\n\n### Key Decisions & Highlights for Your Review\n\n1. **Interactive Pair-Testing Protocol:**\n   - Guides you through one feature at a time, presenting one test case per turn with its preconditions, step-by-step procedure, concrete test data, multi-tier expected result (UI / API / DB), and ready-to-run verification snippets (`curl` / `sqlite3`).\n   - Compares your observed actual results against the SRS specification to determine `PASS`, `FAIL`, or `BLOCKED`.\n   - Automatically synchronizes outcomes into the 3,100+ line [`Main_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Main_Report.md).\n\n2. **Standardized Defect & GitHub Issue Management:**\n   - Includes a standardized 8-section GitHub Issue and Defect Ticket template (metadata, preconditions, steps to reproduce, test data, expected vs. actual, screenshots/logs, and code root-cause analysis with proposed fix).\n   - Generates ready-to-post GitHub Issue Markdown (and optionally supports `gh issue create` CLI submission).\n   - Automatically appends formatted defect tickets to [`Bug_Report.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_02/Bug_Report.md).\n\n3. **Enforced 100% Completion Gatekeeper:**\n   - Tracks a live progress bar at each step (e.g., `[14/24] (58.3%)`) and actively prevents switching features or wrapping up until all designed test cases for the active feature have been recorded.\n\n4. **Testing Improvements:**\n   - Introduces a Python report-sync helper (`sync_reports.py`) to safely update Markdown tables without formatting errors.\n   - Adds a one-second database snapshot/reset utility (`db_helper.sh`) to prevent test side-effect contamination.\n   - Provides an optional Fast-Forward API pre-check mode for headless boundary/format test cases to maximize efficiency.\n\nPlease review the plan in [`implementation_plan.md`](file:///home/quocky05/.gemini/antigravity/brain/7951c94e-8136-4c6c-81cb-660a6bf9dcfe/implementation_plan.md). Once you approve, I will begin implementing the skill files and helper utilities.",
+      "verdict": "INCOMPLETE",
+      "reasoning": "FIT@HCMUS HW02 Section 7 (Agent Skills) & Section 14 (Bug Reporting): Initial skill implementation plan did not mandate direct GitHub CLI (gh) issue submission automation, and left session isolation across separate chats unspecified.",
+      "student_fix": "Student intervened in Turn #54, instructing to use GitHub CLI (gh) for direct issue creation and requiring support for executing each feature testing workflow in its own separate chat session.<br/>• **Student Follow-up (Turn #54):** Student mandated automated GitHub issue creation via GitHub CLI (gh) on repo ttbhanh/eshop-sut, and required the test execution partner skill to support isolated test runs per feature in separate chat sessions."
     }
   ],
   "critique_text": ""
