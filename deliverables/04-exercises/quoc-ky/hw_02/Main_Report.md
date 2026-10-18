@@ -1280,13 +1280,44 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 | `SEC-17-03` | Robustness / Tràn số nguyên JS | `min_order_amount = 10^16` ($10.000.000.000.000.000$) | Kiểm tra độ bền bỉ khi nhập số vượt `Number.MAX_SAFE_INTEGER` | Hệ thống xử lý an toàn không treo máy; không biến thành `Infinity` hoặc sinh ra lỗi làm sập tiến trình Node.js |
 | `SEC-17-04` | Malformed JSON Payload | Payload JSON thiếu ngoặc, sai format hoặc chứa trường rác | Kiểm tra khả năng xử lý ngoại lệ của middleware Express | Server trả về HTTP 400 Bad Request rõ ràng, không văng lỗi stack trace `500 Internal Server Error` ra client |
 
-### 4.3 Bước 3: Phân tích giá trị biên (BVA)
-| Boundary ID | Biến | Điều kiện biên | Mode BVA | On-point | Off-point | In-point |
+### 4.3 Bước 3: Phân tích giá trị biên (Step 3 Deliverables - Boundary Value Analysis - BVA)
+
+> **Phương pháp tiếp cận Phân tích Giá trị Biên (ISTQB FL §4.2.2):**
+> - **Lựa chọn kỹ thuật:** Áp dụng **3-Value BVA** (On-point, Off-point, In-point) cho các biến có thứ tự (số nguyên, số tiền, tỷ lệ %, ngày tháng, độ dài chuỗi) với bước vi sai nhỏ nhất ($\epsilon$).
+> - **Định nghĩa các điểm biên chuẩn ISTQB:**
+>   - **On-point:** Giá trị nằm chính xác trên đường phân định ranh giới.
+>   - **Off-point:** Giá trị nằm sát biên nhất ở phía đối diện:
+>     - Nếu biên đóng / bao gồm ($\le, \ge$), On-point nằm trong vùng hợp lệ (Valid On-point); Off-point nằm ngay ngoài biên (Invalid Off-point).
+>     - Nếu biên mở / loại trừ ($<, >$), On-point nằm ngoài vùng hợp lệ (Invalid On-point); Off-point nằm ngay sát trong vùng hợp lệ (Valid Off-point).
+>   - **In-point:** Giá trị nằm liền kề bên trong phân vùng hợp lệ.
+> - **Phân tách 2 phạm vi kiểm thử biên:**
+>   1. **4.3.1 Form Input BVA:** Các giá trị biên của form tạo mới mã giảm giá (FR-17).
+>   2. **4.3.2 Checkout Application BVA:** Các giá trị biên của điều kiện áp dụng mã tại giỏ hàng và thanh toán (FR-09).
+
+---
+
+#### 4.3.1 Bảng Phân Tích Giá Trị Biên Dữ Liệu Đầu Vào Form Tạo Coupon (Input Form BVA - FR-17)
+
+| Boundary ID | Variable / Field | Boundary Rule | BVA Method & Step ($\epsilon$) | On-point (Value / Type & Mô tả) | Off-point (Value / Type & Mô tả) | In-point (Value / Type & Mô tả) |
 | :--- | :--- | :--- | :---: | :--- | :--- | :--- |
-| `BVA-17-01` | `discount_value` | $> 0$ (Exclusive) | 3-Value ($\epsilon=1$) | $V = 0$ (Invalid) | $V = 1$ (Valid) | $V = 2$ (Valid) |
-| `BVA-17-02` | `discount_value` (%) | $\le 100\%$ (Inclusive) | 3-Value ($\epsilon=1\%$) | $V = 100\%$ (Valid) | $V = 101\%$ (Invalid) | $V = 99\%$ (Valid) |
-| `BVA-17-03` | `min_order_amount` | $\ge 0$ (Inclusive) | 3-Value ($\epsilon=1$) | $M = 0$ (Valid) | $M = -1$ (Invalid) | $M = 1$ (Valid) |
-| `BVA-17-04` | `max_uses_per_user`| $\ge 1$ (Inclusive) | 3-Value ($\epsilon=1$) | $U = 1$ (Valid) | $U = 0$ (Invalid) | $U = 2$ (Valid) |
+| `BVA-17-01` | `code.length` | $Len \ge 1$ (Biên dưới độ dài mã không rỗng) | 3-Value ($\epsilon=1\text{ char}$) | $Len = 1$ [Valid On-point]<br/>`code = "A"` (đúng 1 ký tự, mã ngắn nhất hợp lệ). | $Len = 0$ [Invalid Off-point]<br/>`code = ""` ($1 - 1 = 0$, chuỗi rỗng vi phạm bắt buộc). | $Len = 2$ [Valid In-point]<br/>`code = "AB"` ($1 + 1 = 2$, độ dài kề cận trong vùng hợp lệ). |
+| `BVA-17-02` | `code.length` | $Len \le 50$ (Cận trên độ dài mã theo quy ước CSDL) | 3-Value ($\epsilon=1\text{ char}$)<br/>`[Assumption]` | $Len = 50$ [Valid On-point]<br/>Mã dài đúng 50 ký tự (chấp nhận lưu trữ). | $Len = 51$ [Invalid Off-point]<br/>Mã dài 51 ký tự ($50 + 1$, vượt ngưỡng quy ước CSDL). | $Len = 49$ [Valid In-point]<br/>Mã dài 49 ký tự ($50 - 1$, kề cận trong vùng hợp lệ). |
+| `BVA-17-03` | `discount_value` (`type='percent'`) | $V > 0\%$ (Biên dưới số dương - Exclusive boundary) | 3-Value ($\epsilon=1\%$) | $V = 0\%$ [Invalid On-point]<br/>Đúng vạch biên $V = 0$ (vi phạm ràng buộc số dương của SRS). | $V = 1\%$ [Valid Off-point]<br/>$0 + 1\% = 1\%$ (giá trị phần trăm dương nhỏ nhất được chấp nhận). | $V = 2\%$ [Valid In-point]<br/>$0 + 2\% = 2\%$ (giá trị kề cận bên trong miền hợp lệ). |
+| `BVA-17-04` | `discount_value` (`type='percent'`) | $V \le 100\%$ (Cận trên tỷ lệ % - Inclusive boundary) | 3-Value ($\epsilon=1\%$)<br/>`[Business Rule]` | $V = 100\%$ [Valid On-point]<br/>Đúng vạch biên 100% (giảm tối đa toàn bộ đơn hàng - miễn phí 100%). | $V = 101\%$ [Invalid Off-point]<br/>$100 + 1\% = 101\%$ (vượt 100%, không thể giảm nhiều hơn đơn hàng). | $V = 99\%$ [Valid In-point]<br/>$100 - 1\% = 99\%$ (kề cận dưới mốc 100%, hợp lệ). |
+| `BVA-17-05` | `discount_value` (`type='fixed'`) | $V > 0\text{ ₫}$ (Biên dưới số tiền dương - Exclusive) | 3-Value ($\epsilon=1\text{ ₫}$) | $V = 0\text{ ₫}$ [Invalid On-point]<br/>Đúng vạch biên $0\text{ ₫}$ (bị từ chối vì phải là số dương $> 0$). | $V = 1\text{ ₫}$ [Valid Off-point]<br/>$0 + 1\text{ ₫} = 1\text{ ₫}$ (số tiền dương nhỏ nhất được chấp nhận). | $V = 2\text{ ₫}$ [Valid In-point]<br/>$0 + 2\text{ ₫} = 2\text{ ₫}$ (giá trị tiền kề cận trong miền hợp lệ). |
+| `BVA-17-06` | `min_order_amount` | $M \ge 0\text{ ₫}$ (Ngưỡng đơn hàng tối thiểu - Inclusive) | 3-Value ($\epsilon=1\text{ ₫}$) | $M = 0\text{ ₫}$ [Valid On-point]<br/>Đúng vạch biên $0\text{ ₫}$ (áp dụng cho mọi đơn hàng không ràng buộc). | $M = -1\text{ ₫}$ [Invalid Off-point]<br/>$0 - 1\text{ ₫} = -1\text{ ₫}$ (số âm vi phạm bất đẳng thức $M \ge 0$). | $M = 1\text{ ₫}$ [Valid In-point]<br/>$0 + 1\text{ ₫} = 1\text{ ₫}$ (giá trị ngưỡng tối thiểu dương nhỏ nhất). |
+| `BVA-17-07` | `max_uses_per_user` | $U \ge 1\text{ lượt}$ (Giới hạn lượt dùng tối thiểu - Inclusive) | 3-Value ($\epsilon=1\text{ lượt}$) | $U = 1\text{ lượt}$ [Valid On-point]<br/>Đúng mốc tối thiểu (mỗi người dùng được áp dụng đúng 1 lần). | $U = 0\text{ lượt}$ [Invalid Off-point]<br/>$1 - 1 = 0$ (vi phạm $U \ge 1$; nếu bằng 0 mã không ai dùng được). | $U = 2\text{ lượt}$ [Valid In-point]<br/>$1 + 1 = 2\text{ lượt}$ (giá trị kề cận bên trong miền hợp lệ). |
+| `BVA-17-08` | `expired_at` | $expired\_at \ge \text{today}$ (Ranh giới ngày hết hạn khi tạo mã) | 3-Value ($\epsilon=1\text{ ngày}$)<br/>`[Conditional]` | $expired\_at = \text{today}$ [On-point]<br/>Ngày hôm nay (cần kiểm tra mốc cutoff giờ: 00:00 vs 23:59). | $expired\_at = \text{yesterday}$ [Invalid Off-point]<br/>$\text{today} - 1\text{ ngày}$ (ngày quá khứ; vừa tạo đã hết hạn ngay). | $expired\_at = \text{tomorrow}$ [Valid In-point]<br/>$\text{today} + 1\text{ ngày}$ (ngày mai; thời hạn tương lai gần nhất). |
+
+---
+
+#### 4.3.2 Bảng Phân Tích Giá Trị Biên Quy Tắc Áp Dụng Tại Checkout (Checkout Application BVA - FR-09)
+
+| Boundary ID | Điều kiện kiểm thử biên | Boundary Rule | BVA Method & Step ($\epsilon$) | On-point (Value / Type & Mô tả) | Off-point (Value / Type & Mô tả) | In-point (Value / Type & Mô tả) |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- |
+| `BVA-17-09` | `order_total` vs `min_order_amount` ($M = 300.000\text{ ₫}$) | $Total \ge M$ (Ngưỡng đơn đủ điều kiện C3 - Inclusive) | 3-Value ($\epsilon=1\text{ ₫}$) | $Total = 300.000\text{ ₫}$ [Valid On-point]<br/>Đúng bằng ngưỡng tối thiểu $\to$ Đủ điều kiện C3, áp dụng giảm giá. | $Total = 299.999\text{ ₫}$ [Invalid Off-point]<br/>$M - 1\text{ ₫} \to$ Thiếu đúng 1 ₫, từ chối áp dụng mã giảm giá. | $Total = 300.001\text{ ₫}$ [Valid In-point]<br/>$M + 1\text{ ₫} \to$ Vượt ngưỡng 1 ₫, áp dụng giảm giá bình thường. |
+| `BVA-17-10` | `user_usage_count` vs `max_uses_per_user` ($U = 2\text{ lượt}$) | $used < U$ (Điều kiện C5 chưa hết lượt - Exclusive) | 3-Value ($\epsilon=1\text{ lượt}$) | $used = 2\text{ lần}$ [Invalid On-point]<br/>Đúng bằng mốc giới hạn ($2 \not< 2$) $\to$ Đã hết lượt, từ chối áp dụng. | $used = 1\text{ lần}$ [Valid Off-point]<br/>$U - 1 = 1$ ($1 < 2$) $\to$ Lượt dùng hợp lệ cuối cùng, được áp dụng. | $used = 3\text{ lần}$ [Invalid In-point]<br/>$U + 1 = 3$ ($3 \not< 2$) $\to$ Đã vượt quá giới hạn, từ chối áp dụng. |
+| `BVA-17-11` | `fixed_discount` vs `order_total` ($Total = 50.000\text{ ₫}$) | $discount \le Total$ (Biên khấu trừ tiền mặt đơn hàng) | 3-Value ($\epsilon=1\text{ ₫}$)<br/>`[Defect Hotspot]` | $discount = 50.000\text{ ₫}$ [Valid On-point]<br/>Giảm đúng bằng tổng tiền $\to$ Đơn hàng thanh toán bằng $0\text{ ₫}$. | $discount = 50.001\text{ ₫}$ [Anomaly Off-point]<br/>Giảm vượt tổng đơn 1 ₫ $\to$ Kiểm tra hệ thống chặn ở $0\text{ ₫}$ hay bị âm tiền. | $discount = 49.999\text{ ₫}$ [Valid In-point]<br/>Giảm thiếu 1 ₫ $\to$ Đơn hàng còn phải trả đúng $1\text{ ₫}$. |
 
 ### 4.4 Bước 4: Thiết kế kịch bản kiểm thử
 | TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước | Test Data | Mã EP/BVA | Kết quả mong đợi (SRS) | Trạng thái |
