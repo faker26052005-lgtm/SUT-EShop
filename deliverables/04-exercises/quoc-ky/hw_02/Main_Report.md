@@ -2411,15 +2411,621 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 | `ORD-BVA-07` | `ui_tap_frequency`<br/>*(Ranh giới chạm nút Hủy trên Mobile UI)* | Thao tác chạm nút "Hủy đơn" trên màn hình cảm ứng Mobile ($\epsilon = 1\text{ lần chạm}$) | 2-Value BVA | $1\text{ lần chạm}$<br/>*(Valid On-point)* | $2\text{ lần chạm liên tiếp (Rapid Double-tap)}$<br/>*(Robustness Off-point)* | N/A | - **On ($1\text{ tap}$):** Hiển thị đúng 1 hộp thoại xác nhận `Alert.alert`.<br/>- **Off ($2\text{ taps}$ liên tiếp $< 200ms$):** Nút bị vô hiệu hóa / debounce an toàn, không mở 2 hộp thoại xác nhận đè nhau hay gửi 2 request API trùng lặp. |
 
 
-### 5.4 Bước 4: Thiết kế kịch bản kiểm thử
-| TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước thực hiện | Test Data | Mã EP/BVA | Kết quả mong đợi (SRS) | Trạng thái |
-| :--- | :--- | :--- | :--- | :--- | :--- | :---: |
-| `TC_MOB_01` | User hủy đơn hàng ở trạng thái `pending` | Đơn hàng vừa đặt, status = `pending`. Mở Mobile App $\to$ Bấm "Hủy đơn". | Order `pending` | `EP-20-01` | Hủy thành công, trạng thái đổi thành `canceled`. | *Chờ thực thi* |
-| `TC_MOB_02` | User hủy đơn hàng ở trạng thái `confirmed` (Biên hợp lệ) | Đơn đã được Admin xác nhận (`confirmed`). Mở Mobile $\to$ Bấm "Hủy đơn". | Order `confirmed` | `EP-20-01`, `BVA-20-01` | Hủy thành công, trạng thái đổi thành `canceled`. | *Chờ thực thi* |
-| `TC_MOB_03` | Kiểm tra giao diện Mobile khi đơn ở `shipping` | Đơn chuyển sang `shipping`. Mở chi tiết đơn trên Mobile. | Order `shipping` | `EP-20-02`, `BVA-20-02` | Nút "Hủy đơn" phải bị ẩn hoặc vô hiệu hóa. | *Chờ thực thi* |
-| `TC_MOB_04` | Bypass gọi API hủy khi đơn đang ở `shipping` | Đơn đang `shipping`. Dùng Postman gửi request cancel bằng JWT của User. | Order `shipping` | `BVA-20-03` | Backend từ chối với lỗi rõ ràng; giữ nguyên `shipping`. | *Chờ thực thi* |
-| `TC_MOB_05` | Thử hủy đơn hàng đã giao (`delivered`) | Đơn có status = `delivered`. Gửi yêu cầu hủy đơn. | Order `delivered`| `EP-20-03`, `BVA-20-04` | Hệ thống báo lỗi; không thể đổi trạng thái final. | *Chờ thực thi* |
-| `TC_MOB_06` | Thử hủy đơn hàng đã hủy (`canceled`) | Đơn đã ở trạng thái `canceled`. Thử gọi action hủy tiếp. | Order `canceled` | `EP-20-04` | Hệ thống báo lỗi hoặc không thực hiện action dư thừa. | *Chờ thực thi* |
+### 5.4 Bước 4: Thiết kế kịch bản kiểm thử (Step 4 Deliverables - Test Case Design)
+
+> **Nguyên Tắc Thiết Kế Kịch Bản Kiểm Thử & Chuẩn Hóa Hồ Sơ Đặc Tả (ISTQB FL §4.2):**
+> - **Nguyên tắc Phối hợp VEP (Positive Cases):** Kết hợp các phân vùng tương đương hợp lệ (VEP) và điểm biên hợp lệ (On-point/In-point) trong cùng một ca kiểm thử để tối ưu hóa lộ trình luồng nghiệp vụ chuẩn.
+> - **Nguyên tắc Giả định Đơn lỗi (Single-Fault Assumption):** Mỗi ca kiểm thử phủ định (Negative Case) chỉ kích hoạt đúng 1 điều kiện không hợp lệ (1 IEP hoặc 1 Off-point); toàn bộ các biến/trạng thái còn lại bắt buộc phải được cố định ở **Bộ Giá trị Cơ sở (Standard Baseline)**:
+>   - Đơn hàng mục tiêu: `id = 101`, trạng thái khởi đầu: `'pending'`, thuộc sở hữu của User 1 (`user_id = 1`).
+>   - Xác thực: Bearer JWT Token hợp lệ của User 1 (`role = 'user'`).
+>   - Payload Body: `{}`. Endpoint: `PUT /api/orders/101/cancel`.
+> - **100% Standalone Detailed Test Specification Cards:** Toàn bộ 28 ca kiểm thử trong Ma trận truy vết dưới đây đều được xây dựng hồ sơ kiểm thử độc lập, hoàn chỉnh theo chuẩn 7 phần (Tracking, Objective, Preconditions, Test Data, Procedure, Multi-tier Validations, Teardown).
+
+#### 5.4.1 Bảng Tổng Hợp Kịch Bản Kiểm Thử & Ma Trận Truy Vết (Overview Traceability Matrix)
+
+| TC ID | Mục tiêu kiểm thử ($\text{Action} + \text{Function} + \text{Condition}$) | Phân loại | Mã EP / Rule bao phủ | Mã BVA bao phủ | Dữ liệu đầu vào & Baseline | Kết quả cốt lõi (Core Expected) | Trạng thái |
+| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :---: |
+| `TC_MOB_01` | User hủy đơn hàng hợp lệ ở trạng thái `pending` (Baseline) | Positive | `ORD-INP-VEP01`, `ORD-INP-VEP02`, `ORD-AUTH-VEP01`, `ORD-RES-VEP01`, `ORD-STA-VEP01` | `ORD-BVA-03` (In: `pending`), `ORD-BVA-05` (On: $N=1$) | Đơn 101, User 1, `status = 'pending'`, JWT User 1, body `{}` | HTTP 200 OK; `orders.status` cập nhật `canceled`; UI đổi nhãn sang "Đã hủy" | *Chờ thực thi* |
+| `TC_MOB_02` | User hủy đơn hàng ở trạng thái `confirmed` (Ranh giới hợp lệ cuối) | Positive | `ORD-STA-VEP02` | `ORD-BVA-03` (On: `confirmed`), `ORD-BVA-04` (Off: `confirmed`) | Đơn 102, User 1, `status = 'confirmed'`, JWT User 1, body `{}` | HTTP 200 OK; `orders.status` cập nhật `canceled`; UI đổi nhãn sang "Đã hủy" | *Chờ thực thi* |
+| `TC_MOB_03` | User hủy đơn hàng có ID nhỏ nhất hợp lệ ($id = 1$) | Positive | `ORD-INP-VEP01` | `ORD-BVA-01` (On: `1`) | Đơn 1, User 1, `status = 'pending'`, JWT User 1 | HTTP 200 OK; `orders.status` cập nhật `canceled` | *Chờ thực thi* |
+| `TC_MOB_04` | User hủy đơn hàng có ID liền kề trong miền hợp lệ ($id = 2$) | Positive | `ORD-INP-VEP01` | `ORD-BVA-01` (In: `2`) | Đơn 2, User 1, `status = 'pending'`, JWT User 1 | HTTP 200 OK; `orders.status` cập nhật `canceled` | *Chờ thực thi* |
+| `TC_MOB_05` | User cố tình hủy đơn đang ở `shipping` qua API (Bypass UI) | Negative (SUT Probe) | `ORD-STA-IEP01`, `ORD-SEC-03` | `ORD-BVA-03` (Off: `shipping`) | Đơn 103, User 1, `status = 'shipping'`, JWT User 1, gửi raw API `PUT` | HTTP 400 Bad Request; CSDL giữ nguyên `shipping`; Phát hiện lỗi nếu backend trả 200 | *Chờ thực thi* |
+| `TC_MOB_06` | User gửi yêu cầu hủy đơn đã giao hàng thành công (`delivered`) | Negative | `ORD-STA-IEP02` | `ORD-BVA-04` (On: `delivered`) | Đơn 104, User 1, `status = 'delivered'`, JWT User 1 | HTTP 400 Bad Request (`Cannot cancel this order.`); CSDL giữ nguyên `delivered` | *Chờ thực thi* |
+| `TC_MOB_07` | User gửi yêu cầu hủy lại đơn hàng đã hủy trước đó ($N=2$) | Negative | `ORD-STA-IEP03` | `ORD-BVA-05` (Off: $N=2$) | Đơn 105, User 1, `status = 'canceled'`, gửi API cancel lần 2 | HTTP 400 Bad Request (`Cannot cancel this order.`); CSDL giữ nguyên `canceled` | *Chờ thực thi* |
+| `TC_MOB_08` | User gửi yêu cầu hủy đơn có ID bằng 0 (Biên dưới Off-point) | Negative | `ORD-INP-IEP01` | `ORD-BVA-01` (Off: `0`) | Baseline chuẩn, thay `:id = 0` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_09` | User gửi yêu cầu hủy với ID số nguyên âm ($id = -1$) | Negative | `ORD-INP-IEP02` | N/A | Baseline chuẩn, thay `:id = -1` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_10` | User gửi yêu cầu hủy với ID chuỗi ký tự phi số (`id = "abc"`) | Negative | `ORD-INP-IEP03` | N/A | Baseline chuẩn, thay `:id = "abc"` | HTTP 404 Not Found (`Order not found`); tiến trình Node.js không crash | *Chờ thực thi* |
+| `TC_MOB_11` | User gửi yêu cầu hủy với ID dạng số thập phân (`id = 101.5`) | Negative | `ORD-INP-IEP04` | N/A | Baseline chuẩn, thay `:id = 101.5` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_12` | Gửi yêu cầu hủy với ID số nguyên cực lớn tràn số 64-bit | Robustness | `ORD-INP-IEP05` | `ORD-BVA-02` (Off: $2^{63}$) | Baseline chuẩn, `:id = 9223372036854775808` | HTTP 404/400 an toàn; SQLite không bị crash exception | *Chờ thực thi* |
+| `TC_MOB_13` | Gửi yêu cầu hủy với ID đơn hàng không tồn tại trong hệ thống | Negative | `ORD-RES-IEP01` | N/A | Baseline chuẩn, `:id = 99999` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_14` | Gửi request hủy đơn không kèm Header `Authorization` | Negative | `ORD-AUTH-IEP01` | N/A | Đơn 101, Header `Authorization: None` | HTTP 401 Unauthorized (`Access denied. No token provided.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_15` | Gửi request hủy đơn với Token JWT sai chữ ký / giả mạo | Negative | `ORD-AUTH-IEP02` | N/A | Đơn 101, `Authorization: Bearer fake_jwt_xyz` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_16` | Gửi request hủy đơn với Token JWT đã hết hạn (`expired`) | Negative | `ORD-AUTH-IEP03` | N/A | Đơn 101, `Authorization: Bearer <expired_jwt>` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_17` | Tấn công IDOR: User 1 cố tình gửi request hủy đơn 202 của User 2 | Security | `ORD-AUTH-IEP04` | N/A | Token User 1, `:id = 202` (thuộc User 2, `pending`) | HTTP 404 Not Found (`Order not found`); Đơn 202 của User 2 giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_18` | Tài khoản Admin gọi endpoint hủy của khách hàng | Conditional | `ORD-AUTH-IEP05` | N/A | Token Admin, `:id = 101` (đơn của User 1) | HTTP 404 Not Found (`Order not found`); Đơn 101 giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_19` | Body chứa trường lạ `{"status": "delivered"}` can thiệp dữ liệu | Security / Probe | `ORD-INP-IEP05` | N/A | Đơn 101, body `{"status": "delivered"}` | HTTP 200 OK; `orders.status` là `canceled` (Tuyệt đối KHÔNG thành `delivered`) | *Chờ thực thi* |
+| `TC_MOB_20` | Tấn công SQL Injection qua tham số URL `:id` | Security | `ORD-SEC-01` | N/A | URL: `/api/orders/101%20OR%201=1/cancel` | HTTP 404 Not Found; CSDL SQLite nguyên vẹn, không có đơn hàng nào bị ảnh hưởng | *Chờ thực thi* |
+| `TC_MOB_21` | Kiểm thử hộp thoại xác nhận an toàn khi bấm Hủy trên Mobile UI | UI Safety | `ORD-SEC-02` | N/A | Đơn 101 trên Mobile UI: Bấm "Hủy đơn" $\to$ Hủy bỏ / Đồng ý | Hiện Alert; chọn "Hủy bỏ" $\to$ không gửi API, giữ `pending`; chọn "Đồng ý" $\to$ gửi API | *Chờ thực thi* |
+| `TC_MOB_22` | Gửi đồng thời 2 request hủy trong cùng 1 mili-giây (Race Condition) | Concurrency | `ORD-SEC-04` | `ORD-BVA-06` (Off: $k=2$) | Đơn 101 `pending`, 2 thread gửi `PUT` đồng thời | **Exactly-once:** 1 request HTTP 200, 1 request HTTP 400; DB cập nhật đúng 1 lần | *Chờ thực thi* |
+| `TC_MOB_23` | Xáo trộn phương thức HTTP (`POST`, `GET`, `DELETE` tới API cancel) | Robustness | `ORD-SEC-05` | N/A | Gửi `POST /api/orders/101/cancel` | HTTP 404 Not Found hoặc 405 Method Not Allowed; CSDL giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_24` | Gửi request body dạng JSON sai cú pháp (`"{broken_json"`) | Robustness | `ORD-SEC-06` | N/A | Header JSON, body `"{broken_json"` | HTTP 400 Bad Request từ express body-parser; CSDL giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_25` | Bấm liên tiếp 2 lần cực nhanh nút Hủy trên Mobile (Double-tap) | UI Robustness | `ORD-BVA-07` | `ORD-BVA-07` (Off: 2 taps) | Mobile UI: Chạm nút "Hủy đơn" 2 lần $< 200ms$ | Debounce xử lý an toàn: Chỉ mở 1 hộp thoại xác nhận, không gửi request trùng lặp | *Chờ thực thi* |
+| `TC_MOB_26` | Đơn hàng có trạng thái dị thường trong DB (`corrupted_state`) | Robustness | `ORD-STA-IEP04` | N/A | Đơn 106, DB sửa cứng `status = 'corrupted_state'` | HTTP 400 Bad Request; CSDL giữ nguyên trạng thái cũ | *Chờ thực thi* |
+| `TC_MOB_27` | Quan sát tác dụng phụ hoàn trả kho khi đơn hàng bị hủy | Clarification | `ORD-STA-CLAR01` | N/A | Đơn 101 hủy thành công (gồm 2 SP A, kho trước hủy = 10) | HTTP 200; Quan sát `products.stock` xem có $+2$ lên 12 hay giữ nguyên 10 | *Chờ thực thi* |
+| `TC_MOB_28` | Quan sát tác dụng phụ khôi phục lượt dùng coupon khi đơn bị hủy | Clarification | `ORD-STA-CLAR02` | N/A | Đơn 101 có dùng coupon `SAVE10`, sau đó hủy thành công | HTTP 200; Quan sát xem User 1 có thể áp dụng lại mã `SAVE10` ở đơn tiếp theo không | *Chờ thực thi* |
+
+---
+
+#### 5.4.2 Hồ Sơ Đặc Tả Chi Tiết Từng Kịch Bản Kiểm Thử (Detailed Test Specification Cards - 100% Exhaustive Coverage)
+
+##### Nhóm 1: Các Kịch Bản Hủy Đơn Hợp Lệ & Điểm Biên Trạng Thái (Valid Baseline & Transition Boundaries)
+
+###### Test Case `TC_MOB_01`: User hủy đơn hàng hợp lệ ở trạng thái `pending` (Baseline)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_01` | **Priority:** Critical (P0)
+  - **Target Layer:** Mobile App (`frontend-mobile/App.js`) & REST API (`PUT /api/orders/:id/cancel`) & SQLite DB
+  - **Traceability:** SRS FR-10, FR-20; API Spec §4.6
+  - **Coverage IDs:** `ORD-INP-VEP01`, `ORD-INP-VEP02`, `ORD-AUTH-VEP01`, `ORD-RES-VEP01`, `ORD-STA-VEP01`, `ORD-BVA-03` (In-point: `pending`), `ORD-BVA-05` (On-point: $N=1$)
+  - **Single-Fault Isolation:** Không áp dụng (Positive Baseline Test Case kết hợp toàn bộ các điều kiện hợp lệ cơ sở).
+- **2. Test Objective:** Thực hiện thao tác Hủy đơn hàng đối với đơn hàng đang ở trạng thái `pending` của chính người dùng và xác nhận hệ thống cập nhật trạng thái sang `canceled` trên mọi tầng.
+- **3. Pre-conditions & Environment:**
+  - Hệ thống EShop backend và SQLite DB đang chạy bình thường.
+  - Người dùng User 1 (`user_id = 1`) đã đăng nhập thành công trên Mobile App, sở hữu Token JWT hợp lệ.
+  - Trong bảng `orders`, tồn tại đơn hàng `id = 101` với `user_id = 1` và `status = 'pending'`.
+- **4. Test Data:**
+  - Target URL: `PUT http://192.168.10.13:3000/api/orders/101/cancel`
+  - Headers: `Authorization: Bearer <user1_jwt>`, `Content-Type: application/json`
+  - Body: `{}`
+- **5. Step-by-Step Procedure:**
+  1. Mở ứng dụng EShop Mobile App, chuyển đến màn hình "Hồ sơ" (Profile).
+  2. Cuộn đến danh sách đơn hàng của tôi, định vị đơn hàng `#101`.
+  3. Quan sát thấy nhãn trạng thái hiển thị "Chờ xác nhận" và nút màu đỏ "Hủy đơn" đang hiển thị.
+  4. Chạm vào nút "Hủy đơn".
+  5. Khi hộp thoại xác nhận xuất hiện, chạm "Đồng ý" (hoặc gửi request `PUT /api/orders/101/cancel` qua HTTP client).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client Layer:* Ứng dụng hiển thị thông báo Alert thành công "Hủy đơn thành công!"; danh sách đơn hàng tự động tải lại; nhãn trạng thái đơn `#101` chuyển thành "Đã hủy"; nút "Hủy đơn" màu đỏ biến mất hoàn toàn.
+  - *API / Network Layer:* HTTP Status `200 OK`; Response Body JSON chứa `{"message": "Order canceled successfully"}`.
+  - *Database State Layer:* Truy vấn SQLite `SELECT status FROM orders WHERE id = 101` trả về đúng giá trị `'canceled'`. Các trường khác (`total_amount`, `user_id`) giữ nguyên.
+  - *Security & Business Rules Layer:* Quy tắc chuyển đổi trạng thái hợp lệ cấp 1 của State Machine FR-10 được thực thi nghiêm ngặt.
+- **7. Teardown & Clean-up:** Khôi phục trạng thái đơn `101` bằng câu lệnh SQL `UPDATE orders SET status = 'pending' WHERE id = 101` nếu cần tái sử dụng môi trường test.
+
+---
+
+###### Test Case `TC_MOB_02`: User hủy đơn hàng ở trạng thái `confirmed` (Ranh giới hợp lệ cuối cùng)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_02` | **Priority:** Critical (P0)
+  - **Target Layer:** Mobile App & REST API & SQLite DB
+  - **Traceability:** SRS FR-10, FR-20; API Spec §4.6
+  - **Coverage IDs:** `ORD-STA-VEP02`, `ORD-BVA-03` (On-point: `confirmed`), `ORD-BVA-04` (Off-point: `confirmed`)
+  - **Single-Fault Isolation:** Thay đổi trạng thái ban đầu của đơn hàng mục tiêu từ `pending` sang `confirmed` (Valid On-point ranh giới cuối cho User). Mọi tham số khác giữ nguyên baseline.
+- **2. Test Objective:** Kiểm chứng hành vi hủy đơn hàng đối với đơn đã được Admin duyệt sang trạng thái `confirmed`, đảm bảo User vẫn được phép tự hủy theo đúng FR-10.
+- **3. Pre-conditions & Environment:**
+  - User 1 đăng nhập thành công, có token JWT.
+  - Đơn hàng `id = 102` thuộc sở hữu của User 1 (`user_id = 1`), trạng thái ban đầu là `confirmed`.
+- **4. Test Data:**
+  - URL: `PUT /api/orders/102/cancel`; Headers: `Authorization: Bearer <user1_jwt>`; Body: `{}`
+- **5. Step-by-Step Procedure:**
+  1. Mở màn hình Profile trên Mobile App.
+  2. Định vị đơn hàng `#102` đang hiển thị trạng thái "Đã xác nhận".
+  3. Xác nhận nút "Hủy đơn" màu đỏ vẫn hiển thị trên giao diện.
+  4. Chạm "Hủy đơn" và xác nhận trên hộp thoại Alert.
+- **6. Multi-tier Validation Points:**
+  - *UI / Client Layer:* Alert "Hủy đơn thành công!"; nhãn trạng thái đổi thành "Đã hủy"; nút "Hủy đơn" bị ẩn.
+  - *API / Network Layer:* HTTP Status `200 OK`; Response JSON: `{"message": "Order canceled successfully"}`.
+  - *Database State Layer:* CSDL SQLite `orders.status` chuyển thành `'canceled'`.
+  - *Security & Business Rules Layer:* Khớp hoàn toàn ranh giới cho phép của State Machine FR-10.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'confirmed' WHERE id = 102`.
+
+---
+
+###### Test Case `TC_MOB_03`: User hủy đơn hàng có ID nhỏ nhất hợp lệ ($id = 1$)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_03` | **Priority:** High (P1)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** API Spec §4.6; ISTQB FL §4.2.2
+  - **Coverage IDs:** `ORD-INP-VEP01`, `ORD-BVA-01` (On-point: `1`)
+  - **Single-Fault Isolation:** Thay đổi `:id` thành giá trị biên dưới nhỏ nhất ($id = 1$). Đơn 1 thuộc sở hữu User 1, trạng thái `pending`.
+- **2. Test Objective:** Xác nhận hệ thống xử lý chính xác giá trị biên dưới số nguyên $id = 1$ trong tham số URL.
+- **3. Pre-conditions & Environment:** Đơn hàng `id = 1` tồn tại trong SQLite, `user_id = 1`, `status = 'pending'`.
+- **4. Test Data:** `PUT /api/orders/1/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT` đến endpoint `/api/orders/1/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API / Network Layer:* HTTP `200 OK`; `{"message": "Order canceled successfully"}`.
+  - *Database State Layer:* `SELECT status FROM orders WHERE id = 1` trả về `'canceled'`.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 1`.
+
+---
+
+###### Test Case `TC_MOB_04`: User hủy đơn hàng có ID liền kề trong miền hợp lệ ($id = 2$)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_04` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** API Spec §4.6; ISTQB FL §4.2.2
+  - **Coverage IDs:** `ORD-INP-VEP01`, `ORD-BVA-01` (In-point: `2`)
+  - **Single-Fault Isolation:** Thay đổi `:id` thành giá trị điểm trong ($id = 2$).
+- **2. Test Objective:** Xác nhận điểm In-point liền kề ranh giới dưới xử lý thành công.
+- **3. Pre-conditions & Environment:** Đơn hàng `id = 2` tồn tại trong SQLite, `user_id = 1`, `status = 'pending'`.
+- **4. Test Data:** `PUT /api/orders/2/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/2/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API / Network Layer:* HTTP `200 OK`; `{"message": "Order canceled successfully"}`.
+  - *Database State Layer:* `orders.status` của đơn 2 chuyển thành `'canceled'`.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 2`.
+
+---
+
+##### Nhóm 2: Kiểm Thử Ranh Giới Chuyển Đổi Trạng Thái & Trạng Thái Kết Thúc (State Machine Violations & Terminal States)
+
+###### Test Case `TC_MOB_05`: User cố tình hủy đơn hàng ở trạng thái `shipping` qua API (Bypass UI Probe)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_05` | **Priority:** Critical (P0)
+  - **Target Layer:** Mobile UI & REST API & SQLite DB
+  - **Traceability:** SRS FR-10: *"Khi đơn hàng đã ở trạng thái shipping, User không được phép tự hủy — chỉ Admin mới có thể thao tác."*
+  - **Coverage IDs:** `ORD-STA-IEP01`, `ORD-BVA-03` (Off-point: `shipping`), `ORD-SEC-03` (Client-side validation bypass probe)
+  - **Single-Fault Isolation:** Cô lập duy nhất trạng thái đơn hàng mục tiêu: `order.status = 'shipping'` (Invalid Off-point ranh giới cấm hủy). Mọi tham số khác giữ nguyên baseline.
+- **2. Test Objective:** Kiểm tra tính toàn vẹn của máy trạng thái phía Backend API khi User gửi yêu cầu hủy đối với đơn hàng đang ở trạng thái `shipping`, phát hiện lỗ hổng Client-Side-Only Validation.
+- **3. Pre-conditions & Environment:** Đơn hàng `id = 103` thuộc User 1, trạng thái hiện tại là `shipping`.
+- **4. Test Data:** URL: `PUT /api/orders/103/cancel`; Headers: `Authorization: Bearer <user1_jwt>`; Body: `{}`
+- **5. Step-by-Step Procedure:**
+  1. Mở màn hình Profile trên Mobile App, kiểm tra đơn hàng `#103`.
+  2. Xác nhận nhãn trạng thái là "Đang giao" và nút "Hủy đơn" đã bị ẩn hoàn toàn khỏi giao diện.
+  3. Dùng công cụ curl hoặc Postman gửi request trực tiếp `PUT /api/orders/103/cancel` với token của User 1.
+  4. Quan sát mã phản hồi HTTP và kiểm tra bản ghi đơn hàng trong CSDL SQLite.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Client Layer:* Nút "Hủy đơn" bắt buộc phải bị ẩn khỏi giao diện.
+  - *API / Network Layer (SRS Expected):* HTTP Status `400 Bad Request` (hoặc 403) kèm thông báo lỗi rõ ràng `"Cannot cancel order in shipping status"`.
+  - *Database State Layer (Database Invariant):* `SELECT status FROM orders WHERE id = 103` bắt buộc giữ nguyên giá trị `'shipping'`. Tuyệt đối không được chuyển thành `'canceled'`.
+  - *Defect Detection Trigger:* Nếu API trả về `HTTP 200 OK` và CSDL bị đổi sang `'canceled'`, xác nhận phát hiện **Defect nghiêm trọng** trên SUT EShop do backend thiếu logic kiểm tra trạng thái `shipping` tại `server.js:329`.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'shipping' WHERE id = 103`.
+
+---
+
+###### Test Case `TC_MOB_06`: Cố tình hủy đơn hàng đã hoàn tất giao hàng (`delivered` - Final State)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_06` | **Priority:** High (P1)
+  - **Target Layer:** Mobile UI & REST API & SQLite DB
+  - **Traceability:** SRS FR-10: *"Trạng thái delivered và canceled là trạng thái kết thúc — không được phép chuyển sang bất kỳ trạng thái nào khác."*
+  - **Coverage IDs:** `ORD-STA-IEP02`, `ORD-BVA-04` (On-point: `delivered`)
+  - **Single-Fault Isolation:** Cô lập duy nhất trạng thái ban đầu của đơn: `order.status = 'delivered'` (Final State).
+- **2. Test Objective:** Xác nhận hệ thống cấm tuyệt đối việc thay đổi trạng thái đối với đơn hàng đã hoàn tất giao hàng (`delivered`).
+- **3. Pre-conditions & Environment:** Đơn hàng `id = 104` thuộc User 1, trạng thái là `delivered`.
+- **4. Test Data:** `PUT /api/orders/104/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/104/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *UI Layer:* Nút "Hủy đơn" bị ẩn.
+  - *API Layer:* HTTP `400 Bad Request`; Response JSON: `{"error": "Cannot cancel this order."}`.
+  - *Database State Layer:* `SELECT status FROM orders WHERE id = 104` giữ nguyên `'delivered'`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_07`: Cố tình hủy lại đơn hàng đã ở trạng thái `canceled` ($N=2$ - Double Cancellation)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_07` | **Priority:** High (P1)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** SRS FR-10; ISTQB FL §4.2.2
+  - **Coverage IDs:** `ORD-STA-IEP03`, `ORD-BVA-05` (Off-point: $N=2$)
+  - **Single-Fault Isolation:** Cô lập số lần hủy $N=2$ trên đơn đã có trạng thái `canceled` (Final State).
+- **2. Test Objective:** Đảm bảo hệ thống từ chối các yêu cầu hủy trùng lặp/dư thừa trên đơn hàng đã hủy trước đó, duy trì tính bất biến của trạng thái kết thúc.
+- **3. Pre-conditions & Environment:** Đơn hàng `id = 105` thuộc User 1, trạng thái hiện tại là `canceled`.
+- **4. Test Data:** `PUT /api/orders/105/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/105/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `400 Bad Request`; Response JSON: `{"error": "Cannot cancel this order."}`.
+  - *Database State Layer:* Trạng thái giữ nguyên `'canceled'`, không phát sinh câu lệnh ghi dư thừa.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_08`: Đơn hàng có trạng thái dị thường trong CSDL (`status = 'corrupted_state'`)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_08` | **Priority:** Low (P3)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** SRS FR-10 (Robustness)
+  - **Coverage IDs:** `ORD-STA-IEP04`
+  - **Single-Fault Isolation:** Đơn hàng bị ghi đè trạng thái lạ không nằm trong State Machine chuẩn.
+- **2. Test Objective:** Đảm bảo hệ thống xử lý an toàn, không tự động chuyển trạng thái lạ sang `canceled`.
+- **3. Pre-conditions & Environment:** Đơn `id = 106`, cập nhật trực tiếp trong DB `UPDATE orders SET status = 'corrupted_state' WHERE id = 106`.
+- **4. Test Data:** `PUT /api/orders/106/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/106/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `400 Bad Request`.
+  - *Database State Layer:* CSDL giữ nguyên trạng thái cũ, không bị ghi đè sang `canceled`.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 106`.
+
+---
+
+##### Nhóm 3: Kiểm Thử Miền Dữ Liệu Tham Số Đường Dẫn & Cấu Trúc Request (Input EP & Route Parameter Boundaries)
+
+###### Test Case `TC_MOB_09`: Gửi yêu cầu hủy với ID bằng 0 (Biên dưới Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_09` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API
+  - **Traceability:** API Spec §4.6; ISTQB FL §4.2.2
+  - **Coverage IDs:** `ORD-INP-IEP01`, `ORD-BVA-01` (Off-point: `0`)
+  - **Single-Fault Isolation:** Thay đổi `:id` thành `0` (Off-point vi phạm ràng buộc $id \ge 1$).
+- **2. Test Objective:** Xác nhận hệ thống từ chối an toàn khi ID bằng 0.
+- **3. Pre-conditions & Environment:** User 1 đăng nhập hợp lệ.
+- **4. Test Data:** `PUT /api/orders/0/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/0/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* CSDL nguyên vẹn 100%.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_10`: Gửi yêu cầu hủy với ID số nguyên âm ($id = -1$)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_10` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API
+  - **Traceability:** API Spec §4.6; ISTQB FL §4.2.1
+  - **Coverage IDs:** `ORD-INP-IEP02`
+  - **Single-Fault Isolation:** Thay đổi `:id` thành `-1`.
+- **2. Test Objective:** Đảm bảo ID âm bị từ chối an toàn.
+- **3. Pre-conditions & Environment:** User 1 đăng nhập hợp lệ.
+- **4. Test Data:** `PUT /api/orders/-1/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/-1/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* CSDL không thay đổi.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_11`: Gửi yêu cầu hủy với ID dạng chuỗi phi số (`id = "abc"`)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_11` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API
+  - **Traceability:** API Spec §4.6 (Type Validation)
+  - **Coverage IDs:** `ORD-INP-IEP03`
+  - **Single-Fault Isolation:** Thay đổi `:id` thành chuỗi ký tự chữ `"abc"`.
+- **2. Test Objective:** Kiểm tra khả năng xử lý an toàn khi tham số URL sai kiểu dữ liệu, không gây unhandled exception hay sập server.
+- **3. Pre-conditions & Environment:** User 1 đăng nhập hợp lệ.
+- **4. Test Data:** `PUT /api/orders/abc/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/abc/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* CSDL không thay đổi, Node.js process tiếp tục phục vụ bình thường.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_12`: Gửi yêu cầu hủy với ID dạng số thập phân (`id = 101.5`)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_12` | **Priority:** Low (P3)
+  - **Target Layer:** REST API
+  - **Traceability:** API Spec §4.6
+  - **Coverage IDs:** `ORD-INP-IEP04`
+  - **Single-Fault Isolation:** Thay đổi `:id` thành `101.5`.
+- **2. Test Objective:** Đảm bảo số thập phân không bị cắt gọt tự động thành số nguyên `101` để tránh hủy nhầm đơn.
+- **3. Pre-conditions & Environment:** Đơn `101` đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101.5/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/101.5/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found`.
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_13`: Gửi yêu cầu hủy với ID số nguyên cực lớn tràn số 64-bit
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_13` | **Priority:** Low (P3)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** ISTQB FL §4.2.2 (Robustness BVA)
+  - **Coverage IDs:** `ORD-INP-IEP05`, `ORD-BVA-02` (Off-point: $2^{63}$)
+  - **Single-Fault Isolation:** Thay đổi `:id` thành `9223372036854775808` ($2^{63}$).
+- **2. Test Objective:** Đảm bảo giá trị tràn số nguyên 64-bit không làm crash SQLite driver.
+- **3. Pre-conditions & Environment:** User 1 đăng nhập hợp lệ.
+- **4. Test Data:** `PUT /api/orders/9223372036854775808/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request qua curl.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (hoặc 400).
+  - *Database State Layer:* CSDL SQLite an toàn 100%.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_14`: Gửi yêu cầu hủy với ID đơn hàng không tồn tại trong hệ thống
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_14` | **Priority:** High (P1)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** API Spec §4.6
+  - **Coverage IDs:** `ORD-RES-IEP01`
+  - **Single-Fault Isolation:** Thay đổi `:id` thành `99999` (ID số nguyên dương nhưng không tồn tại trong CSDL).
+- **2. Test Objective:** Kiểm tra xử lý tài nguyên không tồn tại.
+- **3. Pre-conditions & Environment:** Bảng `orders` không chứa bản ghi nào có `id = 99999`.
+- **4. Test Data:** `PUT /api/orders/99999/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request `PUT /api/orders/99999/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* CSDL không đổi.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+###### Test Case `TC_MOB_15`: Gửi request body chứa thuộc tính lạ `{"status": "delivered"}`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_15` | **Priority:** High (P1)
+  - **Target Layer:** REST API & Security
+  - **Traceability:** API Spec §4.6; Security Mass Assignment Prevention
+  - **Coverage IDs:** `ORD-INP-IEP05`
+  - **Single-Fault Isolation:** Giữ nguyên baseline, chỉ truyền thêm body JSON độc hại `{"status": "delivered"}`.
+- **2. Test Objective:** Đảm bảo backend không bị lỗ hổng Mass Assignment, không gán trường từ body vào SQL UPDATE.
+- **3. Pre-conditions & Environment:** Đơn `101` của User 1 đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: `Authorization: Bearer <user1_jwt>`, `Content-Type: application/json`; Body: `{"status": "delivered"}`
+- **5. Step-by-Step Procedure:** Gửi request `PUT` với body trên.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `200 OK` (trường lạ bị phớt lờ).
+  - *Database State Layer:* `SELECT status FROM orders WHERE id = 101` trả về `'canceled'` (tuyệt đối không bị thành `'delivered'`).
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 101`.
+
+---
+
+###### Test Case `TC_MOB_16`: Gửi request body dạng JSON sai cú pháp (Malformed JSON Payload)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_16` | **Priority:** Low (P3)
+  - **Target Layer:** REST API (Express Middleware)
+  - **Traceability:** Protocol Robustness
+  - **Coverage IDs:** `ORD-SEC-06`
+  - **Single-Fault Isolation:** Body gửi lên là chuỗi hỏng cú pháp JSON.
+- **2. Test Objective:** Đảm bảo `express.json()` bắt lỗi cú pháp an toàn và trả về HTTP 400.
+- **3. Pre-conditions & Environment:** Đơn `101` đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: `Authorization: Bearer <user1_jwt>`, `Content-Type: application/json`; Body: `"{broken_json"`
+- **5. Step-by-Step Procedure:** Gửi request với body hỏng.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `400 Bad Request`.
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+##### Nhóm 4: Kiểm Thử Xác Thực, Phân Quyền & Chống Tấn Công IDOR (Authentication & Ownership)
+
+###### Test Case `TC_MOB_17`: Gửi request hủy đơn không kèm Header `Authorization` (Unauthenticated)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_17` | **Priority:** Critical (P0)
+  - **Target Layer:** REST API & Access Control
+  - **Traceability:** SRS FR-12; API Spec §4.6; `server.js:46`
+  - **Coverage IDs:** `ORD-AUTH-IEP01`
+  - **Single-Fault Isolation:** Lược bỏ hoàn toàn Header `Authorization`. Mọi tham số khác giữ nguyên baseline.
+- **2. Test Objective:** Đảm bảo endpoint hủy đơn bắt buộc phải có xác thực, từ chối người dùng nặc danh với HTTP 401.
+- **3. Pre-conditions & Environment:** Đơn hàng `101` đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: None (Không truyền token)
+- **5. Step-by-Step Procedure:** Gửi request không có header Authorization.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `401 Unauthorized`; Response JSON: `{"error": "Access denied. No token provided."}`.
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_18`: Gửi request hủy đơn với Token JWT sai chữ ký / giả mạo
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_18` | **Priority:** High (P1)
+  - **Target Layer:** REST API & Authentication
+  - **Traceability:** SRS FR-12; `server.js:50`
+  - **Coverage IDs:** `ORD-AUTH-IEP02`
+  - **Single-Fault Isolation:** Thay token JWT bằng chuỗi token giả ký sai secret.
+- **2. Test Objective:** Đảm bảo token giả mạo bị từ chối với HTTP 403 Forbidden.
+- **3. Pre-conditions & Environment:** Đơn hàng `101` đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: `Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.fake.signature`
+- **5. Step-by-Step Procedure:** Gửi request với token giả.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `403 Forbidden`; Response JSON: `{"error": "Invalid token."}`.
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_19`: Gửi request hủy đơn với Token JWT đã hết hạn (`expired`)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_19` | **Priority:** High (P1)
+  - **Target Layer:** REST API & Authentication
+  - **Traceability:** SRS FR-12; `server.js:50`
+  - **Coverage IDs:** `ORD-AUTH-IEP03`
+  - **Single-Fault Isolation:** Sử dụng token JWT hợp lệ nhưng có trường `exp` trong quá khứ.
+- **2. Test Objective:** Đảm bảo token hết hạn bị từ chối với HTTP 403 Forbidden.
+- **3. Pre-conditions & Environment:** Đơn hàng `101` đang `pending`.
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: `Authorization: Bearer <expired_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request với expired token.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `403 Forbidden` (`{"error": "Invalid token."}`).
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_20`: Tấn công IDOR: User 1 cố tình gửi request hủy đơn 202 của User 2
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_20` | **Priority:** Critical (P0)
+  - **Target Layer:** REST API & Data Privacy & SQLite DB
+  - **Traceability:** SRS FR-11: *"Người dùng chỉ xem được đơn hàng của chính mình."*; Nguyên tắc chống IDOR (OWASP Top 10)
+  - **Coverage IDs:** `ORD-AUTH-IEP04`
+  - **Single-Fault Isolation:** User 1 đăng nhập hợp lệ nhưng truyền `:id = 202` (đơn hàng hợp lệ đang `pending` của User 2). Vi phạm duy nhất điều kiện quyền sở hữu (`user_id !== order.user_id`).
+- **2. Test Objective:** Kiểm tra cơ chế chống tấn công IDOR, đảm bảo người dùng này tuyệt đối không thể hủy đơn hàng của người dùng khác.
+- **3. Pre-conditions & Environment:**
+  - User 1 đăng nhập, có token JWT.
+  - Đơn hàng `id = 202` thuộc sở hữu của User 2 (`user_id = 2`), trạng thái đang là `pending`.
+- **4. Test Data:** `PUT /api/orders/202/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** User 1 gửi request `PUT /api/orders/202/cancel`.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`). Chính sách bảo mật che giấu sự tồn tại của đơn hàng người khác.
+  - *Database State Layer (Data Integrity Invariant):* `SELECT status, user_id FROM orders WHERE id = 202` trả về đúng `status = 'pending'` và `user_id = 2`. Đơn hàng của User 2 hoàn toàn không bị ảnh hưởng!
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_21`: Tài khoản Admin gọi endpoint hủy của khách hàng `PUT /api/orders/101/cancel`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_21` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API & Access Control
+  - **Traceability:** API Spec §4.6 vs §6.3
+  - **Coverage IDs:** `ORD-AUTH-IEP05`
+  - **Single-Fault Isolation:** Sử dụng token của tài khoản Admin (`user_id = 99`, `role = 'admin'`) gọi vào endpoint khách hàng trên đơn `101` của User 1.
+- **2. Test Objective:** Xác nhận endpoint khách hàng lọc chặt chẽ theo `user_id` và buộc Admin phải dùng endpoint quản trị chuyên biệt.
+- **3. Pre-conditions & Environment:** Đơn `101` thuộc User 1 (`user_id = 1`).
+- **4. Test Data:** `PUT /api/orders/101/cancel`; Headers: `Authorization: Bearer <admin_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request bằng token Admin.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+##### Nhóm 5: Kiểm Thử An Toàn Giao Diện Mobile, Xử Lý Đồng Thời & An Toàn Giao Thức (Security, Concurrency & UI Safety)
+
+###### Test Case `TC_MOB_22`: Tấn công SQL Injection qua tham số URL `:id`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_22` | **Priority:** High (P1)
+  - **Target Layer:** REST API & Database Security
+  - **Traceability:** SRS SEC-01: *"Chống SQL Injection bằng Parameterized Queries"*
+  - **Coverage IDs:** `ORD-SEC-01`
+  - **Single-Fault Isolation:** Tham số URL chứa chuỗi payload SQL Injection độc hại.
+- **2. Test Objective:** Xác nhận backend sử dụng câu lệnh tham số hóa `WHERE id = ? AND user_id = ?`, không bị chèn câu lệnh SQL độc hại.
+- **3. Pre-conditions & Environment:** User 1 đăng nhập hợp lệ.
+- **4. Test Data:** `PUT /api/orders/101%20OR%201=1/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:** Gửi request URL encode payload SQLi.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` (`{"error": "Order not found"}`).
+  - *Database State Layer:* Toàn bộ bảng `orders` nguyên vẹn 100%, không có bản ghi nào bị cập nhật sai lệch.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_23`: Kiểm thử hộp thoại xác nhận an toàn khi bấm Hủy trên Mobile UI
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_23` | **Priority:** High (P1)
+  - **Target Layer:** Mobile App UI (`frontend-mobile/App.js`)
+  - **Traceability:** SRS FR-21, FR-24 (GUI Safety Standards)
+  - **Coverage IDs:** `ORD-SEC-02`
+  - **Single-Fault Isolation:** Thao tác tương tác chạm trên màn hình cảm ứng: Chọn Hủy bỏ vs Đồng ý.
+- **2. Test Objective:** Đảm bảo nút "Hủy đơn" trên Mobile App kích hoạt hộp thoại xác nhận Alert Dialog nhằm ngăn chặn việc vô tình chạm nhầm nút.
+- **3. Pre-conditions & Environment:** Đơn `101` hiển thị trên màn hình Profile Mobile ở trạng thái `pending`.
+- **4. Test Data:** Tương tác chạm nút "Hủy đơn" màu đỏ.
+- **5. Step-by-Step Procedure:**
+  1. Mở màn hình Profile trên Mobile App.
+  2. Chạm vào nút "Hủy đơn" màu đỏ tại đơn `#101`.
+  3. Quan sát xem hộp thoại `Alert` có xuất hiện với 2 nút lựa chọn không.
+  4. Chạm "Hủy bỏ": Kiểm tra xem API có bị gọi không và trạng thái đơn có giữ nguyên không.
+  5. Chạm lại "Hủy đơn", lần này chọn "Đồng ý": Kiểm tra API được gửi và giao diện cập nhật.
+- **6. Multi-tier Validation Points:**
+  - *UI Layer:* Hộp thoại `Alert.alert` xuất hiện. Khi chọn "Hủy bỏ", không có request gửi đi, đơn vẫn là "Chờ xác nhận". Khi chọn "Đồng ý", gửi API và đổi trạng thái sang "Đã hủy".
+  - *Database State Layer:* CSDL chỉ đổi sang `canceled` sau khi chọn "Đồng ý".
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 101`.
+
+---
+
+###### Test Case `TC_MOB_24`: Bấm liên tiếp 2 lần cực nhanh nút Hủy trên Mobile (Double-tap)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_24` | **Priority:** Medium (P2)
+  - **Target Layer:** Mobile App UI (Debounce / Throttling)
+  - **Traceability:** Mobile UX Robustness; `ORD-BVA-07`
+  - **Coverage IDs:** `ORD-BVA-07` (Off-point: 2 taps liên tiếp)
+  - **Single-Fault Isolation:** Bấm đúp liên tiếp 2 lần trong khoảng thời gian $< 200ms$.
+- **2. Test Objective:** Đảm bảo giao diện có cơ chế chống chạm lặp (debounce), không mở 2 hộp thoại Alert đè lên nhau.
+- **3. Pre-conditions & Environment:** Đơn `101` đang `pending` trên Mobile App.
+- **4. Test Data:** 2 lần tap liên tiếp trong $100ms$.
+- **5. Step-by-Step Procedure:** Chạm nhanh 2 lần liên tiếp vào nút "Hủy đơn".
+- **6. Multi-tier Validation Points:**
+  - *UI Layer:* Chỉ có duy nhất 1 hộp thoại `Alert` hiển thị, ứng dụng không bị giật lag hay đơ giao diện.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+###### Test Case `TC_MOB_25`: Gửi đồng thời 2 request hủy trong cùng 1 mili-giây (Concurrent Race Condition / Exactly-Once)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_25` | **Priority:** High (P1)
+  - **Target Layer:** REST API & SQLite DB (Concurrency Handling)
+  - **Traceability:** Transaction Integrity; ISTQB FL §4.2.2
+  - **Coverage IDs:** `ORD-SEC-04`, `ORD-BVA-06` (Off-point: $k=2$)
+  - **Single-Fault Isolation:** Gửi đồng thời $k=2$ request hủy cho cùng một đơn hàng `101`.
+- **2. Test Objective:** Kiểm tra tính bất biến Exactly-Once của tiến trình hủy đơn hàng khi chịu tải đồng thời từ nhiều luồng mạng.
+- **3. Pre-conditions & Environment:** Đơn `101` của User 1 đang ở trạng thái `pending`.
+- **4. Test Data:** 2 request `PUT /api/orders/101/cancel` được phát đi đồng thời bằng script đa luồng.
+- **5. Step-by-Step Procedure:**
+  1. Sử dụng script Node.js hoặc Python phát 2 request `PUT` song song trong cùng 1 mili-giây.
+  2. Ghi nhận response status code và body của cả 2 request.
+  3. Kiểm tra số lượng bản ghi được cập nhật trong CSDL SQLite.
+- **6. Multi-tier Validation Points (Exactly-Once Oracle):**
+  - *API Layer:* Đúng 1 request nhận HTTP `200 OK`; request còn lại nhận HTTP `400 Bad Request` (`Cannot cancel this order.`) do đơn đã chuyển sang `canceled` (hoặc cả 2 trả về 200 nếu server xử lý idempotent).
+  - *Database State Layer:* Trạng thái cuối cùng của đơn `101` là `canceled`. Không xảy ra lỗi khóa chết (SQLITE_BUSY / Deadlock).
+  - *Security & Business Rules Layer:* Thao tác hủy chỉ được áp dụng đúng 1 lần duy nhất.
+- **7. Teardown & Clean-up:** `UPDATE orders SET status = 'pending' WHERE id = 101`.
+
+---
+
+###### Test Case `TC_MOB_26`: Xáo trộn phương thức HTTP (`POST`, `GET`, `DELETE` tới API cancel)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_26` | **Priority:** Low (P3)
+  - **Target Layer:** REST API Routing
+  - **Traceability:** API Protocol Robustness
+  - **Coverage IDs:** `ORD-SEC-05`
+  - **Single-Fault Isolation:** Thay đổi HTTP Method từ `PUT` sang `POST` / `GET` / `DELETE`.
+- **2. Test Objective:** Đảm bảo API chỉ chấp nhận duy nhất phương thức `PUT`, từ chối các phương thức sai.
+- **3. Pre-conditions & Environment:** Đơn `101` đang `pending`.
+- **4. Test Data:** `POST /api/orders/101/cancel`, `GET /api/orders/101/cancel`, `DELETE /api/orders/101/cancel`
+- **5. Step-by-Step Procedure:** Gửi request bằng các method sai.
+- **6. Multi-tier Validation Points:**
+  - *API Layer:* HTTP `404 Not Found` hoặc `405 Method Not Allowed`.
+  - *Database State Layer:* Đơn `101` giữ nguyên trạng thái `pending`.
+- **7. Teardown & Clean-up:** Không thay đổi CSDL.
+
+---
+
+##### Nhóm 6: Kiểm Thử Làm Rõ Tác Dụng Phụ Nghiệp Vụ (Business Side-effect Clarification Observations)
+
+###### Test Case `TC_MOB_27`: Quan sát tác dụng phụ hoàn trả kho khi đơn hàng bị hủy
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_27` | **Priority:** Medium (P2)
+  - **Target Layer:** SQLite DB (`products` & `order_items` tables)
+  - **Traceability:** SRS FR-07, FR-10 (Clarification Item)
+  - **Coverage IDs:** `ORD-STA-CLAR01`
+  - **Single-Fault Isolation:** Quan sát tác dụng phụ tồn kho sau khi thực hiện thao tác hủy hợp lệ trên đơn `pending`.
+- **2. Test Objective:** Quan sát và ghi nhận hành vi thực tế của hệ thống EShop đối với số lượng tồn kho sản phẩm (`products.stock`) khi đơn hàng bị hủy (làm rõ câu hỏi mở nghiệp vụ).
+- **3. Pre-conditions & Environment:**
+  - Tạo một đơn hàng mới `#107` cho User 1 gồm 1 sản phẩm `id = 1` với số lượng $Q = 2$.
+  - Ghi nhận số lượng tồn kho trước khi hủy: `stock_before = 10`.
+- **4. Test Data:** `PUT /api/orders/107/cancel`; Headers: `Authorization: Bearer <user1_jwt>`
+- **5. Step-by-Step Procedure:**
+  1. Kiểm tra tồn kho sản phẩm 1: `SELECT stock FROM products WHERE id = 1` (giả sử = 10).
+  2. Gửi request hủy đơn hàng `#107`.
+  3. Xác nhận request trả về HTTP `200 OK`.
+  4. Thực hiện lại câu truy vấn: `SELECT stock FROM products WHERE id = 1`.
+- **6. Multi-tier Validation Points (Observation Oracle):**
+  - *API Layer:* HTTP `200 OK`.
+  - *Database State Layer:*
+    - Nếu `stock_after = 12` ($10 + 2$): Hệ thống có cơ chế tự động hoàn kho khi hủy đơn.
+    - Nếu `stock_after = 10`: Hệ thống KHÔNG tự động hoàn kho khi hủy đơn.
+  - *Assessment Note:* Ghi nhận hành vi thực tế vào Báo cáo Khảo sát SUT để đối chiếu với câu hỏi làm rõ đặc tả.
+- **7. Teardown & Clean-up:** Đặt lại số lượng tồn kho ban đầu nếu có thay đổi.
+
+---
+
+###### Test Case `TC_MOB_28`: Quan sát tác dụng phụ khôi phục lượt dùng coupon khi đơn bị hủy
+- **1. Tracking Information:**
+  - **TC ID:** `TC_MOB_28` | **Priority:** Medium (P2)
+  - **Target Layer:** REST API & SQLite DB
+  - **Traceability:** SRS FR-09, FR-10 (Clarification Item)
+  - **Coverage IDs:** `ORD-STA-CLAR02`
+  - **Single-Fault Isolation:** Quan sát khả năng tái sử dụng voucher sau khi đơn hàng áp dụng voucher đó bị hủy.
+- **2. Test Objective:** Kiểm tra xem mã giảm giá bị giới hạn lượt dùng (`max_uses_per_user = 1`) có được giải phóng để người dùng sử dụng lại sau khi hủy đơn hay không.
+- **3. Pre-conditions & Environment:**
+  - Coupon `ONETIME` có `max_uses_per_user = 1`.
+  - User 1 đặt đơn `#108` áp dụng mã `ONETIME`, đơn ở trạng thái `pending`.
+- **4. Test Data:** `PUT /api/orders/108/cancel`; sau đó gửi `POST /api/apply-coupon` với mã `ONETIME`.
+- **5. Step-by-Step Procedure:**
+  1. Hủy đơn hàng `#108` bằng request `PUT /api/orders/108/cancel`.
+  2. Xác nhận hủy thành công (HTTP 200).
+  3. Gửi request áp dụng mã `ONETIME` cho một giỏ hàng mới của User 1: `POST /api/apply-coupon`.
+- **6. Multi-tier Validation Points (Observation Oracle):**
+  - *API Layer:*
+    - Nếu trả về HTTP 200: Mã được hoàn lại lượt dùng.
+    - Nếu trả về HTTP 400 ("Bạn đã sử dụng hết lượt mã này"): Hệ thống không hoàn lại lượt voucher khi hủy đơn.
+  - *Assessment Note:* Ghi nhận hành vi thực tế làm minh chứng đối chiếu cho AI Gap Analysis.
+- **7. Teardown & Clean-up:** Xóa đơn hàng thử nghiệm `#108`.
 
 ### 5.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
 - Bao phủ toàn diện 5 trạng thái trong sơ đồ State Machine của FR-10.
