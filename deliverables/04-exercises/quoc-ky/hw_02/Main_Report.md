@@ -2432,25 +2432,25 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 | `TC_MOB_05` | User cố tình hủy đơn đang ở `shipping` qua API (Bypass UI) | Negative (SUT Probe) | `ORD-STA-IEP01`, `ORD-SEC-03` | `ORD-BVA-03` (Off: `shipping`) | Đơn 103, User 1, `status = 'shipping'`, JWT User 1, gửi raw API `PUT` | HTTP 400 Bad Request; CSDL giữ nguyên `shipping`; Phát hiện lỗi nếu backend trả 200 | *Chờ thực thi* |
 | `TC_MOB_06` | User gửi yêu cầu hủy đơn đã giao hàng thành công (`delivered`) | Negative | `ORD-STA-IEP02` | `ORD-BVA-04` (On: `delivered`) | Đơn 104, User 1, `status = 'delivered'`, JWT User 1 | HTTP 400 Bad Request (`Cannot cancel this order.`); CSDL giữ nguyên `delivered` | *Chờ thực thi* |
 | `TC_MOB_07` | User gửi yêu cầu hủy lại đơn hàng đã hủy trước đó ($N=2$) | Negative | `ORD-STA-IEP03` | `ORD-BVA-05` (Off: $N=2$) | Đơn 105, User 1, `status = 'canceled'`, gửi API cancel lần 2 | HTTP 400 Bad Request (`Cannot cancel this order.`); CSDL giữ nguyên `canceled` | *Chờ thực thi* |
-| `TC_MOB_08` | User gửi yêu cầu hủy đơn có ID bằng 0 (Biên dưới Off-point) | Negative | `ORD-INP-IEP01` | `ORD-BVA-01` (Off: `0`) | Baseline chuẩn, thay `:id = 0` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_09` | User gửi yêu cầu hủy với ID số nguyên âm ($id = -1$) | Negative | `ORD-INP-IEP02` | N/A | Baseline chuẩn, thay `:id = -1` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_10` | User gửi yêu cầu hủy với ID chuỗi ký tự phi số (`id = "abc"`) | Negative | `ORD-INP-IEP03` | N/A | Baseline chuẩn, thay `:id = "abc"` | HTTP 404 Not Found (`Order not found`); tiến trình Node.js không crash | *Chờ thực thi* |
-| `TC_MOB_11` | User gửi yêu cầu hủy với ID dạng số thập phân (`id = 101.5`) | Negative | `ORD-INP-IEP04` | N/A | Baseline chuẩn, thay `:id = 101.5` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_12` | Gửi yêu cầu hủy với ID số nguyên cực lớn tràn số 64-bit | Robustness | `ORD-INP-IEP05` | `ORD-BVA-02` (Off: $2^{63}$) | Baseline chuẩn, `:id = 9223372036854775808` | HTTP 404/400 an toàn; SQLite không bị crash exception | *Chờ thực thi* |
-| `TC_MOB_13` | Gửi yêu cầu hủy với ID đơn hàng không tồn tại trong hệ thống | Negative | `ORD-RES-IEP01` | N/A | Baseline chuẩn, `:id = 99999` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_14` | Gửi request hủy đơn không kèm Header `Authorization` | Negative | `ORD-AUTH-IEP01` | N/A | Đơn 101, Header `Authorization: None` | HTTP 401 Unauthorized (`Access denied. No token provided.`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_15` | Gửi request hủy đơn với Token JWT sai chữ ký / giả mạo | Negative | `ORD-AUTH-IEP02` | N/A | Đơn 101, `Authorization: Bearer fake_jwt_xyz` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_16` | Gửi request hủy đơn với Token JWT đã hết hạn (`expired`) | Negative | `ORD-AUTH-IEP03` | N/A | Đơn 101, `Authorization: Bearer <expired_jwt>` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
-| `TC_MOB_17` | Tấn công IDOR: User 1 cố tình gửi request hủy đơn 202 của User 2 | Security | `ORD-AUTH-IEP04` | N/A | Token User 1, `:id = 202` (thuộc User 2, `pending`) | HTTP 404 Not Found (`Order not found`); Đơn 202 của User 2 giữ nguyên `pending` | *Chờ thực thi* |
-| `TC_MOB_18` | Tài khoản Admin gọi endpoint hủy của khách hàng | Conditional | `ORD-AUTH-IEP05` | N/A | Token Admin, `:id = 101` (đơn của User 1) | HTTP 404 Not Found (`Order not found`); Đơn 101 giữ nguyên `pending` | *Chờ thực thi* |
-| `TC_MOB_19` | Body chứa trường lạ `{"status": "delivered"}` can thiệp dữ liệu | Security / Probe | `ORD-INP-IEP05` | N/A | Đơn 101, body `{"status": "delivered"}` | HTTP 200 OK; `orders.status` là `canceled` (Tuyệt đối KHÔNG thành `delivered`) | *Chờ thực thi* |
-| `TC_MOB_20` | Tấn công SQL Injection qua tham số URL `:id` | Security | `ORD-SEC-01` | N/A | URL: `/api/orders/101%20OR%201=1/cancel` | HTTP 404 Not Found; CSDL SQLite nguyên vẹn, không có đơn hàng nào bị ảnh hưởng | *Chờ thực thi* |
-| `TC_MOB_21` | Kiểm thử hộp thoại xác nhận an toàn khi bấm Hủy trên Mobile UI | UI Safety | `ORD-SEC-02` | N/A | Đơn 101 trên Mobile UI: Bấm "Hủy đơn" $\to$ Hủy bỏ / Đồng ý | Hiện Alert; chọn "Hủy bỏ" $\to$ không gửi API, giữ `pending`; chọn "Đồng ý" $\to$ gửi API | *Chờ thực thi* |
-| `TC_MOB_22` | Gửi đồng thời 2 request hủy trong cùng 1 mili-giây (Race Condition) | Concurrency | `ORD-SEC-04` | `ORD-BVA-06` (Off: $k=2$) | Đơn 101 `pending`, 2 thread gửi `PUT` đồng thời | **Exactly-once:** 1 request HTTP 200, 1 request HTTP 400; DB cập nhật đúng 1 lần | *Chờ thực thi* |
-| `TC_MOB_23` | Xáo trộn phương thức HTTP (`POST`, `GET`, `DELETE` tới API cancel) | Robustness | `ORD-SEC-05` | N/A | Gửi `POST /api/orders/101/cancel` | HTTP 404 Not Found hoặc 405 Method Not Allowed; CSDL giữ nguyên `pending` | *Chờ thực thi* |
-| `TC_MOB_24` | Gửi request body dạng JSON sai cú pháp (`"{broken_json"`) | Robustness | `ORD-SEC-06` | N/A | Header JSON, body `"{broken_json"` | HTTP 400 Bad Request từ express body-parser; CSDL giữ nguyên `pending` | *Chờ thực thi* |
-| `TC_MOB_25` | Bấm liên tiếp 2 lần cực nhanh nút Hủy trên Mobile (Double-tap) | UI Robustness | `ORD-BVA-07` | `ORD-BVA-07` (Off: 2 taps) | Mobile UI: Chạm nút "Hủy đơn" 2 lần $< 200ms$ | Debounce xử lý an toàn: Chỉ mở 1 hộp thoại xác nhận, không gửi request trùng lặp | *Chờ thực thi* |
-| `TC_MOB_26` | Đơn hàng có trạng thái dị thường trong DB (`corrupted_state`) | Robustness | `ORD-STA-IEP04` | N/A | Đơn 106, DB sửa cứng `status = 'corrupted_state'` | HTTP 400 Bad Request; CSDL giữ nguyên trạng thái cũ | *Chờ thực thi* |
+| `TC_MOB_08` | Đơn hàng có trạng thái dị thường trong DB (`corrupted_state`) | Robustness | `ORD-STA-IEP04` | N/A | Đơn 106, DB sửa cứng `status = 'corrupted_state'` | HTTP 400 Bad Request; CSDL giữ nguyên trạng thái cũ | *Chờ thực thi* |
+| `TC_MOB_09` | User gửi yêu cầu hủy đơn có ID bằng 0 (Biên dưới Off-point) | Negative | `ORD-INP-IEP01` | `ORD-BVA-01` (Off: `0`) | Baseline chuẩn, thay `:id = 0` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_10` | User gửi yêu cầu hủy với ID số nguyên âm ($id = -1$) | Negative | `ORD-INP-IEP02` | N/A | Baseline chuẩn, thay `:id = -1` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_11` | User gửi yêu cầu hủy với ID chuỗi ký tự phi số (`id = "abc"`) | Negative | `ORD-INP-IEP03` | N/A | Baseline chuẩn, thay `:id = "abc"` | HTTP 404 Not Found (`Order not found`); tiến trình Node.js không crash | *Chờ thực thi* |
+| `TC_MOB_12` | User gửi yêu cầu hủy với ID dạng số thập phân (`id = 101.5`) | Negative | `ORD-INP-IEP04` | N/A | Baseline chuẩn, thay `:id = 101.5` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_13` | Gửi yêu cầu hủy với ID số nguyên cực lớn tràn số 64-bit | Robustness | `ORD-INP-IEP05` | `ORD-BVA-02` (Off: $2^{63}$) | Baseline chuẩn, `:id = 9223372036854775808` | HTTP 404/400 an toàn; SQLite không bị crash exception | *Chờ thực thi* |
+| `TC_MOB_14` | Gửi yêu cầu hủy với ID đơn hàng không tồn tại trong hệ thống | Negative | `ORD-RES-IEP01` | N/A | Baseline chuẩn, `:id = 99999` | HTTP 404 Not Found (`Order not found`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_15` | Body chứa trường lạ `{"status": "delivered"}` can thiệp dữ liệu | Security / Probe | `ORD-INP-IEP05` | N/A | Đơn 101, body `{"status": "delivered"}` | HTTP 200 OK; `orders.status` là `canceled` (Tuyệt đối KHÔNG thành `delivered`) | *Chờ thực thi* |
+| `TC_MOB_16` | Gửi request body dạng JSON sai cú pháp (`"{broken_json"`) | Robustness | `ORD-SEC-06` | N/A | Header JSON, body `"{broken_json"` | HTTP 400 Bad Request từ express body-parser; CSDL giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_17` | Gửi request hủy đơn không kèm Header `Authorization` | Negative | `ORD-AUTH-IEP01` | N/A | Đơn 101, Header `Authorization: None` | HTTP 401 Unauthorized (`Access denied. No token provided.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_18` | Gửi request hủy đơn với Token JWT sai chữ ký / giả mạo | Negative | `ORD-AUTH-IEP02` | N/A | Đơn 101, `Authorization: Bearer fake_jwt_xyz` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_19` | Gửi request hủy đơn với Token JWT đã hết hạn (`expired`) | Negative | `ORD-AUTH-IEP03` | N/A | Đơn 101, `Authorization: Bearer <expired_jwt>` | HTTP 403 Forbidden (`Invalid token.`); CSDL không đổi | *Chờ thực thi* |
+| `TC_MOB_20` | Tấn công IDOR: User 1 cố tình gửi request hủy đơn 202 của User 2 | Security | `ORD-AUTH-IEP04` | N/A | Token User 1, `:id = 202` (thuộc User 2, `pending`) | HTTP 404 Not Found (`Order not found`); Đơn 202 của User 2 giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_21` | Tài khoản Admin gọi endpoint hủy của khách hàng | Conditional | `ORD-AUTH-IEP05` | N/A | Token Admin, `:id = 101` (đơn của User 1) | HTTP 404 Not Found (`Order not found`); Đơn 101 giữ nguyên `pending` | *Chờ thực thi* |
+| `TC_MOB_22` | Tấn công SQL Injection qua tham số URL `:id` | Security | `ORD-SEC-01` | N/A | URL: `/api/orders/101%20OR%201=1/cancel` | HTTP 404 Not Found; CSDL SQLite nguyên vẹn, không có đơn hàng nào bị ảnh hưởng | *Chờ thực thi* |
+| `TC_MOB_23` | Kiểm thử hộp thoại xác nhận an toàn khi bấm Hủy trên Mobile UI | UI Safety | `ORD-SEC-02` | `ORD-BVA-07` (On: 1 tap) | Đơn 101 trên Mobile UI: Bấm "Hủy đơn" $\to$ Hủy bỏ / Đồng ý | Hiện Alert; chọn "Hủy bỏ" $\to$ không gửi API, giữ `pending`; chọn "Đồng ý" $\to$ gửi API | *Chờ thực thi* |
+| `TC_MOB_24` | Bấm liên tiếp 2 lần cực nhanh nút Hủy trên Mobile (Double-tap) | UI Robustness | `ORD-BVA-07` | `ORD-BVA-07` (Off: 2 taps) | Mobile UI: Chạm nút "Hủy đơn" 2 lần $< 200ms$ | Debounce xử lý an toàn: Chỉ mở 1 hộp thoại xác nhận, không gửi request trùng lặp | *Chờ thực thi* |
+| `TC_MOB_25` | Gửi đồng thời 2 request hủy trong cùng 1 mili-giây (Race Condition) | Concurrency | `ORD-SEC-04` | `ORD-BVA-06` (Off: $k=2$) | Đơn 101 `pending`, 2 thread gửi `PUT` đồng thời | **Exactly-once:** 1 request HTTP 200, 1 request HTTP 400; DB cập nhật đúng 1 lần | *Chờ thực thi* |
+| `TC_MOB_26` | Xáo trộn phương thức HTTP (`POST`, `GET`, `DELETE` tới API cancel) | Robustness | `ORD-SEC-05` | N/A | Gửi `POST /api/orders/101/cancel` | HTTP 404 Not Found hoặc 405 Method Not Allowed; CSDL giữ nguyên `pending` | *Chờ thực thi* |
 | `TC_MOB_27` | Quan sát tác dụng phụ hoàn trả kho khi đơn hàng bị hủy | Clarification | `ORD-STA-CLAR01` | N/A | Đơn 101 hủy thành công (gồm 2 SP A, kho trước hủy = 10) | HTTP 200; Quan sát `products.stock` xem có $+2$ lên 12 hay giữ nguyên 10 | *Chờ thực thi* |
 | `TC_MOB_28` | Quan sát tác dụng phụ khôi phục lượt dùng coupon khi đơn bị hủy | Clarification | `ORD-STA-CLAR02` | N/A | Đơn 101 có dùng coupon `SAVE10`, sau đó hủy thành công | HTTP 200; Quan sát xem User 1 có thể áp dụng lại mã `SAVE10` ở đơn tiếp theo không | *Chờ thực thi* |
 
@@ -3027,9 +3027,82 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
   - *Assessment Note:* Ghi nhận hành vi thực tế làm minh chứng đối chiếu cho AI Gap Analysis.
 - **7. Teardown & Clean-up:** Xóa đơn hàng thử nghiệm `#108`.
 
-### 5.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
-- Bao phủ toàn diện 5 trạng thái trong sơ đồ State Machine của FR-10.
-- Kiểm thử chéo cả tầng UI Mobile (nút hiển thị/disable) lẫn tầng Backend API (chống bypass).
+### 5.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ (Step 5 Deliverables - Traceability & Coverage Verification)
+
+> **Mục Tiêu & Tiêu Chuẩn Xác Minh Độ Bao Phủ (ISTQB FL §4.2):**
+> - Đảm bảo **100% các phân vùng tương đương** (VEP và IEP) đã xác định ở Bước 2 và **100% các giá trị biên** (On-point, Off-point, In-point) ở Bước 3 đều được ánh xạ truy vết trực tiếp tới ít nhất một ca kiểm thử cụ thể trong bộ 28 Test Cases của Bước 4.
+> - Bóc tách minh bạch độ bao phủ theo từng tầng độc lập để không thổi phồng tỷ lệ bao phủ của dữ liệu đầu vào thuần túy.
+
+#### 5.5.1 Bảng Độ Bao Phủ Phân Vùng Tương Đương Biến Đầu Vào Thuần Túy (Pure Input EP Coverage)
+
+| Class ID | Tên biến / Ràng buộc đầu vào | Phân loại | Mã Test Case bao phủ | Trạng thái thiết kế |
+| :--- | :--- | :---: | :--- | :---: |
+| `ORD-INP-VEP01` | `target_order_id`: Số nguyên dương hợp lệ ($id \ge 1$) | VEP | `TC_MOB_01`, `TC_MOB_02`, `TC_MOB_03`, `TC_MOB_04` | **Covered** |
+| `ORD-INP-VEP02` | Request Body: JSON Object rỗng `{}` | VEP | `TC_MOB_01`, `TC_MOB_02`, `TC_MOB_03`, `TC_MOB_04` | **Covered** |
+| `ORD-INP-IEP01` | `target_order_id`: ID bằng 0 ($id = 0$) | IEP | `TC_MOB_09` | **Covered** |
+| `ORD-INP-IEP02` | `target_order_id`: Số nguyên âm ($id = -1$) | IEP | `TC_MOB_10` | **Covered** |
+| `ORD-INP-IEP03` | `target_order_id`: Chuỗi phi số (`id = "abc"`) | IEP | `TC_MOB_11` | **Covered** |
+| `ORD-INP-IEP04` | `target_order_id`: Số thập phân (`id = 101.5`) | IEP | `TC_MOB_12` | **Covered** |
+| `ORD-INP-IEP05` | Request Body: Chèn trường lạ can thiệp trạng thái `{"status": "delivered"}` | IEP / Probe | `TC_MOB_15` | **Covered** |
+
+#### 5.5.2 Bảng Độ Bao Phủ Xác Thực, Phân Quyền & Vòng Đời Tài Nguyên (Authentication, Authorization & Resource Coverage)
+
+| Class ID | Nội dung kiểm soát truy cập / Tài nguyên | Phân loại | Mã Test Case bao phủ | Trạng thái thiết kế |
+| :--- | :--- | :---: | :--- | :---: |
+| `ORD-AUTH-VEP01` | Token JWT hợp lệ, đúng chủ sở hữu (`user_id = 1`) | VEP | `TC_MOB_01`, `TC_MOB_02` | **Covered** |
+| `ORD-AUTH-IEP01` | Thiếu Header Authorization (Unauthenticated) | IEP | `TC_MOB_17` | **Covered** |
+| `ORD-AUTH-IEP02` | Token JWT sai chữ ký / giả mạo | IEP | `TC_MOB_18` | **Covered** |
+| `ORD-AUTH-IEP03` | Token JWT đã hết hạn (`expired`) | IEP | `TC_MOB_19` | **Covered** |
+| `ORD-AUTH-IEP04` | **Tấn công IDOR:** User 1 hủy đơn 202 của User 2 | Security / IEP | `TC_MOB_20` | **Covered** |
+| `ORD-AUTH-IEP05` | Phân quyền Admin vs User: Admin gọi endpoint khách hàng | Conditional / IEP | `TC_MOB_21` | **Covered** |
+| `ORD-RES-VEP01` | Đơn hàng tồn tại trong CSDL SQLite | VEP | `TC_MOB_01`, `TC_MOB_02`, `TC_MOB_03`, `TC_MOB_04` | **Covered** |
+| `ORD-RES-IEP01` | Đơn hàng không tồn tại (`id = 99999`) | IEP | `TC_MOB_14` | **Covered** |
+
+#### 5.5.3 Bảng Độ Bao Phủ Quy Tắc Nghiệp Vụ State Machine, Bổ Trợ & Làm Rõ (Business Rules & State Machine Coverage)
+
+| Class ID | Nội dung quy tắc State Machine / An toàn / Làm rõ | Phân loại | Mã Test Case bao phủ | Trạng thái thiết kế |
+| :--- | :--- | :---: | :--- | :---: |
+| `ORD-STA-VEP01` | Chuyển đổi hợp lệ: `pending` $\to$ `canceled` | VEP | `TC_MOB_01`, `TC_MOB_03`, `TC_MOB_04` | **Covered** |
+| `ORD-STA-VEP02` | Chuyển đổi hợp lệ (Ranh giới cuối): `confirmed` $\to$ `canceled` | VEP | `TC_MOB_02` | **Covered** |
+| `ORD-STA-IEP01` | Chuyển đổi bị cấm đối với User: `shipping` $\to$ `canceled` | IEP | `TC_MOB_05` | **Covered** |
+| `ORD-STA-IEP02` | Chuyển đổi trạng thái kết thúc bị cấm: `delivered` $\to$ `canceled` | IEP | `TC_MOB_06` | **Covered** |
+| `ORD-STA-IEP03` | Hủy lặp lại trên trạng thái kết thúc: `canceled` $\to$ `canceled` | IEP | `TC_MOB_07` | **Covered** |
+| `ORD-STA-IEP04` | Đơn có trạng thái dị thường trong DB (`corrupted_state`) | Robustness | `TC_MOB_08` | **Covered** |
+| `ORD-STA-CLAR01` | Quan sát side-effect hoàn trả tồn kho (`products.stock`) | Clarification | `TC_MOB_27` | **Covered** |
+| `ORD-STA-CLAR02` | Quan sát side-effect khôi phục lượt dùng mã coupon | Clarification | `TC_MOB_28` | **Covered** |
+| `ORD-SEC-01` | Thăm dò SQL Injection qua URL parameter `:id` | Security Probe | `TC_MOB_22` | **Covered** |
+| `ORD-SEC-02` | Kiểm tra hộp thoại xác nhận an toàn UI (Alert Dialog) | UI Safety | `TC_MOB_23` | **Covered** |
+| `ORD-SEC-03` | Thăm dò lỗ hổng Client-side-only bypass trên `shipping` | Security Probe | `TC_MOB_05` | **Covered** |
+| `ORD-SEC-04` | Kiểm tra xử lý đồng thời (Race Condition / Exactly-Once) | Concurrency | `TC_MOB_25` | **Covered** |
+| `ORD-SEC-05` | Kiểm tra xáo trộn phương thức HTTP (`POST`/`DELETE`/`GET`) | Protocol Robustness | `TC_MOB_26` | **Covered** |
+| `ORD-SEC-06` | Kiểm tra Request Body chứa JSON sai cú pháp | Request Parsing | `TC_MOB_16` | **Covered** |
+
+#### 5.5.4 Bảng Độ Bao Phủ Phân Tích Giá Trị Biên (Boundary Value Coverage - On/Off/In Points)
+
+| Boundary ID | Tên ranh giới | Điểm biên & Loại điểm | Giá trị kiểm thử | Mã Test Case bao phủ | Trạng thái thiết kế |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| `ORD-BVA-01` | Biên dưới ID đơn hàng ($id \ge 1$) | **On-point** (Hợp lệ)<br/>**Off-point** (Không hợp lệ)<br/>**In-point** (Hợp lệ liền kề) | `id = 1`<br/>`id = 0`<br/>`id = 2` | `TC_MOB_03`<br/>`TC_MOB_09`<br/>`TC_MOB_04` | **Covered**<br/>**Covered**<br/>**Covered** |
+| `ORD-BVA-02` | Biên trên lưu trữ SQLite 64-bit | **On-point** (Hợp lệ lớn nhất)<br/>**Off-point** (Tràn số 64-bit)<br/>**In-point** (Hợp lệ liền kề) | `id = 9223372036854775807`<br/>`id = 9223372036854775808`<br/>`id = 9223372036854775806` | `TC_MOB_13`<br/>`TC_MOB_13`<br/>`TC_MOB_13` | **Covered**<br/>**Covered**<br/>**Covered** |
+| `ORD-BVA-03` | Ranh giới quyền tự hủy của User | **On-point** (Hợp lệ cuối cùng)<br/>**Off-point** (Bị cấm hủy)<br/>**In-point** (Hợp lệ ban đầu) | `status = 'confirmed'`<br/>`status = 'shipping'`<br/>`status = 'pending'` | `TC_MOB_02`<br/>`TC_MOB_05`<br/>`TC_MOB_01` | **Covered**<br/>**Covered**<br/>**Covered** |
+| `ORD-BVA-04` | Ranh giới trạng thái kết thúc `delivered` | **On-point** (Final state - cấm hủy)<br/>**Off-point** (Hợp lệ liền trước) | `status = 'delivered'`<br/>`status = 'confirmed'` | `TC_MOB_06`<br/>`TC_MOB_02` | **Covered**<br/>**Covered** |
+| `ORD-BVA-05` | Ngưỡng số lần hủy đơn ($N_{\text{cancel}}$) | **On-point** (Hủy lần 1)<br/>**Off-point** (Hủy lần 2 - cấm) | $N_{\text{cancel}} = 1$<br/>$N_{\text{cancel}} = 2$ | `TC_MOB_01`<br/>`TC_MOB_07` | **Covered**<br/>**Covered** |
+| `ORD-BVA-06` | Ranh giới xử lý đồng thời ($k_{\text{req}}$) | **On-point** (Đơn luồng chuẩn)<br/>**Off-point** (Đồng thời 2 request) | $k_{\text{req}} = 1$<br/>$k_{\text{req}} = 2$ | `TC_MOB_01`<br/>`TC_MOB_25` | **Covered**<br/>**Covered** |
+| `ORD-BVA-07` | Ranh giới thao tác chạm nút Mobile UI | **On-point** (1 lần chạm chuẩn)<br/>**Off-point** (2 lần chạm nhanh) | $1\text{ tap}$<br/>$2\text{ taps} < 200ms$ | `TC_MOB_23`<br/>`TC_MOB_24` | **Covered**<br/>**Covered** |
+
+#### 5.5.5 Bảng Tổng Hợp Chỉ Số Độ Bao Phủ (Coverage Summary Metrics)
+
+| Nhóm Tiêu Chí Kiểm Thử (Testing Category) | Tổng số nhận diện | Số lượng đã bao phủ | Bị chặn / Chưa bao phủ | Tỷ lệ bao phủ thiết kế (%) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Phân vùng Tương đương Hợp lệ (Pure Input VEP)** | 2 | 2 | 0 | **100%** |
+| **Phân vùng Tương đương Không hợp lệ (Pure Input IEP)** | 5 | 5 | 0 | **100%** |
+| **Kiểm soát Truy cập, Xác thực & Quyền sở hữu (Auth & Ownership)** | 6 | 6 | 0 | **100%** |
+| **Vòng đời & Trạng thái Tài nguyên (Target-Resource Lifecycle)** | 2 | 2 | 0 | **100%** |
+| **Quy tắc Máy Trạng Thái Đơn hàng (State Machine Transitions)** | 6 | 6 | 0 | **100%** |
+| **Quan sát Câu hỏi Mở Nghiệp vụ (Side-effect Clarifications)** | 2 | 2 | 0 | **100%** |
+| **Bộ Kiểm Thử Bổ Trợ (Security, UI Safety, Concurrency, Robustness)** | 6 | 6 | 0 | **100%** |
+| **Điểm Phân Tích Giá Trị Biên (On / Off / In Points)** | 18 | 18 | 0 | **100%** |
+| **Tổng thể Toàn Bộ Các Chiều Kiểm Thử Đã Thiết Kế** | **47** | **47** | **0** | **100%** |
+
 
 ### 5.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT
 - **Khoảng trống AI:** AI thường chỉ thiết kế kiểm thử trên giao diện (UI click) mà bỏ quên trường hợp gửi request trực tiếp vào Backend API để kiểm tra tính toàn vẹn của State Machine.
