@@ -1122,19 +1122,28 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 
 ## 4. TÍNH NĂNG C (POOL C): FR-17 – QUẢN LÝ MÃ GIẢM GIÁ (COUPON CRUD - ADMIN)
 
-### 4.1 Bước 1: Nhận diện biến đầu vào & Ràng buộc
-> **Trích dẫn đặc tả SRS FR-17:**
+### 4.1 Bước 1: Nhận diện biến đầu vào & Ràng buộc (Step 1 Deliverables)
+> **Trích dẫn đặc tả SRS FR-17 (Quản lý Mã Giảm Giá - Coupon CRUD):**
 > - Admin có thể Thêm / Xem / Xóa mã giảm giá.
 > - Các trường bắt buộc: `code` (duy nhất), `type` (percent/fixed), `discount_value` (dương), `expired_at`, `min_order_amount` (>= 0), `max_uses_per_user` (>= 1).
+> 
+> *(Đối chiếu Đặc tả Hệ thống & API:*
+> - *SRS Mục 5.3 & SEC-03: "Tất cả các API Admin (`/api/admin/*`) và các API có tính ảnh hưởng dữ liệu (`POST/PUT/DELETE /api/products`, `/api/categories`, `/api/coupons`) đều phải yêu cầu: Phải có JWT Token hợp lệ... User phải có role là admin (`role = 'admin'`). Nếu user thông thường (`role = 'user'`) gọi API admin -> trả về HTTP 403 Forbidden."*
+> - *SRS FR-09: "Mã phải có trong CSDL và đang hoạt động (`is_active = 1`); Ngày hiện tại phải trước `expired_at`; Tổng đơn hàng >= `min_order_amount`; Số lần đã dùng mã này của user < `max_uses_per_user`." Công thức: percent thì `discount_amount = total * discount_value / 100`, fixed thì `discount_amount = discount_value`.*
+> - *API Spec §6.4: `POST /api/admin/coupons` và `DELETE /api/admin/coupons/:id`.*
+> - *API Spec §5.2: `GET /api/coupons` (Lấy danh sách mã giảm giá).*
+> - *Frontend Admin UI: Form tạo mã gồm Mã coupon (chuyển chữ hoa), Loại (select percent/fixed), Giá trị, Đơn tối thiểu, Ngày hết hạn, Giới hạn/người. Bảng danh sách mã giảm giá có nút Xóa từng mã.)*
 
-| Variable ID | Tên biến | Kiểu dữ liệu | Bắt buộc? | Bước nhảy ($\epsilon$) | Ràng buộc đặc tả SRS |
-| :--- | :--- | :--- | :---: | :---: | :--- |
-| `VAR-17-01` | `code` | String | Có | N/A | Bắt buộc, duy nhất (unique), không rỗng. |
-| `VAR-17-02` | `type` | Enum | Có | N/A | Chỉ nhận giá trị: `percent` hoặc `fixed`. |
-| `VAR-17-03` | `discount_value` | Number | Có | 1 / 1% | Dương ($> 0$). Nếu `percent` thì trong khoảng $(0, 100\%]$. |
-| `VAR-17-04` | `min_order_amount`| Number | Có | 1 ₫ | Lớn hơn hoặc bằng 0 ($\ge 0$). |
-| `VAR-17-05` | `max_uses_per_user`| Integer | Có | 1 | Lớn hơn hoặc bằng 1 ($\ge 1$). |
-| `VAR-17-06` | `expired_at` | DateTime | Có | 1 ngày | Ngày hết hạn của coupon (so với hiện tại). |
+| Variable ID | Variable Name | Data Type | Mandatory? | Precision ($\epsilon$) | Specification Constraint (Quote) | Assumptions / Ambiguities |
+| :--- | :--- | :--- | :---: | :---: | :--- | :--- |
+| `VAR-17-01` | `code` (Mã giảm giá) | String | Có | 1 char | Trích dẫn SRS FR-17: *"Các trường bắt buộc: `code` (duy nhất)..."* (Đối chiếu FR-09: *"Mã phải có trong CSDL và đang hoạt động (`is_active = 1`)"*; API Spec §6.4) | Chuỗi định danh voucher; bắt buộc, không được để trống `""` hoặc chỉ chứa khoảng trắng `"   "`. Tính duy nhất (`UNIQUE`): nếu mã đã tồn tại trong CSDL, hệ thống phải từ chối (HTTP 400/409) và thông báo lỗi rõ ràng, không được làm sập server (500). Giao diện Admin tự động chuyển thành chữ in hoa (`toUpperCase()`). SRS không quy định độ dài tối đa $\to$ Giả định chuẩn độ dài hợp lệ từ 1 đến 50 ký tự; không chứa ký tự đặc biệt gây lỗi XSS hay SQL injection. |
+| `VAR-17-02` | `type` (Loại giảm giá) | Enum / String | Có | N/A | Trích dẫn SRS FR-17: *"Các trường bắt buộc: ... `type` (percent/fixed)..."* (Đối chiếu FR-09: *"Loại `percent`... Loại `fixed`..."*) | Chỉ chấp nhận tập giá trị rời rạc gồm đúng 2 lựa chọn: `'percent'` (tính theo tỷ lệ phần trăm) hoặc `'fixed'` (tính theo số tiền cố định ₫). Các giá trị khác ngoài tập (như chuỗi rỗng `""`, `'free_shipping'`, `'PERCENT'`, số, `null`) đều không hợp lệ và phải bị từ chối từ cả UI lẫn API. |
+| `VAR-17-03` | `discount_value` (Giá trị giảm giá) | Number | Có | $1\% \text{ hoặc } 1\text{ ₫}$ | Trích dẫn SRS FR-17: *"Các trường bắt buộc: ... `discount_value` (dương)..."* (Đối chiếu FR-09: *"Loại percent: discount_amount = total * discount_value / 100; Loại fixed: discount_amount = discount_value"*) | Ràng buộc bất đẳng thức: phải là số dương ($discount\_value > 0$). Giá trị bằng 0 hoặc âm ($< 0$) đều vi phạm đặc tả. Ràng buộc phụ thuộc theo `type`: (1) Nếu `type = 'percent'`: miền giá trị hợp lệ là $(0, 100\%]$, với bước nhảy $\epsilon = 1\%$; vượt quá 100% (ví dụ $101\%$) là không hợp lệ vì không thể giảm vượt quá giá trị đơn hàng; (2) Nếu `type = 'fixed'`: số tiền nguyên dương $> 0$ (đơn vị ₫, $\epsilon = 1\text{ ₫}$); không được phép âm hay bằng 0. |
+| `VAR-17-04` | `min_order_amount` (Ngưỡng đơn hàng tối thiểu) | Number / Currency | Có (Mặc định 0) | 1 ₫ | Trích dẫn SRS FR-17: *"Các trường bắt buộc: ... `min_order_amount` (>= 0)..."* (Đối chiếu FR-09: *"Tổng đơn hàng >= (lớn hơn hoặc bằng) min_order_amount"*) | Ràng buộc bất đẳng thức: $min\_order\_amount \ge 0$. Điểm biên hợp lệ tối thiểu là $0\text{ ₫}$ (mã áp dụng cho mọi đơn hàng không ràng buộc giá trị). Giá trị âm ($< 0$) vi phạm đặc tả và phải bị từ chối. Trên form Admin, giá trị mặc định được gợi ý là `0`. |
+| `VAR-17-05` | `max_uses_per_user` (Số lượt dùng tối đa / người) | Integer | Có (Mặc định 1) | 1 lượt | Trích dẫn SRS FR-17: *"Các trường bắt buộc: ... `max_uses_per_user` (>= 1)."* (Đối chiếu FR-09: *"Số lần đã dùng mã này của user < max_uses_per_user"*) | Số nguyên dương $max\_uses\_per\_user \ge 1$. Điểm biên hợp lệ tối thiểu là `1` (mỗi người dùng được áp dụng đúng 1 lần). Giá trị bằng `0`, số nguyên âm, số thập phân hoặc chuỗi phi số là không hợp lệ và phải bị từ chối. Trên form Admin, trường có thuộc tính HTML `min="1"` và mặc định là `1`. |
+| `VAR-17-06` | `expired_at` (Ngày hết hạn của mã) | Date / DateTime | Có | 1 ngày | Trích dẫn SRS FR-17: *"Các trường bắt buộc: ... `expired_at`..."* (Đối chiếu FR-09: *"Còn hạn sử dụng: Ngày hiện tại phải trước expired_at"*) | Định dạng ngày theo chuẩn ISO (`YYYY-MM-DD`). Khi tạo mã mới, thời hạn phải là một ngày trong tương lai ($expired\_at > \text{now}$) để mã có ý nghĩa sử dụng. Nếu chọn ngày trong quá khứ ($expired\_at \le \text{now}$), mã tạo ra sẽ hết hạn ngay lập tức (cần cảnh báo/chặn). Ranh giới hết hạn: thời điểm hết hạn tính đến cuối ngày (`23:59:59`) hay đầu ngày (`00:00:00`) của ngày `expired_at`. |
+| `VAR-17-07` | `auth_token_and_role` (Xác thực & Quyền hạn truy cập Admin) | Compound (JWT & Role) | Bắt buộc (Bảo mật) | N/A | Trích dẫn SRS Mục 5.3 & SEC-03: *"Tất cả các API Admin... phải có JWT Token hợp lệ... User phải có role là admin (`role = 'admin'`). Nếu user thông thường (`role = 'user'`) gọi API admin -> trả về HTTP 403 Forbidden."* | Precondition bảo mật: Chỉ tài khoản có `role = 'admin'` mới được phép thực hiện các thao tác Thêm (`POST /api/admin/coupons`), Xem danh sách quản trị (`GET /api/coupons`), và Xóa (`DELETE /api/admin/coupons/:id`). Gọi API không có Token $\to$ HTTP 401; gọi API bằng Token của User thường (`role = 'user'`) $\to$ HTTP 403 Forbidden. |
+| `VAR-17-08` | `target_coupon_id` (Định danh coupon cho thao tác Xóa) | Integer | Bắt buộc (Thao tác Xóa) | 1 đơn vị | Trích dẫn SRS FR-17: *"Admin có thể Thêm / Xem / Xóa mã giảm giá."*; API Spec §6.4: *"Xóa mã: `DELETE /api/admin/coupons/:id`"* | Tham số đường dẫn `:id` trong API xóa. Phải là số nguyên dương tương ứng với một coupon đang tồn tại trong bảng `coupons`. Nếu gửi ID không tồn tại (ví dụ: `id = 9999`) hoặc đã bị xóa trước đó, hệ thống phải xử lý an toàn (trả về HTTP 404 hoặc thông báo lỗi phù hợp). Trên giao diện Admin, cần kiểm tra xem thao tác Xóa có dialog xác nhận hay không (đối chiếu FR-07/FR-24). |
 
 ### 4.2 Bước 2: Phân vùng tương đương (Single Fault Assumption)
 | Partition ID | Biến | Phân lớp tương đương | Loại | Giá trị đại diện | Hành vi mong đợi |
