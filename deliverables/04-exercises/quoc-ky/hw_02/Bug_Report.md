@@ -26,7 +26,7 @@
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | `BUG-FR02-01` | Bộ đếm số lần đăng nhập sai tăng 2 thay vì 1 đơn vị sau 1 lần thử sai | FR-02 | `TC_FR02_03` | Major | [Issue #4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4) | Open |
-| `BUG-FR02-02` | Thông báo lỗi tiết lộ thông tin mật khẩu sai thay vì thông báo chung | FR-02 | `TC_FR02_02` | Major | [Issue #13](https://github.com/ttbhanh/eshop-sut/issues/13) | Open |
+| `BUG-FR02-02` | Khóa tài khoản sớm tại lần thử sai thứ 2 với thời gian phạt 180s thay vì 30s | FR-02 | `TC_FR02_04` | Critical | [Issue #5](https://github.com/faker26052005-lgtm/SUT-EShop/issues/5) | Open |
 | `BUG-FR07-01` | Bấm nút giảm (-) tại số lượng 1 tự xóa sản phẩm không có dialog xác nhận | FR-07 | `TC_FR07_03` | Major | [Issue #14](https://github.com/ttbhanh/eshop-sut/issues/14) | Open |
 | `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
@@ -107,30 +107,86 @@
 
 ---
 
-#### [BUG-FR02-02] Thông báo lỗi tiết lộ thông tin mật khẩu sai thay vì thông báo chung
+#### [BUG-FR02-02] Khóa tài khoản sớm tại lần thử sai thứ 2 với thời gian phạt 180s thay vì 30s
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR02-02` |
-| **Tiêu đề Bug** | `[FR-02][Web] Detailed error message exposes credential validation specifics violating SRS privacy rule` |
-| **Mức độ (Severity)** | **Major** (User Enumeration vulnerability) |
-| **Test Case phát hiện** | `TC_FR02_02` |
-| **GitHub Issue Link** | [Issue #13: [FR-02] Error message reveals password error details](https://github.com/ttbhanh/eshop-sut/issues/13) |
+| **Tiêu đề Bug** | `[FR-02][Backend API / SQLite DB] Premature account lockout triggered at attempt N=2 with excessive 180s duration` |
+| **Chức năng (Feature)** | FR-02: Đăng nhập & Khóa tài khoản (Pool A) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v18.19 • Linux |
+| **Mức độ (Severity)** | **Critical** (Khóa oan tài khoản người dùng hợp lệ và phạt thời gian vượt mức 6 lần quy định) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR02_04`](Main_Report.md#tc_fr02_04) (Thử sai lần 2 - Biên Off-point trước ngưỡng khóa) |
+| **GitHub Issue Link** | [Issue #5: [BUG] [FR-02][Backend API / SQLite DB] Premature account lockout triggered at attempt N=2 with excessive 180s duration](https://github.com/faker26052005-lgtm/SUT-EShop/issues/5) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Các bước tái hiện:**
-1. Truy cập `http://localhost:5173/login`.
-2. Nhập Email: `test@eshop.com`, Mật khẩu: `SaiMatKhau123!`.
-3. Bấm "Đăng nhập".
+**1. Tiền điều kiện (Preconditions):**
+- Tài khoản người dùng `test@eshop.com` đang tích lũy 1 lần đăng nhập sai trước đó: `login_attempts = 1`, `locked_until = NULL`.
+- SUT backend đang chạy tại `http://localhost:3000`.
 
-**2. Kết quả mong đợi (SRS FR-02):**
-> *Trích dẫn SRS:* "Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."
-- Thông báo lỗi chung: "Email hoặc mật khẩu không chính xác".
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Gửi yêu cầu đăng nhập lần thứ 2 với email `test@eshop.com` và mật khẩu không chính xác `WrongPass2!`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@eshop.com","password":"WrongPass2!"}'
+   ```
+2. Truy vấn SQLite kiểm tra giá trị hai cột `login_attempts` và `locked_until` của tài khoản `test@eshop.com`:
+   ```bash
+   SELECT id, email, login_attempts, locked_until FROM users WHERE email='test@eshop.com';
+   ```
 
-**3. Kết quả thực tế:**
-- Hệ thống thông báo rõ: "Mật khẩu không chính xác" (cho phép kẻ tấn công biết email đã tồn tại trong CSDL).
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "email": "test@eshop.com",
+  "password": "WrongPass2!"
+}
+```
 
-**4. Bằng chứng kiểm thử:**
-- *Ảnh chụp minh chứng:* `screenshots/bug_fr02_02_actual.png`
+**4. Kết quả mong đợi (Expected Result theo SRS FR-02):**
+> *Trích dẫn SRS FR-02 (Mục 2 & 3):* "Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm số lần đăng nhập sai liên tiếp lên đúng 1 đơn vị. Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây (môi trường demo)."
+- Tại lần thử sai thứ 2 ($N=2$, điểm Off-point trước ngưỡng khóa 3):
+  - HTTP Status: `401 Unauthorized` (`{"error": "Invalid email or password"}`).
+  - Trong CSDL SQLite: `login_attempts` phải tăng từ `1` lên **đúng `2`** ($N=2$).
+  - Trường `locked_until` phải tiếp tục giữ nguyên là `NULL` (chưa kích hoạt khóa).
+- Khi tài khoản đạt ngưỡng khóa ($N=3$), thời hạn phạt chỉ được là 30 giây.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/login` trả về HTTP `401 Unauthorized`.
+- Tuy nhiên trong CSDL SQLite:
+  - `login_attempts` bị tăng vọt từ `1` lên **`3`** (do lỗi logic `+ 2`).
+  - Do `newAttempts >= 3`, hệ thống kích hoạt khóa tài khoản non ngay tại lần thử thứ 2 ($N=2$).
+  - Thời hạn khóa `locked_until` bị đặt thành **180 giây** (`2026-10-18T17:38:17.793Z` so với thời điểm gửi `17:35:17 GMT`), dài gấp 6 lần quy định 30 giây của SRS.
+- HTTP Status Code: `401 Unauthorized`
+- Database Mutation: `login_attempts` = 3, `locked_until` = `2026-10-18T17:38:17.793Z` (+180s)
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp bằng chứng terminal & database:*  
+  ![Minh chứng lỗi khóa tài khoản non và thời gian 180s](./screenshots/BUG_FR02_02_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/5](https://github.com/faker26052005-lgtm/SUT-EShop/issues/5)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 54–58.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  const newAttempts = user.login_attempts + 2;
+  let lockedUntil = null;
+  if (newAttempts >= 3) {
+    lockedUntil = new Date(Date.now() + 180000).toISOString();
+  }
+  ```
+- **Khắc phục:** 
+  1. Đổi phép cộng sang tăng 1 đơn vị: `user.login_attempts + 1`.
+  2. Đổi thời gian khóa về đúng 30 giây theo SRS demo: `Date.now() + 30000`.
+  ```javascript
+  const newAttempts = user.login_attempts + 1;
+  let lockedUntil = null;
+  if (newAttempts >= 3) {
+    lockedUntil = new Date(Date.now() + 30000).toISOString();
+  }
+  ```
 
 ---
 
