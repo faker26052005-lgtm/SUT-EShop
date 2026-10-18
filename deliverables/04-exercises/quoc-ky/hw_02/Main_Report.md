@@ -1319,18 +1319,772 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 | `BVA-17-10` | `user_usage_count` vs `max_uses_per_user` ($U = 2\text{ lượt}$) | $used < U$ (Điều kiện C5 chưa hết lượt - Exclusive) | 3-Value ($\epsilon=1\text{ lượt}$) | $used = 2\text{ lần}$ [Invalid On-point]<br/>Đúng bằng mốc giới hạn ($2 \not< 2$) $\to$ Đã hết lượt, từ chối áp dụng. | $used = 1\text{ lần}$ [Valid Off-point]<br/>$U - 1 = 1$ ($1 < 2$) $\to$ Lượt dùng hợp lệ cuối cùng, được áp dụng. | $used = 3\text{ lần}$ [Invalid In-point]<br/>$U + 1 = 3$ ($3 \not< 2$) $\to$ Đã vượt quá giới hạn, từ chối áp dụng. |
 | `BVA-17-11` | `fixed_discount` vs `order_total` ($Total = 50.000\text{ ₫}$) | $discount \le Total$ (Biên khấu trừ tiền mặt đơn hàng) | 3-Value ($\epsilon=1\text{ ₫}$)<br/>`[Defect Hotspot]` | $discount = 50.000\text{ ₫}$ [Valid On-point]<br/>Giảm đúng bằng tổng tiền $\to$ Đơn hàng thanh toán bằng $0\text{ ₫}$. | $discount = 50.001\text{ ₫}$ [Anomaly Off-point]<br/>Giảm vượt tổng đơn 1 ₫ $\to$ Kiểm tra hệ thống chặn ở $0\text{ ₫}$ hay bị âm tiền. | $discount = 49.999\text{ ₫}$ [Valid In-point]<br/>Giảm thiếu 1 ₫ $\to$ Đơn hàng còn phải trả đúng $1\text{ ₫}$. |
 
-### 4.4 Bước 4: Thiết kế kịch bản kiểm thử
-| TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước | Test Data | Mã EP/BVA | Kết quả mong đợi (SRS) | Trạng thái |
-| :--- | :--- | :--- | :--- | :--- | :--- | :---: |
-| `TC_FR17_01` | Tạo coupon percent hợp lệ biên 100% | Đăng nhập Admin. Nhập đủ thông tin hợp lệ với giảm 100%. | `type=percent`, `val=100`, `min=0`, `uses=1` | `BVA-17-02-ON`, `BVA-17-03-ON` | Tạo thành công | *Chờ thực thi* |
-| `TC_FR17_02` | Tạo coupon percent với giá trị 101% | Giữ các trường hợp lệ, nhập giảm 101%. | `val=101%` (các trường khác chuẩn) | `BVA-17-02-OFF` | Hệ thống từ chối | *Chờ thực thi* |
-| `TC_FR17_03` | Tạo coupon với `discount_value = 0` | Giữ các trường hợp lệ, nhập giá trị = 0. | `val=0` | `BVA-17-01-ON` | Từ chối vì phải $> 0$ | *Chờ thực thi* |
-| `TC_FR17_04` | Tạo coupon với `min_order_amount = 0` | Giữ các trường hợp lệ, ngưỡng tối thiểu = 0. | `min_order=0` | `BVA-17-03-ON` | Chấp nhận ($\ge 0$) | *Chờ thực thi* |
-| `TC_FR17_05` | Tạo coupon với `min_order_amount = -1` | Giữ các trường hợp lệ, nhập ngưỡng = -1. | `min_order=-1` | `BVA-17-03-OFF` | Báo lỗi không hợp lệ | *Chờ thực thi* |
-| `TC_FR17_06` | Tạo coupon với `max_uses_per_user = 1` | Giữ các trường hợp lệ, số lượt dùng = 1. | `max_uses=1` | `BVA-17-04-ON` | Chấp nhận ($\ge 1$) | *Chờ thực thi* |
-| `TC_FR17_07` | Tạo coupon với `max_uses_per_user = 0` | Giữ các trường hợp lệ, số lượt dùng = 0. | `max_uses=0` | `BVA-17-04-OFF` | Báo lỗi phải $\ge 1$ | *Chờ thực thi* |
-| `TC_FR17_08` | Tạo coupon trùng mã `code` đã có | Dùng lại mã `SAVE10` đã có trong hệ thống. | `code=SAVE10` | `EP-17-02` | Báo lỗi mã coupon đã tồn tại | *Chờ thực thi* |
-| `TC_FR17_09` | Để trống mã coupon `code` | Để trống trường code. | `code=""` | `EP-17-03` | Báo lỗi bắt buộc nhập code | *Chờ thực thi* |
+### 4.4 Bước 4: Thiết kế kịch bản kiểm thử (Step 4 Deliverables - Test Case Design)
+
+> **Phương pháp luận Thiết kế Kịch bản Kiểm thử (Theo `Comprehensive Guide: How to Write Test Cases`):**
+> 1. **Cú pháp Định danh Mục tiêu (Title / Objective Formula):** Mọi kịch bản kiểm thử đều tuân thủ công thức chuẩn:
+>    $$\text{Action (Hành động)} + \text{Function (Chức năng)} + \text{Operating Condition (Điều kiện vận hành)}$$
+> 2. **Nguyên tắc Giả định Đơn lỗi (Single Fault Isolation):** Mỗi kịch bản Negative (IEP hoặc Off-point) chỉ kích hoạt đúng 1 điều kiện không hợp lệ; tất cả các biến khác giữ nguyên giá trị hợp lệ cơ sở (Baseline).
+> 3. **Tính Tự dọn dẹp (Self-Cleaning / Teardown):** Mỗi kịch bản thao tác dữ liệu đều có bước dọn dẹp hoặc khôi phục trạng thái bảng `coupons` và `coupon_usage` trong SQLite để đảm bảo tính độc lập tuyệt đối giữa các lượt kiểm thử.
+> 4. **Điểm kiểm chứng đa tầng (Multi-tier Validation Points):** Kết quả mong đợi phân tách rõ ràng 4 tầng: Giao diện Quản trị (Admin Web), Giao diện Lập trình (API), Trạng thái CSDL (Database SQLite), và Tuân thủ An toàn Thông tin & Nghiệp vụ (Security / Business Rules).
+
+---
+
+#### 4.4.1 Bảng Tổng Hợp Kịch Bản Kiểm Thử & Ma Trận Truy Vết (Overview Traceability Matrix)
+
+| TC ID | Test Case Objective ($\text{Action} + \text{Function} + \text{Condition}$) | Phân loại | Mã EP / Rule bao phủ | Mã BVA bao phủ | Dữ liệu đầu vào & Baseline | Kết quả cốt lõi (Core Expected) | Trạng thái |
+| :--- | :--- | :---: | :---: | :---: | :--- | :--- | :---: |
+| `TC_FR17_01` | Verify creating a valid percent coupon with standard baseline inputs on Admin Web & API | Positive (VEP) | `EP-17-01`, `EP-17-09`, `EP-17-15`, `EP-17-26`, `EP-17-31`, `EP-17-36`, `AUTH-17-01`, `CPN-BR-12` | `BVA-17-03-IN` | `code="PROMO2026"`, `type="percent"`, `val=10`, `min=100000`, `max=1`, `expired="2026-12-31"` | HTTP 200/201, tạo thành công coupon ID mới, hiển thị trên bảng Admin | *Chờ thực thi* |
+| `TC_FR17_02` | Verify creating a valid fixed amount coupon on Admin Web & API | Positive (VEP) | `EP-17-01`, `EP-17-10`, `EP-17-16`, `EP-17-26`, `EP-17-31`, `EP-17-36`, `AUTH-17-01`, `CPN-BR-12` | `BVA-17-05-IN` | `code="FIXED50K"`, `type="fixed"`, `val=50000`, `min=100000`, `max=1`, `expired="2026-12-31"` | HTTP 200/201, tạo thành công coupon trừ 50.000 ₫ | *Chờ thực thi* |
+| `TC_FR17_03` | Verify creating a percent coupon at upper boundary 100% (On-point) | Positive (BVA) | `EP-17-15` | `BVA-17-04-ON` ($V=100\%$) | `val=100%`, các trường khác chuẩn baseline | Chấp nhận tạo mã giảm 100% (miễn phí toàn bộ đơn hàng) | *Chờ thực thi* |
+| `TC_FR17_04` | Verify creating a percent coupon at lower boundary 1% (Off-point of $>0$) | Positive (BVA) | `EP-17-15` | `BVA-17-03-OFF` ($V=1\%$) | `val=1%`, các trường khác chuẩn baseline | Chấp nhận tạo mã với tỷ lệ giảm nhỏ nhất 1% | *Chờ thực thi* |
+| `TC_FR17_05` | Verify creating a coupon with zero minimum order amount (On-point M=0) | Positive (BVA) | `EP-17-27` | `BVA-17-06-ON` ($M=0\text{ ₫}$) | `min_order_amount=0`, các trường khác chuẩn baseline | Chấp nhận tạo mã không ràng buộc ngưỡng đơn hàng | *Chờ thực thi* |
+| `TC_FR17_06` | Verify creating a coupon with minimum max uses per user 1 (On-point U=1) | Positive (BVA) | `EP-17-31` | `BVA-17-07-ON` ($U=1$) | `max_uses_per_user=1`, các trường khác chuẩn baseline | Chấp nhận tạo mã giới hạn 1 lượt dùng / người | *Chờ thực thi* |
+| `TC_FR17_07` | Verify creating a coupon with code length exactly 1 char (On-point Len=1) | Positive (BVA) | `EP-17-01` | `BVA-17-01-ON` ($Len=1$) | `code="A"`, các trường khác chuẩn baseline | Chấp nhận tạo mã với độ dài 1 ký tự | *Chờ thực thi* |
+| `TC_FR17_08` | Verify viewing coupon list in Admin management table | Positive (CRUD) | `VAR-17-01..06`, `AUTH-17-01` | N/A (List View) | Đăng nhập Admin, mở tab Mã Giảm Giá | Bảng hiển thị đầy đủ các cột: Mã, Loại, Giá trị, Đơn tối thiểu, Hết hạn, Giới hạn/người, Hành động | *Chờ thực thi* |
+| `TC_FR17_09` | Verify deleting an existing coupon by ID via Admin Web & API | Positive (CRUD) | `RES-17-01`, `AUTH-17-01`, `CPN-BR-13` | N/A (Delete Flow) | Bấm "Xóa" tại coupon vừa tạo (`DELETE /api/admin/coupons/:id`) | HTTP 200 OK, xóa thành công, bản ghi biến mất khỏi bảng Admin | *Chờ thực thi* |
+| `TC_FR17_10` | Validate rejection when creating coupon with duplicate code (Single Fault) | Negative (IEP) | `EP-17-02` | N/A (Unique Constraint) | `code="SAVE10"` (đã có trong DB), các trường khác chuẩn | Báo lỗi mã coupon đã tồn tại; API trả về HTTP 400 hoặc 409, không sập 500 | *Chờ thực thi* |
+| `TC_FR17_11` | Validate rejection when coupon code is empty string (Boundary Off-point) | Negative (BVA) | `EP-17-03` | `BVA-17-01-OFF` ($Len=0$) | `code=""`, các trường khác chuẩn | Báo lỗi trường bắt buộc không được để trống (UI tooltip / HTTP 400) | *Chờ thực thi* |
+| `TC_FR17_12` | Validate rejection when coupon code contains only whitespace (Single Fault) | Negative (IEP) | `EP-17-04` | N/A (Whitespace) | `code="     "`, các trường khác chuẩn | Hệ thống trim khoảng trắng và từ chối mã rỗng; HTTP 400 | *Chờ thực thi* |
+| `TC_FR17_13` | Validate rejection when creating coupon with invalid type enum (Single Fault) | Negative (IEP) | `EP-17-11` | N/A (Enum) | `type="free_shipping"`, các trường khác chuẩn | API từ chối với HTTP 400 Bad Request (Invalid type enum) | *Chờ thực thi* |
+| `TC_FR17_14` | Validate rejection when discount value is 0 for percent type (Boundary On-point) | Negative (BVA) | `EP-17-17` | `BVA-17-03-ON` ($V=0$) | `type="percent"`, `val=0`, các trường khác chuẩn | Hệ thống từ chối; báo lỗi giá trị giảm phải là số dương $> 0$ (HTTP 400) | *Chờ thực thi* |
+| `TC_FR17_15` | Validate rejection when discount value is negative for percent type (Single Fault) | Negative (IEP) | `EP-17-18` | N/A (Negative Range) | `type="percent"`, `val=-10`, các trường khác chuẩn | Hệ thống từ chối số âm; không để xảy ra lỗi làm tăng giá trị đơn hàng | *Chờ thực thi* |
+| `TC_FR17_16` | Validate rejection when discount value exceeds 100% at 101% for percent type (Boundary Off-point) | Negative (BVA) | `EP-17-19` | `BVA-17-04-OFF` ($V=101\%$) | `type="percent"`, `val=101`, các trường khác chuẩn | Hệ thống từ chối (HTTP 400); tỷ lệ % không thể vượt quá 100% | *Chờ thực thi* |
+| `TC_FR17_17` | Validate rejection when discount value is 0 for fixed type (Boundary On-point) | Negative (BVA) | `EP-17-17` | `BVA-17-05-ON` ($V=0\text{ ₫}$) | `type="fixed"`, `val=0`, các trường khác chuẩn | Hệ thống từ chối; giá trị giảm tiền mặt phải là số dương $> 0$ | *Chờ thực thi* |
+| `TC_FR17_18` | Validate rejection when min order amount is negative at -1 (Boundary Off-point) | Negative (BVA) | `EP-17-28` | `BVA-17-06-OFF` ($M=-1\text{ ₫}$) | `min_order_amount=-1`, các trường khác chuẩn | Hệ thống từ chối; báo lỗi ngưỡng đơn hàng phải lớn hơn hoặc bằng 0 | *Chờ thực thi* |
+| `TC_FR17_19` | Validate rejection when max uses per user is 0 (Boundary Off-point) | Negative (BVA) | `EP-17-32` | `BVA-17-07-OFF` ($U=0$) | `max_uses_per_user=0`, các trường khác chuẩn | Hệ thống từ chối; số lượt dùng tối đa của mỗi người dùng phải $\ge 1$ | *Chờ thực thi* |
+| `TC_FR17_20` | Validate rejection when max uses per user is negative (Single Fault) | Negative (IEP) | `EP-17-33` | N/A (Negative Range) | `max_uses_per_user=-1`, các trường khác chuẩn | Hệ thống từ chối số âm; HTTP 400 Bad Request | *Chờ thực thi* |
+| `TC_FR17_21` | Validate handling when expired_at is set in the past (Boundary Off-point) | Negative / Probe | `EP-17-37` | `BVA-17-08-OFF` (yesterday) | `expired_at="2020-01-01"`, các trường khác chuẩn | Hệ thống từ chối tạo mã hoặc gắn nhãn hết hạn ngay; cảnh báo Admin | *Chờ thực thi* |
+| `TC_FR17_22` | Validate rejection when unauthenticated request calls create coupon API (Single Fault) | Negative (Security) | `AUTH-17-02` | N/A (No Auth Header) | Gửi `POST /api/admin/coupons` không kèm Authorization token | API từ chối với HTTP 401 Unauthorized; không ghi dữ liệu | *Chờ thực thi* |
+| `TC_FR17_23` | Validate rejection when regular user with role 'user' calls admin coupon API (Single Fault) | Negative (Security) | `AUTH-17-03` | N/A (Role Escalation) | Gửi `POST /api/admin/coupons` với token của `test@eshop.com` | API từ chối với HTTP 403 Forbidden theo SEC-03; cấm leo thang đặc quyền | *Chờ thực thi* |
+| `TC_FR17_24` | Validate rejection when deleting non-existent coupon ID 9999 (Single Fault) | Negative (IEP) | `RES-17-02` | N/A (Non-existent ID) | `DELETE /api/admin/coupons/9999` với token Admin | API trả về HTTP 404 Not Found (hoặc lỗi rõ ràng); không sập server | *Chờ thực thi* |
+| `TC_FR17_25` | Validate rejection when deleting coupon with negative ID -1 (Single Fault) | Negative (IEP) | `RES-17-03` | N/A (Negative Route Param) | `DELETE /api/admin/coupons/-1` với token Admin | API từ chối với HTTP 400 Bad Request; ID phải là số dương | *Chờ thực thi* |
+| `TC_FR17_26` | Validate rejection when deleting coupon with malformed string ID 'abc' (Single Fault) | Negative (IEP) | `RES-17-05` | N/A (Malformed Route Param)| `DELETE /api/admin/coupons/abc` với token Admin | API từ chối với HTTP 400 Bad Request do sai kiểu dữ liệu | *Chờ thực thi* |
+| `TC_FR17_27` | Verify applying percent coupon discount arithmetic calculation at checkout | Positive (Checkout) | `CPN-BR-01` | N/A (Formula Calc) | Đơn hàng 1.000.000 ₫; áp dụng mã 10% | Giảm đúng 100.000 ₫; tổng thanh toán cập nhật thành 900.000 ₫ | *Chờ thực thi* |
+| `TC_FR17_28` | Verify applying fixed coupon discount arithmetic calculation at checkout | Positive (Checkout) | `CPN-BR-02` | N/A (Formula Calc) | Đơn hàng 1.000.000 ₫; áp dụng mã 50.000 ₫ | Giảm đúng 50.000 ₫; tổng thanh toán cập nhật thành 950.000 ₫ | *Chờ thực thi* |
+| `TC_FR17_29` | Validate rejection when order total is below min_order_amount at boundary offset M-1 ₫ | Negative (BVA) | `CPN-BR-03` | `BVA-17-09-OFF` ($M-1\text{ ₫}$) | `min=300.000 ₫`; đơn hàng $299.999\text{ ₫}$ | Từ chối áp dụng; thông báo đơn hàng chưa đủ ngưỡng tối thiểu (C3) | *Chờ thực thi* |
+| `TC_FR17_30` | Verify acceptance when order total equals exact min_order_amount at boundary On-point M | Positive (BVA) | `CPN-BR-04` | `BVA-17-09-ON` ($M=300.000\text{ ₫}$) | `min=300.000 ₫`; đơn hàng đúng $300.000\text{ ₫}$ | Chấp nhận áp dụng mã thành công (thỏa mãn điều kiện toán học $\ge$) | *Chờ thực thi* |
+| `TC_FR17_31` | Validate rejection when applying expired coupon at checkout | Negative (Checkout) | `CPN-BR-06` | N/A (Expired State) | Áp dụng mã `EXPIRED` (`expired_at='2020-01-01'`) | Từ chối áp dụng; thông báo mã giảm giá đã hết hạn sử dụng (C2) | *Chờ thực thi* |
+| `TC_FR17_32` | Validate rejection when user usage count reaches max_uses_per_user at boundary On-point | Negative (BVA) | `CPN-BR-09` | `BVA-17-10-ON` ($used=U$) | `max=1`; user đã dùng 1 lần trong CSDL | Từ chối áp dụng; thông báo người dùng đã dùng hết lượt cho phép (C5) | *Chờ thực thi* |
+| `TC_FR17_33` | Verify acceptance when user usage count is max_uses_per_user - 1 at boundary Off-point | Positive (BVA) | `CPN-BR-08` | `BVA-17-10-OFF` ($used=U-1$)| `max=2`; user đã dùng 1 lần trong CSDL | Chấp nhận áp dụng mã cho lần thanh toán thứ 2 ($1 < 2$) | *Chờ thực thi* |
+| `TC_FR17_34` | Validate system handling when fixed discount exceeds order total (Financial Boundary Defect Probe) | Boundary Probe | `CPN-BR-10` | `BVA-17-11-OFF` ($discount>Total$)| Đơn hàng 30.000 ₫; áp dụng mã fixed 50.000 ₫ | Tổng tiền đơn hàng giảm tối đa về 0 ₫; tuyệt đối KHÔNG bị âm tiền | *Chờ thực thi* |
+| `TC_FR17_35` | Validate stored XSS escaping when viewing coupon with HTML tags on Admin Web | Negative (Security) | `EP-17-06`, `SEC-17-01` | N/A (XSS Probe) | `code="<script>alert('XSS')</script>"` | Giao diện escape thẻ HTML (SEC-04); hiển thị text, không chạy mã script | *Chờ thực thi* |
+| `TC_FR17_36` | Validate race condition handling when creating duplicate coupon codes simultaneously | Concurrency | `CPN-BR-14` | N/A (Race Condition) | 2 request `POST` cùng mã `code="FLASH50"` trong 100ms | Đúng 1 request thành công; request thứ 2 bị từ chối; CSDL duy nhất 1 bản ghi | *Chờ thực thi* |
+
+---
+
+#### 4.4.2 Hồ Sơ Đặc Tả Chi Tiết Từng Kịch Bản Kiểm Thử (Detailed Test Specification Cards - 100% Exhaustive Coverage)
+
+Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36 kịch bản kiểm thử (`TC_FR17_01` đến `TC_FR17_36`) theo chuẩn 7 phân đoạn: Tracking Information, Test Objective, Pre-conditions & Environment, Test Data, Step-by-Step Procedure, Multi-tier Validation Points (UI, API, Database SQLite, Security / Business Rules), và Teardown & Clean-up:
+
+###### Test Case `TC_FR17_01`: Verify creating a valid percent coupon with standard baseline inputs on Admin Web & API
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_01` | **Priority:** High (P1) | **Target Layer:** Admin Web (`/coupons`) & REST API (`POST /api/admin/coupons`)
+  - **Traceability:** SRS FR-17, API Spec §6.4
+  - **Coverage IDs:** `EP-17-01`, `EP-17-09`, `EP-17-15`, `EP-17-26`, `EP-17-31`, `EP-17-36`, `AUTH-17-01`, `CPN-BR-12`, `BVA-17-03-IN`
+  - **Single-Fault Isolation:** Kịch bản Baseline hợp lệ tiêu chuẩn phối hợp các phân vùng VEP hợp lệ cơ sở để tạo coupon loại phần trăm.
+- **2. Test Objective:** Verify creating a valid percent coupon with standard baseline inputs on Admin Web & API.
+- **3. Pre-conditions & Environment:**
+  - Hệ thống EShop đang chạy (Backend `:3000`, Admin Web `:5174` hoặc `:5173`).
+  - Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`), lưu token vào `localStorage.getItem('adminToken')`.
+  - CSDL SQLite chưa tồn tại mã `"PROMO2026"`.
+- **4. Test Data:**
+  ```json
+  {
+    "code": "PROMO2026",
+    "type": "percent",
+    "discount_value": 10,
+    "min_order_amount": 100000,
+    "expired_at": "2026-12-31",
+    "max_uses_per_user": 1
+  }
+  ```
+- **5. Step-by-Step Procedure:**
+  1. Đăng nhập Admin Web, điều hướng vào mục "Mã Giảm Giá".
+  2. Tại form "Tạo mã giảm giá mới", điền đầy đủ các trường theo Test Data trên.
+  3. Nhấn nút "Tạo mã" (kích hoạt `POST /api/admin/coupons`).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Form tự động reset về giá trị mặc định. Bảng danh sách lập tức xuất hiện dòng mới mang mã `PROMO2026`, loại "Phần trăm", giá trị `10%`, đơn tối thiểu `100.000 ₫`, hết hạn `2026-12-31`, giới hạn `1 lần`.
+  - *API / Network:* HTTP Status trả về `200 OK` (hoặc `201 Created`). Response JSON: `{"message": "Coupon created", "id": <number>}`.
+  - *Database State:* Câu lệnh `SELECT * FROM coupons WHERE code='PROMO2026'` trả về đúng 1 bản ghi với `type='percent'`, `discount_value=10`, `min_order_amount=100000`, `max_uses_per_user=1`, `is_active=1`.
+  - *Security & Business Rules:* Xác thực quyền admin thành công (`AUTH-17-01`); thiết lập đúng trạng thái khả dụng ban đầu.
+- **7. Teardown & Clean-up:** Xóa coupon `PROMO2026` bằng nút "Xóa" trên Admin Web hoặc chạy SQL: `DELETE FROM coupons WHERE code='PROMO2026'`.
+
+###### Test Case `TC_FR17_02`: Verify creating a valid fixed amount coupon on Admin Web & API
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_02` | **Priority:** High (P1) | **Target Layer:** Admin Web & REST API
+  - **Traceability:** SRS FR-17, API Spec §6.4
+  - **Coverage IDs:** `EP-17-01`, `EP-17-10`, `EP-17-16`, `EP-17-26`, `EP-17-31`, `EP-17-36`, `AUTH-17-01`, `CPN-BR-12`, `BVA-17-05-IN`
+  - **Single-Fault Isolation:** Baseline hợp lệ tiêu chuẩn cho loại giảm giá tiền mặt cố định (`fixed`).
+- **2. Test Objective:** Verify creating a valid fixed amount coupon on Admin Web & API.
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập với JWT hợp lệ; CSDL chưa có mã `"FIXED50K"`.
+- **4. Test Data:**
+  ```json
+  {
+    "code": "FIXED50K",
+    "type": "fixed",
+    "discount_value": 50000,
+    "min_order_amount": 100000,
+    "expired_at": "2026-12-31",
+    "max_uses_per_user": 1
+  }
+  ```
+- **5. Step-by-Step Procedure:**
+  1. Mở trang quản trị "Mã Giảm Giá".
+  2. Chọn loại "Cố định", nhập mã `FIXED50K` và giá trị `50000`.
+  3. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Bảng quản trị cập nhật thêm dòng mới với mã `FIXED50K`, loại `Cố định`, giá trị giảm `50.000 ₫`.
+  - *API / Network:* HTTP 200/201 OK, trả về ID của coupon mới tạo.
+  - *Database State:* Bản ghi được lưu chính xác với `type='fixed'`, `discount_value=50000`.
+  - *Security & Business Rules:* Giảm giá tiền mặt được lưu nguyên vẹn, không chuyển đổi nhầm sang tỷ lệ phần trăm.
+- **7. Teardown & Clean-up:** Xóa mã `FIXED50K` (`DELETE FROM coupons WHERE code='FIXED50K'`).
+
+###### Test Case `TC_FR17_03`: Verify creating a percent coupon at upper boundary 100% (On-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_03` | **Priority:** High (P1) | **Target Layer:** Admin Web & Backend Validation
+  - **Traceability:** SRS FR-17, Quy tắc trần phần trăm tối đa 100%
+  - **Coverage IDs:** `EP-17-15`, `BVA-17-04-ON` ($V=100\%$)
+  - **Single-Fault Isolation:** Điểm biên trên On-point của tỷ lệ phần trăm ($V=100\%$); các trường khác chuẩn baseline.
+- **2. Test Objective:** Verify creating a percent coupon at upper boundary 100% (On-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `"FREE100"`.
+- **4. Test Data:** `code="FREE100"`, `type="percent"`, `discount_value=100`, `min_order_amount=0`, `max_uses_per_user=1`, `expired_at="2026-12-31"`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập thông tin mã giảm 100% vào form Admin.
+  2. Gửi request tạo mã.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Chấp nhận tạo mã, bảng hiển thị mã giảm `100%`.
+  - *API / Network:* HTTP 200/201 OK.
+  - *Database State:* Bản ghi lưu `discount_value=100`, `type='percent'`.
+  - *Security & Business Rules:* Thỏa mãn trần 100% của coupon tỷ lệ; cho phép tạo đơn miễn phí toàn bộ giá trị hàng khi áp dụng.
+- **7. Teardown & Clean-up:** Xóa mã `FREE100`.
+
+###### Test Case `TC_FR17_04`: Verify creating a percent coupon at lower boundary 1% (Off-point of >0)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_04` | **Priority:** High (P1) | **Target Layer:** Admin Web & Backend Validation
+  - **Traceability:** SRS FR-17 (*"discount_value (dương)"*), BVA $\epsilon=1\%$
+  - **Coverage IDs:** `EP-17-15`, `BVA-17-03-OFF` ($V=1\%$)
+  - **Single-Fault Isolation:** Điểm biên dưới hợp lệ nhỏ nhất (Off-point của $>0$) với $\epsilon=1\%$; các trường khác chuẩn baseline.
+- **2. Test Objective:** Verify creating a percent coupon at lower boundary 1% (Off-point of >0).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `"MIN1PCT"`.
+- **4. Test Data:** `code="MIN1PCT"`, `type="percent"`, `discount_value=1`, `min_order_amount=50000`, `max_uses_per_user=1`, `expired_at="2026-12-31"`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập form tạo coupon với `discount_value=1`.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Tạo thành công, bảng hiển thị `1%`.
+  - *API / Network:* HTTP 200/201 OK.
+  - *Database State:* `discount_value=1`, `type='percent'`.
+  - *Security & Business Rules:* Thỏa mãn điều kiện dương $>0$ theo định nghĩa toán học rời rạc.
+- **7. Teardown & Clean-up:** Xóa mã `MIN1PCT`.
+
+###### Test Case `TC_FR17_05`: Verify creating a coupon with zero minimum order amount (On-point M=0)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_05` | **Priority:** High (P1) | **Target Layer:** Admin Web & Backend Validation
+  - **Traceability:** SRS FR-17 (*"min_order_amount >= 0"*), BVA On-point
+  - **Coverage IDs:** `EP-17-27`, `BVA-17-06-ON` ($M=0\text{ ₫}$)
+  - **Single-Fault Isolation:** Điểm biên dưới On-point của ngưỡng đơn hàng tối thiểu ($M=0\text{ ₫}$); các trường khác chuẩn baseline.
+- **2. Test Objective:** Verify creating a coupon with zero minimum order amount (On-point M=0).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `"NO_MIN"`.
+- **4. Test Data:** `code="NO_MIN"`, `type="fixed"`, `discount_value=20000`, `min_order_amount=0`, `max_uses_per_user=1`, `expired_at="2026-12-31"`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập form Admin với `min_order_amount = 0`.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Chấp nhận tạo mã, hiển thị đơn tối thiểu `0 ₫` (hoặc "Không giới hạn").
+  - *API / Network:* HTTP 200/201 OK.
+  - *Database State:* Bản ghi lưu `min_order_amount = 0`.
+  - *Security & Business Rules:* Coupon áp dụng được cho mọi đơn hàng có giá trị bất kỳ mà không bị chặn bởi ngưỡng tiền.
+- **7. Teardown & Clean-up:** Xóa mã `NO_MIN`.
+
+###### Test Case `TC_FR17_06`: Verify creating a coupon with minimum max uses per user 1 (On-point U=1)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_06` | **Priority:** High (P1) | **Target Layer:** Admin Web & Backend Validation
+  - **Traceability:** SRS FR-17 (*"max_uses_per_user >= 1"*), BVA On-point
+  - **Coverage IDs:** `EP-17-31`, `BVA-17-07-ON` ($U=1$)
+  - **Single-Fault Isolation:** Điểm biên dưới On-point của số lượt dùng tối đa ($U=1\text{ lượt}$); các trường khác chuẩn baseline.
+- **2. Test Objective:** Verify creating a coupon with minimum max uses per user 1 (On-point U=1).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `"ONE_TIME"`.
+- **4. Test Data:** `code="ONE_TIME"`, `type="percent"`, `discount_value=15`, `min_order_amount=100000`, `max_uses_per_user=1`, `expired_at="2026-12-31"`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `max_uses_per_user = 1` trên form Admin.
+  2. Gửi request tạo mã.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Bảng hiển thị giới hạn `1 lần/người`.
+  - *API / Network:* HTTP 200/201 OK.
+  - *Database State:* `max_uses_per_user = 1`.
+  - *Security & Business Rules:* Thỏa mãn quy định tối thiểu 1 lượt dùng cho mỗi khách hàng.
+- **7. Teardown & Clean-up:** Xóa mã `ONE_TIME`.
+
+###### Test Case `TC_FR17_07`: Verify creating a coupon with code length exactly 1 char (On-point Len=1)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_07` | **Priority:** Medium (P2) | **Target Layer:** Admin Web & Backend Validation
+  - **Traceability:** SRS FR-17, BVA On-point Len=1
+  - **Coverage IDs:** `EP-17-01`, `BVA-17-01-ON` ($Len=1$)
+  - **Single-Fault Isolation:** Mã có độ dài nhỏ nhất 1 ký tự (`Len=1`); các trường khác chuẩn baseline.
+- **2. Test Objective:** Verify creating a coupon with code length exactly 1 char (On-point Len=1).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `"A"`.
+- **4. Test Data:** `code="A"`, `type="fixed"`, `discount_value=10000`, `min_order_amount=50000`, `max_uses_per_user=1`, `expired_at="2026-12-31"`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `code="A"` vào form Admin.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Chấp nhận tạo mã, bảng hiển thị mã `A`.
+  - *API / Network:* HTTP 200/201 OK.
+  - *Database State:* `SELECT * FROM coupons WHERE code='A'` có 1 bản ghi.
+  - *Security & Business Rules:* Xử lý chuỗi độ dài 1 ký tự an toàn, không bị lỗi cắt chuỗi hay validation rỗng.
+- **7. Teardown & Clean-up:** Xóa mã `A`.
+
+###### Test Case `TC_FR17_08`: Verify viewing coupon list in Admin management table
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_08` | **Priority:** High (P1) | **Target Layer:** Admin Web (`/coupons`) & REST API (`GET /api/admin/coupons`)
+  - **Traceability:** SRS FR-17 (*"Admin có thể Xem danh sách mã"*), API Spec §6.4
+  - **Coverage IDs:** `VAR-17-01..06`, `AUTH-17-01`
+  - **Single-Fault Isolation:** Luồng đọc dữ liệu tổng thể (Read Operation); không sửa đổi trạng thái dữ liệu.
+- **2. Test Objective:** Verify viewing coupon list in Admin management table.
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL có sẵn ít nhất 2 coupon mẫu (`PROMO2026`, `FIXED50K`).
+- **4. Test Data:** Gửi request `GET /api/admin/coupons` với token Admin.
+- **5. Step-by-Step Procedure:**
+  1. Đăng nhập Admin Web.
+  2. Nhấp vào tab "Mã Giảm Giá" trên thanh điều hướng.
+  3. Kiểm tra các dòng và cột hiển thị trên bảng quản trị.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Bảng render đầy đủ các cột: Mã coupon, Loại giảm giá, Giá trị giảm, Đơn tối thiểu, Hạn dùng, Giới hạn/người, và Nút hành động (Xóa).
+  - *API / Network:* HTTP 200 OK, trả về mảng JSON chứa danh sách các coupon trong CSDL.
+  - *Database State:* Không có thao tác ghi hoặc xóa nào diễn ra trong CSDL.
+  - *Security & Business Rules:* Chỉ người dùng có quyền Admin mới xem được danh sách mã này.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp dữ liệu.
+
+###### Test Case `TC_FR17_09`: Verify deleting an existing coupon by ID via Admin Web & API
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_09` | **Priority:** High (P1) | **Target Layer:** Admin Web & Backend API (`DELETE /api/admin/coupons/:id`)
+  - **Traceability:** SRS FR-17 (*"Admin có thể Xóa mã"*), API Spec §6.4
+  - **Coverage IDs:** `RES-17-01`, `AUTH-17-01`, `CPN-BR-13`
+  - **Single-Fault Isolation:** Luồng xóa tài nguyên hợp lệ với ID tồn tại; người dùng có đủ quyền Admin.
+- **2. Test Objective:** Verify deleting an existing coupon by ID via Admin Web & API.
+- **3. Pre-conditions & Environment:** Đang có coupon tồn tại trong CSDL với ID xác định (ví dụ `id = 5`); Admin đã đăng nhập.
+- **4. Test Data:** `id = 5` (hoặc ID của coupon vừa tạo trong fixture).
+- **5. Step-by-Step Procedure:**
+  1. Tìm dòng coupon có ID tương ứng trên bảng Admin.
+  2. Bấm nút "Xóa" bên cạnh.
+  3. Xác nhận trên popup dialog xác nhận xóa.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Dòng coupon biến mất khỏi bảng danh sách; hiển thị thông báo "Xóa mã giảm giá thành công".
+  - *API / Network:* `DELETE /api/admin/coupons/5` trả về HTTP 200 OK, payload `{"message": "Coupon deleted"}`.
+  - *Database State:* `SELECT * FROM coupons WHERE id=5` không còn bản ghi (hoặc `is_active=0` nếu soft-delete).
+  - *Security & Business Rules:* Sau khi xóa, nhập mã này tại Checkout nhận thông báo mã không tồn tại.
+- **7. Teardown & Clean-up:** Dữ liệu đã được xóa sạch.
+
+###### Test Case `TC_FR17_10`: Validate rejection when creating coupon with duplicate code (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_10` | **Priority:** High (P1) | **Target Layer:** Backend API & SQLite Constraint Guard
+  - **Traceability:** SRS FR-17 (*"Mã coupon là duy nhất"*), DB Schema `UNIQUE(code)`
+  - **Coverage IDs:** `EP-17-02`
+  - **Single-Fault Isolation:** Chỉ thay đổi trường `code` trùng với mã đã có sẵn trong DB (`SAVE10`); tất cả các trường khác giữ nguyên giá trị hợp lệ cơ sở.
+- **2. Test Objective:** Validate rejection when creating coupon with duplicate code (Single Fault).
+- **3. Pre-conditions & Environment:** Mã `SAVE10` đã tồn tại trong CSDL; Admin đã đăng nhập.
+- **4. Test Data:**
+  ```json
+  {
+    "code": "SAVE10",
+    "type": "percent",
+    "discount_value": 15,
+    "min_order_amount": 100000,
+    "expired_at": "2026-12-31",
+    "max_uses_per_user": 1
+  }
+  ```
+- **5. Step-by-Step Procedure:**
+  1. Điền form tạo mã với `code="SAVE10"`.
+  2. Nhấn nút "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Hiển thị thông báo lỗi "Mã giảm giá này đã tồn tại trong hệ thống".
+  - *API / Network:* Trả về HTTP 400 Bad Request hoặc 409 Conflict. **SUT Defect Alert:** Không được trả về HTTP 500 do unhandled SQLite UNIQUE constraint error.
+  - *Database State:* Bảng `coupons` giữ nguyên bản ghi cũ; không có bản ghi thứ 2 mang mã `SAVE10`.
+  - *Security & Business Rules:* Bảo vệ tính duy nhất của mã nhận diện coupon.
+- **7. Teardown & Clean-up:** Giữ nguyên bản ghi ban đầu.
+
+###### Test Case `TC_FR17_11`: Validate rejection when coupon code is empty string (Boundary Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_11` | **Priority:** High (P1) | **Target Layer:** Admin Form & Backend API
+  - **Traceability:** SRS FR-17 (*"code (bắt buộc)"*), BVA Off-point Len=0
+  - **Coverage IDs:** `EP-17-03`, `BVA-17-01-OFF` ($Len=0$)
+  - **Single-Fault Isolation:** Trường `code` rỗng `""`; các trường khác hợp lệ theo baseline.
+- **2. Test Objective:** Validate rejection when coupon code is empty string (Boundary Off-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code=""`, `type="percent", `discount_value=10`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Để trống ô nhập mã coupon trên form Admin.
+  2. Điền các trường khác hợp lệ rồi bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Form chặn submit với tooltip HTML5 "Vui lòng điền vào trường này" (hoặc hiển thị thông báo lỗi validation dưới trường mã).
+  - *API / Network:* Gửi request trực tiếp nhận HTTP 400 Bad Request kèm thông báo lỗi rõ ràng.
+  - *Database State:* Không có bản ghi mới nào được lưu vào CSDL.
+  - *Security & Business Rules:* Không cho phép tạo coupon không có mã định danh.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_12`: Validate rejection when coupon code contains only whitespace (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_12` | **Priority:** Medium (P2) | **Target Layer:** Admin Web & Backend Trim Validation
+  - **Traceability:** SRS FR-17 (*"code (bắt buộc)"*), Robustness Requirement
+  - **Coverage IDs:** `EP-17-04`
+  - **Single-Fault Isolation:** Trường `code` chỉ chứa khoảng trắng `"     "`; các trường khác hợp lệ.
+- **2. Test Objective:** Validate rejection when coupon code contains only whitespace (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="     "`, `type="percent"`, `discount_value=10`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập chuỗi gồm 5 dấu cách vào ô "Mã giảm giá".
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Báo lỗi mã không hợp lệ sau khi trim khoảng trắng.
+  - *API / Network:* HTTP 400 Bad Request (`{"error": "Coupon code cannot be empty"}`).
+  - *Database State:* Không có bản ghi nào với chuỗi khoảng trắng được tạo trong bảng `coupons`.
+  - *Security & Business Rules:* Chống kỹ thuật bypass validation chuỗi rỗng bằng khoảng trắng.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_13`: Validate rejection when creating coupon with invalid type enum (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_13` | **Priority:** High (P1) | **Target Layer:** REST API Validation Guard
+  - **Traceability:** SRS FR-17 (*"type: percent hoặc fixed"*), API Spec §6.4
+  - **Coverage IDs:** `EP-17-11`
+  - **Single-Fault Isolation:** Trường `type` mang giá trị enum không hỗ trợ (`free_shipping`); các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when creating coupon with invalid type enum (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="FREESHIP"`, `type="free_shipping"`, `discount_value=20000`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request `POST /api/admin/coupons` với payload chứa `type="free_shipping"`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Dropdown trên UI chỉ cung cấp 2 lựa chọn (Percent/Fixed).
+  - *API / Network:* HTTP 400 Bad Request (`Invalid coupon type. Must be 'percent' or 'fixed'`).
+  - *Database State:* Không có bản ghi nào được ghi vào CSDL.
+  - *Security & Business Rules:* Bảo toàn tính toàn vẹn kiểu dữ liệu của enum `type`.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_14`: Validate rejection when discount value is 0 for percent type (Boundary On-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_14` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"discount_value (dương)"*), BVA On-point V=0
+  - **Coverage IDs:** `EP-17-17`, `BVA-17-03-ON` ($V=0$)
+  - **Single-Fault Isolation:** `discount_value = 0` cho loại `percent`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when discount value is 0 for percent type (Boundary On-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="PCTZERO"`, `type="percent"`, `discount_value=0`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `discount_value = 0` với loại `percent`.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Báo lỗi giá trị giảm phải lớn hơn 0.
+  - *API / Network:* HTTP 400 Bad Request (`Discount value must be positive`).
+  - *Database State:* Không có bản ghi nào được tạo trong `coupons`.
+  - *Security & Business Rules:* Tuân thủ ràng buộc giá trị giảm phải là số dương $> 0$.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_15`: Validate rejection when discount value is negative for percent type (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_15` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"discount_value (dương)"*), Negative Domain
+  - **Coverage IDs:** `EP-17-18`
+  - **Single-Fault Isolation:** `discount_value = -10` cho loại `percent`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when discount value is negative for percent type (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="PCTNEG"`, `type="percent"`, `discount_value=-10`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `discount_value = -10` với loại `percent`.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Báo lỗi số âm không hợp lệ.
+  - *API / Network:* HTTP 400 Bad Request; từ chối xử lý số âm.
+  - *Database State:* Không có bản ghi nào lưu số âm vào CSDL.
+  - *Security & Business Rules:* Ngăn ngừa lỗi nghiệp vụ coupon âm làm tăng giá trị thanh toán của khách hàng.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_16`: Validate rejection when discount value exceeds 100% at 101% for percent type (Boundary Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_16` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17, Tỷ lệ phần trăm tối đa 100%, BVA Off-point V=101%
+  - **Coverage IDs:** `EP-17-19`, `BVA-17-04-OFF` ($V=101\%$)
+  - **Single-Fault Isolation:** `discount_value = 101` cho loại `percent`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when discount value exceeds 100% at 101% for percent type (Boundary Off-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="OVER101"`, `type="percent"`, `discount_value=101`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `discount_value = 101` cho mã tỷ lệ phần trăm.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Thuộc tính `max="100"` trên HTML5 hoặc Javascript chặn gửi; thông báo tỷ lệ không thể vượt quá 100%.
+  - *API / Network:* HTTP 400 Bad Request (`Percentage discount cannot exceed 100%`).
+  - *Database State:* Không tạo bản ghi `OVER101` trong bảng `coupons`.
+  - *Security & Business Rules:* Giới hạn phần trăm giảm giá không vượt quá toàn bộ giá trị đơn hàng.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_17`: Validate rejection when discount value is 0 for fixed type (Boundary On-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_17` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"discount_value (dương)"*), BVA On-point V=0 ₫
+  - **Coverage IDs:** `EP-17-17`, `BVA-17-05-ON` ($V=0\text{ ₫}$)
+  - **Single-Fault Isolation:** `discount_value = 0` cho loại `fixed`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when discount value is 0 for fixed type (Boundary On-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="FIXZERO"`, `type="fixed"`, `discount_value=0`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Chọn loại "Cố định", nhập `discount_value = 0`.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Báo lỗi số tiền giảm phải lớn hơn 0 ₫.
+  - *API / Network:* HTTP 400 Bad Request.
+  - *Database State:* Không ghi bản ghi vào CSDL.
+  - *Security & Business Rules:* Đảm bảo số tiền giảm giá tiền mặt phải là số dương $> 0$.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_18`: Validate rejection when min order amount is negative at -1 (Boundary Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_18` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"min_order_amount >= 0"*), BVA Off-point M=-1 ₫
+  - **Coverage IDs:** `EP-17-28`, `BVA-17-06-OFF` ($M=-1\text{ ₫}$)
+  - **Single-Fault Isolation:** `min_order_amount = -1`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when min order amount is negative at -1 (Boundary Off-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="NEGMIN"`, `type="percent"`, `discount_value=10`, `min_order_amount=-1`, `expired_at="2026-12-31"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `min_order_amount = -1` vào form Admin.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Chặn nhập số âm bằng thuộc tính `min="0"` hoặc cảnh báo lỗi.
+  - *API / Network:* HTTP 400 Bad Request (`Minimum order amount must be greater than or equal to 0`).
+  - *Database State:* Không lưu bản ghi với giá trị âm vào CSDL.
+  - *Security & Business Rules:* Bảo vệ tính hợp lý phi âm của ngưỡng giá trị đơn hàng.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_19`: Validate rejection when max uses per user is 0 (Boundary Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_19` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"max_uses_per_user >= 1"*), BVA Off-point U=0
+  - **Coverage IDs:** `EP-17-32`, `BVA-17-07-OFF` ($U=0$)
+  - **Single-Fault Isolation:** `max_uses_per_user = 0`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when max uses per user is 0 (Boundary Off-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="ZEROUSES"`, `type="percent"`, `discount_value=10`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=0`.
+- **5. Step-by-Step Procedure:**
+  1. Nhập `max_uses_per_user = 0` vào form Admin.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Thuộc tính `min="1"` chặn nhập 0; báo lỗi số lượt dùng phải tối thiểu là 1.
+  - *API / Network:* HTTP 400 Bad Request (`Max uses per user must be at least 1`).
+  - *Database State:* Không tạo bản ghi trong bảng `coupons`.
+  - *Security & Business Rules:* Tránh tạo coupon "rác" không bao giờ có thể được sử dụng bởi bất kỳ ai.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_20`: Validate rejection when max uses per user is negative (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_20` | **Priority:** High (P1) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"max_uses_per_user >= 1"*), Negative Range
+  - **Coverage IDs:** `EP-17-33`
+  - **Single-Fault Isolation:** `max_uses_per_user = -1`; các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate rejection when max uses per user is negative (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="NEGUSES"`, `type="percent"`, `discount_value=10`, `min_order_amount=100000`, `expired_at="2026-12-31"`, `max_uses_per_user=-1`.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request `POST /api/admin/coupons` với `max_uses_per_user = -1`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Chặn nhập số âm trên form.
+  - *API / Network:* HTTP 400 Bad Request.
+  - *Database State:* Không có bản ghi nào được ghi vào CSDL.
+  - *Security & Business Rules:* Đảm bảo số lượt dùng không mang giá trị âm gây sai lệch bộ đếm CSDL.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_21`: Validate handling when expired_at is set in the past (Boundary Off-point)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_21` | **Priority:** Medium (P2) | **Target Layer:** Form Validation & Backend API
+  - **Traceability:** SRS FR-17 (*"expired_at (ngày hợp lệ)"*), BVA Off-point (quá khứ)
+  - **Coverage IDs:** `EP-17-37`, `BVA-17-08-OFF` (yesterday)
+  - **Single-Fault Isolation:** `expired_at` đặt là ngày trong quá khứ (`2020-01-01`); các trường khác chuẩn baseline.
+- **2. Test Objective:** Validate handling when expired_at is set in the past (Boundary Off-point).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `code="PASTEXP"`, `type="percent"`, `discount_value=10`, `min_order_amount=100000`, `expired_at="2020-01-01"`, `max_uses_per_user=1`.
+- **5. Step-by-Step Procedure:**
+  1. Chọn ngày hết hạn trong quá khứ trên form tạo mã.
+  2. Bấm "Tạo mã".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Hệ thống từ chối tạo mã (HTTP 400) HOẶC chấp nhận tạo nhưng gắn nhãn trạng thái "Đã hết hạn" ngay lập tức trên bảng quản trị.
+  - *API / Network:* HTTP 400 (nếu chặn tạo) hoặc HTTP 200/201 (nếu cho phép nhưng coi là expired).
+  - *Database State:* Nếu tạo thành công, trường `expired_at` lưu đúng chuỗi ngày quá khứ.
+  - *Security & Business Rules:* Khi khách hàng thử áp dụng mã này tại Checkout, hệ thống bắt buộc phải từ chối theo điều kiện C2 (mã đã hết hạn).
+- **7. Teardown & Clean-up:** Xóa mã `PASTEXP` nếu được tạo vào CSDL.
+
+###### Test Case `TC_FR17_22`: Validate rejection when unauthenticated request calls create coupon API (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_22` | **Priority:** Critical (P0 - Security) | **Target Layer:** Backend API Middleware
+  - **Traceability:** SRS Mục 5.3, SEC-03 (*"Yêu cầu xác thực API Admin"*), API Spec §6.4
+  - **Coverage IDs:** `AUTH-17-02`
+  - **Single-Fault Isolation:** Payload hợp lệ hoàn toàn; lỗi duy nhất là request hoàn toàn không gửi kèm Header `Authorization`.
+- **2. Test Objective:** Validate rejection when unauthenticated request calls create coupon API (Single Fault).
+- **3. Pre-conditions & Environment:** Không gửi token xác thực.
+- **4. Test Data:** Gửi `POST /api/admin/coupons` không có header `Authorization`.
+- **5. Step-by-Step Procedure:**
+  1. Sử dụng công cụ curl/Postman gửi request tạo coupon baseline không có token.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* HTTP 401 Unauthorized (`{"error": "Access token required"}`).
+  - *Database State:* Tuyệt đối không có bản ghi mới nào được tạo trong `coupons`.
+  - *Security & Business Rules:* Chặn truy cập trái phép của người dùng vãng lai vào tài nguyên quản trị.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_23`: Validate rejection when regular user with role 'user' calls admin coupon API (Single Fault - SEC-03)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_23` | **Priority:** Critical (P0 - Security Hotspot) | **Target Layer:** Backend RBAC Authorization Guard
+  - **Traceability:** SRS Mục 5.3, SEC-03 (*"Chỉ user có role='admin' mới được gọi API Admin"*), API Spec §6.4
+  - **Coverage IDs:** `AUTH-17-03`
+  - **Single-Fault Isolation:** Payload tạo coupon hoàn toàn hợp lệ cơ sở; biến lỗi duy nhất là JWT token thuộc tài khoản thường có `role = 'user'`.
+- **2. Test Objective:** Validate rejection when regular user with role 'user' calls admin coupon API (Single Fault - SEC-03).
+- **3. Pre-conditions & Environment:** Đăng nhập tài khoản User thường `test@eshop.com`, lấy JWT token của User.
+- **4. Test Data:** Gửi `POST http://localhost:3000/api/admin/coupons` kèm Header `Authorization: Bearer <User_JWT>`.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request tạo coupon bằng JWT của User thường.
+  2. Quan sát HTTP status code và kiểm tra CSDL SQLite.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* HTTP Status code bắt buộc phải trả về **`403 Forbidden`** (hoặc `401 Unauthorized`).
+  - *Security Enforcement (SEC-03):* Backend bắt buộc phải kiểm tra `req.user.role === 'admin'`. **Lỗ hổng bảo mật nghiêm trọng nếu xảy ra:** Nếu API trả về `200 OK` và cho phép user thường tạo coupon do middleware chỉ verify chữ ký JWT mà quên kiểm tra `role`, đây là lỗ hổng leo thang đặc quyền (Privilege Escalation Vulnerability - SEC-03 vi phạm trực tiếp).
+  - *Database State:* Tuyệt đối không có coupon mới nào được tạo trong CSDL.
+- **7. Teardown & Clean-up:** Dọn dẹp bản ghi nếu phát hiện lỗ hổng cho phép tạo mã.
+
+###### Test Case `TC_FR17_24`: Validate rejection when deleting non-existent coupon ID 9999 (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_24` | **Priority:** Medium (P2) | **Target Layer:** Backend API Delete Handler
+  - **Traceability:** SRS FR-17, API Spec §6.4
+  - **Coverage IDs:** `RES-17-02`
+  - **Single-Fault Isolation:** ID truyền vào route `DELETE /api/admin/coupons/:id` là ID không tồn tại (`id = 9999`); token Admin hợp lệ.
+- **2. Test Objective:** Validate rejection when deleting non-existent coupon ID 9999 (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL không có coupon mang `id = 9999`.
+- **4. Test Data:** `DELETE /api/admin/coupons/9999` với token Admin.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request xóa coupon ID 9999.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* HTTP 404 Not Found (hoặc HTTP 400 kèm thông báo `Coupon not found`). Server không được crash 500.
+  - *Database State:* CSDL giữ nguyên vẹn toàn bộ các bản ghi hiện tại.
+  - *Security & Business Rules:* Hệ thống xử lý an toàn khi tài nguyên mục tiêu không tồn tại.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_25`: Validate rejection when deleting coupon with negative ID -1 (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_25` | **Priority:** Medium (P2) | **Target Layer:** Backend Route Parameter Validation
+  - **Traceability:** SRS FR-17, API Spec §6.4
+  - **Coverage IDs:** `RES-17-03`
+  - **Single-Fault Isolation:** Tham số route mang giá trị âm `:id = -1`; token Admin hợp lệ.
+- **2. Test Objective:** Validate rejection when deleting coupon with negative ID -1 (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `DELETE /api/admin/coupons/-1` với token Admin.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request xóa với `id = -1`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* HTTP 400 Bad Request (hoặc 404 Not Found). Không xảy ra lỗi SQL syntax error hay 500.
+  - *Database State:* Không có thao tác xóa nào làm ảnh hưởng đến CSDL.
+  - *Security & Business Rules:* Khóa tham số route kiểu số nguyên dương hợp lệ.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_26`: Validate rejection when deleting coupon with malformed string ID 'abc' (Single Fault)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_26` | **Priority:** Medium (P2) | **Target Layer:** Backend Route Parameter Validation
+  - **Traceability:** SRS FR-17, API Spec §6.4
+  - **Coverage IDs:** `RES-17-05`
+  - **Single-Fault Isolation:** Tham số route mang kiểu chuỗi không thể parse sang số nguyên (`:id = "abc"`).
+- **2. Test Objective:** Validate rejection when deleting coupon with malformed string ID 'abc' (Single Fault).
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập.
+- **4. Test Data:** `DELETE /api/admin/coupons/abc` với token Admin.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request xóa với `id = "abc"`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* HTTP 400 Bad Request (`Invalid coupon ID`).
+  - *Database State:* CSDL không bị thay đổi.
+  - *Security & Business Rules:* Validate kiểu dữ liệu của route param trước khi chuyển tiếp vào câu truy vấn SQL.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+###### Test Case `TC_FR17_27`: Verify applying percent coupon discount arithmetic calculation at checkout
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_27` | **Priority:** High (P1) | **Target Layer:** Checkout Pricing Engine (`POST /api/orders`)
+  - **Traceability:** SRS FR-09 (*"Áp dụng mã giảm giá"*), FR-17
+  - **Coverage IDs:** `CPN-BR-01`
+  - **Single-Fault Isolation:** Luồng tính toán số học giảm giá tỷ lệ hợp lệ tại Checkout.
+- **2. Test Objective:** Verify applying percent coupon discount arithmetic calculation at checkout.
+- **3. Pre-conditions & Environment:** Có coupon `SAVE10` (`type='percent'`, `discount_value=10`, `min_order_amount=200000`); User đã đăng nhập, giỏ hàng có tổng giá trị $1.000.000\text{ ₫}$.
+- **4. Test Data:** Nhập mã `SAVE10` tại trang thanh toán Checkout.
+- **5. Step-by-Step Procedure:**
+  1. Tại Checkout, nhập `SAVE10` vào ô mã giảm giá.
+  2. Bấm "Áp dụng".
+  3. Kiểm tra số tiền giảm và tổng thanh toán.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Hiển thị dòng giảm giá: `-100.000 ₫` ($1.000.000 \times 10\%$). Tổng thanh toán hiển thị: `900.000 ₫`.
+  - *API / Network:* Endpoint áp dụng mã trả về `200 OK` kèm `{"discount": 100000, "final_total": 900000}`.
+  - *Database State:* Chưa ghi trừ lượt dùng cho đến khi đơn hàng được đặt thành công.
+  - *Security & Business Rules:* Tuân thủ đúng công thức tính toán tài chính phần trăm của FR-09.
+- **7. Teardown & Clean-up:** Xóa sản phẩm khỏi giỏ hàng.
+
+###### Test Case `TC_FR17_28`: Verify applying fixed coupon discount arithmetic calculation at checkout
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_28` | **Priority:** High (P1) | **Target Layer:** Checkout Pricing Engine
+  - **Traceability:** SRS FR-09, FR-17
+  - **Coverage IDs:** `CPN-BR-02`
+  - **Single-Fault Isolation:** Luồng tính toán số học giảm giá tiền mặt cố định tại Checkout.
+- **2. Test Objective:** Verify applying fixed coupon discount arithmetic calculation at checkout.
+- **3. Pre-conditions & Environment:** Có coupon `FIX50K` (`type='fixed'`, `discount_value=50000`, `min_order_amount=200000`); giỏ hàng có tổng giá trị $1.000.000\text{ ₫}$.
+- **4. Test Data:** Nhập mã `FIX50K` tại Checkout.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `FIX50K` và bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Dòng giảm giá hiển thị: `-50.000 ₫`. Tổng thanh toán: `950.000 ₫`.
+  - *API / Network:* Trả về `200 OK` kèm `discount = 50000`, `final_total = 950000`.
+  - *Database State:* Tính toán nhất quán trên server backend.
+  - *Security & Business Rules:* Khấu trừ đúng số tiền cố định đã cấu hình trong FR-17.
+- **7. Teardown & Clean-up:** Xóa giỏ hàng.
+
+###### Test Case `TC_FR17_29`: Validate rejection when order total is below min_order_amount at boundary offset M-1 ₫
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_29` | **Priority:** High (P1) | **Target Layer:** Checkout Validation Engine
+  - **Traceability:** SRS FR-09 Điều kiện C3 (*"Tổng đơn hàng >= min_order_amount"*), BVA Off-point $M-1\text{ ₫}$
+  - **Coverage IDs:** `CPN-BR-03`, `BVA-17-09-OFF` ($M-1\text{ ₫}$)
+  - **Single-Fault Isolation:** Tổng tiền đơn hàng thiếu đúng 1 ₫ so với ngưỡng tối thiểu ($299.999\text{ ₫} < 300.000\text{ ₫}$); các điều kiện khác thỏa mãn.
+- **2. Test Objective:** Validate rejection when order total is below min_order_amount at boundary offset M-1 ₫.
+- **3. Pre-conditions & Environment:** Có coupon `MIN300` với `min_order_amount = 300000`.
+- **4. Test Data:** Giỏ hàng có tổng giá trị đúng $299.999\text{ ₫}$.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `MIN300` tại Checkout.
+  2. Bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Hiển thị thông báo lỗi "Đơn hàng chưa đạt giá trị tối thiểu 300.000 ₫ để áp dụng mã này".
+  - *API / Network:* Trả về HTTP 400 Bad Request kèm thông báo vi phạm ngưỡng đơn hàng tối thiểu.
+  - *Database State:* Không áp dụng giảm giá; tổng thanh toán giữ nguyên $299.999\text{ ₫}$.
+  - *Security & Business Rules:* Bảo vệ ngưỡng doanh thu tối thiểu theo yêu cầu kinh doanh C3.
+- **7. Teardown & Clean-up:** Xóa sản phẩm khỏi giỏ hàng.
+
+###### Test Case `TC_FR17_30`: Verify acceptance when order total equals exact min_order_amount at boundary On-point M
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_30` | **Priority:** High (P1) | **Target Layer:** Checkout Validation Engine
+  - **Traceability:** SRS FR-09 Điều kiện C3 (*"Tổng đơn hàng >= min_order_amount"*), BVA On-point $M\text{ ₫}$
+  - **Coverage IDs:** `CPN-BR-04`, `BVA-17-09-ON` ($M=300.000\text{ ₫}$)
+  - **Single-Fault Isolation:** Điểm biên On-point hợp lệ khi tổng tiền đơn hàng đạt đúng ngưỡng tối thiểu $300.000\text{ ₫}$.
+- **2. Test Objective:** Verify acceptance when order total equals exact min_order_amount at boundary On-point M.
+- **3. Pre-conditions & Environment:** Có coupon `MIN300` (`min_order_amount = 300000`, giảm 10%).
+- **4. Test Data:** Giỏ hàng có tổng giá trị đúng $300.000\text{ ₫}$.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `MIN300` tại Checkout.
+  2. Bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Thông báo áp dụng mã thành công; giảm giá $30.000\text{ ₫}$; tổng thanh toán cập nhật thành $270.000\text{ ₫}$.
+  - *API / Network:* HTTP 200 OK.
+  - *Database State:* Chấp nhận áp dụng mã thỏa mãn bất đẳng thức toán học $\ge$.
+  - *Security & Business Rules:* Xác nhận điểm biên hợp lệ bao gồm cả dấu bằng theo SRS.
+- **7. Teardown & Clean-up:** Xóa giỏ hàng.
+
+###### Test Case `TC_FR17_31`: Validate rejection when applying expired coupon at checkout
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_31` | **Priority:** High (P1) | **Target Layer:** Checkout Coupon Engine
+  - **Traceability:** SRS FR-09 Điều kiện C2 (*"Mã còn hạn sử dụng"*), FR-17
+  - **Coverage IDs:** `CPN-BR-06`
+  - **Single-Fault Isolation:** Mã giảm giá có `expired_at` trong quá khứ; đơn hàng đạt đủ mọi điều kiện khác.
+- **2. Test Objective:** Validate rejection when applying expired coupon at checkout.
+- **3. Pre-conditions & Environment:** CSDL có mã `EXPIRED` (`expired_at = '2020-01-01'`); giỏ hàng thỏa mãn ngưỡng tối thiểu.
+- **4. Test Data:** Nhập mã `EXPIRED` tại Checkout.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `EXPIRED` và bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Báo lỗi "Mã giảm giá đã hết hạn sử dụng".
+  - *API / Network:* HTTP 400 Bad Request (`Coupon has expired`).
+  - *Database State:* Không có chiết khấu nào được áp dụng cho đơn hàng.
+  - *Security & Business Rules:* Tuân thủ điều kiện chặn sử dụng mã hết hạn C2.
+- **7. Teardown & Clean-up:** Xóa mã thử nghiệm nếu có.
+
+###### Test Case `TC_FR17_32`: Validate rejection when user usage count reaches max_uses_per_user at boundary On-point
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_32` | **Priority:** High (P1) | **Target Layer:** Checkout Usage Limiter
+  - **Traceability:** SRS FR-09 Điều kiện C5 (*"Số lần dùng của user < max_uses_per_user"*), BVA On-point
+  - **Coverage IDs:** `CPN-BR-09`, `BVA-17-10-ON` ($used=U$)
+  - **Single-Fault Isolation:** User hiện tại đã dùng đúng $U=1$ lần trong bảng `coupon_usage`; coupon quy định `max_uses_per_user = 1`.
+- **2. Test Objective:** Validate rejection when user usage count reaches max_uses_per_user at boundary On-point.
+- **3. Pre-conditions & Environment:** Mã `ONCE` có `max_uses_per_user = 1`; User `quocky` đã sử dụng mã này 1 lần (đã có bản ghi trong `coupon_usage`).
+- **4. Test Data:** User `quocky` nhập lại mã `ONCE` trong đơn hàng tiếp theo.
+- **5. Step-by-Step Procedure:**
+  1. Đăng nhập bằng tài khoản `quocky`.
+  2. Tại Checkout, nhập `ONCE` và bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Báo lỗi "Bạn đã sử dụng hết số lần cho phép đối với mã giảm giá này".
+  - *API / Network:* HTTP 400 Bad Request (`Coupon usage limit exceeded for this user`).
+  - *Database State:* Không ghi nhận thêm bản ghi sử dụng nào trong `coupon_usage`.
+  - *Security & Business Rules:* Thực thi nghiêm ngặt giới hạn lượt dùng của từng khách hàng theo C5.
+- **7. Teardown & Clean-up:** Xóa bản ghi trong `coupon_usage` cho user thử nghiệm.
+
+###### Test Case `TC_FR17_33`: Verify acceptance when user usage count is max_uses_per_user - 1 at boundary Off-point
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_33` | **Priority:** High (P1) | **Target Layer:** Checkout Usage Limiter
+  - **Traceability:** SRS FR-09 Điều kiện C5, BVA Off-point $used=U-1$
+  - **Coverage IDs:** `CPN-BR-08`, `BVA-17-10-OFF` ($used=U-1$)
+  - **Single-Fault Isolation:** User đã dùng 1 lần trên mã có `max_uses_per_user = 2` ($1 < 2$).
+- **2. Test Objective:** Verify acceptance when user usage count is max_uses_per_user - 1 at boundary Off-point.
+- **3. Pre-conditions & Environment:** Mã `TWICE` có `max_uses_per_user = 2`; User `quocky` đã sử dụng 1 lần trong CSDL.
+- **4. Test Data:** User `quocky` nhập lại mã `TWICE` cho đơn hàng thứ hai.
+- **5. Step-by-Step Procedure:**
+  1. Nhập mã `TWICE` và bấm "Áp dụng".
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Áp dụng mã thành công, hiển thị mức giảm giá tương ứng.
+  - *API / Network:* HTTP 200 OK.
+  - *Database State:* Cho phép tiến hành thanh toán; khi đặt hàng thành công ghi nhận bản ghi thứ 2 vào `coupon_usage`.
+  - *Security & Business Rules:* Cho phép người dùng sử dụng đầy đủ quyền lợi trong hạn mức quy định.
+- **7. Teardown & Clean-up:** Dọn dẹp bản ghi `coupon_usage`.
+
+###### Test Case `TC_FR17_34`: Validate system handling when fixed discount exceeds order total (Financial Boundary Defect Probe)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_34` | **Priority:** Critical (P0 - Financial Safety Hotspot) | **Target Layer:** Checkout Arithmetic Calculation Engine
+  - **Traceability:** SRS FR-09, FR-08, BVA Off-point $discount > order\_total$
+  - **Coverage IDs:** `CPN-BR-10`, `BVA-17-11-OFF` ($discount > Total$)
+  - **Single-Fault Isolation:** Mức giảm tiền mặt ($50.000\text{ ₫}$) vượt quá tổng giá trị đơn hàng ($30.000\text{ ₫}$).
+- **2. Test Objective:** Validate system handling when fixed discount exceeds order total (Financial Boundary Defect Probe).
+- **3. Pre-conditions & Environment:** Có coupon `BIGDISCOUNT` giảm cố định $50.000\text{ ₫}$ với `min_order_amount = 0\text{ ₫}`.
+- **4. Test Data:** Đơn hàng chỉ có 1 sản phẩm phụ kiện giá $30.000\text{ ₫}$ ($Total = 30.000\text{ ₫} < 50.000\text{ ₫}$).
+- **5. Step-by-Step Procedure:**
+  1. Tiến hành Checkout với đơn hàng $30.000\text{ ₫}$.
+  2. Nhập mã `BIGDISCOUNT` và bấm "Áp dụng".
+  3. Quan sát số tiền giảm giá và tổng tiền thanh toán cuối cùng.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Checkout Web:* Số tiền giảm hiển thị tối đa $-30.000\text{ ₫}$; tổng thanh toán hiển thị đúng **`0 ₫`**. Tuyệt đối **không hiển thị số âm** (ví dụ `-20.000 ₫`).
+  - *API / Network:* Response tính toán trả về `discount: 30000` (hoặc `50000` nhưng `final_total: 0`). **Defect Alert:** Nếu `final_total: -20000` và cho phép checkout đơn âm tiền, đây là lỗi thất thoát tài chính cực kỳ nghiêm trọng.
+  - *Database State:* Bản ghi đơn hàng trong bảng `orders` lưu `total_amount = 0`.
+  - *Security & Business Rules:* Cố định chặn dưới của số tiền thanh toán không bao giờ được nhỏ hơn 0 ₫.
+- **7. Teardown & Clean-up:** Hủy đơn hàng thử nghiệm.
+
+###### Test Case `TC_FR17_35`: Validate stored XSS escaping when viewing coupon with HTML tags on Admin Web (SEC-04)
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_35` | **Priority:** High (P1 - Security) | **Target Layer:** Admin Web Table Rendering (DOM)
+  - **Traceability:** SRS SEC-04 (*"Escape đúng cách, không dùng innerHTML"*), API Spec §6.4
+  - **Coverage IDs:** `EP-17-06`, `SEC-17-01`
+  - **Single-Fault Isolation:** Mã coupon chứa thẻ kịch bản độc hại `<script>alert('XSS')</script>`; các trường khác hợp lệ.
+- **2. Test Objective:** Validate stored XSS escaping when viewing coupon with HTML tags on Admin Web.
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; tạo coupon chứa payload XSS qua API.
+- **4. Test Data:** `{"code": "<script>alert('XSS')</script>", "type": "percent", "discount_value": 10, "min_order_amount": 0, "max_uses_per_user": 1, "expired_at": "2026-12-31"}`.
+- **5. Step-by-Step Procedure:**
+  1. Gửi request tạo coupon với code mang mã script.
+  2. Mở tab "Mã Giảm Giá" trên Admin Web để tải danh sách mã.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Admin Web:* Bảng hiển thị nguyên văn chuỗi `<script>alert('XSS')</script>` dưới dạng plain text. Tuyệt đối **không xuất hiện hộp thoại alert()** trên trình duyệt.
+  - *DOM Inspection:* Thẻ được render an toàn bằng text node của React (`<span>` / `<td>`), không sử dụng `dangerouslySetInnerHTML`.
+  - *API / Network:* Trả về chuỗi nguyên vẹn trong JSON mà không làm vỡ cú pháp parse.
+  - *Security & Business Rules:* Tuân thủ chuẩn chống Stored Cross-Site Scripting (SEC-04).
+- **7. Teardown & Clean-up:** Xóa coupon XSS khỏi CSDL.
+
+###### Test Case `TC_FR17_36`: Validate race condition handling when creating duplicate coupon codes simultaneously
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR17_36` | **Priority:** High (P1 - Concurrency) | **Target Layer:** Backend API & SQLite Database Concurrency Lock
+  - **Traceability:** SRS FR-17 (*"Mã coupon duy nhất"*), ACID Transaction Guarantee
+  - **Coverage IDs:** `CPN-BR-14`
+  - **Single-Fault Isolation:** Hai request `POST` cùng mang mã coupon giống nhau được gửi đồng thời trong khoảng thời gian < 100ms.
+- **2. Test Objective:** Validate race condition handling when creating duplicate coupon codes simultaneously.
+- **3. Pre-conditions & Environment:** Admin đã đăng nhập; CSDL chưa có mã `RACE50`.
+- **4. Test Data:** Gửi đồng thời 2 request `POST /api/admin/coupons` với `code="RACE50"`.
+- **5. Step-by-Step Procedure:**
+  1. Sử dụng script bất đồng bộ (`Promise.all` hoặc parallel curl) bắn 2 request tạo mã `RACE50` cùng lúc.
+  2. Kiểm tra status code của cả 2 request và số lượng bản ghi trong SQLite.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API / Network:* Đúng 1 request thành công trả về HTTP 200/201. Request còn lại bắt buộc bị từ chối với HTTP 400 hoặc 409 (hoặc 500 do unhandled DB lock - ghi nhận defect nếu crash).
+  - *Database State:* Câu lệnh `SELECT COUNT(*) FROM coupons WHERE code='RACE50'` trả về đúng `1` bản ghi duy nhất. Tuyệt đối không sinh 2 bản ghi trùng mã do race condition.
+  - *Security & Business Rules:* Đảm bảo tính toàn vẹn dữ liệu ACID và chống xung đột tương tranh.
+- **7. Teardown & Clean-up:** Xóa mã `RACE50`.
+
 
 ### 4.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
 - Bao phủ đầy đủ toàn bộ các điều kiện bất đẳng thức toán học $V > 0, V \le 100\%, M \ge 0, U \ge 1$.
