@@ -50,8 +50,8 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 
 | Variable ID | Variable Name | Data Type | Mandatory? | Precision ($\epsilon$) | Specification Constraint (Quote) | Assumptions / Ambiguities |
 | :--- | :--- | :--- | :---: | :---: | :--- | :--- |
-| `VAR-02-01` | `email` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* và *"Trường email phải dùng `type="email"` (có validate HTML5 format)."* (Đối chiếu FR-01: *"Email phải có định dạng hợp lệ (`user@domain.com`)"*) | Cần có tài khoản tồn tại trong CSDL (`test@eshop.com`); Trình duyệt validate format HTML5 trước khi submit; Backend `POST /api/login` cần validate tính hợp lệ. |
-| `VAR-02-02` | `password` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* (Đối chiếu FR-01: *"Tối thiểu 8 ký tự, có ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 ký tự đặc biệt"*) | Khớp với mật khẩu đã băm trong CSDL. Form đăng nhập không chặn mật khẩu yếu khi gõ, chỉ kiểm tra tính xác thực. Mật khẩu mẫu: `Test1234!`. |
+| `VAR-02-01` | `email` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* và *"Trường email phải dùng `type="email"` (có validate HTML5 format)."* (Đối chiếu FR-01: *"Email phải có định dạng hợp lệ (`user@domain.com`)"*) | Cần có tài khoản tồn tại trong CSDL (`test@eshop.com`); SRS không nêu độ dài tối đa $\to$ Áp dụng chuẩn RFC 5321 / RFC 3696: tối đa 254 ký tự; Trình duyệt validate format HTML5 trước khi submit; Backend `POST /api/login` cần validate tính hợp lệ. |
+| `VAR-02-02` | `password` | String | Có | 1 char | Trích dẫn SRS FR-02: *"Người dùng nhập Email và Mật khẩu."* (Đối chiếu FR-01: *"Tối thiểu 8 ký tự, có ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 ký tự đặc biệt"*) | Khớp với mật khẩu đã băm trong CSDL. Form đăng nhập không chặn mật khẩu yếu khi gõ, chỉ kiểm tra tính xác thực. SRS không nêu cận trên $\to$ Áp dụng chuẩn an toàn OWASP ASVS: tối đa 255 ký tự để chống tấn công DoS tính toán hash. Mật khẩu mẫu: `Test1234!`. |
 | `VAR-02-03` | `failed_attempts` | Integer | Hệ thống | 1 lần | Trích dẫn SRS FR-02: *"Sau mỗi lần đăng nhập sai, hệ thống tăng bộ đếm lên đúng 1 đơn vị."* và *"Nếu đăng nhập sai từ 3 lần trở lên liên tiếp, tài khoản bị tạm khóa 30 giây"* | Biến trạng thái đếm số lần sai liên tiếp theo từng tài khoản (`email`). Đăng nhập thành công trước khi đạt ngưỡng 3 lần sẽ reset bộ đếm về 0. |
 | `VAR-02-04` | `lockout_time` | Seconds | Hệ thống | 1 giây | Trích dẫn SRS FR-02: *"tài khoản bị tạm khóa 30 giây (môi trường demo). Hệ thống trả về thông báo lỗi phù hợp; không để lộ chi tiết nguyên nhân."* | Thời gian phạt tính từ lúc đăng nhập sai lần thứ 3 ($T = 30s$). Trong thời gian này, mọi thử nghiệm đăng nhập đều bị từ chối; sau 30s tài khoản tự động mở khóa. Thông báo lỗi phải trung tính để bảo mật. |
 
@@ -66,11 +66,13 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 | `EP-02-02` | `email` | Định dạng không hợp lệ theo HTML5/RFC (thiếu `@`, ký tự cấm) | IEP | `testeshop.com` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi do cú pháp email; HTML5/UI validate chặn submit trước khi gửi API. |
 | `EP-02-03` | `email` | Chuỗi rỗng / để trống trường bắt buộc | IEP | `""` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi thiếu trường bắt buộc email. |
 | `EP-02-04` | `email` | Chuỗi chỉ chứa khoảng trắng (Whitespace-only) | IEP | `"     "` | `password = "Test1234!"` (hợp lệ). Cô lập lỗi chuỗi rỗng ngụy trang; HTML5 trim/pattern hoặc backend từ chối. |
+| `EP-02-04b`| `email` | Độ dài vượt quá giới hạn tối đa RFC 5321 ($Len > 254$) | IEP | Email dài 255 ký tự | `password = "Test1234!"` (hợp lệ). Cô lập lỗi tràn trường email; hệ thống từ chối hoặc báo lỗi định dạng. |
 | `EP-02-05` | `email` | Định dạng hợp lệ nhưng tài khoản không tồn tại | IEP | `notfound@eshop.com` | `password = "Test1234!"` (hợp lệ). Kiểm tra phản hồi bảo mật chung, không làm lộ thông tin tài khoản chưa tồn tại. |
 | `EP-02-06` | `password` | Mật khẩu khớp chính xác với tài khoản | VEP | `Test1234!` | `email = "test@eshop.com"`. Đáp ứng đầy đủ thông tin xác thực, cấp JWT token. |
 | `EP-02-07` | `password` | Mật khẩu sai / không khớp CSDL | IEP | `WrongPass1!` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi sai mật khẩu; hệ thống tăng bộ đếm thất bại đúng 1 đơn vị. |
 | `EP-02-08` | `password` | Mật khẩu để trống | IEP | `""` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi thiếu trường bắt buộc mật khẩu. |
 | `EP-02-09` | `password` | Mật khẩu chỉ chứa khoảng trắng (Whitespace-only) | IEP | `"    "` | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi chuỗi rỗng ngụy trang cho password; hệ thống từ chối xác thực. |
+| `EP-02-09b`| `password` | Độ dài vượt quá giới hạn an toàn OWASP ($Len > 255$) | IEP | Mật khẩu dài 256 ký tự | `email = "test@eshop.com"` (hợp lệ). Cô lập lỗi tràn bộ đệm tính toán hash; hệ thống xử lý an toàn không treo máy. |
 | `EP-02-10` | `failed_attempts` | Số lần đăng nhập sai dưới ngưỡng ($1 \le N \le 2$), sau đó nhập đúng | VEP | $N = 1$ hoặc $N = 2 \to$ nhập đúng `Test1234!` | Tài khoản `test@eshop.com`. Kiểm tra sequence: đăng nhập đúng sau $1$ hoặc $2$ lần sai phải thành công và reset $N \to 0$. |
 | `EP-02-11` | `failed_attempts` | Số lần sai đạt hoặc vượt ngưỡng lần đầu ($N \ge 3$) | IEP | $N = 3$ | Nhập sai liên tiếp 3 lần trên cùng tài khoản `test@eshop.com`. Kích hoạt tạm khóa 30 giây lần đầu. |
 | `EP-02-12` | `failed_attempts` | Chu kỳ khóa lặp lại (Second lockout cycle sau khi hết lần 1) | IEP | Hết khóa 1 $\to$ sai tiếp 3 lần | Tài khoản `test@eshop.com`. Kiểm tra thời gian phạt lần 2 có bị lũy tiến (escalate/backoff) hay giữ nguyên 30s theo SRS. |
@@ -83,10 +85,21 @@ Báo cáo này trình bày quy trình thiết kế kịch bản kiểm thử h�
 > - **Kết luận phân loại:** Trạng thái duy nhất điều khiển quyền truy cập tài khoản trong FR-02 là **Tạm khóa do đăng nhập sai (`locked_until`)**. Tình huống tài khoản bị cấm/vô hiệu hóa sẽ được ghi nhận vào phần **Khoảng trống Đặc tả & Giả thuyết Khám phá (Step 6 Gap Analysis)** thay vì lớp tương đương nghiệp vụ bắt buộc.
 
 ### 2.3 Bước 3: Phân tích giá trị biên (Step 3 Deliverables)
-| Boundary ID | Biến / Điều kiện | Ranh giới | Phương pháp | On-point | Off-point | In-point (3-value) |
+
+> **Phương pháp tiếp cận Phân tích Giá trị Biên (ISTQB FL §4.2.2):**
+> Áp dụng kỹ thuật **3-Value BVA** cho các miền có thứ tự (số nguyên, thời gian, độ dài chuỗi) với bước vi sai nhỏ nhất ($\epsilon$).
+> - **On-point:** Giá trị nằm chính xác trên ranh giới phân hoạch.
+> - **Off-point:** Giá trị nằm sát biên nhất ở phía đối diện (ngoài vùng nếu On nằm trong; hoặc trong vùng nếu On nằm ngoài).
+> - **In-point:** Giá trị nằm liền kề bên trong phân vùng cần kiểm thử.
+
+| Boundary ID | Variable / Field | Boundary Rule | BVA Method | On-point (Value/Type) | Off-point (Value/Type) | In-point (Value/Type) |
 | :--- | :--- | :--- | :---: | :--- | :--- | :--- |
-| `BVA-02-01` | Ngưỡng số lần sai ($N \ge 3$) | $N = 3$ | 3-Value BVA | $N = 3$ (Khóa tài khoản) | $N = 2$ (Chưa bị khóa) | $N = 4$ (Đang bị khóa) |
-| `BVA-02-02` | Thời gian tạm khóa ($T = 30s$) | $T = 30s$ | 3-Value BVA ($\epsilon = 1s$) | $t = 30s$ (Biên mở khóa) | $t = 29s$ (Vẫn bị khóa) | $t = 31s$ (Đã mở khóa) |
+| `BVA-02-01` | `failed_attempts` | $N \ge 3$ (Ngưỡng khóa tài khoản do nhập sai liên tiếp) | 3-Value ($\epsilon=1\text{ lần}$) | $N = 3$ [Invalid - Khóa]<br/>Nhập sai đúng lần thứ 3 $\to$ Kích hoạt tạm khóa 30s. | $N = 2$ [Valid - Chưa khóa]<br/>Nhập sai 2 lần ($3 - 1$) $\to$ Cảnh báo lỗi, chưa bị khóa. | $N = 4$ [Invalid - Đang khóa]<br/>Cố tình thử tiếp khi đã đạt ngưỡng $\to$ Giữ trạng thái khóa. |
+| `BVA-02-02` | `lockout_time` | $t \ge 30s$ (Ngưỡng tự động giải tỏa tạm khóa tài khoản) | 3-Value ($\epsilon=1\text{ giây}$) | $t = 30s$ [Valid - Mở khóa]<br/>Đúng mốc 30 giây $\to$ Biên chuyển đổi từ khóa sang mở. | $t = 29s$ [Invalid - Vẫn khóa]<br/>Sát biên mở 1s ($30 - 1$) $\to$ Vẫn đang bị khóa, từ chối login. | $t = 31s$ [Valid - Mở khóa]<br/>Sau mở khóa 1s ($30 + 1$) $\to$ Đăng nhập đúng thành công, cấp JWT. |
+| `BVA-02-03` | `password.length` | $Len \ge 8$ (Độ dài mật khẩu tối thiểu - đối chiếu FR-01) | 3-Value ($\epsilon=1\text{ char}$) | $Len = 8$ [Valid]<br/>`"Pass123!"` (đúng 8 ký tự). | $Len = 7$ [Invalid]<br/>`"Pass12!"` ($8 - 1$ ký tự, dưới ngưỡng tối thiểu). | $Len = 9$ [Valid]<br/>`"Pass1234!"` ($8 + 1$ ký tự, trên ngưỡng tối thiểu). |
+| `BVA-02-04` | `login_sequence` | $N = 1, 2$ (Ngưỡng reset bộ đếm trước khi chạm mốc khóa) | 3-Value Transition | $N = 2 \to$ Đúng [Valid]<br/>Sai 2 lần rồi nhập đúng $\to$ Login thành công, reset $N \to 0$. | $N = 3 \to$ Sai [Invalid]<br/>Sai tiếp lần 3 $\to$ Vượt biên chịu lỗi, tài khoản bị tạm khóa 30s. | $N = 1 \to$ Đúng [Valid]<br/>Sai 1 lần rồi nhập đúng $\to$ Login thành công, reset $N \to 0$. |
+| `BVA-02-05` | `email.length` | $Len \le 254$ ký tự (Cận trên độ dài theo chuẩn RFC 5321 / RFC 3696) | 3-Value ($\epsilon=1\text{ char}$) | $Len = 254$ [Valid]<br/>Email đúng chuẩn dài đúng 254 ký tự. | $Len = 255$ [Invalid]<br/>Email dài 255 ký tự ($254 + 1$, vượt chuẩn RFC). | $Len = 253$ [Valid]<br/>Email dài 253 ký tự ($254 - 1$, cận kề trong vùng hợp lệ). |
+| `BVA-02-06` | `password.length` | $Len \le 255$ ký tự (Cận trên độ dài an toàn theo OWASP ASVS) | 3-Value ($\epsilon=1\text{ char}$) | $Len = 255$ [Valid]<br/>Mật khẩu dài đúng 255 ký tự. | $Len = 256$ [Invalid]<br/>Mật khẩu dài 256 ký tự ($255 + 1$, vượt ngưỡng an toàn). | $Len = 254$ [Valid]<br/>Mật khẩu dài 254 ký tự ($255 - 1$, cận kề trong vùng hợp lệ). |
 
 ### 2.4 Bước 4: Thiết kế kịch bản kiểm thử (Step 4 Deliverables)
 | TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước thực hiện | Dữ liệu đầu vào | Mã EP/BVA bao phủ | Kết quả mong đợi (SRS) | Trạng thái thực thi |
