@@ -3104,24 +3104,61 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 | **Tổng thể Toàn Bộ Các Chiều Kiểm Thử Đã Thiết Kế** | **47** | **47** | **0** | **100%** |
 
 
-### 5.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT
-- **Khoảng trống AI:** AI thường chỉ thiết kế kiểm thử trên giao diện (UI click) mà bỏ quên trường hợp gửi request trực tiếp vào Backend API để kiểm tra tính toàn vẹn của State Machine.
-- **Giả thuyết lỗi SUT:**
-  - Nút "Hủy đơn" vẫn hiển thị khi đơn đã sang trạng thái `shipping`.
-  - Backend API không kiểm tra trạng thái hiện tại trước khi cập nhật `status = 'canceled'`, cho phép hủy mọi lúc.
+### 5.6 Bước 6: AI Gap Analysis & Giả thuyết lỗi SUT (Step 6 Deliverables)
+
+> **Mục đích:** Cung cấp minh chứng thực tế cho **Mục 6 Task 3 (AI Gap Analysis)** và làm cơ sở biện luận cho **Mục 10 (AI Critique)** của báo cáo HW02. Phân tách rạch ròi giữa các thiếu sót do suy luận AI và các khiếm khuyết nội bộ thực tế trong mã nguồn SUT EShop liên quan đến chức năng Hủy Đơn Hàng trên Mobile App & Máy Trạng Thái Đơn Hàng (FR-20 & FR-10).
 
 ---
 
-## 6. TỔNG HỢP KẾT QUẢ THỰC THI & PHÁT HIỆN LỖI (DEFECT LOG)
+#### 5.6.1 Bảng Phân Tích Khoảng Trống Kiểm Thử Của AI (AI Gap Analysis)
 
-*Phần này sẽ được cập nhật số liệu thực tế sau khi chạy toàn bộ test cases trên SUT EShop.*
+| Hạng mục / Vấn đề phát sinh | Nguyên nhân AI bỏ sót hoặc gặp khó khăn | Hiệu chỉnh của con người (Human Fix Applied) | Căn cứ Tiêu chuẩn & Kỹ thuật Kiểm thử |
+| :--- | :--- | :--- | :--- |
+| **Gộp lẫn kiểm thử UI với API Backend (Bỏ quên lỗ hổng Client-Side-Only Validation bypass)** | AI ban đầu chỉ tập trung thiết kế kịch bản trên giao diện Mobile (kiểm tra nút "Hủy đơn" có hiển thị ở `pending`/`confirmed` và biến mất ở `shipping`), mà bỏ qua trường hợp kẻ tấn công hoặc script gửi trực tiếp HTTP request `PUT /api/orders/:id/cancel` bỏ qua giao diện người dùng. | Con người chỉ đạo bóc tách độc lập 2 kênh kiểm thử: (1) Kiểm thử ẩn/hiện nút trên Mobile UI (`frontend-mobile/App.js`); (2) Gửi raw HTTP PUT request qua API client để kiểm tra tính toàn vẹn State Machine phía Backend (`TC_MOB_05`). Phát hiện mã nguồn `server.js:329` không chặn `shipping`! | **OWASP Top 10 & API Security Testing:** Client-side UI hiding không bao giờ được xem là giải pháp bảo mật; mọi quy tắc chuyển đổi trạng thái bắt buộc phải được bảo vệ độc lập ở tầng Backend API. |
+| **Ảo giác về logic hoàn kho và khôi phục coupon (Over-specifying Business Side-effects)** | Do ảnh hưởng từ dữ liệu huấn luyện về các hệ thống e-commerce thực tế (Shopee, Lazada), AI tự động suy diễn rằng hủy đơn thì bắt buộc phải hoàn trả tồn kho (`products.stock`) và hoàn lại lượt dùng voucher (`coupon_usage`), rồi khẳng định kết quả mong đợi là `200 OK & stock restored`. | Con người đối chiếu trực tiếp với tài liệu đặc tả SRS FR-10 và mã nguồn SUT, nhận thấy đặc tả không đề cập và mã nguồn backend `server.js:333-339` chỉ chạy lệnh `UPDATE orders SET status = 'canceled'`. Con người đã phân loại lại thành các ca kiểm thử quan sát / làm rõ (`TC_MOB_27`, `TC_MOB_28`) với Expected Results dạng Observation Oracle. | **Nguyên tắc "Đặc tả là căn cứ duy nhất" (Specification as Sole Source of Truth):** Không tự ý biến giả định nghiệp vụ bên ngoài thành tiêu chí Pass/Fail của đặc tả khi chưa được khách hàng xác nhận. |
+| **Mơ hồ và đưa ra nhiều mã trạng thái HTTP status codes thay thế (`400 or 404`)** | AI thường đưa ra các kỳ vọng nước đôi như `HTTP 400 hoặc 404`, hoặc không phân biệt rạch ròi giữa lỗi chưa xác thực (`401 Unauthorized`), token sai/hết hạn (`403 Forbidden`), tài nguyên không tìm thấy / IDOR (`404 Not Found`), và vi phạm State Machine (`400 Bad Request`). | Con người đã phân tích kiến trúc middleware Express trong `server.js:46-55` và chuẩn hóa chính xác từng mã status code duy nhất cho 28 test cases: `401` khi thiếu token, `403` khi token giả/hết hạn, `404` khi không tìm thấy đơn hoặc tấn công IDOR, `400` khi vi phạm chuyển đổi trạng thái. | **RESTful API Design Standards & ISTQB FL §4.2.1:** Tiêu chí đánh giá của ca kiểm thử phải xác định rõ ràng, không được chứa các mệnh đề thay thế gây mơ hồ cho việc tự động hóa kiểm thử. |
+| **Bỏ qua kiểm thử tương tác phần cứng & trải nghiệm Mobile UI (Confirmation Alert & Double-tap)** | AI có thói quen sinh kịch bản API thuần túy, bỏ quên các đặc thù vật lý và trải nghiệm người dùng trên thiết bị di động: hành vi chạm nhầm trên màn hình cảm ứng đòi hỏi hộp thoại xác nhận (Confirmation Alert), và thao tác chạm nhanh liên tiếp (double-tap $< 200ms$) đòi hỏi debounce/throttling. | Con người chỉ đạo bổ sung nhóm kiểm thử an toàn Mobile UI chuyên biệt (`TC_MOB_23`, `TC_MOB_24`) để xác minh sự hiện diện của `Alert.alert` và kiểm thử độ bền trước thao tác double-tap, phát hiện SUT gọi ngay lệnh hủy mà không có Alert xác nhận. | **Mobile GUI Safety Guidelines (SRS FR-21 / FR-24):** Thao tác hủy đơn là hành động phá hủy vĩnh viễn, bắt buộc phải có hộp thoại xác nhận trước khi phát lệnh đến server. |
+| **Bỏ quên kiểm thử tương thích giữa State Machine của User và Admin** | AI chỉ nhìn nhận đơn lẻ luồng người dùng hủy đơn trên Mobile App mà không kiểm tra bức tranh tổng thể của Order State Machine giữa User và Quản trị viên (Admin), bỏ lỡ kiểm tra tính bất biến của trạng thái kết thúc (`canceled` và `delivered`). | Con người chỉ đạo mở rộng phạm vi kiểm tra tính bất biến trạng thái kết thúc, qua đó phát hiện lỗ hổng nghiêm trọng tại `server.js:550-551` cho phép Admin đảo ngược đơn hàng từ `canceled` sang `delivered`. | **ISTQB FL §4.2.2 & State Transition Testing:** Trạng thái kết thúc (Final / Absorbing State) trong đồ thị máy trạng thái phải có bậc ra bằng 0 (out-degree = 0), không có cung chuyển tiếp nào được phép đi ra. |
 
-| Chỉ số | Số lượng | Tỷ lệ (%) |
+---
+
+#### 5.6.2 Danh Sách Giả Thuyết Khiếm Khuyết Thăm Dò Trên SUT EShop (Candidate Defect Hypotheses)
+
+> *Ghi chú: Toàn bộ các giả thuyết dưới đây được gắn nhãn `[Exploratory - Unconfirmed Hypothesis - Requires SUT execution]` và sẽ được kiểm chứng thực tế trong Giai đoạn thực thi trên hệ thống EShop đang chạy.*
+
+| Hypothesis ID | Khu vực kiểm thử (Target Area) | Mô tả giả thuyết lỗi (Description) | Kỳ vọng theo đặc tả (Spec Expected) | Dự đoán hành vi thực tế (Hypothesized Actual) | Bước kiểm chứng trên SUT (Verification Step) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `HYP-20-01` | Backend State Machine Validation (`server.js:328-331`) | **Lỗ hổng Client-Side-Only Validation: Backend API cho phép hủy đơn hàng đang ở trạng thái `shipping`** | Trích dẫn SRS FR-10: *"Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy — chỉ Admin mới có thể thao tác."* Request `PUT /api/orders/:id/cancel` trên đơn `shipping` phải bị từ chối với HTTP `400 Bad Request` (`{"error": "Cannot cancel this order."}`) và giữ nguyên `status = 'shipping'`. | Trong `server.js:328-331`, lập trình viên để lại comment `// Lẽ ra phải là: if (order.status !== 'pending' && order.status !== 'confirmed')` nhưng code thực tế chỉ là: `if (order.status === 'delivered' || order.status === 'canceled') return res.status(400)`. Khi đơn ở trạng thái `shipping`, điều kiện này sai, hệ thống cho phép ghi đè `status = 'canceled'` và trả về HTTP `200 OK`! | Tạo đơn hàng `#103` của User 1; Admin chuyển trạng thái sang `shipping`. Dùng curl/Postman gửi request `PUT http://localhost:3000/api/orders/103/cancel` kèm JWT của User 1. Quan sát thấy HTTP trả về `200 OK` và câu truy vấn `SELECT status FROM orders WHERE id = 103` trả về `'canceled'`. |
+| `HYP-20-02` | Admin State Machine Integrity (`server.js:550-551`) | **Vi phạm tính bất biến của trạng thái kết thúc: Admin API cho phép chuyển đơn từ `canceled` sang `delivered`** | Trích dẫn SRS FR-10: *"Trạng thái delivered và canceled là trạng thái kết thúc — không được phép chuyển sang bất kỳ trạng thái nào khác."* Mọi nỗ lực chuyển tiếp từ `canceled` sang trạng thái khác phải trả về HTTP `400 Bad Request`. | Trong `server.js:550-551`, mã nguồn chứa quy tắc cố ý sai: `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;`. Admin có thể hồi sinh một đơn hàng đã hủy và chuyển thẳng sang trạng thái đã giao hàng thành công! | Đơn hàng `#105` đã ở trạng thái `canceled`. Đăng nhập tài khoản Admin, gửi request `PUT /api/admin/orders/105/status` với body `{"status": "delivered"}`. Quan sát thấy response trả về HTTP `200 OK` và đơn hàng bị cập nhật sang `delivered` trong CSDL. |
+| `HYP-20-03` | Mobile GUI Safety (`frontend-mobile/App.js:312-329`, `App.js:964`) | **Thiếu hộp thoại xác nhận hủy trên Mobile UI: Nút "Hủy đơn" gọi API ngay lập tức khi chạm** | Trích dẫn SRS FR-21 / FR-24: Thao tác hủy đơn là hành động phá hủy dữ liệu không thể đảo ngược (`canceled` là trạng thái kết thúc). Giao diện phải hiển thị `Alert.alert` với 2 nút "Hủy bỏ" và "Đồng ý" để người dùng xác nhận trước khi phát lệnh hủy. | Trong `App.js:964`, sự kiện `onPress={() => cancelOrder(o.id)}` gọi thẳng hàm `cancelOrder`, hàm này phát ngay lập tức HTTP request `PUT` tới backend. Người dùng chỉ cần vô tình chạm tay vào nút đỏ là đơn hàng bị hủy vĩnh viễn, sau đó mới hiện popup thông báo thành công! | Mở ứng dụng Mobile, vào tab Profile; tại đơn `#101` (`pending`), chạm một lần vào nút "Hủy đơn" màu đỏ. Quan sát xem có hộp thoại hỏi "Bạn có chắc chắn muốn hủy đơn không?" hay đơn bị hủy ngay lập tức. |
+| `HYP-20-04` | Mobile UI Debounce (`frontend-mobile/App.js:962-968`) | **Thiếu cơ chế Debounce / Disabled khi chạm nút Hủy trên Mobile: Nguy cơ gửi nhiều request trùng lặp** | Tiêu chuẩn Mobile UX: Nút bấm thực hiện tác vụ mạng phải có thuộc tính `disabled` khi đang xử lý hoặc áp dụng hàm debounce để tránh gửi nhiều request khi người dùng bấm liên tiếp (double-tap). | Thẻ `<TouchableOpacity style={styles.smallRedButton}>` trong `App.js:962` không có prop `disabled={loading}` và hàm `cancelOrder` không có cờ khóa trạng thái, cho phép người dùng chạm nhanh 2 lần liên tiếp phát đi 2 request mạng song song. | Chạm nhanh 2 lần liên tiếp ($< 200ms$) vào nút "Hủy đơn"; kiểm tra tab Network hoặc console log của Metro Bundler để đếm số lượng HTTP request phát đi. |
+| `HYP-20-05` | Backend Side-effect Inconsistency (`server.js:333-339`) | **Backend không hoàn trả số lượng tồn kho sản phẩm (`products.stock`) khi đơn hàng bị hủy** | Quy tắc nghiệp vụ thương mại điện tử: Khi đơn hàng ở trạng thái `pending` hoặc `confirmed` bị hủy, số lượng hàng hóa đã giữ trong đơn phải được hoàn trả tự động lại kho (`stock = stock + quantity`). | Đoạn mã hủy đơn trong `server.js:333-339` chỉ chạy duy nhất câu lệnh: `UPDATE orders SET status = ? WHERE id = ?`. Hệ thống hoàn toàn không truy vấn bảng `order_items` và không chạy bất kỳ câu lệnh nào để cập nhật lại `products.stock`! | Kiểm tra tồn kho của sản phẩm 1: `SELECT stock FROM products WHERE id = 1` (ví dụ 10); User đặt 2 sản phẩm (kho giảm còn 8); sau đó User hủy đơn thành công; kiểm tra lại `stock` trong DB thấy vẫn là 8 thay vì được hoàn lại 10. |
+| `HYP-20-06` | Backend Side-effect Inconsistency (`server.js:333-339`) | **Backend không giải phóng / hoàn trả lượt dùng mã coupon khi đơn hàng bị hủy** | Quy tắc nghiệp vụ mã giảm giá: Nếu đơn hàng áp dụng voucher có giới hạn lượt dùng (`max_uses_per_user = 1`) bị hủy trước khi giao hàng, người dùng phải được khôi phục quyền sử dụng voucher đó cho đơn hàng tiếp theo. | Hệ thống lưu thông tin sử dụng mã vào bảng `coupon_usage` khi đặt hàng, nhưng khi hủy đơn trong `server.js:333-339`, backend không xóa bản ghi tương ứng trong `coupon_usage`. Do đó, người dùng sẽ bị mất vĩnh viễn voucher dù đơn hàng chưa từng được giao! | Áp dụng mã `ONETIME` đặt đơn hàng `#108`; sau đó hủy đơn `#108`; tạo đơn hàng mới `#109` và thử nhập lại mã `ONETIME`. Quan sát xem API áp dụng coupon có báo lỗi "Bạn đã sử dụng hết lượt mã này" hay không. |
+
+---
+
+## 6. TỔNG HỢP KẾT QUẢ THIẾT KẾ & PHÂN BỔ TEST CASES TOÀN BỘ BÁO CÁO HW02
+
+### 6.1 Bảng Phân Bổ Ca Kiểm Thử Theo 4 Tính Năng Đã Thiết Kế
+
+| Nhóm Tính Năng (Feature Scope) | Mã Chức Năng (SRS FR) | Kênh Giao Diện & Tầng Kiến Trúc | Số Lớp EP | Số Điểm BVA | Số Lượng Test Cases | Tỷ Lệ Thiết Kế (%) | Trạng Thái Hoàn Thành |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Tính Năng A (Pool A - Auth)** | FR-02: Đăng ký tài khoản người dùng | Web Storefront & Backend API | 15 | 10 | **13** | 13.4% | **100% Hoàn thành** |
+| **Tính Năng B (Pool B - Product)**| FR-07: Tìm kiếm sản phẩm đa tiêu chí | Web Storefront & Search API | 21 | 14 | **20** | 20.6% | **100% Hoàn thành** |
+| **Tính Năng C (Pool C - Admin)**  | FR-17: Quản lý Mã giảm giá (Coupons)| Admin Portal & Coupon API | 40 | 18 | **36** | 37.1% | **100% Hoàn thành** |
+| **Tính Năng D (Pool D - Mobile)** | FR-20 & FR-10: Hủy đơn hàng theo trạng thái | Mobile App & Order State Machine | 28 | 18 | **28** | 28.9% | **100% Hoàn thành** |
+| **TỔNG CỘNG TOÀN BỘ HỆ THỐNG** | **4 Tính Năng Đại Diện (A, B, C, D)** | **Full-stack (Web, Admin, Mobile, API, DB)** | **104** | **60** | **97** | **100.0%** | **Sẵn sàng thực thi** |
+
+### 6.2 Bảng Theo Dõi Thực Thi Ca Kiểm Thử (Execution & Defect Log)
+
+*Phần này sẽ được cập nhật số liệu thực tế sau khi chạy toàn bộ 97 test cases trên hệ thống SUT EShop đang hoạt động.*
+
+| Chỉ số Thực Thi (Execution Metric) | Số lượng Test Cases | Tỷ lệ phần trăm (%) |
 | :--- | :---: | :---: |
-| **Tổng số Test Cases thiết kế** | 34 | 100% |
-| **Số Test Cases Đạt (Passed)** | -- | --% |
-| **Số Test Cases Thất bại (Failed - Phát hiện lỗi)** | -- | --% |
-| **Số Test Cases Bị chặn (Blocked)** | -- | --% |
+| **Tổng số Test Cases đã thiết kế** | **97** | **100.0%** |
+| **Số Test Cases Đạt (Passed - Đúng đặc tả)** | *Chờ thực thi* | --% |
+| **Số Test Cases Thất bại (Failed - Phát hiện khiếm khuyết SUT)** | *Chờ thực thi* | --% |
+| **Số Test Cases Bị chặn (Blocked - Lỗi môi trường / phụ thuộc)** | *Chờ thực thi* | --% |
 
 ---
 
