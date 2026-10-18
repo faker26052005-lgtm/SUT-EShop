@@ -549,25 +549,454 @@ Dưới đây là đặc tả chi tiết 6 phân đoạn vận hành (Tracking, 
 | `ASSERT-07-02` | Dialog xác nhận xóa | Nút Xóa sản phẩm phải có **dialog xác nhận** trước khi thực hiện. | Bấm nút Xóa thì sản phẩm biến mất ngay lập tức mà không xuất hiện bất kỳ dialog xác nhận nào. | Click nút Xóa tại dòng sản phẩm và kiểm tra sự xuất hiện của popup/dialog xác nhận. |
 | `ASSERT-07-03` | Hình minh họa giỏ trống | Giỏ hàng trống phải có **hình minh họa** và thông báo rõ ràng. | Giao diện giỏ hàng trống chỉ có dòng chữ thông báo mà hoàn toàn không có thẻ hình ảnh (`<img>`/SVG minh họa). | Xóa hết sản phẩm trong giỏ và kiểm tra cây DOM xem có thẻ ảnh minh họa hay không. |
 
-### 3.3 Bước 3: Phân tích giá trị biên (BVA)
-| Boundary ID | Biến / Điều kiện | Ranh giới | Phương pháp | On-point | Off-point | In-point |
-| :--- | :--- | :--- | :---: | :--- | :--- | :--- |
-| `BVA-07-01` | Biên dưới số lượng ($Quantity \ge 1$) | $Quantity = 1$ | 3-Value ($\epsilon=1$) | $Q = 1$ (Hợp lệ) | $Q = 0$ (Không hợp lệ/Xóa) | $Q = 2$ (Hợp lệ) |
-| `BVA-07-02` | Biên trên số lượng ($Quantity \le Stock$) | $Quantity = Stock$ | 3-Value ($\epsilon=1$) | $Q = Stock$ (Hợp lệ) | $Q = Stock + 1$ (Vượt kho) | $Q = Stock - 1$ (Hợp lệ) |
-| `BVA-07-03` | Nút `-` chuyển đổi $1 \to 0$ | $Q = 1 \to 0$ | Transition BVA | Bấm `-` tại $Q=1$ | Hiện dialog xác nhận xóa | Không giảm âm |
+### 3.3 Bước 3: Phân tích giá trị biên (Step 3 Deliverables - BVA)
 
-### 3.4 Bước 4: Thiết kế kịch bản kiểm thử
-| TC ID | Kịch bản kiểm thử | Tiền điều kiện & Các bước | Test Data | Mã EP/BVA | Kết quả mong đợi (SRS) | Trạng thái thực thi |
-| :--- | :--- | :--- | :--- | :--- | :--- | :---: |
-| `TC_FR07_01` | Thêm sản phẩm và xem tính tiền chuẩn | Giỏ có 1 SP giá 100.000₫. Nhập số lượng = 2. | $Q = 2$ | `EP-07-01` | Thành tiền: 200.000₫; Tổng tiền nhãn: "Tổng cộng". | *Chờ thực thi* |
-| `TC_FR07_02` | Giảm số lượng từ 2 về 1 (On-point Min) | Đang có $Q=2$, bấm nút `-`. | $Q = 1$ | `BVA-07-01-ON` | Số lượng giảm về 1, thành tiền cập nhật. | *Chờ thực thi* |
-| `TC_FR07_03` | Bấm nút `-` tại số lượng 1 (Ranh giới xóa) | Đang có $Q=1$, bấm nút `-`. | $Q = 1 \to 0$ | `BVA-07-03` | Hệ thống phải hiện dialog xác nhận trước khi xóa SP. | *Chờ thực thi* |
-| `TC_FR07_04` | Xóa sản phẩm bằng nút Xóa | Bấm nút thùng rác/Xóa tại dòng sản phẩm. | Click Xóa | SRS FR-07 | Hiển thị Dialog xác nhận; hủy bỏ thì giữ nguyên. | *Chờ thực thi* |
-| `TC_FR07_05` | Đặt số lượng đạt mức tồn kho tối đa | Sản phẩm có Stock = 10. Nhập $Q = 10$. | $Q = 10$ | `BVA-07-02-ON` | Chấp nhận số lượng 10; tính đúng tổng tiền. | *Chờ thực thi* |
-| `TC_FR07_06` | Nhập số lượng vượt tồn kho 1 đơn vị | Sản phẩm có Stock = 10. Nhập $Q = 11$. | $Q = 11$ | `BVA-07-02-OFF`| Chặn hoặc thông báo vượt quá số lượng trong kho. | *Chờ thực thi* |
-| `TC_FR07_07` | Nhập số âm trực tiếp vào ô số lượng | Nhập trực tiếp `-1` vào ô số lượng. | $Q = -1$ | `EP-07-03` | Không cho phép nhập hoặc tự phục hồi về 1. | *Chờ thực thi* |
-| `TC_FR07_08` | Kiểm tra trạng thái giỏ hàng trống | Xóa hết sản phẩm trong giỏ. | Giỏ rỗng | `EP-07-06` | Có hình minh họa và thông báo giỏ hàng trống. | *Chờ thực thi* |
-| `TC_FR07_09` | Kiểm tra nhãn hiển thị Tổng tiền | Có sản phẩm trong giỏ, quan sát footer giỏ. | UI Inspect | `EP-07-07` | Hiển thị đúng nhãn "Tổng cộng", không dùng "Tổng tạm tính". | *Chờ thực thi* |
+> **Phương pháp tiếp cận Phân tích Giá trị Biên (ISTQB FL §4.2.2):**
+> - **Lựa chọn phương pháp:** Áp dụng kỹ thuật **3-Value BVA** (On-point, Off-point, In-point) cho các miền giá trị có thứ tự và ranh giới chuyển tiếp trạng thái với bước vi sai nhỏ nhất ($\epsilon$).
+> - **Định nghĩa các điểm biên:**
+>   - **On-point:** Giá trị nằm chính xác trên đường phân định ranh giới.
+>   - **Off-point:** Giá trị nằm sát biên nhất ở phía đối diện (ngay ngoài biên nếu On nằm trong; hoặc ngay trong nếu On nằm ngoài).
+>   - **In-point:** Giá trị nằm liền kề bên trong phân vùng cần kiểm thử.
+> - **Ghi chú về Cận trên Số lượng (Upper Bound Confirmation):** Đối chiếu đặc tả SRS FR-06 và FR-07, hệ thống **không quy định giới hạn tồn kho (`stock_quantity`) hay cận trên số lượng tối đa**. Do đó, miền số lượng có biên dưới đóng $[1$ và biên trên mở $+\infty)$. Thiết kế tập trung vào biên dưới hợp lệ, ranh giới chuyển tiếp số lượng, ranh giới trạng thái số mặt hàng trong giỏ, và kiểm thử độ bền số học cực hạn.
+
+| Boundary ID | Variable / Field | Boundary Rule | BVA Method | On-point (Value/Type) | Off-point (Value/Type) | In-point (Value/Type) |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- |
+| `BVA-07-01` | `quantity` | $Q \ge 1$ (Ngưỡng số lượng nguyên dương tối thiểu theo SRS FR-06/FR-07) | 3-Value ($\epsilon=1\text{ đơn vị}$) | $Q = 1$ [Valid - On-point]<br/>Số lượng tối thiểu hợp lệ; hiển thị đúng thành tiền. | $Q = 0$ [Invalid - Off-point]<br/>$1 - 1 = 0$, vi phạm điều kiện $Q \ge 1$; chặn không cho lưu hoặc yêu cầu xác nhận. | $Q = 2$ [Valid - In-point]<br/>$1 + 1 = 2$, nằm liền kề bên trong vùng hợp lệ. |
+| `BVA-07-02` | `cart_items_count` | $Items \ge 1 \leftrightarrow Items = 0$ (Ranh giới chuyển tiếp trạng thái Giỏ rỗng vs Giỏ có hàng) | 3-Value State Transition ($\epsilon=1\text{ SP}$) | $Items = 1$ [Valid Non-Empty]<br/>Còn đúng 1 SP trong giỏ $\to$ Hiển thị bảng chi tiết, thành tiền, tổng tiền. | $Items = 0$ [Valid Empty]<br/>$1 - 1 = 0$ (sau khi xóa SP cuối) $\to$ Ẩn bảng; hiển thị hình minh họa và thông báo giỏ rỗng. | $Items = 2$ [Valid Non-Empty]<br/>$1 + 1 = 2$ SP trong giỏ $\to$ Hiển thị nhiều dòng và cộng dồn tổng tiền. |
+| `BVA-07-03` | `button_decrement_action` | $Q = 1 \xrightarrow{\text{click } -} \text{Chuyển tiếp}$ (Ranh giới thao tác nút `-` tại mốc tối thiểu) | 3-Value Transition | Bấm nút `-` tại $Q = 1$ [Boundary Event]<br/>Hệ thống disable nút `-` hoặc kích hoạt dialog xác nhận xóa. | Giảm âm $Q \le 0$ [Invalid Behavior]<br/>Nếu bấm `-` mà số lượng giảm về 0 hoặc số âm mà không hỏi, vi phạm SRS. | Bấm nút `-` tại $Q = 2$ [Valid Event]<br/>$2 - 1 = 1$, số lượng giảm về 1 bình thường. |
+| `BVA-07-04` | `quantity.format` | $Q \in \mathbb{Z}^+$ (Ranh giới số nguyên vs số thập phân kề cận mốc tối thiểu) | 3-Value Real ($\epsilon=0.1$) | $Q = 1.0$ [Valid - On-point]<br/>Số nguyên chuẩn xác $Q = 1$. | $Q = 0.9$ hoặc $Q = 1.1$ [Invalid - Off-point]<br/>Số thập phân kề cận; hệ thống từ chối hoặc không nhận dấu chấm/phẩy. | $Q = 2.0$ [Valid - In-point]<br/>Số nguyên hợp lệ tiếp theo. |
+| `BVA-07-05` | `quantity.robustness` | $Q \le 2^{53}-1$ (Ngưỡng an toàn số nguyên JavaScript `MAX_SAFE_INTEGER`) | Robustness Boundary ($\epsilon=1$) | $Q = 9.007.199.254.740.991$ [On-point]<br/>Giá trị nguyên lớn nhất an toàn trong JS; không gây lỗi tràn số. | $Q = 9.007.199.254.740.992$ [Off-point]<br/>Vượt ngưỡng an toàn JS; kiểm tra hệ thống không bị lỗi crash hoặc `Infinity`. | $Q = 9.007.199.254.740.990$ [In-point]<br/>Giá trị kề cận trong ngưỡng an toàn. |
+
+### 3.4 Bước 4: Thiết kế kịch bản kiểm thử (Step 4 Deliverables)
+
+> **Phương pháp luận Thiết kế Kịch bản Kiểm thử (Theo `Comprehensive Guide: How to Write Test Cases`):**
+> 1. **Cú pháp Định danh Mục tiêu (Title / Objective Formula):** Tuân thủ công thức:
+>    $$\text{Action (Hành động)} + \text{Function (Chức năng)} + \text{Operating Condition (Điều kiện vận hành)}$$
+> 2. **Nguyên tắc Giả định Đơn lỗi (Single Fault Isolation):** Mọi kịch bản Negative (IEP hoặc Off-point) chỉ kích hoạt đúng 1 điều kiện sai; các biến còn lại giữ nguyên giá trị hợp lệ cơ sở (Baseline).
+> 3. **Tính Tự dọn dẹp (Self-Cleaning / Teardown):** Khôi phục trạng thái giỏ hàng rỗng sau mỗi kịch bản để đảm bảo tính độc lập tuyệt đối giữa các lượt test.
+> 4. **Điểm kiểm chứng đa tầng (Multi-tier Validation Points):** Phân tách rõ kỳ vọng ở các tầng: Giao diện Web (UI), Giao diện Lập trình (API), Trạng thái CSDL / Context (Data State), và Tuân thủ Đặc tả SRS (Specification Adherence).
+
+---
+
+#### 3.4.1 Bảng Tổng Hợp Kịch Bản Kiểm Thử & Ma Trận Truy Vết (Overview Traceability Matrix)
+
+| TC ID | Test Case Objective ($\text{Action} + \text{Function} + \text{Condition}$) | Phân loại | Mã EP / Rule bao phủ | Mã BVA bao phủ | Dữ liệu đầu vào & Baseline | Kết quả cốt lõi (Core Expected) | Trạng thái |
+| :--- | :--- | :---: | :---: | :---: | :--- | :--- | :---: |
+| `TC_FR07_01` | Verify adding a new valid product to empty cart on Web & API | Positive (VEP) | `EP-07-01`, `STATE-07-01` | `BVA-07-01-ON`, `BVA-07-02-ON` | Giỏ rỗng; thêm `id = 1` (iPhone 15, giá 30tr), $Q = 1$ | Tạo đúng 1 dòng trong giỏ, hiển thị đủ 5 cột, Thành tiền 30tr, Tổng 30tr. | *Chờ thực thi* |
+| `TC_FR07_02` | Verify adding duplicate product increments quantity without creating new row | Positive (Rule) | `RULE-07-01`, `EP-07-04` | `BVA-07-01-IN` ($Q=2$) | Giỏ đã có `id = 1` ($Q=1$); thêm tiếp `id = 1` ($Q_{add}=1$) | Số lượng tăng $1 \to 2$ trên dòng hiện tại, vẫn duy trì đúng 1 dòng; Thành tiền 60tr. | *Chờ thực thi* |
+| `TC_FR07_03` | Validate rejection when adding well-formed non-existent product ID (Single Fault) | Negative (IEP) | `EP-07-02` | N/A (Product DB) | `id = 9999`, $Q = 1$ | Báo lỗi không tìm thấy sản phẩm; không thêm bản ghi rác vào giỏ. | *Chờ thực thi* |
+| `TC_FR07_04` | Validate rejection when submitting malformed product ID via API (Single Fault) | Negative (IEP) | `EP-07-03` | N/A (Format/Type) | `id = "abc"` (hoặc `-1`), $Q = 1$ gửi qua `POST /api/cart` | HTTP 400 Bad Request; từ chối xử lý dữ liệu sai kiểu. | *Chờ thực thi* |
+| `TC_FR07_05` | Validate rejection of quantity zero input on Cart item (Boundary Off-point) | Negative (BVA) | `EP-07-05` | `BVA-07-01-OFF` ($Q=0$) | Giỏ có SP1; sửa ô số lượng thành $Q = 0$ | Chặn không cho nhập 0, hoặc tự khôi phục về 1, hoặc hiện dialog hỏi xóa; không lưu $Q=0$. | *Chờ thực thi* |
+| `TC_FR07_06` | Validate rejection of negative integer quantity input (Single Fault) | Negative (IEP) | `EP-07-06` | N/A (Negative Range) | Giỏ có SP1; nhập $Q = -1$ (hoặc $-5$) | Chặn ký tự `-` hoặc tự khôi phục về 1; không để thành tiền âm. | *Chờ thực thi* |
+| `TC_FR07_07` | Validate rejection of empty or whitespace quantity input (Single Fault) | Negative (IEP) | `EP-07-07`, `EP-07-08` | N/A (Required) | Giỏ có SP1; xóa trắng ô số lượng ($Q = \text{""}$ hoặc $\text{"   "}$) | Chặn submit hoặc tự động khôi phục về giá trị hợp lệ trước đó. | *Chờ thực thi* |
+| `TC_FR07_08` | Validate rejection of non-numeric string characters in quantity field (Single Fault) | Negative (IEP) | `EP-07-09` | N/A (Format) | Giỏ có SP1; gõ ký tự chữ `$Q = \text{"abc"}$` | Input `type="number"` chặn ký tự chữ; không làm xuất hiện lỗi `NaN`. | *Chờ thực thi* |
+| `TC_FR07_09` | Validate rejection of decimal quantity near lower boundary (Boundary Off-point) | Negative (BVA) | `EP-07-10` | `BVA-07-04-OFF` ($Q=1.5$) | Giỏ có SP1; nhập số thập phân $Q = 1.5$ (hoặc $0.9 / 1.1$) | Chặn ký tự dấu `.` / `,`; chỉ chấp nhận số nguyên dương $Q \in \mathbb{Z}^+$. | *Chờ thực thi* |
+| `TC_FR07_10` | Validate API rejection when quantity is omitted or null in payload (Single Fault) | Negative (IEP) | `EP-07-11` | N/A (Payload) | `POST /api/cart` với payload thiếu `quantity` hoặc `quantity: null` | HTTP 400 Bad Request; backend bắt buộc trường số lượng nguyên dương. | *Chờ thực thi* |
+| `TC_FR07_11` | Validate system robustness against extremely large integer quantity (Robustness) | Robustness | `EP-07-12` | `BVA-07-05` ($Q=10^9$) | Giỏ có SP1; nhập $Q = 10^9$ | Hệ thống xử lý an toàn không treo máy, không gây tràn số JS hay biến thành `Infinity`. | *Chờ thực thi* |
+| `TC_FR07_12` | Verify arithmetic calculation of line subtotals and cart total for multiple items | Positive (Calc) | `RULE-07-02`, `RULE-07-03` | `BVA-07-02-IN` ($Items=2$) | SP1 (30tr, $Q=2$) + SP2 (AirPods 6tr, $Q=1$) | Thành tiền SP1: 60tr; SP2: 6tr; Tổng tiền: 66.000.000 ₫ (khớp công thức $\sum Subtotal$). | *Chờ thực thi* |
+| `TC_FR07_13` | Verify quantity decrement via '-' button when quantity exceeds minimum (Normal) | Positive (Action) | `ACTION-07-01` | `BVA-07-03-IN` ($Q=2 \to 1$) | Đang có SP1 với $Q = 2$; bấm nút `-` | Số lượng giảm về $Q = 1$; Thành tiền giảm từ 60tr về 30tr; Tổng tiền cập nhật tương ứng. | *Chờ thực thi* |
+| `TC_FR07_14` | Validate boundary decrement behavior via '-' button at minimum quantity Q=1 (Probe) | Boundary / Probe | `ACTION-07-02` | `BVA-07-03-ON` ($Q=1$) | Đang có SP1 với $Q = 1$; bấm nút `-` | Nút `-` bị disabled HOẶC bật dialog xác nhận xóa; tuyệt đối KHÔNG tự ý giảm âm $Q \le 0$. | *Chờ thực thi* |
+| `TC_FR07_15` | Verify item removal upon confirming delete dialog (Interaction Flow) | Positive (Action) | `ACTION-07-03` | N/A (Delete Flow) | Giỏ có 2 SP; bấm "Xóa" tại SP1 $\to$ Bấm "OK / Đồng ý" trên dialog | Dialog xác nhận xuất hiện; sau khi xác nhận, SP1 bị xóa khỏi giỏ, tổng tiền cập nhật lại. | *Chờ thực thi* |
+| `TC_FR07_16` | Verify item retention upon cancelling delete dialog (Interaction Flow) | Positive (Action) | `ACTION-07-04` | N/A (Cancel Flow) | Giỏ có 1 SP; bấm "Xóa" $\to$ Bấm "Cancel / Hủy" trên dialog | Dialog xác nhận xuất hiện; sau khi bấm Cancel, SP vẫn giữ nguyên vẹn trong giỏ hàng. | *Chờ thực thi* |
+| `TC_FR07_17` | Verify empty cart state display upon deleting last remaining item (State Boundary) | Positive (State) | `STATE-07-02` | `BVA-07-02-OFF` ($Items=0$) | Giỏ còn đúng 1 SP ($Items=1$); xóa SP đó khỏi giỏ $\to Items=0$ | Ẩn bảng sản phẩm; bắt buộc hiển thị đồng thời cả **hình minh họa** và thông báo giỏ rỗng. | *Chờ thực thi* |
+| `TC_FR07_18` | Validate total amount UI label matches required "Tổng cộng" text (UI Assertion) | Negative / Probe | `ASSERT-07-01` | N/A (UI String) | Giỏ có sản phẩm; quan sát nhãn hiển thị cạnh số tiền tổng | Nhãn hiển thị chính xác là `"Tổng cộng"`; cấm hiển thị `"Tổng tạm tính"` (SRS FR-07). | *Chờ thực thi* |
+| `TC_FR07_19` | Validate enforcement of confirmation dialog before product deletion (Safety Probe) | Negative / Probe | `ASSERT-07-02` | N/A (Safety Check) | Giỏ có sản phẩm; bấm nút "Xóa" tại dòng sản phẩm | Bắt buộc phải bật dialog xác nhận; nếu SP bị xóa ngay không hỏi $\to$ Defect vi phạm SRS. | *Chờ thực thi* |
+| `TC_FR07_20` | Verify navigation back to home page via "Tiếp tục mua sắm" button (Navigation Flow) | Positive (Nav) | `ACTION-07-05` | N/A (Routing) | Tại trang giỏ hàng (`/cart`), bấm nút "Tiếp tục mua sắm" | Trình duyệt chuyển hướng về trang chủ (`/`), giỏ hàng vẫn được bảo toàn nguyên trạng. | *Chờ thực thi* |
+
+---
+
+#### 3.4.2 Hồ Sơ Đặc Tả Chi Tiết 100% Các Kịch Bản Kiểm Thử (Detailed Test Specification Cards for All 20 TCs)
+
+Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Tracking Information, Objective, Pre-conditions & Environment, Test Data, Procedure, Multi-tier Validation Points, Teardown & Clean-up*) cho toàn bộ 20 kịch bản kiểm thử trong ma trận:
+
+---
+
+##### Nhóm 1: Thao Tác Thêm Sản Phẩm & Quy Tắc Dòng Giỏ Hàng (Product Addition & Line Item Rules)
+
+###### Test Case `TC_FR07_01`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_01` | **Priority:** High (P1) | **Target:** Web Frontend (`/cart`) & Backend API (`/api/cart`)
+  - **Traceability:** SRS FR-07 (Item 1), API Spec §4.1, §4.2 | **Coverage IDs:** `EP-07-01`, `STATE-07-01`, `BVA-07-01-ON`, `BVA-07-02-ON`
+- **2. Test Objective:** Verify adding a new valid product to empty cart on Web & API with exact 5 columns rendering.
+- **3. Pre-conditions & Environment:**
+  - Hệ thống EShop đang chạy (Backend `:3000`, Web `:5173`).
+  - Giỏ hàng của người dùng đang trống hoàn toàn (`cart.length === 0`).
+  - CSDL có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`, đơn giá `30.000.000 ₫`).
+- **4. Test Data:** `id = 1`, `quantity = 1`
+- **5. Step-by-Step Procedure:**
+  1. Mở trình duyệt, truy cập trang chi tiết sản phẩm: `http://localhost:5173/products/1`.
+  2. Quan sát ô nhập số lượng (mặc định là 1).
+  3. Nhấn nút "Thêm vào giỏ hàng".
+  4. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI / Table Structure:* Trang `/cart` hiển thị bảng danh sách sản phẩm với đầy đủ **đúng 5 cột**:
+    1. **Sản phẩm:** Tên sản phẩm "iPhone 15 Pro Max" kèm ảnh thu nhỏ (thumbnail).
+    2. **Đơn giá:** Hiển thị `30.000.000 ₫`.
+    3. **Số lượng:** Hiển thị số `1` kèm hai nút tương tác `+` và `-` để điều chỉnh.
+    4. **Thành tiền:** Hiển thị `30.000.000 ₫` ($30tr \times 1$).
+    5. **Thao tác:** Hiển thị nút "Xóa" (hoặc icon thùng rác).
+  - *UI / Summary:* Footer hiển thị nhãn "Tổng cộng" kèm số tiền `30.000.000 ₫`. Nút "Tiến hành thanh toán" và "Tiếp tục mua sắm" sẵn sàng.
+  - *Context State:* Mảng giỏ hàng chứa đúng 1 phần tử `{ id: 1, name: "iPhone 15 Pro Max", price: 30000000, quantity: 1 }`.
+- **7. Teardown & Clean-up:** Xóa sản phẩm khỏi giỏ hàng hoặc refresh state để đưa giỏ về rỗng.
+
+###### Test Case `TC_FR07_02`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_02` | **Priority:** High (P1) | **Target:** Web Frontend & Context State
+  - **Traceability:** SRS FR-07 (Item 2: *"Thêm cùng một sản phẩm vào giỏ sẽ tăng số lượng, không tạo dòng mới"*)
+  - **Coverage IDs:** `RULE-07-01`, `EP-07-04`, `BVA-07-01-IN` ($Q=2$)
+- **2. Test Objective:** Verify adding duplicate product increments quantity without creating new row.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng đã có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`) với số lượng $Q = 1$.
+- **4. Test Data:** `id = 1`, `quantity = 1`
+- **5. Step-by-Step Procedure:**
+  1. Từ trang chủ hoặc danh mục, truy cập lại trang chi tiết `http://localhost:5173/products/1`.
+  2. Giữ nguyên số lượng là 1, nhấn nút "Thêm vào giỏ hàng" lần thứ hai.
+  3. Mở trang giỏ hàng `http://localhost:5173/cart`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI Table:* Bảng giỏ hàng vẫn duy trì **chính xác 1 dòng sản phẩm duy nhất** (không xuất hiện dòng thứ 2 cho cùng iPhone 15 Pro Max).
+  - *Quantity & Price:*
+    - Cột Số lượng hiển thị giá trị tăng lên: $Q = 1 + 1 = 2$.
+    - Cột Thành tiền tự động nhân đôi: $30.000.000 \times 2 = 60.000.000\text{ ₫}$.
+    - Tổng tiền giỏ hàng hiển thị `60.000.000 ₫`.
+  - *SUT Verification Alert:* Nếu giỏ hàng tạo ra 2 dòng riêng biệt cho cùng sản phẩm ID 1, đây là lỗi vi phạm trực tiếp SRS FR-07 (Defect trong `CartContext.jsx`).
+- **7. Teardown & Clean-up:** Xóa toàn bộ sản phẩm để dọn dẹp state.
+
+###### Test Case `TC_FR07_03`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_03` | **Priority:** Medium (P2) | **Target:** Web Client & Backend API
+  - **Traceability:** SRS FR-07 (Item 1), API Spec §4.2 | **Coverage IDs:** `EP-07-02`
+  - **Single-Fault Isolation:** `quantity = 1` (hợp lệ); biến sai duy nhất là `product_id = 9999` không tồn tại trong CSDL.
+- **2. Test Objective:** Validate rejection when adding well-formed non-existent product ID.
+- **3. Pre-conditions & Environment:**
+  - CSDL SQLite không chứa sản phẩm có `id = 9999`.
+- **4. Test Data:** `id = 9999`, `quantity = 1`
+- **5. Step-by-Step Procedure:**
+  1. Mở trình duyệt truy cập route sản phẩm giả định: `http://localhost:5173/products/9999`.
+  2. Hoặc gửi HTTP `POST /api/cart` với body JSON: `{"id": 9999, "price": 100000, "quantity": 1}` kèm Authorization header.
+  3. Quan sát phản hồi trên giao diện và trong Network tab.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Giao diện hiển thị thông báo "Sản phẩm không tồn tại", nút "Thêm vào giỏ hàng" không hoạt động hoặc bị ẩn.
+  - *API:* Endpoint trả về HTTP `404 Not Found` hoặc `400 Bad Request`.
+  - *Cart State:* Giỏ hàng không bị thêm bản ghi rác mang ID 9999.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp nếu không có dữ liệu chèn vào.
+
+###### Test Case `TC_FR07_04`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_04` | **Priority:** Medium (P2) | **Target:** Backend API (`POST /api/cart`)
+  - **Traceability:** API Spec §4.2 | **Coverage IDs:** `EP-07-03`
+  - **Single-Fault Isolation:** `quantity = 1` (hợp lệ); biến sai duy nhất là `id = "abc"` sai kiểu dữ liệu.
+- **2. Test Objective:** Validate rejection when submitting malformed product ID via API.
+- **3. Pre-conditions & Environment:**
+  - Backend EShop đang chạy tại cổng 3000. Có JWT token của người dùng hợp lệ.
+- **4. Test Data:** `id = "abc"` (hoặc `-1`), `price = 100000`, `quantity = 1`
+- **5. Step-by-Step Procedure:**
+  1. Gửi request `POST http://localhost:3000/api/cart` kèm Header `Authorization: Bearer <token>`.
+  2. Body JSON truyền: `{"id": "abc", "price": 100000, "quantity": 1}`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API:* Endpoint trả về mã trạng thái `400 Bad Request` với thông báo lỗi rõ ràng về định dạng ID.
+  - *Backend State:* Mảng `userCarts` không lưu trữ đối tượng chứa ID sai kiểu dữ liệu.
+- **7. Teardown & Clean-up:** Reset giỏ hàng qua `GET /api/cart` nếu cần.
+
+---
+
+##### Nhóm 2: Kiểm Thử Miền Dữ Liệu & Giá Trị Biên Của Số Lượng (Quantity EP & BVA Negative Testing)
+
+###### Test Case `TC_FR07_05`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_05` | **Priority:** High (P1) | **Target:** Web Frontend (`Cart.jsx`)
+  - **Traceability:** SRS FR-06, FR-07 (Tối thiểu là 1) | **Coverage IDs:** `EP-07-05`, `BVA-07-01-OFF` ($Q=0$)
+  - **Single-Fault Isolation:** Sản phẩm ID 1 hợp lệ; biến sai duy nhất là số lượng $Q = 0$.
+- **2. Test Objective:** Validate rejection of quantity zero input on Cart item (Boundary Off-point).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng đang có 1 sản phẩm ID 1 với $Q = 1$.
+- **4. Test Data:** `quantity = 0`
+- **5. Step-by-Step Procedure:**
+  1. Truy cập trang giỏ hàng `http://localhost:5173/cart`.
+  2. Nhấp vào ô số lượng của sản phẩm ID 1.
+  3. Xóa số `1` và gõ `0`.
+  4. Nhấn Enter hoặc nhấp chuột ra ngoài ô nhập (blur).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Hệ thống từ chối lưu giá trị 0; tự động phục hồi về 1 HOẶC hiển thị dialog hỏi "Bạn có muốn xóa sản phẩm này?".
+  - *Cart State:* Tuyệt đối không lưu dòng sản phẩm có $Q = 0$ và thành tiền = 0 ₫ trong bảng.
+- **7. Teardown & Clean-up:** Khôi phục giỏ hàng rỗng.
+
+###### Test Case `TC_FR07_06`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_06` | **Priority:** High (P1) | **Target:** Web Frontend & Backend API
+  - **Traceability:** SRS FR-06, FR-07 (*"chỉ nhận số nguyên dương, tối thiểu là 1"*) | **Coverage IDs:** `EP-07-06`
+  - **Single-Fault Isolation:** Sản phẩm ID 1 hợp lệ; biến sai duy nhất là số lượng âm $Q = -1$.
+- **2. Test Objective:** Validate rejection of negative integer quantity input (Single Fault).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1.
+- **4. Test Data:** `quantity = -1` (hoặc `-5`)
+- **5. Step-by-Step Procedure:**
+  1. Tại ô số lượng của sản phẩm, gõ `-1`.
+  2. Hoặc gửi API `POST /api/cart` với `quantity: -1`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Input chặn ký tự dấu trừ `-` hoặc tự động reset về 1; hiển thị cảnh báo số lượng phải $\ge 1$.
+  - *Arithmetic Check:* Thành tiền và Tổng tiền giỏ hàng tuyệt đối không bị tính ra số âm.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_07`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_07` | **Priority:** Medium (P2) | **Target:** Web Frontend (`Cart.jsx`)
+  - **Traceability:** SRS FR-07 (Trường số lượng bắt buộc) | **Coverage IDs:** `EP-07-07`, `EP-07-08`
+  - **Single-Fault Isolation:** Sản phẩm hợp lệ; ô số lượng bị xóa trắng thành chuỗi rỗng `""` hoặc chỉ có khoảng trắng `"   "`.
+- **2. Test Objective:** Validate rejection of empty or whitespace quantity input.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1 ($Q = 1$).
+- **4. Test Data:** `quantity = ""` (chuỗi rỗng) hoặc `"   "` (khoảng trắng)
+- **5. Step-by-Step Procedure:**
+  1. Mở `/cart`.
+  2. Bôi đen toàn bộ số trong ô số lượng và nhấn Backspace để xóa sạch.
+  3. Nhấp chuột ra ngoài ô nhập (onBlur).
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Ô số lượng tự động khôi phục về giá trị hợp lệ gần nhất ($Q = 1$).
+  - *Calculation Safety:* Thành tiền và Tổng tiền không bị biến thành `NaN ₫` hay `0 ₫`.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_08`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_08` | **Priority:** Medium (P2) | **Target:** Web Frontend Input Control
+  - **Traceability:** SRS FR-06 (*"chỉ nhận số nguyên dương"*) | **Coverage IDs:** `EP-07-09`
+  - **Single-Fault Isolation:** Sản phẩm hợp lệ; nhập ký tự chữ/ký hiệu đặc biệt vào ô số lượng.
+- **2. Test Objective:** Validate rejection of non-numeric string characters in quantity field.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1.
+- **4. Test Data:** `quantity = "abc"` hoặc `"@#$"`
+- **5. Step-by-Step Procedure:**
+  1. Nhấp chuột vào ô số lượng của sản phẩm.
+  2. Cố tình gõ chuỗi chữ `abc` hoặc paste ký tự đặc biệt `@#$`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Ô nhập liệu không hiển thị các ký tự chữ cái (do có `type="number"` hoặc input filter).
+  - *Safety:* Giá trị số lượng trong state vẫn là số nguyên hợp lệ; không gây crash ứng dụng.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_09`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_09` | **Priority:** High (P1) | **Target:** Web Frontend & Validation Rule
+  - **Traceability:** SRS FR-06, FR-07 (*"chỉ nhận số nguyên dương"*) | **Coverage IDs:** `EP-07-10`, `BVA-07-04-OFF` ($Q=1.5$)
+  - **Single-Fault Isolation:** Sản phẩm hợp lệ; số lượng là số thập phân $Q = 1.5$.
+- **2. Test Objective:** Validate rejection of decimal quantity near lower boundary (Boundary Off-point).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1.
+- **4. Test Data:** `quantity = 1.5` (hoặc `0.9`, `1.1`)
+- **5. Step-by-Step Procedure:**
+  1. Nhập `1.5` (hoặc `1,5`) vào ô số lượng.
+  2. Nhấn Enter hoặc chuyển tab.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *UI:* Input chặn ký tự dấu chấm/phẩy hoặc hiển thị thông báo lỗi "Số lượng phải là số nguyên".
+  - *Safety:* Thành tiền không xuất hiện phần lẻ thập phân gây sai lệch tiền tệ VND (ví dụ không cho phép $30tr \times 1.5 = 45tr$ khi bán mặt hàng nguyên chiếc).
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_10`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_10` | **Priority:** Medium (P2) | **Target:** Backend REST API (`POST /api/cart`)
+  - **Traceability:** API Spec §4.2 | **Coverage IDs:** `EP-07-11`
+  - **Single-Fault Isolation:** `id` và `price` hợp lệ; trường `quantity` bị null hoặc khuyết hoàn toàn trong payload.
+- **2. Test Objective:** Validate API rejection when quantity is omitted or null in payload.
+- **3. Pre-conditions & Environment:**
+  - Backend `:3000` đang hoạt động, có token xác thực.
+- **4. Test Data:** Payload JSON: `{"id": 1, "price": 30000000, "quantity": null}` hoặc `{"id": 1, "price": 30000000}`
+- **5. Step-by-Step Procedure:**
+  1. Dùng Postman hoặc cURL gửi `POST /api/cart` với payload trên.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *API:* HTTP Status `400 Bad Request`. Body JSON thông báo trường `quantity` là bắt buộc và phải là số nguyên dương.
+  - *State:* Không đẩy bản ghi không có số lượng vào giỏ hàng.
+- **7. Teardown & Clean-up:** Không có dữ liệu rác cần dọn.
+
+###### Test Case `TC_FR07_11`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_11` | **Priority:** Low (P3) | **Target:** System Robustness & JS Number Range
+  - **Traceability:** Tiêu chuẩn ổn định số học (Robustness) | **Coverage IDs:** `EP-07-12`, `BVA-07-05`
+  - **Single-Fault Isolation:** Số lượng cực lớn $Q = 10^9$ (1 tỷ đơn vị).
+- **2. Test Objective:** Validate system robustness against extremely large integer quantity.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1.
+- **4. Test Data:** `quantity = 1000000000` ($10^9$)
+- **5. Step-by-Step Procedure:**
+  1. Nhập `1000000000` vào ô số lượng của sản phẩm.
+  2. Quan sát khả năng phản hồi của giao diện.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *System:* Ứng dụng không bị đứng hình, không tràn bộ nhớ CPU/RAM.
+  - *Display:* Thành tiền không hiển thị `Infinity` hoặc `NaN`; hiển thị cảnh báo vượt giới hạn giao dịch nếu có.
+- **7. Teardown & Clean-up:** Đưa giỏ hàng về rỗng.
+
+---
+
+##### Nhóm 3: Kiểm Chứng Tính Toán Số Học Thành Tiền & Tổng Cộng (Subtotal & Total Calculation Verification)
+
+###### Test Case `TC_FR07_12`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_12` | **Priority:** High (P1) | **Target:** Business Logic & Arithmetic Calculation
+  - **Traceability:** SRS FR-07 (Cột Thành tiền & Nhãn Tổng cộng) | **Coverage IDs:** `RULE-07-02`, `RULE-07-03`, `BVA-07-02-IN` ($Items=2$)
+- **2. Test Objective:** Verify arithmetic calculation of line subtotals and cart total for multiple items.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng rỗng ban đầu.
+  - Có 2 sản phẩm trong CSDL: SP1 (iPhone 15, giá `30.000.000 ₫`) và SP2 (AirPods Pro, giá `6.000.000 ₫`).
+- **4. Test Data:** SP1 với $Q_1 = 2$; SP2 với $Q_2 = 1$
+- **5. Step-by-Step Procedure:**
+  1. Thêm SP1 vào giỏ với số lượng 2.
+  2. Thêm SP2 vào giỏ với số lượng 1.
+  3. Truy cập vào trang giỏ hàng `http://localhost:5173/cart`.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Thành tiền dòng 1:* $30.000.000 \times 2 = 60.000.000\text{ ₫}$.
+  - *Thành tiền dòng 2:* $6.000.000 \times 1 = 6.000.000\text{ ₫}$.
+  - *Tổng tiền giỏ hàng:* $60.000.000 + 6.000.000 = 66.000.000\text{ ₫}$ (khớp chính xác công thức $Total = \sum Subtotal$).
+- **7. Teardown & Clean-up:** Xóa cả 2 sản phẩm khỏi giỏ.
+
+---
+
+##### Nhóm 4: Nút Bấm Điều Chỉnh Số Lượng & Ranh Giới Chuyển Tiếp (Quantity Adjustment & Decrement Transition)
+
+###### Test Case `TC_FR07_13`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_13` | **Priority:** High (P1) | **Target:** Web Frontend Interactive Controls
+  - **Traceability:** SRS FR-07 (*"Số lượng (có nút +/- để chỉnh)"*) | **Coverage IDs:** `ACTION-07-01`, `BVA-07-03-IN` ($Q=2 \to 1$)
+- **2. Test Objective:** Verify quantity decrement via '-' button when quantity exceeds minimum (Normal Action).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có sản phẩm ID 1 đang mang số lượng $Q = 2$.
+- **4. Test Data:** Thao tác click nút `-` khi $Q = 2$
+- **5. Step-by-Step Procedure:**
+  1. Vào `/cart`.
+  2. Tìm nút `-` cạnh ô số lượng của sản phẩm ID 1.
+  3. Nhấn nút `-` một lần duy nhất.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Số lượng:* Giảm từ 2 xuống đúng `1`.
+  - *Thành tiền:* Tự động giảm từ 60tr xuống `30.000.000 ₫`.
+  - *Tổng tiền:* Tự động giảm từ 60tr xuống `30.000.000 ₫`.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_14`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_14` | **Priority:** Medium (P2) | **Target:** Web Frontend Interactive Controls
+  - **Traceability:** SRS FR-07 (Item 1, 3: Nút +/- và Dialog xác nhận xóa) | **Coverage IDs:** `ACTION-07-02`, `BVA-07-03-ON` ($Q=1$)
+- **2. Test Objective:** Validate boundary decrement behavior via '-' button at minimum quantity Q=1 (State Transition Probe).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm ID 1 với số lượng đúng bằng $Q = 1$.
+- **4. Test Data:** Click nút `-` khi $Q = 1$
+- **5. Step-by-Step Procedure:**
+  1. Vào `/cart`.
+  2. Nhấn nút `-` tại dòng sản phẩm đang có số lượng 1.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Chuẩn hành vi chấp nhận được:*
+    - **Phương án A (Disable):** Nút `-` bị vô hiệu hóa (`disabled`), không cho phép giảm dưới 1.
+    - **Phương án B (Confirm Delete):** Nút `-` kích hoạt dialog xác nhận xóa sản phẩm tương tự nút Xóa.
+  - *Hành vi vi phạm nghiêm trọng (Defect):*
+    - Giảm số lượng về $Q = 0$ hoặc số âm ($-1$) làm thành tiền âm.
+    - Tự động xóa sản phẩm ngay lập tức mà không có bất kỳ dialog xác nhận nào.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+---
+
+##### Nhóm 5: Thao Tác Xóa Sản Phẩm, Hộp Thoại Xác Nhận & Giỏ Hàng Trống (Delete Flow, Confirmation Dialog & Empty Cart State)
+
+###### Test Case `TC_FR07_15`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_15` | **Priority:** High (P1) | **Target:** Web Frontend Modal & State
+  - **Traceability:** SRS FR-07 (Item 3: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện"*) | **Coverage IDs:** `ACTION-07-03`
+- **2. Test Objective:** Verify item removal upon confirming delete dialog (Interaction Flow).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 2 sản phẩm (SP1 giá 30tr, SP2 giá 6tr; Tổng: 36tr).
+- **4. Test Data:** Thao tác click "Xóa" tại SP1 $\to$ Click "OK / Confirm"
+- **5. Step-by-Step Procedure:**
+  1. Mở `/cart`.
+  2. Tại dòng SP1, nhấn nút "Xóa".
+  3. Khi hộp thoại xác nhận hiện lên, nhấn nút "OK" (hoặc "Xóa / Confirm").
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Dialog:* Hộp thoại xác nhận hiển thị rõ ràng trước khi xóa.
+  - *Table:* Dòng SP1 biến mất khỏi bảng giỏ hàng; SP2 vẫn giữ nguyên.
+  - *Tổng tiền:* Cập nhật tức thời còn `6.000.000 ₫`.
+- **7. Teardown & Clean-up:** Xóa nốt SP2 để đưa giỏ về rỗng.
+
+###### Test Case `TC_FR07_16`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_16` | **Priority:** High (P1) | **Target:** Web Frontend Modal Interaction
+  - **Traceability:** SRS FR-07 (Item 3) | **Coverage IDs:** `ACTION-07-04`
+- **2. Test Objective:** Verify item retention upon cancelling delete dialog (Interaction Flow).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có 1 sản phẩm SP1 ($Q = 1$).
+- **4. Test Data:** Click "Xóa" $\to$ Click "Cancel / Hủy"
+- **5. Step-by-Step Procedure:**
+  1. Mở `/cart`.
+  2. Nhấn nút "Xóa" tại dòng SP1.
+  3. Khi hộp thoại xác nhận hiện lên, nhấn nút "Cancel" (hoặc "Hủy").
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Dialog:* Hộp thoại đóng lại.
+  - *Table:* Dòng sản phẩm SP1 vẫn hiển thị nguyên vẹn, số lượng vẫn là 1, tổng tiền không đổi.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_17`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_17` | **Priority:** High (P1) | **Target:** Web Frontend State Transition (`Cart.jsx`)
+  - **Traceability:** SRS FR-07 (Item 6: *"Giỏ hàng trống phải có hình minh họa và thông báo rõ ràng"*) | **Coverage IDs:** `STATE-07-02`, `BVA-07-02-OFF` ($Items=0$), `ASSERT-07-03`
+- **2. Test Objective:** Verify empty cart state display upon deleting last remaining item with both illustration and message.
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng còn đúng 1 sản phẩm duy nhất ($Items = 1$).
+- **4. Test Data:** Xóa sản phẩm cuối cùng $\to Items = 0$
+- **5. Step-by-Step Procedure:**
+  1. Mở `/cart`.
+  2. Nhấn "Xóa" sản phẩm duy nhất và xác nhận xóa.
+  3. Quan sát giao diện giỏ hàng sau khi xóa.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Bảng danh mục:* Ẩn bảng sản phẩm và tổng tiền.
+  - *Thông báo văn bản:* Hiển thị câu thông báo rõ ràng (ví dụ: *"Giỏ hàng của bạn đang trống"*).
+  - *Hình minh họa:* **Bắt buộc phải có thẻ hình ảnh minh họa** (thẻ `<img>` hoặc SVG minh họa giỏ hàng rỗng). Nếu chỉ có dòng chữ đơn điệu $\to$ Defect vi phạm SRS FR-07.
+  - *Liên kết:* Có nút/link "Tiếp tục mua sắm" dẫn về trang chủ.
+- **7. Teardown & Clean-up:** Không cần dọn dẹp.
+
+---
+
+##### Nhóm 6: Điểm Kiểm Chứng Giao Diện & Điều Hướng Hệ Thống (UI Assertions, Safety Probes & Navigation)
+
+###### Test Case `TC_FR07_18`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_18` | **Priority:** Medium (P2) | **Target:** Web Frontend UI Text (`Cart.jsx`)
+  - **Traceability:** SRS FR-07 (Item 5: *"Tổng tiền hiển thị nhãn chính xác: 'Tổng cộng' (không phải 'Tổng tạm tính')"*) | **Coverage IDs:** `ASSERT-07-01`
+- **2. Test Objective:** Validate total amount UI label matches required "Tổng cộng" text (UI Assertion).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có ít nhất 1 sản phẩm hợp lệ.
+- **4. Test Data:** Footer giỏ hàng
+- **5. Step-by-Step Procedure:**
+  1. Thêm 1 sản phẩm vào giỏ và mở `/cart`.
+  2. Quan sát chuỗi ký tự hiển thị cạnh số tiền tổng ở cuối bảng.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Nhãn văn bản:* Bắt buộc phải là **"Tổng cộng"** (hoặc `"Tổng cộng:"`).
+  - *Defect Detection:* Nếu giao diện hiển thị nhãn là **"Tổng tạm tính"** hoặc **"Subtotal"** $\to$ Ghi nhận Defect vi phạm trực tiếp yêu cầu SRS FR-07.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_19`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_19` | **Priority:** High (P1) | **Target:** Web Frontend Deletion Safety
+  - **Traceability:** SRS FR-07 (Item 3: *"Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện"*) | **Coverage IDs:** `ASSERT-07-02`
+- **2. Test Objective:** Validate enforcement of confirmation dialog before product deletion (Safety Probe).
+- **3. Pre-conditions & Environment:**
+  - Giỏ hàng có sản phẩm.
+- **4. Test Data:** Thao tác click nút "Xóa"
+- **5. Step-by-Step Procedure:**
+  1. Vào `/cart`.
+  2. Nhấn nút "Xóa" tại dòng sản phẩm và quan sát màn hình.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Hộp thoại xác nhận:* Bắt buộc phải xuất hiện dialog xác nhận trước khi xóa.
+  - *Defect Detection:* Nếu sản phẩm bị xóa lập tức mà không có bất kỳ dialog nào hỏi ý kiến người dùng $\to$ Ghi nhận Defect vi phạm an toàn thao tác SRS FR-07.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
+
+###### Test Case `TC_FR07_20`
+- **1. Tracking Information:**
+  - **TC ID:** `TC_FR07_20` | **Priority:** Medium (P2) | **Target:** Web Frontend Routing & Navigation
+  - **Traceability:** SRS FR-07 (Item 4: *"Có nút Tiếp tục mua sắm để quay về trang chủ"*) | **Coverage IDs:** `ACTION-07-05`
+- **2. Test Objective:** Verify navigation back to home page via "Tiếp tục mua sắm" button (Navigation Flow).
+- **3. Pre-conditions & Environment:**
+  - Người dùng đang đứng tại trang giỏ hàng `http://localhost:5173/cart`.
+  - Giỏ hàng có 1 sản phẩm ID 1.
+- **4. Test Data:** Click nút "Tiếp tục mua sắm" (hoặc "← Mua tiếp")
+- **5. Step-by-Step Procedure:**
+  1. Tại trang giỏ hàng `/cart`, tìm nút hoặc liên kết "Tiếp tục mua sắm".
+  2. Nhấp chuột vào nút/liên kết này.
+- **6. Multi-tier Validation Points (Expected Results):**
+  - *Routing:* URL trình duyệt chuyển hướng an toàn về trang chủ `http://localhost:5173/`.
+  - *State Preservation:* Dữ liệu sản phẩm trong giỏ hàng vẫn được lưu giữ nguyên vẹn, không bị mất khi quay lại `/cart`.
+- **7. Teardown & Clean-up:** Dọn dẹp giỏ hàng.
 
 ### 3.5 Bước 5: Ma trận truy vết & Kiểm tra độ bao phủ
 - Bao phủ 100% các phân vùng số lượng âm, 0, hợp lệ, vượt kho, giỏ rỗng, nhãn tổng tiền.
