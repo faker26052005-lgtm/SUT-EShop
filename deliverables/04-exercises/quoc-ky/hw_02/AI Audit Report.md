@@ -18,7 +18,7 @@
 | **Student ID:** | 23120138 |
 | **Class / Cohort:** | 23CLC02 |
 | **Assignment ID (e.g., HW#00, HW#02):** | HW02 |
-| **Assignment date:** | 18/10/2026 |
+| **Assignment date:** | 19/10/2026 |
 | **AI tool(s) used:** | Google Antigravity (Gemini 3.8 Flash) |
 | **AI tool(s) used:** | [x] Yes  [ ] No |
 
@@ -81,9 +81,11 @@ Aggregate the verdicts from Section 3 and complete the table below.
 
 Write 80–150 words describing patterns you observed. Where did AI shine? Where did AI fail? What is your recommendation for using AI in this kind of work in the future?
 
-AI demonstrated high efficiency in scaffolding standard equivalence partitions and routine positive tests (16 artifacts accepted as-is). In 13 instances, the AI output was incomplete, notably omitting strict 2-value/3-value boundary Off-points and domain-specific RFC edge cases.
+Quá trình cộng tác với Google Antigravity (Gemini 3.8 Flash) bộc lộ rõ cả ưu thế lẫn các điểm mù nghiêm trọng. Trong 13/29 lượt tương tác được kiểm toán, AI cho ra kết quả chưa đầy đủ hoặc thiên lệch. Cụ thể, ở kỹ thuật Phân tích Giá trị Biên (ISTQB FL §4.2.2), AI ban đầu chỉ tạo biên 2-Value sơ sài, thiếu phân loại 3-Value (On/Off/In) và bước vi sai ε. Với Phân vùng Tương đương, mô hình vi phạm Giả định Đơn lỗi khi gộp nhiều giá trị sai vào một ca kiểm thử, gây nguy cơ che giấu lỗi. Đặc biệt, AI mắc thiên kiến "happy-path", mặc định hệ thống bảo mật tốt nên bỏ sót lỗi thiếu phân quyền Admin (BUG-FR17-12), hủy đơn trái phép ở trạng thái shipping (BUG-FR20-01) và thiếu dialog xác nhận trên Mobile (BUG-FR20-03).
 
-**Principle learned:** AI serves as a high-velocity generative assistant for testing scaffolding, but lacks holistic awareness of domain constraints. Strict human verification against ISTQB standards and actual SUT behavior remains indispensable for test validity.
+AI không nhận diện được các khiếm khuyết trên do bản chất LLM chỉ học theo khuôn mẫu mã nguồn phổ biến, thiếu khả năng suy luận ngữ nghĩa lúc thực thi. Không có phản hồi runtime, AI không thể nhận diện các đột biến CSDL hay lỗi bị che lấp bởi mã HTTP 200.
+
+Bài học cốt lõi là AI chỉ đóng vai trò trợ lý phác thảo tốc độ cao, không thể thay thế kỹ sư kiểm thử. Để đảm bảo chất lượng, con người bắt buộc phải dẫn dắt chặt chẽ: áp dụng nghiêm ngặt chuẩn mực ISTQB FL v4.0, cô lập biến số và trực tiếp kiểm chứng mọi kịch bản trên hệ thống SUT thực tế.
 
 ## **6. Mandatory Disclosure (paste verbatim)**
 
@@ -97,7 +99,7 @@ AI demonstrated high efficiency in scaffolding standard equivalence partitions a
 | **Class / Cohort:** | 23CLC02 |
 | **Course:** | CS423 / CSC13003 – Software Testing |
 | **Instructor:** | Dr. Lam Quang Vu / MSc. Tran Thi Bich Hanh |
-| **Date:** | 18/10/2026 |
+| **Date:** | 19/10/2026 |
 | **Signature:** | Nguyễn Quốc Kỳ |
 
 ## **References**
