@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 1 | 0 | **12** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **16** | **2** | **0** | **21** |
+| **TỔNG CỘNG** | | | **3** | **16** | **3** | **0** | **22** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -42,6 +42,7 @@
 | `BUG-FR07-10` | Bảng giỏ hàng thiếu hoàn toàn nút +/- để điều chỉnh số lượng sản phẩm theo đặc tả | FR-07 | `TC_FR07_13`, `TC_FR07_14` | Major | [Issue #18](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18) | Open |
 | `BUG-FR07-11` | Nút Xóa sản phẩm xóa trực tiếp không có dialog xác nhận theo yêu cầu SRS | FR-07 | `TC_FR07_15`, `TC_FR07_16` | Major | [Issue #19](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19) | Open |
 | `BUG-FR07-12` | Giao diện giỏ hàng trống chỉ có text thuần, thiếu hình ảnh minh họa theo đặc tả | FR-07 | `TC_FR07_17` | Medium | [Issue #20](https://github.com/faker26052005-lgtm/SUT-EShop/issues/20) | Open |
+| `BUG-FR07-13` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" theo đặc tả | FR-07 | `TC_FR07_18` | Medium | [Issue #21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -1429,6 +1430,65 @@
         </div>
       );
     }
+    ```
+
+
+---
+
+#### [BUG-FR07-13] Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" theo đặc tả
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-13` |
+| **Tiêu đề Bug** | `[FR-07][Web UI] Cart footer displays incorrect label "Tổng tạm tính" instead of required "Tổng cộng" as specified in SRS FR-07` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Medium** (Sai lệch nhãn hiển thị theo quy định kiểm thử định danh SRS) |
+| **Mức ưu tiên (Priority)**| **Medium (P2)** |
+| **Test Case phát hiện** | [`TC_FR07_18`](Main_Report.md#tc_fr07_18) (Validate total amount UI label matches required "Tổng cộng" text) |
+| **GitHub Issue Link** | [Issue #21: [BUG] [FR-07][Web UI] Cart footer displays incorrect label "Tổng tạm tính" instead of required "Tổng cộng" as specified in SRS FR-07](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- Giỏ hàng có ít nhất 1 sản phẩm.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/cart`.
+2. Quan sát phần tổng kết thành tiền ở góc dưới bên trái của bảng giỏ hàng.
+3. Đọc nhãn văn bản đi kèm số tiền tổng.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Nhãn hiển thị tổng tiền tại footer giỏ hàng
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07 (Mục 5):* "Tổng tiền hiển thị nhãn chính xác: **'Tổng cộng' (không phải 'Tổng tạm tính')**."
+- Nhãn văn bản hiển thị phải là `"Tổng cộng"` hoặc `"Tổng cộng:"`.
+- Tuyệt đối không hiển thị `"Tổng tạm tính"` hay `"Subtotal"`.
+
+**5. Kết quả thực tế (Actual Result):**
+- Giao diện giỏ hàng trong `Cart.jsx` render dòng chữ hardcode:
+  ```jsx
+  <div className="text-xl font-bold">
+    Tổng tạm tính: <span className="text-red-600">{cartTotal.toLocaleString()} ₫</span>
+  </div>
+  ```
+- Nhãn hiển thị thực tế là `"Tổng tạm tính:"`, vi phạm trực diện điều cấm của đặc tả SRS FR-07.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp nhãn hiển thị sai thành Tổng tạm tính:*  
+  ![Nhãn hiển thị sai thành Tổng tạm tính](./screenshots/BUG_FR07_13_wrong_label.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/Cart.jsx`, dòng 63.
+- **Khắc phục:**
+  - Đổi chuỗi text thành `"Tổng cộng:"`:
+    ```jsx
+    <div className="text-xl font-bold">
+      Tổng cộng: <span className="text-red-600">{cartTotal.toLocaleString()} ₫</span>
+    </div>
     ```
 
 ---
