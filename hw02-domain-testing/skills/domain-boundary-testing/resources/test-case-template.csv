@@ -1,0 +1,5 @@
+TC-ID,Source,Feature,Description,Preconditions,Input Data,Test Steps,Expected Result,Actual Result,Pass/Fail,Notes
+TC-FRXX-D01,Domain/Positive,FR-XX,<Mô tả test case>,<Điều kiện tiên quyết>,<Dữ liệu đầu vào>,<Các bước thực hiện>,<Kết quả mong đợi>,(chưa chạy),-,
+TC-FRXX-D02,Domain/EC-XX-I1,FR-XX,<Mô tả test case negative>,<Điều kiện tiên quyết>,<Dữ liệu đầu vào>,<Các bước thực hiện>,<Kết quả mong đợi>,(chưa chạy),-,
+TC-FRXX-B01,BVA/Min-1,FR-XX,<Mô tả test biên dưới>,<Điều kiện tiên quyết>,<Dữ liệu đầu vào>,<Các bước thực hiện>,<Kết quả mong đợi>,(chưa chạy),-,
+TC-FRXX-B02,BVA/Min,FR-XX,<Mô tả test biên>,<Điều kiện tiên quyết>,<Dữ liệu đầu vào>,<Các bước thực hiện>,<Kết quả mong đợi>,(chưa chạy),-,
