@@ -44,7 +44,7 @@
 | `BUG-FR07-12` | Giao diện giỏ hàng trống chỉ có text thuần, thiếu hình ảnh minh họa theo đặc tả | FR-07 | `TC_FR07_17` | Medium | [Issue #20](https://github.com/faker26052005-lgtm/SUT-EShop/issues/20) | Open |
 | `BUG-FR07-13` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" theo đặc tả | FR-07 | `TC_FR07_18` | Medium | [Issue #21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21) | Open |
 | `BUG-FR17-01` | Tạo trùng mã coupon gây lỗi unhandled HTTP 500 rò rỉ ngoại lệ SQLite | FR-17 | `TC_FR17_10` | Major | [Issue #22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22) | Open |
-| `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
+| `BUG-FR17-02` | Endpoint POST /api/admin/coupons chấp nhận mã rỗng tạo coupon 200 OK | FR-17 | `TC_FR17_11` | Major | [Issue #23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -1581,21 +1581,82 @@
 
 ---
 
-#### [BUG-FR17-02] Không kiểm tra trùng lặp mã coupon khi tạo mới
+#### [BUG-FR17-02] Endpoint POST /api/admin/coupons chấp nhận mã rỗng tạo coupon thành công
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR17-02` |
-| **Tiêu đề Bug** | `[FR-17][Admin] Duplicate coupon code creation allowed without uniqueness validation` |
-| **Mức độ (Severity)** | **Major** (Tính toàn vẹn dữ liệu) |
-| **Test Case phát hiện** | `TC_FR17_08` |
-| **GitHub Issue Link** | [Issue #17: [FR-17] Duplicate coupon code](https://github.com/ttbhanh/eshop-sut/issues/17) |
+| **Tiêu đề Bug** | `[FR-17][REST API] Endpoint POST /api/admin/coupons accepts empty string code and creates coupon with HTTP 200 OK` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Thiếu validation tầng API cho trường bắt buộc theo đặc tả, cho phép chèn coupon vô danh vào CSDL) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_11`](Main_Report.md#tc_fr17_11) (Biên Off-point chuỗi rỗng `code = ""`) |
+| **GitHub Issue Link** | [Issue #23: [BUG] [FR-17][REST API] Endpoint POST /api/admin/coupons accepts empty string code and creates coupon with HTTP 200 OK](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Kết quả mong đợi (SRS FR-17):**
-> *Trích dẫn SRS:* "Các trường bắt buộc: `code` (duy nhất)".
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
 
-**2. Kết quả thực tế:**
-- Cho phép tạo 2 coupon cùng mang tên `SAVE10`.
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào mục "Mã Giảm Giá", để trống ô "Mã coupon", điền các trường còn lại và bấm "Tạo mã" $\to$ Giao diện HTML5 hiển thị tooltip *"Please fill out this field"*.
+2. Gửi request trực tiếp tới API endpoint `POST /api/admin/coupons` với payload chứa `code: ""` kèm JWT Admin:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"","type":"percent","discount_value":10,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+3. Truy vấn kiểm tra CSDL SQLite: `SELECT * FROM coupons WHERE code='';`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "",
+  "type": "percent",
+  "discount_value": 10,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: `code` (duy nhất), `type` (percent/fixed), `discount_value` (dương)..."
+- Tầng backend API phải kiểm tra các trường bắt buộc; từ chối chuỗi rỗng với HTTP 400 Bad Request (`{"error": "Mã coupon là trường bắt buộc và không được để trống"}`).
+- Không tạo bất kỳ bản ghi coupon nào với mã rỗng trong CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/admin/coupons` trả về mã **`HTTP 200 OK`**: `{"message":"Coupon created","id":14}`.
+- CSDL SQLite lưu thành công bản ghi coupon với trường `code = ''`.
+- Giao diện Admin chỉ dựa vào validation phía client (thuộc tính `required` của HTML5); backend hoàn toàn thiếu validation phòng thủ, cho phép bypass dễ dàng.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp tooltip kiểm tra client-side trên Admin Web:*  
+  ![Tooltip form rỗng](./screenshots/BUG_FR17_02_ui.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_02_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 457–481.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  app.post("/api/admin/coupons", authenticateToken, (req, res) => {
+    const { code, type, discount_value, min_order_amount, expired_at, max_uses_per_user } = req.body;
+    db.run(
+      "INSERT INTO coupons (code, type, discount_value, min_order_amount, expired_at, max_uses_per_user) VALUES (?, ?, ?, ?, ?, ?)",
+      ...
+    );
+  });
+  ```
+- **Khắc phục:** Thêm kiểm tra validation ở đầu handler trước khi gọi CSDL:
+  ```javascript
+  if (!code || typeof code !== "string" || !code.trim()) {
+    return res.status(400).json({ error: "Mã coupon là trường bắt buộc và không được để trống" });
+  }
+  ```
 
 ---
 
