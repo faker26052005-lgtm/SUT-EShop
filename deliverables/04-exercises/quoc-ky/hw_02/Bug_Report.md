@@ -31,7 +31,7 @@
 | `BUG-FR02-04` | Đăng nhập bằng mật khẩu đúng trong khi đang bị khóa vẫn thành công và tự gỡ khóa | FR-02 | `TC_FR02_07` | Critical | [Issue #7](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7) | Open |
 | `BUG-FR02-05` | Form đăng nhập dùng input type="text" cho email, bỏ qua hoàn toàn HTML5 format validation | FR-02 | `TC_FR02_14` | Major | [Issue #8](https://github.com/faker26052005-lgtm/SUT-EShop/issues/8) | Open |
 | `BUG-FR07-01` | Nút "Thêm vào giỏ hàng" tại trang chi tiết sản phẩm bỏ qua lần bấm đầu tiên | FR-07 | `TC_FR07_01` | Major | [Issue #9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9) | Open |
-| `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
+| `BUG-FR07-02` | Thêm cùng sản phẩm tạo dòng mới riêng biệt thay vì tăng số lượng | FR-07 | `TC_FR07_02` | Major | [Issue #10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -519,21 +519,78 @@
 
 ---
 
-#### [BUG-FR07-02] Footer giỏ hàng hiển thị sai nhãn ("Tổng tạm tính" thay vì "Tổng cộng")
+#### [BUG-FR07-02] Thêm cùng sản phẩm tạo dòng mới riêng biệt thay vì tăng số lượng
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR07-02` |
-| **Tiêu đề Bug** | `[FR-07][Web] Cart summary uses incorrect label 'Tổng tạm tính' instead of 'Tổng cộng'` |
-| **Mức độ (Severity)** | **Medium** (Sai lệch giao diện so với SRS) |
-| **Test Case phát hiện** | `TC_FR07_09` |
-| **GitHub Issue Link** | [Issue #15: [FR-07] Cart footer label mismatch](https://github.com/ttbhanh/eshop-sut/issues/15) |
+| **Tiêu đề Bug** | `[FR-07][Web UI] Adding duplicate product creates new row instead of incrementing quantity` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm trực tiếp quy tắc gộp dòng sản phẩm theo SRS FR-07) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_02`](Main_Report.md#tc_fr07_02) (Verify adding duplicate product increments quantity without creating new row) |
+| **GitHub Issue Link** | [Issue #10: [BUG] [FR-07][Web UI] Adding duplicate product creates new row instead of incrementing quantity](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Kết quả mong đợi (SRS FR-07):**
-> *Trích dẫn SRS:* "Tổng tiền hiển thị nhãn chính xác: **'Tổng cộng'** (không phải 'Tổng tạm tính')."
+**1. Tiền điều kiện (Preconditions):**
+- Hệ thống backend và web đang hoạt động bình thường.
+- Giỏ hàng của người dùng đã có sẵn 1 sản phẩm ID 1 (`iPhone 15 Pro Max`) với số lượng $Q = 1$.
 
-**2. Kết quả thực tế:**
-- Giao diện web hiển thị chữ "Tổng tạm tính: ... ₫".
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đảm bảo giỏ hàng đã có 1 sản phẩm `iPhone 15 Pro Max` ($Q=1$).
+2. Từ trang chủ hoặc trang sản phẩm, thực hiện thao tác thêm tiếp sản phẩm `iPhone 15 Pro Max` lần thứ hai ($Q_{add}=1$).
+3. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+4. Quan sát cấu trúc các dòng trong bảng giỏ hàng.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "product_id": 1,
+  "quantity_added": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07 (Mục 2):* "Thêm cùng một sản phẩm vào giỏ sẽ tăng số lượng, không tạo dòng mới."
+- Bảng giỏ hàng duy trì **chính xác 1 dòng duy nhất** cho sản phẩm `iPhone 15 Pro Max`.
+- Cột Số lượng tự động cộng dồn: $Q = 1 + 1 = 2$.
+- Cột Thành tiền: $30.000.000 \times 2 = 60.000.000\text{ ₫}$.
+- Tổng tiền hiển thị $60.000.000\text{ ₫}$.
+
+**5. Kết quả thực tế (Actual Result):**
+- Bảng giỏ hàng sinh ra **dòng thứ hai riêng biệt** cho cùng sản phẩm `iPhone 15 Pro Max`.
+- Cả hai dòng đều hiển thị `Số lượng: 1` và `Thành tiền: 30,000,000 ₫`.
+- Mặc dù tổng tiền cộng đúng thành $60.000.000\text{ ₫}$, nhưng việc tách thành 2 dòng riêng biệt vi phạm nghiêm trọng quy chuẩn UX và logic giỏ hàng của SRS.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp trước khi thêm (1 dòng):*  
+  ![Giỏ hàng ban đầu 1 dòng](./screenshots/BUG_FR07_02_before.png)
+- *Ảnh chụp sau khi thêm trùng lặp (Lỗi 2 dòng):*  
+  ![Lỗi giỏ hàng tạo 2 dòng cho cùng sản phẩm](./screenshots/BUG_FR07_02_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `frontend-web/src/context/CartContext.jsx`, các dòng 8–10.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  const addToCart = (product, quantity) => {
+    setCart([...cart, { ...product, quantity }]);
+  };
+  ```
+- **Khắc phục:** Kiểm tra nếu sản phẩm đã tồn tại thì cộng dồn `quantity`, ngược lại mới append phần tử mới:
+  ```javascript
+  const addToCart = (product, quantity) => {
+    const existingIndex = cart.findIndex((item) => item.id === product.id);
+    if (existingIndex > -1) {
+      const newCart = [...cart];
+      newCart[existingIndex].quantity += quantity;
+      setCart(newCart);
+    } else {
+      setCart([...cart, { ...product, quantity }]);
+    }
+  };
+  ```
 
 ---
 
