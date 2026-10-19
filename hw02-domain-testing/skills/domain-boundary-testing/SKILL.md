@@ -95,7 +95,7 @@ Với **MỖI** biến đầu vào ở Bước 1, phân chia miền giá trị t
 | ... | ... | ... | ... | ... |
 ```
 
-#### Bước 3 — Thiết kế Test Case từ các lớp tương đương
+#### Bước 3 — Thiết kế Test Case từ các lớp tương đương (Áp dụng Baseline Cô Lập Lỗi)
 
 **Nguyên tắc thiết kế test case Domain Testing:**
 
@@ -103,7 +103,24 @@ Với **MỖI** biến đầu vào ở Bước 1, phân chia miền giá trị t
    cùng 1 test case.
 2. **Negative test cases (lớp không hợp lệ):** Mỗi test case chỉ chứa **đúng
    1 biến** ở lớp Invalid, tất cả các biến còn lại giữ ở giá trị Valid. Điều
-   này đảm bảo cô lập nguyên nhân lỗi.
+   này đảm bảo cô lập nguyên nhân lỗi (Single Fault Assumption).
+
+**NGUYÊN LÝ BASELINE CÔ LẬP LỖI (Defect Isolation Baseline Principle):**
+
+* **Thiết lập Test Case Chuẩn Ban Đầu (Golden Positive Baseline):**
+  * Trước khi thiết kế các test case tìm lỗi, **bắt buộc phải xác định một Test Case Chuẩn Ban Đầu (All Valid)** chứa dữ liệu hoàn toàn hợp lệ, thỏa mãn 100% đặc tả (không có lỗi).
+  * Bộ dữ liệu của Test Case Chuẩn này (ví dụ: Họ tên chuẩn, Email chuẩn, Mật khẩu chuẩn, Giá trị đơn hàng chuẩn...) sẽ đóng vai trò là **Baseline cố định** xuyên suốt cho toàn bộ tính năng.
+
+* **Nguyên tắc Tái sử dụng Dữ liệu Baseline:**
+  * Tất cả các test case dùng để phát hiện lỗi (Negative test case, Invalid class, Boundary test case) **phải tái sử dụng toàn bộ dữ liệu của Test Case Chuẩn Ban Đầu**, và **chỉ được sửa đổi duy nhất phần/biến cần kiểm tra**.
+  * Giữ nguyên và dùng chung các giá trị hợp lệ cố định (ví dụ: giữ nguyên đúng 1 địa chỉ email baseline, 1 họ tên baseline...) để tránh gây nhiễu biến và đảm bảo nguyên tắc cô lập lỗi.
+
+* **Sử dụng Workaround khi cần và Ghi chú Minh bạch:**
+  * **Khi nào sử dụng:** Khi SUT có lỗi ở một trường khác (ví dụ: regex bị sai, thiếu input form, lỗi validation cục bộ) gây ra hiện tượng *Lỗi che giấu lỗi (Error Masking)* khiến form không thể submit để kiểm tra biến mục tiêu:
+    * Cho phép áp dụng **Workaround** tại thời điểm thực thi để thông chốt dữ liệu, giúp request đi tới được tầng xử lý của biến mục tiêu (Client-side validation hoặc Backend API).
+  * **Yêu cầu bắt buộc:**
+    * Giữ nguyên giá trị thiết kế lý thuyết theo đặc tả trong cột dữ liệu kiểm thử.
+    * **Bắt buộc phải có ghi chú rõ ràng** trong cột *Kết quả thực tế / Báo cáo* về việc sử dụng Workaround (nêu rõ lý do cần workaround, giá trị workaround là gì, và lỗi gốc gây ra hiện tượng che giấu lỗi).
 
 ---
 
@@ -178,7 +195,9 @@ Nếu phát hiện thiếu sót, quay lại bước tương ứng để bổ sun
 - [ ] **Đầy đủ biến:** Đã liệt kê tất cả biến đầu vào có trong đặc tả?
 - [ ] **Đầy đủ lớp tương đương:** Mỗi ràng buộc có ít nhất 1 lớp Valid và 1 lớp
       Invalid?
-- [ ] **Cô lập lỗi:** Mỗi test case Invalid chỉ vi phạm đúng 1 biến?
+- [ ] **Baseline chuẩn ban đầu:** Đã xác lập Test Case Chuẩn Ban Đầu (All Valid) làm mỏ neo cố định?
+- [ ] **Cô lập lỗi & Tái sử dụng Baseline:** Mỗi test case tìm lỗi có tái sử dụng toàn bộ dữ liệu hợp lệ từ Baseline và chỉ thay đổi duy nhất phần/biến cần kiểm tra?
+- [ ] **Minh bạch Workaround:** Nếu dùng workaround để bypass lỗi che giấu lỗi, đã ghi chú giải thích rõ ràng và minh bạch trong cột kết quả thực tế chưa?
 - [ ] **Đầy đủ biên:** Tất cả điểm biên (min, min±1, max, max±1) đều có test
       case?
 - [ ] **Trường hợp đặc biệt:** Đã xem xét các giá trị: chuỗi rỗng `""`, null,
