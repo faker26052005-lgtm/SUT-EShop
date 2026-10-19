@@ -30,7 +30,7 @@
 | `BUG-FR02-03` | Bộ đếm số lần đăng nhập sai nhảy vọt lên 4 thay vì 3 tại lần thử sai thứ 3 | FR-02 | `TC_FR02_06` | Major | [Issue #6](https://github.com/faker26052005-lgtm/SUT-EShop/issues/6) | Open |
 | `BUG-FR02-04` | Đăng nhập bằng mật khẩu đúng trong khi đang bị khóa vẫn thành công và tự gỡ khóa | FR-02 | `TC_FR02_07` | Critical | [Issue #7](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7) | Open |
 | `BUG-FR02-05` | Form đăng nhập dùng input type="text" cho email, bỏ qua hoàn toàn HTML5 format validation | FR-02 | `TC_FR02_14` | Major | [Issue #8](https://github.com/faker26052005-lgtm/SUT-EShop/issues/8) | Open |
-| `BUG-FR07-01` | Bấm nút giảm (-) tại số lượng 1 tự xóa sản phẩm không có dialog xác nhận | FR-07 | `TC_FR07_03` | Major | [Issue #14](https://github.com/ttbhanh/eshop-sut/issues/14) | Open |
+| `BUG-FR07-01` | Nút "Thêm vào giỏ hàng" tại trang chi tiết sản phẩm bỏ qua lần bấm đầu tiên | FR-07 | `TC_FR07_01` | Major | [Issue #9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9) | Open |
 | `BUG-FR07-02` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" | FR-07 | `TC_FR07_09` | Medium | [Issue #15](https://github.com/ttbhanh/eshop-sut/issues/15) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
@@ -442,30 +442,80 @@
 
 ### 2.2 Các lỗi thuộc Pool B: FR-07 – Giỏ hàng (Shopping Cart)
 
-#### [BUG-FR07-01] Nút giảm (-) tại số lượng 1 tự xóa sản phẩm mà không hiện Dialog xác nhận
+#### [BUG-FR07-01] Nút "Thêm vào giỏ hàng" tại trang chi tiết sản phẩm bỏ qua lần bấm đầu tiên
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR07-01` |
-| **Tiêu đề Bug** | `[FR-07][Web] Decrementing quantity to 0 deletes product immediately without confirmation dialog` |
-| **Mức độ (Severity)** | **Major** (Vi phạm quy chuẩn trải nghiệm người dùng theo SRS) |
-| **Test Case phát hiện** | `TC_FR07_03` (Transition BVA $1 \to 0$) |
-| **GitHub Issue Link** | [Issue #14: [FR-07] Missing confirmation modal when removing item via minus button](https://github.com/ttbhanh/eshop-sut/issues/14) |
+| **Tiêu đề Bug** | `[FR-07][Web UI] Add to cart button on Product Detail page ignores first click` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Làm gián đoạn luồng đặt hàng chính của khách hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_01`](Main_Report.md#tc_fr07_01) (Verify adding a new valid product to empty cart) |
+| **GitHub Issue Link** | [Issue #9: [BUG] [FR-07][Web UI] Add to cart button on Product Detail page ignores first click](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Các bước tái hiện:**
-1. Thêm 1 sản phẩm vào giỏ hàng (`Quantity = 1`).
-2. Vào trang giỏ hàng `http://localhost:5173/cart`.
-3. Bấm nút giảm `-` tại cột Số lượng.
+**1. Tiền điều kiện (Preconditions):**
+- Giỏ hàng của người dùng đang hoàn toàn trống (`cart.length === 0`).
+- SUT backend và frontend-web đang chạy tại `:3000` và `:5173`.
+- CSDL có sản phẩm ID 1 (`iPhone 15 Pro Max`).
 
-**2. Kết quả mong đợi (SRS FR-07):**
-> *Trích dẫn SRS:* "Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."
-- Khi số lượng giảm về 0 (tương đương thao tác xóa), hệ thống phải bật Dialog hỏi người dùng: "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?".
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập trang chi tiết sản phẩm: `http://localhost:5173/product/1`.
+2. Giữ nguyên số lượng mặc định là `1`.
+3. Nhấn nút "Thêm vào giỏ hàng" **1 lần duy nhất**.
+4. Quan sát phản hồi trên giao diện (nút không chuyển sang "Đã thêm").
+5. Nhấn vào mục "Giỏ hàng" trên thanh Header (`http://localhost:5173/cart`).
 
-**3. Kết quả thực tế:**
-- Sản phẩm biến mất lập tức khỏi giỏ hàng mà không hề hiển thị bất kỳ Dialog xác nhận nào.
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "product_id": 1,
+  "quantity": 1
+}
+```
 
-**4. Bằng chứng kiểm thử:**
-- *Ảnh chụp minh chứng:* `screenshots/bug_fr07_01_actual.png`
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07 (Mục 1):* "Hiển thị danh sách sản phẩm với các cột: Sản phẩm, Đơn giá, Số lượng (có nút +/- để chỉnh), Thành tiền, Thao tác."
+- Khi nhấn nút "Thêm vào giỏ hàng" trên trang chi tiết sản phẩm, nút phải đổi trạng thái xác nhận thành công ("Đã thêm"), sản phẩm được cập nhật vào CartContext.
+- Trang giỏ hàng `/cart` hiển thị bảng gồm 1 dòng sản phẩm iPhone 15 Pro Max, đơn giá 30.000.000 ₫, số lượng 1, thành tiền 30.000.000 ₫ và tổng tiền 30.000.000 ₫.
+
+**5. Kết quả thực tế (Actual Result):**
+- Khi người dùng nhấn "Thêm vào giỏ hàng" lần đầu tiên, giao diện hoàn toàn không có phản hồi và sản phẩm không hề được đưa vào giỏ hàng.
+- Khi điều hướng sang `/cart`, màn hình hiển thị: *"Giỏ hàng của bạn đang trống"*.
+- Người dùng buộc phải nhấn nút lần thứ 2 liên tiếp thì sản phẩm mới được thêm vào.
+- State Client: `cart` vẫn là mảng rỗng `[]` sau lần bấm đầu tiên.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp bằng chứng giao diện Web UI:*  
+  ![Giỏ hàng trống sau khi bấm thêm lần đầu](./screenshots/BUG_FR07_01_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `frontend-web/src/pages/ProductDetail.jsx`, các dòng 21–25.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  const handleAddToCart = () => {
+    if (clickCount === 0) {
+      setClickCount(1);
+      return; // Không làm gì cả ở lần đầu tiên
+    }
+
+    addToCart(product, parseInt(quantity));
+    setAdded(true);
+    setClickCount(0); // Reset lại
+    setTimeout(() => setAdded(false), 2000);
+  };
+  ```
+- **Khắc phục:** Loại bỏ điều kiện `clickCount === 0`, kích hoạt `addToCart` ngay trong lần nhấn đầu:
+  ```javascript
+  const handleAddToCart = () => {
+    addToCart(product, parseInt(quantity));
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+  ```
 
 ---
 
