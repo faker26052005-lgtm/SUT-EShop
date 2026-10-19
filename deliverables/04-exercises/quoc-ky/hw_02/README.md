@@ -43,9 +43,9 @@ Sinh viên lựa chọn 4 chức năng từ 4 Pool độc lập theo quy định
 | :--- | :---: | :--- |
 | **Số tính năng kiểm thử (Features)** | 4 | Đại diện cho cả 4 Pools: Web, Admin, Mobile, API |
 | **Tổng số Test Cases thiết kế** | 108| Thiết kế theo ISTQB FL v4.0 §4.2.1 & §4.2.2 |
-| **Số Test Cases đã thực thi (Executed)** | 61| Chạy trực tiếp trên SUT EShop |
+| **Số Test Cases đã thực thi (Executed)** | 62| Chạy trực tiếp trên SUT EShop |
 | **Số Test Cases ĐẠT (Passed)** | 29| Hoạt động đúng như SRS mô tả |
-| **Số Test Cases THẤT BẠI (Failed)** | 32| Phát hiện sai lệch so với SRS |
+| **Số Test Cases THẤT BẠI (Failed)** | 33| Phát hiện sai lệch so với SRS |
 | **Số Test Cases BỊ CHẶN (Blocked)** | 0| Phụ thuộc lỗi khác hoặc thiếu cấu hình |
 | **Tổng số Lỗi (Bugs) phát hiện & báo cáo** | -- | Báo cáo chi tiết trên Markdown & GitHub Issues |
 | **Link Video Demo YouTube** | [YouTube Unlisted Link](https://youtu.be/...) | Demo end-to-end cách dùng skill thiết kế test |

@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 8 | 0 | 0 | **8** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 9 | 0 | 0 | **9** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **22** | **3** | **0** | **28** |
+| **TỔNG CỘNG** | | | **3** | **23** | **3** | **0** | **29** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -51,6 +51,7 @@
 | `BUG-FR17-06` | Form Admin và API chấp nhận giá trị giảm giá âm (-10) cho loại percent | FR-17 | `TC_FR17_15` | Major | [Issue #27](https://github.com/faker26052005-lgtm/SUT-EShop/issues/27) | Open |
 | `BUG-FR17-07` | Form Admin và API chấp nhận tỷ lệ giảm giá vượt 100% (101%) cho loại percent | FR-17 | `TC_FR17_16` | Major | [Issue #28](https://github.com/faker26052005-lgtm/SUT-EShop/issues/28) | Open |
 | `BUG-FR17-08` | Form Admin và API cho phép tạo coupon giảm giá 0 ₫ (discount_value = 0) cho loại fixed | FR-17 | `TC_FR17_17` | Major | [Issue #29](https://github.com/faker26052005-lgtm/SUT-EShop/issues/29) | Open |
+| `BUG-FR17-09` | Form Admin và API chấp nhận đơn hàng tối thiểu âm (-1 ₫) và lưu vào CSDL | FR-17 | `TC_FR17_18` | Major | [Issue #30](https://github.com/faker26052005-lgtm/SUT-EShop/issues/30) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2144,6 +2145,87 @@
 - **Khắc phục:**
   - Frontend: Thêm `min={couponForm.type === 'percent' ? "1" : "1000"}` vào thẻ input.
   - Backend: Thêm `if (discount_value === undefined || discount_value === null || Number(discount_value) <= 0) return res.status(400).json({ error: "Giá trị giảm giá phải lớn hơn 0" });`.
+
+---
+
+#### [BUG-FR17-09] Form Admin và API cho phép tạo coupon có giá trị đơn tối thiểu âm (-1 ₫)
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-09` |
+| **Tiêu đề Bug** | `[FR-17][Admin Web & API] Coupon creation accepts negative min_order_amount (-1) and persists in database` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm ràng buộc giá trị đơn tối thiểu phi âm $M \ge 0$ của đặc tả, tạo mã voucher có điều kiện áp dụng âm) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_18`](Main_Report.md#tc_fr17_18) (Biên Off-point $M = -1\text{ ₫}$, BVA) |
+| **GitHub Issue Link** | [Issue #30: [BUG] [FR-17][Admin Web & API] Coupon creation accepts negative min_order_amount (-1) and persists in database](https://github.com/faker26052005-lgtm/SUT-EShop/issues/30) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá".
+2. Tại form "Tạo mã giảm giá mới", điền thông tin:
+   - Mã coupon: `NEGMIN`
+   - Loại: `Phần trăm (%)`
+   - Giá trị %: `10`
+   - Đơn tối thiểu: `-1`
+   - Ngày hết hạn: `10/19/2026`
+   - Giới hạn/người: `1`
+3. Nhấn nút "Tạo mã" $\to$ Form submit thành công, bảng bên dưới hiển thị dòng mã `NEGMIN` với `Đơn tối thiểu: -1 ₫`.
+4. Hoặc gửi request trực tiếp qua curl tới API backend:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"NEGMIN","type":"percent","discount_value":10,"min_order_amount":-1,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+5. Kiểm tra CSDL SQLite: `SELECT * FROM coupons WHERE min_order_amount < 0;`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "NEGMIN",
+  "type": "percent",
+  "discount_value": 10,
+  "min_order_amount": -1,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: ... `min_order_amount` (>= 0)..."
+- Trong kiểm thử giá trị biên ISTQB, điểm biên On-point là $M = 0\text{ ₫}$ và Off-point là $M = -1\text{ ₫}$ thuộc Invalid Equivalence Partition (`EP-17-28`, `BVA-17-06-OFF`).
+- Ô nhập liệu "Đơn tối thiểu (₫)" trên giao diện Admin phải có thuộc tính `min="0"` để ngăn nhập số âm.
+- Cả UI và backend API phải từ chối `min_order_amount < 0` với mã lỗi **HTTP 400 Bad Request** (`{"error": "Đơn hàng tối thiểu không được âm"}`).
+- Không lưu bất kỳ bản ghi coupon nào có giá trị đơn tối thiểu âm vào CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Ô nhập `min_order_amount` trên Admin Web thiếu thuộc tính `min="0"`, cho phép người dùng nhập và submit số `-1`.
+- Endpoint `POST /api/admin/coupons` trả về **`HTTP 200 OK`**: `{"message":"Coupon created","id":7}`.
+- Bảng CSDL SQLite lưu trữ bản ghi có `min_order_amount = -1`.
+- Bảng quản trị hiển thị dòng coupon `NEGMIN` với `Đơn tối thiểu: -1 ₫`, làm sai lệch quy tắc số học kinh doanh của hệ thống.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp form nhập giá trị đơn tối thiểu âm:*  
+  ![Form nhập đơn tối thiểu -1 ₫](./screenshots/BUG_FR17_09_form_input_negmin.png)
+- *Ảnh chụp bảng Admin hiển thị coupon có đơn tối thiểu -1 ₫:*  
+  ![Bảng Admin hiển thị đơn tối thiểu -1 ₫](./screenshots/BUG_FR17_09_table_negmin.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_09_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/30](https://github.com/faker26052005-lgtm/SUT-EShop/issues/30)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `frontend-admin/src/App.jsx`, dòng 676–687: Ô input chỉ có `type="number"` và `required`, không có `min="0"`.
+  - File `backend/server.js`, dòng 457–481: Không kiểm tra `Number(min_order_amount) >= 0` trước khi insert.
+- **Khắc phục:**
+  - Frontend: Thêm `min="0"` vào thẻ input của `min_order_amount`.
+  - Backend: Thêm `if (min_order_amount !== undefined && min_order_amount !== null && Number(min_order_amount) < 0) return res.status(400).json({ error: "Đơn hàng tối thiểu không được âm" });`.
 
 ---
 
