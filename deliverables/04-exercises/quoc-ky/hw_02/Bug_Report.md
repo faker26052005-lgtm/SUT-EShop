@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 2 | 12 | 3 | 0 | **17** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 3 | 12 | 3 | 0 | **18** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **5** | **26** | **6** | **0** | **37** |
+| **TỔNG CỘNG** | | | **6** | **26** | **6** | **0** | **38** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -60,6 +60,7 @@
 | `BUG-FR17-15` | Endpoint DELETE /api/admin/coupons/:id chấp nhận ID dạng chuỗi ('abc') trả về 200 OK thay vì 400 Bad Request | FR-17 | `TC_FR17_26` | Medium | [Issue #36](https://github.com/faker26052005-lgtm/SUT-EShop/issues/36) | Open |
 | `BUG-FR17-16` | Công thức tính tiền giảm giá coupon loại percent bị đảo ngược khiến tổng thanh toán tăng gấp 10 lần | FR-17 | `TC_FR17_27` | Critical | [Issue #37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37) | Open |
 | `BUG-FR17-17` | Endpoint /api/apply-coupon từ chối đơn hàng bằng đúng ngưỡng tối thiểu tại điểm biên On-point | FR-17 | `TC_FR17_30` | Major | [Issue #38](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38) | Open |
+| `BUG-FR17-18` | Endpoint /api/apply-coupon cho phép số tiền thanh toán bị âm khi mức giảm vượt quá giá trị đơn | FR-17 | `TC_FR17_34` | Critical | [Issue #39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2880,6 +2881,75 @@
   - Thay đổi toán tử so sánh sang `>=`:
     ```javascript
     if (total_amount >= coupon.min_order_amount) {
+    ```
+
+#### [BUG-FR17-18] Endpoint /api/apply-coupon cho phép số tiền thanh toán bị âm khi mức giảm vượt quá giá trị đơn
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-18` |
+| **Tiêu đề Bug** | `[FR-17][Checkout] Endpoint /api/apply-coupon allows negative final order amount when fixed discount exceeds order total` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá & FR-09: Áp dụng mã giảm giá tại Checkout (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Critical** (Lỗ hổng an toàn tài chính / Chiết khấu âm làm âm tổng tiền đơn hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_34`](Main_Report.md#tc_fr17_34) (Boundary Underflow $Discount > Total$, Quy tắc `CPN-BR-10`) |
+| **GitHub Issue Link** | [Issue #39: [BUG] [FR-17][Checkout] Endpoint /api/apply-coupon allows negative final order amount when fixed discount exceeds order total](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Web Frontend đang chạy tại `http://localhost:5173`.
+- Tồn tại mã giảm giá có giá trị giảm cố định lớn hơn giá trị đơn hàng (ví dụ: `BIG50K` giảm 50.000 ₫, đơn tối thiểu 0 ₫).
+- Đã đăng nhập tài khoản Khách hàng (`test@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập Web Client tại `http://localhost:5173/login`.
+2. Mở trang Xác nhận Đơn hàng (`http://localhost:5173/checkout`).
+3. Nhập tổng giá trị đơn hàng là `30000` (nhỏ hơn mức giảm 50.000 ₫).
+4. Tại ô "Mã Giảm Giá", nhập `BIG50K` và bấm nút **"Áp dụng"**.
+5. Quan sát số tiền tiết kiệm, thành tiền và tổng thanh toán.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Tổng đơn hàng: `30.000 ₫`
+- Mã coupon: `BIG50K` (`discount_value = 50000`, `min_order_amount = 0`)
+- Endpoint API: `POST /api/apply-coupon` với payload `{"code":"BIG50K","total_amount":30000,"user_id":2}`
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-09 & FR-08 / CPN-BR-10):**
+> *Trích dẫn SRS FR-09 & FR-08:* "Tổng thanh toán sau giảm giá không bao giờ được nhỏ hơn 0 ₫. Nếu số tiền giảm lớn hơn tổng giá trị đơn hàng, số tiền giảm tối đa chỉ bằng giá trị đơn hàng và tổng thanh toán phải bằng 0 ₫."
+- Đơn hàng 30.000 ₫ áp dụng mã giảm 50.000 ₫:
+  - Mức giảm giá tối đa: `30.000 ₫`.
+  - Tổng thanh toán: **`0 ₫`** (không được âm tiền).
+
+**5. Kết quả thực tế (Actual Result):**
+- Hệ thống trừ thẳng tiền mà không có cơ chế chặn dưới 0:
+  - Thông báo: `✅ Áp dụng thành công! Giảm 50,000 ₫`
+  - Tiết kiệm: `50,000 ₫`
+  - Thành tiền: **`-20.000 ₫`**
+  - Tổng thanh toán: **`-20.000 ₫`** (Đơn hàng bị âm tiền!)
+- Phản hồi từ Backend API `POST /api/apply-coupon`:
+  ```json
+  {"success":true,"coupon_id":16,"discount_amount":50000,"final_amount":-20000,"message":"Áp dụng thành công! Giảm 50,000 ₫"}
+  ```
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp màn hình Web Checkout bị âm tiền tổng thanh toán (-20.000 ₫):*  
+  ![Web Checkout Actual](./screenshots/BUG_FR17_18_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 403–406 và 423–426:
+    ```javascript
+    discount_amount = coupon.discount_value;
+    const final_amount = total_amount - discount_amount;
+    ```
+    Thiếu bước chuẩn hóa mức giảm không vượt quá tổng đơn hàng (`Math.min`) và chặn dưới bằng `Math.max(0, ...)`.
+- **Khắc phục:**
+  - Cập nhật công thức:
+    ```javascript
+    discount_amount = Math.min(total_amount, coupon.discount_value);
+    const final_amount = Math.max(0, total_amount - discount_amount);
     ```
 
 ---
