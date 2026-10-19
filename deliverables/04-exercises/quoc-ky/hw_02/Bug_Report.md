@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 10 | 0 | 0 | **10** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 0 | 0 | **11** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **15** | **1** | **0** | **19** |
+| **TỔNG CỘNG** | | | **3** | **16** | **1** | **0** | **20** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -40,6 +40,7 @@
 | `BUG-FR07-08` | Nhập số lượng thập phân (1.5) được chấp nhận, giao diện tự làm tròn xuống 1 và API trả về 200 OK | FR-07 | `TC_FR07_09` | Major | [Issue #16](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16) | Open |
 | `BUG-FR07-09` | Endpoint POST /api/cart chấp nhận payload khuyết hoặc null trường quantity với 200 OK | FR-07 | `TC_FR07_10` | Major | [Issue #17](https://github.com/faker26052005-lgtm/SUT-EShop/issues/17) | Open |
 | `BUG-FR07-10` | Bảng giỏ hàng thiếu hoàn toàn nút +/- để điều chỉnh số lượng sản phẩm theo đặc tả | FR-07 | `TC_FR07_13`, `TC_FR07_14` | Major | [Issue #18](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18) | Open |
+| `BUG-FR07-11` | Nút Xóa sản phẩm xóa trực tiếp không có dialog xác nhận theo yêu cầu SRS | FR-07 | `TC_FR07_15` | Major | [Issue #19](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -1287,6 +1288,75 @@
       </div>
     </td>
     ```
+
+
+---
+
+#### [BUG-FR07-11] Nút Xóa sản phẩm xóa trực tiếp không có dialog xác nhận theo yêu cầu SRS
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-11` |
+| **Tiêu đề Bug** | `[FR-07][Web UI] Delete product button executes immediate deletion without required confirmation dialog` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm an toàn thao tác người dùng, nguy cơ mất dữ liệu giỏ hàng do click nhầm) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_15`](Main_Report.md#tc_fr07_15) (Verify item removal upon confirming delete dialog) |
+| **GitHub Issue Link** | [Issue #19: [BUG] [FR-07][Web UI] Delete product button executes immediate deletion without required confirmation dialog](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- Giỏ hàng có ít nhất 2 sản phẩm (ví dụ: `Samsung Galaxy S24 Ultra` và `MacBook Pro M3`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/cart`.
+2. Định vị sản phẩm đầu tiên trong bảng giỏ hàng.
+3. Nhấn nút màu đỏ "Xóa".
+4. Quan sát: Xem hệ thống có bật hộp thoại xác nhận (modal hoặc `window.confirm`) trước khi xóa không.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Sản phẩm: `Samsung Galaxy S24 Ultra` (28.000.000 ₫)
+- Thao tác: Bấm nút "Xóa"
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07 (Mục 3):* "Nút Xóa sản phẩm phải có dialog xác nhận trước khi thực hiện."
+- Khi người dùng nhấn nút "Xóa", hệ thống bắt buộc phải hiển thị một hộp thoại cảnh báo/xác nhận (ví dụ: *"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?"*).
+- Chỉ khi người dùng bấm "OK / Xác nhận", sản phẩm mới bị xóa khỏi giỏ. Nếu bấm "Hủy", sản phẩm vẫn được giữ nguyên.
+
+**5. Kết quả thực tế (Actual Result):**
+- Nút "Xóa" gắn trực tiếp hàm `removeFromCart(index)`.
+- Không hề có hộp thoại xác nhận nào xuất hiện; sản phẩm bị xóa biến mất ngay lập tức khi người dùng vừa click chuột. Bất kỳ click nhầm nào cũng sẽ xóa mất sản phẩm của khách hàng mà không có cơ hội hủy thao tác.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp giỏ hàng trước khi bấm Xóa (2 sản phẩm):*  
+  ![Giỏ hàng có 2 sản phẩm](./screenshots/BUG_FR07_11_before_delete.png)
+- *Ảnh chụp giỏ hàng ngay sau khi bấm Xóa (sản phẩm biến mất không qua xác nhận):*  
+  ![Sản phẩm bị xóa tức thì không có dialog](./screenshots/BUG_FR07_11_after_delete_no_dialog.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/19](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/Cart.jsx`, dòng 50–55:
+    ```jsx
+    <button
+      onClick={() => removeFromCart(index)}
+      className="text-red-500 hover:text-red-700"
+    >
+      Xóa
+    </button>
+    ```
+- **Khắc phục:**
+  - Bổ sung hàm kiểm tra xác nhận trước khi gọi `removeFromCart`:
+    ```jsx
+    const handleDeleteItem = (index, itemName) => {
+      if (window.confirm(`Bạn có chắc chắn muốn xóa "${itemName}" khỏi giỏ hàng?`)) {
+        removeFromCart(index);
+      }
+    };
+    ```
+    và gắn vào nút: `<button onClick={() => handleDeleteItem(index, item.name)} ...>`
 
 ---
 
