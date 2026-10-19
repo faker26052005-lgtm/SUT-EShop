@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 11 | 0 | 0 | **11** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 1 | 11 | 0 | 0 | **12** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **25** | **3** | **0** | **31** |
+| **TỔNG CỘNG** | | | **4** | **25** | **3** | **0** | **32** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -54,6 +54,7 @@
 | `BUG-FR17-09` | Form Admin và API chấp nhận đơn hàng tối thiểu âm (-1 ₫) và lưu vào CSDL | FR-17 | `TC_FR17_18` | Major | [Issue #30](https://github.com/faker26052005-lgtm/SUT-EShop/issues/30) | Open |
 | `BUG-FR17-10` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user = 0 và tự ép thành 1 thay vì trả về HTTP 400 | FR-17 | `TC_FR17_19` | Major | [Issue #31](https://github.com/faker26052005-lgtm/SUT-EShop/issues/31) | Open |
 | `BUG-FR17-11` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user âm (-1) và lưu vào CSDL | FR-17 | `TC_FR17_20` | Major | [Issue #32](https://github.com/faker26052005-lgtm/SUT-EShop/issues/32) | Open |
+| `BUG-FR17-12` | Endpoint POST /api/admin/coupons thiếu authorizeAdmin cho phép user thường (role='user') tạo coupon | FR-17 | `TC_FR17_23` | Critical | [Issue #33](https://github.com/faker26052005-lgtm/SUT-EShop/issues/33) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2390,6 +2391,93 @@
     if (max_uses_per_user !== undefined && max_uses_per_user !== null && Number(max_uses_per_user) < 1) {
       return res.status(400).json({ error: "Số lần sử dụng tối đa mỗi người phải từ 1 trở lên" });
     }
+    ```
+
+---
+
+#### [BUG-FR17-12] Endpoint POST /api/admin/coupons thiếu authorizeAdmin cho phép user thường (role='user') tạo coupon
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-12` |
+| **Tiêu đề Bug** | `[SEC-03][BUG] [FR-17][Backend API] Missing authorizeAdmin guard allows regular users (role='user') to create coupons via POST /api/admin/coupons` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá & Bảo mật RBAC API (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Critical** (Lỗ hổng leo thang đặc quyền - Privilege Escalation / BOLA Security Vulnerability) |
+| **Mức ưu tiên (Priority)**| **High (P0 - Security Hotspot)** |
+| **Test Case phát hiện** | [`TC_FR17_23`](Main_Report.md#tc_fr17_23) (SEC-03 RBAC Bypass) |
+| **GitHub Issue Link** | [Issue #33: [SEC-03][BUG] [FR-17][Backend API] Missing authorizeAdmin guard allows regular users (role='user') to create coupons via POST /api/admin/coupons](https://github.com/faker26052005-lgtm/SUT-EShop/issues/33) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Tài khoản người dùng thông thường (`test@eshop.com` / `Test1234!`, `role: 'user'`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập bằng tài khoản người dùng thông thường để lấy JWT token:
+   ```bash
+   USER_TOKEN=$(curl -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@eshop.com","password":"Test1234!"}' | jq -r .token)
+   ```
+2. Gửi request tạo mã coupon Admin bằng token của user thông thường:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $USER_TOKEN" \
+     -d '{"code":"HACKEDD99","type":"percent","discount_value":99,"min_order_amount":0,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+3. Quan sát phản hồi HTTP status code và body.
+4. Kiểm tra CSDL SQLite:
+   ```bash
+   node -e "const sqlite3 = require('./backend/node_modules/sqlite3'); const db = new sqlite3.Database('./backend/database.sqlite'); db.all('SELECT * FROM coupons WHERE code=\"HACKEDD99\"', (err, rows) => console.log(rows));"
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "HACKEDD99",
+  "type": "percent",
+  "discount_value": 99,
+  "min_order_amount": 0,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS Mục 5.3 & SEC-03):**
+> *Trích dẫn SRS Mục 5.3 & SEC-03:* "Chỉ user có role='admin' mới được gọi API Admin... Tất cả các route quản trị `/api/admin/*` bắt buộc phải kiểm tra quyền quản trị viên."
+- Endpoint `POST /api/admin/coupons` bắt buộc phải kiểm tra `req.user.role === 'admin'`.
+- Người dùng thông thường không có quyền admin phải bị từ chối với mã lỗi **HTTP 403 Forbidden** (`{"error": "Forbidden: Admin access required"}`).
+- Tuyệt đối không tạo bản ghi coupon mới trong CSDL từ request của user thường.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/admin/coupons` bỏ qua hoàn toàn kiểm tra phân quyền vai trò (RBAC).
+- Backend chấp nhận request và phản hồi **`HTTP 200 OK`**: `{"message":"Coupon created","id":15}`.
+- Bảng CSDL SQLite lưu trữ bản ghi `HACKEDD99` do user thông thường tạo ra với mức giảm giá 99%.
+- **Mức độ ảnh hưởng an ninh:** Đây là lỗ hổng leo thang đặc quyền nghiêm trọng (Broken Object Level Authorization / Privilege Escalation), cho phép bất kỳ khách hàng nào tự tạo voucher giảm giá 99% - 100% để trục lợi mua hàng miễn phí.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal thực thi API bằng token user thường và nhận mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_12_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/33](https://github.com/faker26052005-lgtm/SUT-EShop/issues/33)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 457:
+    ```javascript
+    // ADMIN: CRUD Coupons
+    app.post("/api/admin/coupons", authenticateToken, (req, res) => {
+    ```
+    Khai báo route chỉ có `authenticateToken`, thiếu middleware `authorizeAdmin` hoặc thiếu kiểm tra `if (!req.user || req.user.role !== 'admin')`.
+- **Khắc phục:**
+  - Bổ sung kiểm tra vai trò admin:
+    ```javascript
+    app.post("/api/admin/coupons", authenticateToken, (req, res) => {
+      if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden: Admin access required" });
+      }
+      // ...
     ```
 
 ---
