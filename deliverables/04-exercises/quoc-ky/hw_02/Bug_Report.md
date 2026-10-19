@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 6 | 0 | 0 | **6** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 7 | 0 | 0 | **7** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **11** | **1** | **0** | **15** |
+| **TỔNG CỘNG** | | | **3** | **12** | **1** | **0** | **16** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -36,6 +36,7 @@
 | `BUG-FR07-04` | Endpoint POST /api/cart chấp nhận ID sai kiểu dữ liệu ("abc") không validate | FR-07 | `TC_FR07_04` | Major | [Issue #12](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12) | Open |
 | `BUG-FR07-05` | Nhập số lượng 0 hệ thống vẫn chấp nhận, lưu bản ghi có thành tiền 0 ₫ | FR-07 | `TC_FR07_05` | Major | [Issue #13](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13) | Open |
 | `BUG-FR07-06` | Hệ thống chấp nhận số lượng âm (-1), hiển thị thành tiền âm trong giỏ | FR-07 | `TC_FR07_06` | Major | [Issue #14](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14) | Open |
+| `BUG-FR07-07` | Xóa trống ô số lượng khiến giỏ hàng bị tính toán sai thành "NaN ₫" | FR-07 | `TC_FR07_07` | Major | [Issue #15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -946,6 +947,90 @@
     const numQty = Number(quantity);
     if (!Number.isInteger(numQty) || numQty <= 0) {
       return res.status(400).json({ error: "Quantity must be a positive integer" });
+    }
+    ```
+
+---
+
+#### [BUG-FR07-07] Xóa trống ô số lượng khiến giỏ hàng bị tính toán sai thành "NaN ₫" và API chấp nhận chuỗi rỗng
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-07` |
+| **Tiêu đề Bug** | `[FR-07][Web UI / API] Empty quantity accepted, corrupting cart table amounts to "NaN ₫"` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi hiển thị NaN phá vỡ tính năng tính toán giá trị đơn hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_07`](Main_Report.md#tc_fr07_07) (Validate rejection of empty or whitespace quantity input) |
+| **GitHub Issue Link** | [Issue #15: [BUG] [FR-07][Web UI / API] Empty quantity accepted, corrupting cart table amounts to "NaN ₫"](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- CSDL SQLite có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/product/1`.
+2. Bôi đen toàn bộ số trong ô số lượng và nhấn Backspace để xóa sạch (chuỗi rỗng `""`).
+3. Bấm nút "Thêm vào giỏ hàng".
+4. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+5. Quan sát giá trị hiển thị tại các cột Số lượng, Thành tiền và Tổng tạm tính.
+6. (API Verification):
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000, "quantity": ""}'
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": 1,
+  "price": 30000000,
+  "quantity": ""
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07:* "Số lượng là trường thông tin bắt buộc và phải là số nguyên dương ($Q \ge 1$)."
+- Khi người dùng xóa rỗng ô số lượng và click ra ngoài hoặc submit, hệ thống phải tự động phục hồi về 1 hoặc chặn submit với cảnh báo trường bắt buộc.
+- API `POST /api/cart` phải từ chối `quantity: ""` với HTTP `400 Bad Request` (`{"error": "Quantity is required and cannot be empty"}`).
+- Bảng giỏ hàng tuyệt đối không được hiển thị giá trị `NaN` hoặc `NaN ₫`.
+
+**5. Kết quả thực tế (Actual Result):**
+- Ô nhập số lượng cho phép submit chuỗi rỗng `""`. Hàm `parseInt("")` trả về `NaN`.
+- Bảng giỏ hàng hiển thị các giá trị lỗi tính toán:
+  - `Số lượng: NaN`
+  - `Thành tiền: NaN ₫`
+  - `Tổng tạm tính: NaN ₫`
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` cho cả chuỗi rỗng `""` và chuỗi khoảng trắng `"   "`.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp Web UI xóa trống ô số lượng:*  
+  ![Ô số lượng xóa trống](./screenshots/BUG_FR07_07_input_empty.png)
+- *Ảnh chụp bảng giỏ hàng tính ra NaN ₫:*  
+  ![Bảng giỏ hàng hiển thị NaN ₫](./screenshots/BUG_FR07_07_cart_nan.png)
+- *Ảnh chụp terminal API trả về 200 OK:*  
+  ![API POST /api/cart với quantity rỗng trả về 200 OK](./screenshots/BUG_FR07_07_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/ProductDetail.jsx`, dòng 27: `addToCart(product, parseInt(quantity));`.
+  - `backend/server.js`, dòng 290–295.
+- **Khắc phục:**
+  - Trong `ProductDetail.jsx`: Fallback về 1 nếu input là NaN:
+    ```javascript
+    const parsedQty = parseInt(quantity, 10);
+    const validQty = isNaN(parsedQty) || parsedQty < 1 ? 1 : parsedQty;
+    addToCart(product, validQty);
+    ```
+  - Trong `backend/server.js`: Bổ sung kiểm tra trường bắt buộc:
+    ```javascript
+    if (quantity === undefined || quantity === null || String(quantity).trim() === "") {
+      return res.status(400).json({ error: "Quantity is required" });
     }
     ```
 
