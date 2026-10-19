@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 1 | 1 | 0 | **2** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 3 | 0 | 0 | **3** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **6** | **2** | **0** | **11** |
+| **TỔNG CỘNG** | | | **3** | **8** | **1** | **0** | **12** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -32,6 +32,7 @@
 | `BUG-FR02-05` | Form đăng nhập dùng input type="text" cho email, bỏ qua hoàn toàn HTML5 format validation | FR-02 | `TC_FR02_14` | Major | [Issue #8](https://github.com/faker26052005-lgtm/SUT-EShop/issues/8) | Open |
 | `BUG-FR07-01` | Nút "Thêm vào giỏ hàng" tại trang chi tiết sản phẩm bỏ qua lần bấm đầu tiên | FR-07 | `TC_FR07_01` | Major | [Issue #9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9) | Open |
 | `BUG-FR07-02` | Thêm cùng sản phẩm tạo dòng mới riêng biệt thay vì tăng số lượng | FR-07 | `TC_FR07_02` | Major | [Issue #10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10) | Open |
+| `BUG-FR07-03` | Endpoint POST /api/cart chấp nhận ID sản phẩm không tồn tại (9999) | FR-07 | `TC_FR07_03` | Major | [Issue #11](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -590,6 +591,99 @@
       setCart([...cart, { ...product, quantity }]);
     }
   };
+  ```
+
+---
+
+#### [BUG-FR07-03] Endpoint POST /api/cart chấp nhận ID sản phẩm không tồn tại (9999) mà không kiểm tra CSDL
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-03` |
+| **Tiêu đề Bug** | `[FR-07][Backend API] Endpoint POST /api/cart accepts non-existent product ID (9999) without validation` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart API - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi toàn vẹn dữ liệu: cho phép lưu sản phẩm rác/không tồn tại vào giỏ hàng người dùng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_03`](Main_Report.md#tc_fr07_03) (Validate rejection when adding well-formed non-existent product ID) |
+| **GitHub Issue Link** | [Issue #11: [BUG] [FR-07][Backend API] Endpoint POST /api/cart accepts non-existent product ID (9999) without validation](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- Backend EShop đang chạy tại cổng `:3000`.
+- Người dùng `test@eshop.com` có JWT Bearer token hợp lệ.
+- CSDL SQLite hoàn toàn không chứa sản phẩm có `id = 9999`.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Lấy Bearer token đăng nhập cho tài khoản `test@eshop.com`.
+2. Gửi request HTTP `POST /api/cart` kèm payload chứa `id = 9999`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 9999, "price": 100000, "quantity": 1}'
+   ```
+3. Gửi request `GET http://localhost:3000/api/cart` để kiểm tra giỏ hàng người dùng.
+4. (Giao diện Web): Truy cập `http://localhost:5173/product/9999`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": 9999,
+  "price": 100000,
+  "quantity": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07 & API Spec §4.2):**
+> *Trích dẫn API Spec §4.2 & SRS FR-07:* "Từ chối thêm sản phẩm không tồn tại vào giỏ hàng."
+- Backend bắt buộc phải truy vấn CSDL SQLite kiểm tra sự tồn tại của sản phẩm trước khi cập nhật giỏ hàng.
+- Endpoint `POST /api/cart` phải từ chối request với mã lỗi HTTP `404 Not Found` hoặc `400 Bad Request` (`{"error": "Product not found"}`).
+- Giỏ hàng của người dùng không được phép chứa ID 9999.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` (`{"message":"Added to cart"}`).
+- Gọi `GET /api/cart` phát hiện bản ghi rác `{"id":9999, "price":100000, "quantity":1}` đã bị chèn trực tiếp vào mảng giỏ hàng của user.
+- Trên giao diện Web:
+  - Route `/product/9999` hiển thị thông báo thô: `"Sản phẩm không tồn tại (Lỗi trắng trang do data rỗng)"` do dev hardcode.
+  - Route số nhiều `/products/9999` bị trắng trang hoàn toàn.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal kiểm thử API (200 OK & chèn bản ghi 9999):*  
+  ![API POST /api/cart chấp nhận ID 9999](./screenshots/BUG_FR07_03_api_terminal.png)
+- *Ảnh chụp Web UI /product/9999:*  
+  ![Web UI hiển thị lỗi rỗng data](./screenshots/BUG_FR07_03_ui_actual.png)
+- *Ảnh chụp Web UI /products/9999 (Trắng trang):*  
+  ![Trắng trang route số nhiều](./screenshots/BUG_FR07_03_route_plural.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/11](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, các dòng 290–295.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  app.post("/api/cart", authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    if (!userCarts[userId]) userCarts[userId] = [];
+    userCarts[userId].push(req.body);
+    res.json({ message: "Added to cart" });
+  });
+  ```
+- **Khắc phục:** Thêm bước kiểm tra CSDL SQLite trước khi thêm vào giỏ:
+  ```javascript
+  app.post("/api/cart", authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { id, quantity } = req.body;
+    if (!id) return res.status(400).json({ error: "Product ID is required" });
+
+    db.get("SELECT id, name, price FROM products WHERE id = ?", [id], (err, product) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (!product) return res.status(404).json({ error: "Product not found" });
+
+      if (!userCarts[userId]) userCarts[userId] = [];
+      userCarts[userId].push({ ...product, quantity: quantity || 1 });
+      res.json({ message: "Added to cart" });
+    });
+  });
   ```
 
 ---
