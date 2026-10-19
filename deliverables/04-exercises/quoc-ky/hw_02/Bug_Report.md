@@ -63,6 +63,7 @@
 | `BUG-FR17-18` | Endpoint /api/apply-coupon cho phép số tiền thanh toán bị âm khi mức giảm vượt quá giá trị đơn | FR-17 | `TC_FR17_34` | Critical | [Issue #39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39) | Open |
 | `BUG-FR20-01` | Endpoint PUT /api/orders/:id/cancel cho phép khách hàng tự hủy đơn ở trạng thái shipping | FR-20 | `TC_MOB_05` | Critical | [Issue #40](https://github.com/faker26052005-lgtm/SUT-EShop/issues/40) | Open |
 | `BUG-FR20-02` | Endpoint PUT /api/orders/:id/cancel chấp nhận trạng thái dị thường (corrupted_state) và đổi thành canceled | FR-20 | `TC_MOB_08` | Medium | [Issue #41](https://github.com/faker26052005-lgtm/SUT-EShop/issues/41) | Open |
+| `BUG-FR20-03` | Nút Hủy đơn trên Mobile App không hiển thị hộp thoại xác nhận Alert, kích hoạt hủy ngay khi bấm | Mobile | `TC_MOB_23` | Major | [Issue #42](https://github.com/faker26052005-lgtm/SUT-EShop/issues/42) | Open |
 
 ---
 
@@ -3109,7 +3110,90 @@
 
 ---
 
+#### [BUG-FR20-03] Nút Hủy đơn trên Mobile App không hiển thị hộp thoại xác nhận Alert, kích hoạt hủy ngay khi bấm
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR20-03` |
+| **Tiêu đề Bug** | `[FR-20][Mobile UI] Cancel order button invokes cancellation immediately without confirmation alert dialog` |
+| **Chức năng (Feature)** | FR-20: Tra cứu & Hủy đơn hàng Mobile / Tiêu chuẩn an toàn giao diện Mobile (FR-21, FR-24) |
+| **Môi trường thử nghiệm**| Mobile App (React Native / Expo 57) • Backend: `http://localhost:3000` • Linux |
+| **Mức độ (Severity)** | **Major** (Rủi ro hành động ngoài ý muốn - Thiếu hộp thoại xác nhận cho thao tác phá hủy không thể hoàn tác) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_MOB_23`](Main_Report.md#tc_mob_23) (Mobile GUI Safety Standards Verification) |
+| **GitHub Issue Link** | [Issue #42: [BUG] [FR-20][Mobile UI] Cancel order button invokes cancellation immediately without confirmation alert dialog](https://github.com/faker26052005-lgtm/SUT-EShop/issues/42) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- Ứng dụng EShop Mobile App đang chạy trên Expo.
+- Backend server đang hoạt động bình thường tại `http://localhost:3000`.
+- Tài khoản người dùng User 1 đã đăng nhập thành công và sở hữu đơn hàng `#101` ở trạng thái `pending`.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở ứng dụng Mobile App, chuyển sang màn hình **Hồ sơ** (Profile).
+2. Cuộn xuống danh sách đơn hàng của tôi, định vị đơn hàng `#101` đang hiển thị trạng thái "Chờ xác nhận".
+3. Nhận diện nút màu đỏ có nhãn **"Hủy đơn"**.
+4. Chạm (click) vào nút "Hủy đơn".
+5. Quan sát phản hồi trên màn hình: Kiểm tra xem ứng dụng có hiển thị hộp thoại xác nhận `Alert Dialog` kèm 2 nút "Hủy bỏ" và "Đồng ý" hay không.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Thành phần giao diện: Nút `TouchableOpacity` với nhãn `Hủy đơn` (`frontend-mobile/App.js:961–967`)
+- Thao tác: Chạm 1 lần vào nút "Hủy đơn"
+
+**4. Kết quả mong đợi (Expected Result theo tiêu chuẩn GUI Safety FR-21 & FR-24):**
+> *Trích dẫn SRS:* "Đối với các thao tác mang tính phá hủy hoặc không thể hoàn tác như Hủy đơn hàng, ứng dụng Mobile bắt buộc phải kích hoạt hộp thoại xác nhận (Alert Dialog) với hai lựa chọn 'Hủy bỏ' và 'Đồng ý' trước khi gửi yêu cầu lên máy chủ."
+- Tầng giao diện: Màn hình phải hiển thị hộp thoại xác nhận an toàn (`Alert.alert`) hỏi người dùng: *"Bạn có chắc chắn muốn hủy đơn hàng này không?"* kèm 2 nút:
+  - **"Hủy bỏ"**: Đóng hộp thoại, không gửi API, đơn `#101` giữ nguyên trạng thái.
+  - **"Đồng ý"**: Chỉ gửi request hủy đơn khi người dùng xác nhận.
+
+**5. Kết quả thực tế (Actual Result):**
+- Ứng dụng **hoàn toàn không hiển thị bất kỳ hộp thoại xác nhận nào**.
+- Vừa chạm vào nút "Hủy đơn", hàm `cancelOrder(o.id)` được gọi ngay lập tức:
+  - Bắn request HTTP `PUT /api/orders/101/cancel` lên server.
+  - Hiển thị pop-up thông báo thành công: `Thành công: Hủy đơn thành công!`.
+  - Đơn hàng trong CSDL bị hủy ngay lập tức, tước đi quyền hủy bỏ của người dùng nếu vô tình chạm nhầm nút.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp mã nguồn nút Hủy đơn gọi trực tiếp hàm API không qua hộp thoại xác nhận:*  
+  ![Button Handler Code](./screenshots/BUG_FR20_03_button_handler.png)
+- *Ảnh chụp mã nguồn hàm cancelOrder thiếu logic hiển thị 2 nút xác nhận:*  
+  ![Missing Confirmation Code](./screenshots/BUG_FR20_03_missing_confirmation.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/42](https://github.com/faker26052005-lgtm/SUT-EShop/issues/42)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `frontend-mobile/App.js`, dòng 961–967:
+    ```javascript
+    {(o.status === "pending" || o.status === "confirmed") && (
+      <TouchableOpacity
+        style={styles.smallRedButton}
+        onPress={() => cancelOrder(o.id)}
+      >
+        <Text style={styles.smallButtonText}>Hủy đơn</Text>
+      </TouchableOpacity>
+    )}
+    ```
+    Thuộc tính `onPress` được gắn thẳng vào `cancelOrder(o.id)` mà không kích hoạt hộp thoại cảnh báo trước khi hủy.
+- **Khắc phục:**
+  - Định nghĩa hàm trung gian hiển thị hộp thoại xác nhận 2 nút trước khi thực hiện request:
+    ```javascript
+    const confirmCancelOrder = (orderId) => {
+      Alert.alert(
+        "Xác nhận hủy đơn",
+        "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+        [
+          { text: "Hủy bỏ", style: "cancel" },
+          { text: "Đồng ý", style: "destructive", onPress: () => cancelOrder(orderId) }
+        ]
+      );
+    };
+    ```
+  - Thay đổi sự kiện nút bấm: `onPress={() => confirmCancelOrder(o.id)}`.
+
+---
+
 ## 3. PHÂN TÍCH NGUYÊN NHÂN LỖI & ĐÁNH GIÁ CHẤT LƯỢNG SUT
+
 
 
 ### 3.1 Phân Loại Lỗi Theo Bản Chất Kỹ Thuật
