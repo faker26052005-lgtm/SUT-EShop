@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 2 | 11 | 3 | 0 | **16** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 2 | 12 | 3 | 0 | **17** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **5** | **25** | **6** | **0** | **36** |
+| **TỔNG CỘNG** | | | **5** | **26** | **6** | **0** | **37** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -59,6 +59,7 @@
 | `BUG-FR17-14` | Endpoint DELETE /api/admin/coupons/:id chấp nhận ID âm (-1) trả về 200 OK thay vì 400/404 | FR-17 | `TC_FR17_25` | Medium | [Issue #35](https://github.com/faker26052005-lgtm/SUT-EShop/issues/35) | Open |
 | `BUG-FR17-15` | Endpoint DELETE /api/admin/coupons/:id chấp nhận ID dạng chuỗi ('abc') trả về 200 OK thay vì 400 Bad Request | FR-17 | `TC_FR17_26` | Medium | [Issue #36](https://github.com/faker26052005-lgtm/SUT-EShop/issues/36) | Open |
 | `BUG-FR17-16` | Công thức tính tiền giảm giá coupon loại percent bị đảo ngược khiến tổng thanh toán tăng gấp 10 lần | FR-17 | `TC_FR17_27` | Critical | [Issue #37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37) | Open |
+| `BUG-FR17-17` | Endpoint /api/apply-coupon từ chối đơn hàng bằng đúng ngưỡng tối thiểu tại điểm biên On-point | FR-17 | `TC_FR17_30` | Major | [Issue #38](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2817,6 +2818,68 @@
       discount_amount = coupon.discount_value;
     }
     const final_amount = Math.max(0, total_amount - discount_amount);
+    ```
+
+#### [BUG-FR17-17] Endpoint /api/apply-coupon từ chối đơn hàng bằng đúng ngưỡng tối thiểu tại điểm biên On-point
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-17` |
+| **Tiêu đề Bug** | `[FR-17][Checkout] Endpoint /api/apply-coupon rejects orders matching exact min_order_amount at boundary On-point` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá & FR-09: Áp dụng mã giảm giá tại Checkout (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi giá trị biên Off-by-one / Vi phạm quy tắc nghiệp vụ C3) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_30`](Main_Report.md#tc_fr17_30) (BVA On-point $M = 300.000\text{ ₫}$, Quy tắc `CPN-BR-04`) |
+| **GitHub Issue Link** | [Issue #38: [BUG] [FR-17][Checkout] Endpoint /api/apply-coupon rejects orders matching exact min_order_amount at boundary On-point](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Web Frontend đang chạy tại `http://localhost:5173`.
+- Mã giảm giá `VIP100` đang kích hoạt (`min_order_amount = 300000`, giảm cố định 100.000 ₫).
+- Đã đăng nhập tài khoản Khách hàng (`test@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập Web Client tại `http://localhost:5173/login`.
+2. Chuyển đến trang Xác nhận Đơn hàng (`http://localhost:5173/checkout`).
+3. Điền ô "Tổng tiền thanh toán (VND)" bằng đúng `300000` (bằng đúng giá trị `min_order_amount = 300.000 ₫`).
+4. Tại ô "Mã Giảm Giá", nhập `VIP100` và bấm nút **"Áp dụng"**.
+5. Quan sát thông báo lỗi hiển thị trên giao diện và mã phản hồi HTTP.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Tổng đơn hàng: `300.000 ₫`
+- Mã coupon: `VIP100` (`min_order_amount = 300000`)
+- Endpoint API: `POST /api/apply-coupon` với payload `{"code":"VIP100","total_amount":300000,"user_id":2}`
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-09 Điều kiện C3 & FR-17 / CPN-BR-04):**
+> *Trích dẫn SRS FR-09:* "Điều kiện áp dụng mã giảm giá: Tổng giá trị đơn hàng >= Giá trị đơn hàng tối thiểu (min_order_amount)."
+- Điểm biên On-point: $Total = min\_order\_amount = 300.000\text{ ₫}$.
+- Biểu thức điều kiện $300.000 \ge 300.000$ có kết quả `true`, hệ thống bắt buộc phải **chấp nhận** áp dụng coupon thành công (**`HTTP 200 OK`**).
+
+**5. Kết quả thực tế (Actual Result):**
+- Hệ thống từ chối áp dụng coupon với mã lỗi **`HTTP 400 Bad Request`**:
+  ```json
+  {"error":"Đơn hàng chưa đủ giá trị tối thiểu 300,000 ₫ để áp dụng mã này"}
+  ```
+- Trên giao diện Checkout xuất hiện thông báo lỗi màu đỏ: `Đơn hàng chưa đủ giá trị tối thiểu 300,000 ₫ để áp dụng mã này`.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp màn hình Web Checkout nhập đúng 300.000 ₫ nhưng bị từ chối coupon VIP100:*  
+  ![Web Checkout Actual](./screenshots/BUG_FR17_17_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/38](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 379:
+    ```javascript
+    if (total_amount > coupon.min_order_amount) {
+    ```
+    Lập trình viên sử dụng toán tử lớn hơn ngặt (`>`) thay vì lớn hơn hoặc bằng (`>=`), dẫn đến việc loại trừ chính xác điểm biên On-point thỏa mãn điều kiện kinh doanh.
+- **Khắc phục:**
+  - Thay đổi toán tử so sánh sang `>=`:
+    ```javascript
+    if (total_amount >= coupon.min_order_amount) {
     ```
 
 ---
