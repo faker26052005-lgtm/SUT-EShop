@@ -1,0 +1,793 @@
+{
+  "info": {
+    "name": "FR-04 Domain Testing + BVA (EShop)",
+    "description": "Chạy server: node server.js (localhost:3000). Folder A: Runner + FR04_testdata.json. Folder B: thủ công.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "C. BẤM SEND LIÊN TIẾP - không cần Runner (khuyên dùng)",
+      "description": "C0 reset -> bấm Send ở C1 nhiều lần (mỗi lần = 1 test, 1 user mới) -> C2 xem tổng hợp. Xem kết quả ở tab Test Results.",
+      "item": [
+        {
+          "name": "C0. Reset (idx=0, xóa nhật ký)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('idx', '0');",
+                  "pm.collectionVariables.set('log', '[]');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Đã reset: idx = 0, nhật ký rỗng. Giờ bấm Send ở C1 để chạy test đầu tiên', () => {});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C1. Chạy test kế tiếp (bấm Send nhiều lần)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Mỗi lần Send: tạo user mới, gửi body của test số idx, kiểm tra, rồi idx tăng 1. Muốn chạy lại 1 test: đặt biến collection idx = số thứ tự (bắt đầu từ 0)."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const CASES = [{\"id\": \"DT-01\", \"group\": \"EP phone\", \"desc\": \"Hợp lệ: 10 chữ số, bắt đầu 0\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912345678\"}}, {\"id\": \"DT-02\", \"group\": \"EP phone\", \"desc\": \"Hợp lệ: 11 chữ số, bắt đầu 0\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"09123456789\"}}, {\"id\": \"DT-03\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: không bắt đầu bằng 0 (10 số)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"9123456789\"}}, {\"id\": \"DT-04\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: chứa chữ cái\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"09123abcde\"}}, {\"id\": \"DT-05\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: có khoảng trắng\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912 345 678\"}}, {\"id\": \"DT-06\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: định dạng +84\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"+84912345678\"}}, {\"id\": \"DT-07\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: ký tự đặc biệt\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912-345-678\"}}, {\"id\": \"DT-08\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: kiểu số (number) thay vì chuỗi\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": 912345678}}, {\"id\": \"DT-08b\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: sai kiểu boolean (tách riêng lỗi kiểu)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": true}}, {\"id\": \"DT-08c\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: sai kiểu mảng chứa SĐT hợp lệ\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": [\"0912345678\"]}}, {\"id\": \"DT-08d\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: phone = null (SRS không nói)\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"phone\": null}}, {\"id\": \"DT-09\", \"group\": \"EP phone\", \"desc\": \"Rỗng '' (SRS không nói rõ)\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"phone\": \"\"}}, {\"id\": \"BV-01\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 9 (min-1)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"012345678\"}}, {\"id\": \"BV-02\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 10 (min)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0123456789\"}}, {\"id\": \"BV-03\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 11 (max)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"01234567890\"}}, {\"id\": \"BV-04\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 12 (max+1)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"012345678901\"}}, {\"id\": \"BV-05\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 1 ('0')\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0\"}}, {\"id\": \"BV-06\", \"group\": \"BVA phone\", \"desc\": \"Chữ số đầu '0' (biên hợp lệ)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0987654321\"}}, {\"id\": \"BV-07\", \"group\": \"BVA phone\", \"desc\": \"Chữ số đầu '1' (sát biên không hợp lệ)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"1987654321\"}}, {\"id\": \"DT-10\", \"group\": \"EP name\", \"desc\": \"Hợp lệ: tên thường\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Nguyen Van A\"}}, {\"id\": \"DT-11\", \"group\": \"EP name\", \"desc\": \"Tên có dấu tiếng Việt\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Nguyễn Văn Ánh\"}}, {\"id\": \"DT-12\", \"group\": \"EP name\", \"desc\": \"Tên rỗng ''\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"name\": \"\"}}, {\"id\": \"DT-13\", \"group\": \"EP name\", \"desc\": \"Tên toàn khoảng trắng\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"name\": \"   \"}}, {\"id\": \"DT-14\", \"group\": \"EP name\", \"desc\": \"Tên chứa thẻ HTML (UI phải escape - SEC-04)\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"name\": \"<b>x</b>\"}}, {\"id\": \"DT-15\", \"group\": \"EP address\", \"desc\": \"Địa chỉ hợp lệ\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"shipping_address\": \"123 Le Loi, Q1, TP.HCM\"}}, {\"id\": \"DT-16\", \"group\": \"EP address\", \"desc\": \"Địa chỉ rỗng ''\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"shipping_address\": \"\"}}, {\"id\": \"DT-17\", \"group\": \"EP name\", \"desc\": \"Tên rất dài (1000 ký tự)\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}, {\"id\": \"BL-01\", \"group\": \"Business\", \"desc\": \"Cập nhật cả 3 trường hợp lệ\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Ten Moi\", \"phone\": \"0911111111\", \"shipping_address\": \"Dia chi moi\"}}, {\"id\": \"BL-02\", \"group\": \"Business\", \"desc\": \"Chỉ gửi phone -> name và address phải giữ nguyên\", \"expected\": \"KEEP\", \"auth\": \"valid\", \"body\": {\"phone\": \"0922222222\"}}, {\"id\": \"BL-03\", \"group\": \"Business\", \"desc\": \"Email không được đổi\", \"expected\": \"EMAIL_SAME\", \"auth\": \"valid\", \"body\": {\"email\": \"hacker@evil.com\"}}, {\"id\": \"BL-04\", \"group\": \"Business\", \"desc\": \"Không tự đổi role (SEC-06)\", \"expected\": \"ROLE_USER\", \"auth\": \"valid\", \"body\": {\"role\": \"admin\"}}, {\"id\": \"BL-05\", \"group\": \"Business\", \"desc\": \"Gửi kèm id=1 không được ghi đè id tài khoản\", \"expected\": \"ID_SAME\", \"auth\": \"valid\", \"body\": {\"id\": 1, \"name\": \"X\"}}, {\"id\": \"AC-01\", \"group\": \"Access\", \"desc\": \"Không có token\", \"expected\": \"401/403\", \"auth\": \"none\", \"body\": {\"name\": \"X\"}}, {\"id\": \"AC-02\", \"group\": \"Access\", \"desc\": \"Token sai\", \"expected\": \"401/403\", \"auth\": \"bad\", \"body\": {\"name\": \"X\"}}];",
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const i = Number(pm.collectionVariables.get('idx') || 0);",
+                  "if (i >= CASES.length) {",
+                  "  throw new Error('Đã chạy hết ' + CASES.length + ' test. Chạy C0 (Reset) để làm lại, hoặc đặt biến idx để chạy lại 1 test.');",
+                  "}",
+                  "const tc = CASES[i];",
+                  "pm.collectionVariables.set('cur', String(i));",
+                  "pm.collectionVariables.set('total', String(CASES.length));",
+                  "pm.collectionVariables.set('tc', JSON.stringify(tc));",
+                  "pm.collectionVariables.set('token', '');",
+                  "pm.collectionVariables.set('before', '');",
+                  "const email = `fr04.${Date.now().toString(16)}.${Math.floor(Math.random()*1e6)}@test.com`;",
+                  "pm.collectionVariables.set('email', email);",
+                  "",
+                  "const send = (method, path, body, token, cb) => pm.sendRequest({",
+                  "  url: base + path, method: method,",
+                  "  header: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),",
+                  "  body: body ? { mode: 'raw', raw: JSON.stringify(body) } : undefined",
+                  "}, cb);",
+                  "",
+                  "// Tạo user MỚI cho mỗi test: register -> login -> đặt hồ sơ gốc -> GET before",
+                  "send('POST', '/api/register', { name: 'Ten Goc', email: email, password: 'Pass1234!' }, null, () => {",
+                  "  send('POST', '/api/login', { email: email, password: 'Pass1234!' }, null, (e2, r2) => {",
+                  "    let token = '';",
+                  "    try { token = r2.json().token || ''; } catch (x) {}",
+                  "    pm.collectionVariables.set('token', token);",
+                  "    send('PUT', '/api/users/me', { name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc' }, token, () => {",
+                  "      send('GET', '/api/users/me', null, token, (e4, r4) => {",
+                  "        try { pm.collectionVariables.set('before', r4.text()); } catch (x) {}",
+                  "        pm.request.body.update({ mode: 'raw', raw: JSON.stringify(tc.body) });",
+                  "        if (tc.auth === 'none') { pm.request.headers.remove('Authorization'); }",
+                  "        else if (tc.auth === 'bad') { pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer abc.def.ghi' }); }",
+                  "      });",
+                  "    });",
+                  "  });",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const tc = JSON.parse(pm.collectionVariables.get('tc'));",
+                  "const token = pm.collectionVariables.get('token');",
+                  "const email = pm.collectionVariables.get('email');",
+                  "const cur = Number(pm.collectionVariables.get('cur'));",
+                  "const total = pm.collectionVariables.get('total');",
+                  "const code = pm.response.code;",
+                  "let before = null;",
+                  "try { before = JSON.parse(pm.collectionVariables.get('before')); } catch (e) {}",
+                  "",
+                  "if (!token || !before) {",
+                  "  pm.test('SETUP LỖI: không tạo được user/token (server đã chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                  "} else {",
+                  "  // GET sau khi PUT để xem dữ liệu đã lưu thật sự",
+                  "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + token } }, (err, res) => {",
+                  "    const after = res.json();",
+                  "    const body = tc.body, exp = tc.expected;",
+                  "    const FIELDS = ['name', 'phone', 'shipping_address', 'email', 'role', 'id'];",
+                  "    const changed = FIELDS.filter(k => before[k] !== after[k]);",
+                  "    const ok2xx = code >= 200 && code < 300;",
+                  "    const is4xx = code >= 400 && code < 500;",
+                  "    const sent = ['name', 'phone', 'shipping_address'].filter(k => k in body);",
+                  "    const persisted = sent.every(k => after[k] === body[k]);",
+                  "",
+                  "    let verdict;",
+                  "    switch (exp) {",
+                  "      case 'OK':         verdict = ok2xx && persisted; break;",
+                  "      case 'REJECT':     verdict = is4xx && changed.length === 0; break;",
+                  "      case 'KEEP':       verdict = ok2xx && after.name === before.name && after.shipping_address === before.shipping_address && after.phone === body.phone; break;",
+                  "      case 'EMAIL_SAME': verdict = after.email === email; break;",
+                  "      case 'ROLE_USER':  verdict = after.role === 'user'; break;",
+                  "      case 'ID_SAME':    verdict = after.id === before.id; break;",
+                  "      case '401/403':    verdict = (code === 401 || code === 403) && changed.length === 0; break;",
+                  "      default:           verdict = null;",
+                  "    }",
+                  "",
+                  "    const label = `[${cur + 1}/${total}] ${tc.id} | ${tc.desc} | HTTP ${code}`;",
+                  "    if (verdict === null) {",
+                  "      pm.test(`[CẦN LÀM RÕ] ${label} | hệ thống ${ok2xx ? 'CHẤP NHẬN' : 'TỪ CHỐI'}`, () => {});",
+                  "    } else {",
+                  "      pm.test(label, () => {",
+                  "        pm.expect(verdict, `expected=${exp}; trường bị đổi: ${JSON.stringify(changed)}`).to.be.true;",
+                  "      });",
+                  "    }",
+                  "",
+                  "    let wiped = [];",
+                  "    if (exp !== '401/403') {",
+                  "      wiped = ['name', 'phone', 'shipping_address'].filter(k => !(k in body) && before[k] !== after[k]);",
+                  "      pm.test(`[SIDE-EFFECT] ${tc.id} | trường không gửi phải giữ nguyên`, () => {",
+                  "        pm.expect(wiped, `bị đổi ngoài ý muốn: ${wiped.join(', ')}`).to.be.empty;",
+                  "      });",
+                  "    }",
+                  "",
+                  "    // ghi nhật ký để C2 tổng hợp; chạy lại cùng test thì ghi đè",
+                  "    let log = [];",
+                  "    try { log = JSON.parse(pm.collectionVariables.get('log') || '[]'); } catch (e) {}",
+                  "    log = log.filter(x => x.id !== tc.id);",
+                  "    log.push({ id: tc.id, desc: tc.desc, code: code, wiped: wiped, verdict: verdict === null ? 'CLARIFY' : (verdict ? 'PASS' : 'FAIL') });",
+                  "    pm.collectionVariables.set('log', JSON.stringify(log));",
+                  "    pm.collectionVariables.set('idx', String(cur + 1));",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C2. Tổng hợp kết quả",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let log = [];",
+                  "try { log = JSON.parse(pm.collectionVariables.get('log') || '[]'); } catch (e) {}",
+                  "const c = { PASS: 0, FAIL: 0, CLARIFY: 0 };",
+                  "log.forEach(x => { c[x.verdict]++; });",
+                  "const side = log.filter(x => x.wiped.length).length;",
+                  "pm.test(`TỔNG ${log.length} test: PASS ${c.PASS} | FAIL ${c.FAIL} | CẦN LÀM RÕ ${c.CLARIFY} | có side-effect ${side}`, () => {});",
+                  "log.forEach(x => {",
+                  "  const extra = x.wiped.length ? ` | side-effect: ${x.wiped.join(',')}` : '';",
+                  "  if (x.verdict === 'CLARIFY') { pm.test(`[CẦN LÀM RÕ] ${x.id} | ${x.desc} | HTTP ${x.code}`, () => {}); }",
+                  "  else { pm.test(`${x.id} | ${x.desc} | HTTP ${x.code}${extra}`, () => { pm.expect(x.verdict === 'PASS').to.be.true; }); }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "A. AUTO - chạy bằng Runner (cần nạp FR04_testdata.json)",
+      "description": "Mỗi iteration = 1 test case, dùng 1 user mới. Chọn Run folder, nạp file data, bấm Run.",
+      "item": [
+        {
+          "name": "A1. Register user mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Ten Goc\",\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const email = `fr04.${Date.now().toString(16)}.${Math.floor(Math.random()*1e6)}@test.com`;",
+                  "pm.collectionVariables.set('email', email);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A2. Login (lưu token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let t = '';",
+                  "try { t = pm.response.json().token || ''; } catch (e) {}",
+                  "pm.collectionVariables.set('token', t);",
+                  "if (!t) { pm.test('SETUP LỖI: login không lấy được token (server đã chạy chưa?)', () => { throw new Error('no token'); }); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A3. Baseline: đặt hồ sơ gốc",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Ten Goc\",\"phone\":\"0900000000\",\"shipping_address\":\"Dia chi goc\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "A4. GET trước khi test",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('before', pm.response.text());"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A5. PUT cần test (body lấy từ data file)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const id = pm.iterationData.get('id');",
+                  "if (!id) { throw new Error('Chưa nạp FR04_testdata.json trong Runner (mục Data). Hãy chọn file dữ liệu rồi chạy lại.'); }",
+                  "let b = pm.iterationData.get('body');",
+                  "if (typeof b === 'string') { b = JSON.parse(b); }",
+                  "pm.request.body.update({ mode: 'raw', raw: JSON.stringify(b) });",
+                  "const auth = pm.iterationData.get('auth') || 'valid';",
+                  "if (auth === 'none') { pm.request.headers.remove('Authorization'); }",
+                  "else if (auth === 'bad') { pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer abc.def.ghi' }); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('putStatus', String(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A6. GET sau + chấm verdict",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = k => pm.iterationData.get(k);",
+                  "const id = d('id'), desc = d('desc'), exp = d('expected');",
+                  "let body = d('body'); if (typeof body === 'string') { body = JSON.parse(body); }",
+                  "const before = JSON.parse(pm.collectionVariables.get('before'));",
+                  "const after = pm.response.json();",
+                  "const code = Number(pm.collectionVariables.get('putStatus'));",
+                  "const email = pm.collectionVariables.get('email');",
+                  "",
+                  "const FIELDS = ['name', 'phone', 'shipping_address', 'email', 'role', 'id'];",
+                  "const changed = FIELDS.filter(k => before[k] !== after[k]);",
+                  "const ok2xx = code >= 200 && code < 300;",
+                  "const is4xx = code >= 400 && code < 500;",
+                  "const sent = ['name', 'phone', 'shipping_address'].filter(k => k in body);",
+                  "const persisted = sent.every(k => after[k] === body[k]);",
+                  "",
+                  "let verdict;",
+                  "switch (exp) {",
+                  "  case 'OK':         verdict = ok2xx && persisted; break;",
+                  "  case 'REJECT':     verdict = is4xx && changed.length === 0; break;",
+                  "  case 'KEEP':       verdict = ok2xx && after.name === before.name && after.shipping_address === before.shipping_address && after.phone === body.phone; break;",
+                  "  case 'EMAIL_SAME': verdict = after.email === email; break;",
+                  "  case 'ROLE_USER':  verdict = after.role === 'user'; break;",
+                  "  case 'ID_SAME':    verdict = after.id === before.id; break;",
+                  "  case '401/403':    verdict = (code === 401 || code === 403) && changed.length === 0; break;",
+                  "  default:           verdict = null;   // mong đợi '?' => CẦN LÀM RÕ, chỉ ghi nhận",
+                  "}",
+                  "",
+                  "const label = `${id} | ${desc} | HTTP ${code}`;",
+                  "if (verdict === null) {",
+                  "  pm.test(`[CẦN LÀM RÕ] ${label} | hệ thống ${ok2xx ? 'CHẤP NHẬN' : 'TỪ CHỐI'}`, () => {});",
+                  "} else {",
+                  "  pm.test(label, () => {",
+                  "    pm.expect(verdict, `expected=${exp}; trường bị đổi: ${JSON.stringify(changed)}`).to.be.true;",
+                  "  });",
+                  "}",
+                  "",
+                  "// Kiểm tra tác dụng phụ: trường KHÔNG gửi lên phải giữ nguyên",
+                  "if (exp !== '401/403') {",
+                  "  const wiped = ['name', 'phone', 'shipping_address'].filter(k => !(k in body) && before[k] !== after[k]);",
+                  "  pm.test(`[SIDE-EFFECT] ${id} | trường không gửi phải giữ nguyên`, () => {",
+                  "    pm.expect(wiped, `bị đổi ngoài ý muốn: ${wiped.join(', ')}`).to.be.empty;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "B. THỦ CÔNG - chụp ảnh / bug report",
+      "description": "Chạy lần lượt B1 -> B2 rồi sửa body ở B3 tùy test, bấm Send, sau đó Send B4 để xem dữ liệu đã lưu.",
+      "item": [
+        {
+          "name": "B1. Register user mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Ten Goc\",\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const email = `fr04.${Date.now().toString(16)}.${Math.floor(Math.random()*1e6)}@test.com`;",
+                  "pm.collectionVariables.set('email', email);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B2. Login (lưu token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let t = '';",
+                  "try { t = pm.response.json().token || ''; } catch (e) {}",
+                  "pm.collectionVariables.set('token', t);",
+                  "if (!t) { pm.test('SETUP LỖI: login không lấy được token (server đã chạy chưa?)', () => { throw new Error('no token'); }); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B3. PUT /users/me (SỬA BODY Ở ĐÂY)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9123456789\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "B4. GET /users/me (xem dữ liệu đã lưu)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "B5. (Mở rộng) Kiểm tra phân quyền admin: GET /api/admin/users bằng user thường",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": "Ngoài phạm vi FR-04 (thuộc SEC-03). Gọi bằng token của user thường: kỳ vọng 403. Nếu trả 200 thì API admin không kiểm tra role - ghi nhận riêng, đừng gộp vào bug của FR-04."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "before",
+      "value": ""
+    },
+    {
+      "key": "putStatus",
+      "value": ""
+    },
+    {
+      "key": "idx",
+      "value": "0"
+    },
+    {
+      "key": "log",
+      "value": "[]"
+    },
+    {
+      "key": "cur",
+      "value": ""
+    },
+    {
+      "key": "total",
+      "value": ""
+    },
+    {
+      "key": "tc",
+      "value": ""
+    }
+  ]
+}
