@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 1 | 11 | 0 | 0 | **12** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 1 | 11 | 1 | 0 | **13** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **4** | **25** | **3** | **0** | **32** |
+| **TỔNG CỘNG** | | | **4** | **25** | **4** | **0** | **33** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -55,6 +55,7 @@
 | `BUG-FR17-10` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user = 0 và tự ép thành 1 thay vì trả về HTTP 400 | FR-17 | `TC_FR17_19` | Major | [Issue #31](https://github.com/faker26052005-lgtm/SUT-EShop/issues/31) | Open |
 | `BUG-FR17-11` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user âm (-1) và lưu vào CSDL | FR-17 | `TC_FR17_20` | Major | [Issue #32](https://github.com/faker26052005-lgtm/SUT-EShop/issues/32) | Open |
 | `BUG-FR17-12` | Endpoint POST /api/admin/coupons thiếu authorizeAdmin cho phép user thường (role='user') tạo coupon | FR-17 | `TC_FR17_23` | Critical | [Issue #33](https://github.com/faker26052005-lgtm/SUT-EShop/issues/33) | Open |
+| `BUG-FR17-13` | Endpoint DELETE /api/admin/coupons/:id trả về 200 OK khi xóa ID không tồn tại (9999) thay vì 404 Not Found | FR-17 | `TC_FR17_24` | Medium | [Issue #34](https://github.com/faker26052005-lgtm/SUT-EShop/issues/34) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2478,6 +2479,90 @@
         return res.status(403).json({ error: "Forbidden: Admin access required" });
       }
       // ...
+    ```
+
+---
+
+#### [BUG-FR17-13] Endpoint DELETE /api/admin/coupons/:id trả về 200 OK khi xóa ID không tồn tại (9999) thay vì 404 Not Found
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-13` |
+| **Tiêu đề Bug** | `[FR-17][Backend API] Endpoint DELETE /api/admin/coupons/:id returns HTTP 200 OK for non-existent ID 9999 instead of HTTP 404 Not Found` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Medium** (Vi phạm chuẩn thiết kế REST API & Resource Handling) |
+| **Mức ưu tiên (Priority)**| **Medium (P2)** |
+| **Test Case phát hiện** | [`TC_FR17_24`](Main_Report.md#tc_fr17_24) (Tài nguyên không tồn tại, Single Fault) |
+| **GitHub Issue Link** | [Issue #34: [BUG] [FR-17][Backend API] Endpoint DELETE /api/admin/coupons/:id returns HTTP 200 OK for non-existent ID 9999 instead of HTTP 404 Not Found](https://github.com/faker26052005-lgtm/SUT-EShop/issues/34) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+- Bảng `coupons` không chứa bản ghi nào có `id = 9999`.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập tài khoản Admin lấy token xác thực:
+   ```bash
+   ADMIN_TOKEN=$(curl -s -X POST http://localhost:3000/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"admin@eshop.com","password":"Admin123!"}' | jq -r .token)
+   ```
+2. Gửi request DELETE tới coupon ID 9999 không tồn tại:
+   ```bash
+   curl -i -s -X DELETE http://localhost:3000/api/admin/coupons/9999 \
+     -H "Authorization: Bearer $ADMIN_TOKEN"
+   ```
+3. Quan sát phản hồi HTTP status code và body.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Route: `DELETE /api/admin/coupons/9999`
+- Header: `Authorization: Bearer $ADMIN_TOKEN`
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17 & API Spec §6.4):**
+> *Trích dẫn SRS FR-17:* "Quản trị viên có thể xóa mã giảm giá... Hệ thống phải phản hồi mã lỗi chuẩn RESTful khi tài nguyên không tồn tại."
+- Backend API bắt buộc phải kiểm tra số dòng bị ảnh hưởng (`this.changes === 0`).
+- Khi xóa ID không tồn tại, API phải trả về mã lỗi **HTTP 404 Not Found** (`{"error": "Mã giảm giá không tồn tại"}`).
+- Không được thông báo thành công giả ("Coupon deleted") khi không có bản ghi nào bị xóa.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `DELETE /api/admin/coupons/:id` bỏ qua việc kiểm tra `this.changes`.
+- Do SQLite không phát sinh lỗi khi câu lệnh `DELETE` không khớp dòng nào (`err` là null), route trả về **`HTTP/1.1 200 OK`**:
+  ```json
+  {"message":"Coupon deleted"}
+  ```
+- Hệ thống báo thành công giả, vi phạm nguyên tắc thiết kế REST API đối với tài nguyên không tồn tại.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal thực thi DELETE ID 9999 và nhận HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_13_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/34](https://github.com/faker26052005-lgtm/SUT-EShop/issues/34)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 483–487:
+    ```javascript
+    app.delete("/api/admin/coupons/:id", authenticateToken, (req, res) => {
+      db.run("DELETE FROM coupons WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Coupon deleted" });
+      });
+    });
+    ```
+    Không kiểm tra `if (this.changes === 0)`.
+- **Khắc phục:**
+  - Bổ sung kiểm tra số bản ghi bị ảnh hưởng:
+    ```javascript
+    app.delete("/api/admin/coupons/:id", authenticateToken, (req, res) => {
+      db.run("DELETE FROM coupons WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) {
+          return res.status(404).json({ error: "Mã giảm giá không tồn tại" });
+        }
+        res.json({ message: "Coupon deleted" });
+      });
+    });
     ```
 
 ---
