@@ -61,8 +61,7 @@
 | `BUG-FR17-16` | Công thức tính tiền giảm giá coupon loại percent bị đảo ngược khiến tổng thanh toán tăng gấp 10 lần | FR-17 | `TC_FR17_27` | Critical | [Issue #37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37) | Open |
 | `BUG-FR17-17` | Endpoint /api/apply-coupon từ chối đơn hàng bằng đúng ngưỡng tối thiểu tại điểm biên On-point | FR-17 | `TC_FR17_30` | Major | [Issue #38](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38) | Open |
 | `BUG-FR17-18` | Endpoint /api/apply-coupon cho phép số tiền thanh toán bị âm khi mức giảm vượt quá giá trị đơn | FR-17 | `TC_FR17_34` | Critical | [Issue #39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39) | Open |
-| `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
-| `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
+| `BUG-FR20-01` | Endpoint PUT /api/orders/:id/cancel cho phép khách hàng tự hủy đơn ở trạng thái shipping | FR-20 | `TC_MOB_05` | Critical | [Issue #40](https://github.com/faker26052005-lgtm/SUT-EShop/issues/40) | Open |
 
 ---
 
@@ -2956,36 +2955,81 @@
 
 ### 2.4 Các lỗi thuộc Pool D: Mobile (FR-20 & FR-10) – Hủy đơn hàng theo trạng thái
 
-#### [BUG-FR20-01] Đơn hàng ở trạng thái `shipping` vẫn cho phép User bấm Hủy trên Mobile
+#### [BUG-FR20-01] Endpoint PUT /api/orders/:id/cancel cho phép khách hàng tự hủy đơn ở trạng thái shipping
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR20-01` |
-| **Tiêu đề Bug** | `[FR-20][Mobile] Order in 'shipping' status can still be canceled by customer on Mobile App` |
-| **Mức độ (Severity)** | **Critical** (Vi phạm ràng buộc chuyển đổi trạng thái State Machine) |
-| **Test Case phát hiện** | `TC_MOB_03` (BVA State Transition Boundary) |
-| **GitHub Issue Link** | [Issue #18: [FR-20] Order in shipping status can be canceled on Mobile](https://github.com/ttbhanh/eshop-sut/issues/18) |
+| **Tiêu đề Bug** | `[FR-20][Backend API] Endpoint PUT /api/orders/:id/cancel allows customer to cancel orders in 'shipping' status` |
+| **Chức năng (Feature)** | FR-20: Tra cứu & Hủy đơn hàng Mobile / FR-10: Máy trạng thái Đơn hàng |
+| **Môi trường thử nghiệm**| Backend: `http://localhost:3000` • SQLite 3 • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Critical** (Vi phạm tính toàn vẹn State Machine, cho phép can thiệp đơn hàng đã xuất kho) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_MOB_05`](Main_Report.md#tc_mob_05) (Bypass UI Probe / State Transition Boundary) |
+| **GitHub Issue Link** | [Issue #40: [BUG] [FR-20][Backend API] Endpoint PUT /api/orders/:id/cancel allows customer to cancel orders in 'shipping' status](https://github.com/faker26052005-lgtm/SUT-EShop/issues/40) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Kết quả mong đợi (SRS FR-10 & FR-20):**
-> *Trích dẫn SRS:* "Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy – chỉ Admin mới có thể thao tác."
-- Trên màn hình chi tiết đơn hàng của Mobile App, nút "Hủy đơn" phải bị ẩn hoặc bị vô hiệu hóa khi trạng thái là `shipping`.
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Trong bảng `orders`, tồn tại đơn hàng `#103` thuộc sở hữu của User 1 (`user_id = 1`) có `status = 'shipping'`.
+- Người dùng User 1 đã đăng nhập thành công và sở hữu token JWT hợp lệ.
 
-**2. Kết quả thực tế:**
-- Nút "Hủy đơn" vẫn hiển thị màu đỏ và bấm được. Khi bấm xác nhận, đơn hàng bị đổi thành `canceled` thành công.
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập qua API `POST /api/login` với thông tin User 1 để lấy JWT Bearer token.
+2. Kiểm tra CSDL xác nhận đơn hàng `#103` đang ở trạng thái `'shipping'`:
+   ```bash
+   SELECT id, user_id, status FROM orders WHERE id = 103;
+   ```
+3. Gửi trực tiếp HTTP PUT request để yêu cầu hủy đơn `#103`:
+   ```bash
+   curl -i -X PUT http://localhost:3000/api/orders/103/cancel \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{}'
+   ```
+4. Quan sát mã phản hồi HTTP và dữ liệu JSON trả về.
+5. Kiểm tra lại trạng thái đơn hàng `#103` trong SQLite DB.
 
----
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Endpoint: `PUT /api/orders/103/cancel`
+- Headers: `Authorization: Bearer <user1_jwt>`, `Content-Type: application/json`
+- Body: `{}`
 
-#### [BUG-FR20-02] Sau khi hủy đơn thành công, giao diện Mobile không tự làm mới trạng thái
+**4. Kết quả mong đợi (Expected Result theo SRS FR-10 & FR-20):**
+> *Trích dẫn SRS FR-10:* "Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy — chỉ Admin mới có thể thao tác."
+- Tầng API: Trả về HTTP Status **`400 Bad Request`** (hoặc `403 Forbidden`) kèm thông báo lỗi như `{"error": "Cannot cancel this order."}`.
+- Tầng CSDL: Trường `orders.status` của đơn `#103` **bắt buộc giữ nguyên `'shipping'`**, tuyệt đối không được chuyển đổi sang `'canceled'`.
 
-| Trường thông tin | Chi tiết |
-| :--- | :--- |
-| **Bug ID** | `BUG-FR20-02` |
-| **Tiêu đề Bug** | `[FR-20][Mobile] Order status does not automatically update after cancellation` |
-| **Mức độ (Severity)** | **Medium** (Lỗi đồng bộ trạng thái giao diện) |
-| **Test Case phát hiện** | `TC_MOB_01` |
-| **GitHub Issue Link** | [Issue #19: [FR-20] Status not refreshed after order cancel](https://github.com/ttbhanh/eshop-sut/issues/19) |
+**5. Kết quả thực tế (Actual Result):**
+- Backend chấp nhận yêu cầu và phản hồi HTTP **`200 OK`**:
+  ```json
+  {"message": "Order canceled successfully"}
+  ```
+- Tầng CSDL: Bản ghi đơn hàng `#103` bị cập nhật trường `status` từ `'shipping'` sang **`'canceled'`**.
 
----
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal thực thi API và truy vấn CSDL SQLite:*  
+  ![Terminal Execution Proof](./screenshots/BUG_FR20_01_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/40](https://github.com/faker26052005-lgtm/SUT-EShop/issues/40)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 328–331:
+    ```javascript
+    // Lẽ ra phải là: if (order.status !== 'pending' && order.status !== 'confirmed')
+    if (order.status === "delivered" || order.status === "canceled") {
+      return res.status(400).json({ error: "Cannot cancel this order." });
+    }
+    ```
+    Backend chỉ từ chối hai trạng thái `delivered` và `canceled`. Khi đơn hàng ở trạng thái `shipping` (đang giao), điều kiện `if` bị bỏ qua và câu lệnh `UPDATE orders SET status = 'canceled'` được thực thi.
+- **Khắc phục:**
+  - Sửa lại điều kiện kiểm tra chỉ cho phép hủy khi trạng thái là `pending` hoặc `confirmed`:
+    ```javascript
+    if (order.status !== "pending" && order.status !== "confirmed") {
+      return res.status(400).json({ error: "Cannot cancel this order." });
+    }
+    ```
+
 
 ## 3. PHÂN TÍCH NGUYÊN NHÂN LỖI & ĐÁNH GIÁ CHẤT LƯỢNG SUT
 
