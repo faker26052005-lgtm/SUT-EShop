@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 8 | 0 | 0 | **8** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 9 | 0 | 0 | **9** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **13** | **1** | **0** | **17** |
+| **TỔNG CỘNG** | | | **3** | **14** | **1** | **0** | **18** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -38,6 +38,7 @@
 | `BUG-FR07-06` | Hệ thống chấp nhận số lượng âm (-1), hiển thị thành tiền âm trong giỏ | FR-07 | `TC_FR07_06` | Major | [Issue #14](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14) | Open |
 | `BUG-FR07-07` | Xóa trống ô số lượng khiến giỏ hàng bị tính toán sai thành "NaN ₫" | FR-07 | `TC_FR07_07` | Major | [Issue #15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15) | Open |
 | `BUG-FR07-08` | Nhập số lượng thập phân (1.5) được chấp nhận, giao diện tự làm tròn xuống 1 và API trả về 200 OK | FR-07 | `TC_FR07_09` | Major | [Issue #16](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16) | Open |
+| `BUG-FR07-09` | Endpoint POST /api/cart chấp nhận payload khuyết hoặc null trường quantity với 200 OK | FR-07 | `TC_FR07_10` | Major | [Issue #17](https://github.com/faker26052005-lgtm/SUT-EShop/issues/17) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -1113,6 +1114,88 @@
   - Trong `backend/server.js`:
     ```javascript
     if (!Number.isInteger(Number(quantity)) || Number(quantity) < 1) {
+      return res.status(400).json({ error: "Quantity must be a positive integer" });
+    }
+    ```
+
+
+---
+
+#### [BUG-FR07-09] Endpoint POST /api/cart chấp nhận payload khuyết hoặc null trường quantity với HTTP 200 OK
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-09` |
+| **Tiêu đề Bug** | `[FR-07][REST API] POST /api/cart accepts omitted or null quantity payload with 200 OK without required field validation` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm ràng buộc API schema & toàn vẹn dữ liệu giỏ hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_10`](Main_Report.md#tc_fr07_10) (Validate API rejection when quantity is omitted or null in payload) |
+| **GitHub Issue Link** | [Issue #17: [BUG] [FR-07][REST API] POST /api/cart accepts omitted or null quantity payload with 200 OK without required field validation](https://github.com/faker26052005-lgtm/SUT-EShop/issues/17) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Tài khoản người dùng có token xác thực JWT hợp lệ.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Lấy token xác thực người dùng qua API login:
+   ```bash
+   TOKEN=$(curl -s -X POST http://localhost:3000/api/login -H "Content-Type: application/json" -d '{"email":"test@eshop.com","password":"Test1234!"}' | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+   ```
+2. Gửi request `POST /api/cart` với trường `quantity: null`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000, "quantity": null}'
+   ```
+3. Gửi request `POST /api/cart` khuyết hoàn toàn trường `quantity`:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000}'
+   ```
+4. Quan sát HTTP response status và body trả về.
+5. Gọi `GET /api/cart` để kiểm tra mảng giỏ hàng lưu trong bộ nhớ server.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+// Payload A (quantity null)
+{"id": 1, "price": 30000000, "quantity": null}
+
+// Payload B (khuyết quantity)
+{"id": 1, "price": 30000000}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07:* "Số lượng là trường thông tin bắt buộc và phải là số nguyên dương ($Q \ge 1$)."
+- Backend REST API `POST /api/cart` phải kiểm tra schema dữ liệu đầu vào và từ chối các request thiếu hoặc null trường số lượng với HTTP `400 Bad Request` kèm body lỗi (ví dụ: `{"error": "Quantity is required and must be a positive integer"}`).
+- CSDL / Bộ nhớ giỏ hàng không được ghi nhận các item thiếu thông tin số lượng.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` (`{"message":"Added to cart"}`) cho cả hai payload trên.
+- Mảng giỏ hàng lưu trực tiếp các đối tượng lỗi: `{"id":1,"price":30000000,"quantity":null}` và `{"id":1,"price":30000000}`.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal API trả về 200 OK cho cả payload null và khuyết quantity:*  
+  ![API POST /api/cart với quantity null và khuyết quantity trả về 200 OK](./screenshots/BUG_FR07_09_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/17](https://github.com/faker26052005-lgtm/SUT-EShop/issues/17)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `backend/server.js`, dòng 290–295: Endpoint `POST /api/cart` thực hiện đẩy thẳng `req.body` vào `userCarts[userId]` mà không có bước validate schema.
+- **Khắc phục:**
+  - Kiểm tra tính hợp lệ của trường `quantity` trước khi lưu vào giỏ hàng:
+    ```javascript
+    const { id, quantity } = req.body;
+    if (quantity === undefined || quantity === null || String(quantity).trim() === "") {
+      return res.status(400).json({ error: "Quantity is required" });
+    }
+    const numQty = Number(quantity);
+    if (!Number.isInteger(numQty) || numQty < 1) {
       return res.status(400).json({ error: "Quantity must be a positive integer" });
     }
     ```
