@@ -2690,7 +2690,7 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 | `TC_MOB_24` | Bấm liên tiếp 2 lần cực nhanh nút Hủy trên Mobile (Double-tap) | UI Robustness | `ORD-BVA-07` | `ORD-BVA-07` (Off: 2 taps) | Mobile UI: Chạm nút "Hủy đơn" 2 lần $< 200ms$ | Debounce xử lý an toàn: Chỉ mở 1 hộp thoại xác nhận, không gửi request trùng lặp | **Pass** |
 | `TC_MOB_25` | Gửi đồng thời 2 request hủy trong cùng 1 mili-giây (Race Condition) | Concurrency | `ORD-SEC-04` | `ORD-BVA-06` (Off: $k=2$) | Đơn 101 `pending`, 2 thread gửi `PUT` đồng thời | **Exactly-once:** 1 request HTTP 200, 1 request HTTP 400; DB cập nhật đúng 1 lần | **Pass** |
 | `TC_MOB_26` | Xáo trộn phương thức HTTP (`POST`, `GET`, `DELETE` tới API cancel) | Robustness | `ORD-SEC-05` | N/A | Gửi `POST /api/orders/101/cancel` | HTTP 404 Not Found hoặc 405 Method Not Allowed; CSDL giữ nguyên `pending` | **Pass** |
-| `TC_MOB_27` | Quan sát tác dụng phụ hoàn trả kho khi đơn hàng bị hủy | Clarification | `ORD-STA-CLAR01` | N/A | Đơn 101 hủy thành công (gồm 2 SP A, kho trước hủy = 10) | HTTP 200; Quan sát `products.stock` xem có $+2$ lên 12 hay giữ nguyên 10 | *Chờ thực thi* |
+| `TC_MOB_27` | Quan sát tác dụng phụ hoàn trả kho khi đơn hàng bị hủy | Clarification | `ORD-STA-CLAR01` | N/A | Đơn 101 hủy thành công (gồm 2 SP A, kho trước hủy = 10) | HTTP 200; Quan sát `products.stock` xem có $+2$ lên 12 hay giữ nguyên 10 | **Pass** |
 | `TC_MOB_28` | Quan sát tác dụng phụ khôi phục lượt dùng coupon khi đơn bị hủy | Clarification | `ORD-STA-CLAR02` | N/A | Đơn 101 có dùng coupon `SAVE10`, sau đó hủy thành công | HTTP 200; Quan sát xem User 1 có thể áp dụng lại mã `SAVE10` ở đơn tiếp theo không | *Chờ thực thi* |
 
 ---
