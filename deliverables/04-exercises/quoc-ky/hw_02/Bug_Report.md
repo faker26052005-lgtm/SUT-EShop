@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 10 | 0 | 0 | **10** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 11 | 0 | 0 | **11** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **24** | **3** | **0** | **30** |
+| **TỔNG CỘNG** | | | **3** | **25** | **3** | **0** | **31** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -53,6 +53,7 @@
 | `BUG-FR17-08` | Form Admin và API cho phép tạo coupon giảm giá 0 ₫ (discount_value = 0) cho loại fixed | FR-17 | `TC_FR17_17` | Major | [Issue #29](https://github.com/faker26052005-lgtm/SUT-EShop/issues/29) | Open |
 | `BUG-FR17-09` | Form Admin và API chấp nhận đơn hàng tối thiểu âm (-1 ₫) và lưu vào CSDL | FR-17 | `TC_FR17_18` | Major | [Issue #30](https://github.com/faker26052005-lgtm/SUT-EShop/issues/30) | Open |
 | `BUG-FR17-10` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user = 0 và tự ép thành 1 thay vì trả về HTTP 400 | FR-17 | `TC_FR17_19` | Major | [Issue #31](https://github.com/faker26052005-lgtm/SUT-EShop/issues/31) | Open |
+| `BUG-FR17-11` | Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user âm (-1) và lưu vào CSDL | FR-17 | `TC_FR17_20` | Major | [Issue #32](https://github.com/faker26052005-lgtm/SUT-EShop/issues/32) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2302,6 +2303,87 @@
     max_uses_per_user || 1,
     ```
     Toán tử `||` coi `0` là falsy và tự động gán thành `1`, dẫn đến bỏ qua hoàn toàn việc kiểm tra ràng buộc $U \ge 1$.
+- **Khắc phục:**
+  - Thêm kiểm tra đầu vào trước khi insert:
+    ```javascript
+    if (max_uses_per_user !== undefined && max_uses_per_user !== null && Number(max_uses_per_user) < 1) {
+      return res.status(400).json({ error: "Số lần sử dụng tối đa mỗi người phải từ 1 trở lên" });
+    }
+    ```
+
+---
+
+#### [BUG-FR17-11] Endpoint POST /api/admin/coupons chấp nhận max_uses_per_user âm (-1) với HTTP 200 OK và lưu vào CSDL
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-11` |
+| **Tiêu đề Bug** | `[FR-17][Backend API] Endpoint POST /api/admin/coupons accepts negative max_uses_per_user (-1) with HTTP 200 OK and stores in SQLite` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm ràng buộc giá trị số lần sử dụng tối thiểu $U \ge 1$ của đặc tả, lưu giá trị âm làm phá vỡ logic kiểm tra điều kiện áp dụng mã) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_20`](Main_Report.md#tc_fr17_20) (Miền giá trị âm $U < 0$, IEP) |
+| **GitHub Issue Link** | [Issue #32: [BUG] [FR-17][Backend API] Endpoint POST /api/admin/coupons accepts negative max_uses_per_user (-1) with HTTP 200 OK and stores in SQLite](https://github.com/faker26052005-lgtm/SUT-EShop/issues/32) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá", nhập `max_uses_per_user = -1` $\to$ Trình duyệt hiển thị HTML5 validation tooltip chặn submit form.
+2. Gửi request trực tiếp qua curl tới API backend bypass UI validation:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"NEGUSES2","type":"percent","discount_value":10,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":-1}'
+   ```
+3. Quan sát phản hồi HTTP status code và body.
+4. Kiểm tra CSDL SQLite:
+   ```bash
+   node -e "const sqlite3 = require('./backend/node_modules/sqlite3'); const db = new sqlite3.Database('./backend/database.sqlite'); db.all('SELECT id, code, max_uses_per_user FROM coupons WHERE code=\"NEGUSES2\"', (err, rows) => console.log(rows));"
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "NEGUSES2",
+  "type": "percent",
+  "discount_value": 10,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": -1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: ... `max_uses_per_user` (>= 1)..."
+- Giá trị âm ($U < 0$) thuộc Invalid Equivalence Partition (`EP-17-33`).
+- Backend API bắt buộc phải validate `Number(max_uses_per_user) >= 1`. Khi nhận giá trị âm, API phải từ chối với mã lỗi **HTTP 400 Bad Request** (`{"error": "Số lần sử dụng tối đa mỗi người phải từ 1 trở lên"}`).
+- Không lưu bất kỳ bản ghi coupon nào có số lần dùng âm vào CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Trên Admin Web UI, trường input có `min="1"` nên chặn gửi form từ trình duyệt.
+- Tuy nhiên trên tầng backend API `POST /api/admin/coupons`, hệ thống chấp nhận request và trả về **`HTTP 200 OK`**: `{"message":"Coupon created","id":12}`.
+- Bảng CSDL SQLite lưu trữ bản ghi với `max_uses_per_user = -1`. Do `-1` là giá trị *truthy* trong JavaScript, biểu thức `max_uses_per_user || 1` giữ nguyên giá trị `-1` và insert trực tiếp vào SQL.
+- Khi người dùng sử dụng mã này, phép so sánh số lần đã dùng với số lần tối đa (`usage_count < max_uses_per_user`, ví dụ `0 < -1` $\to$ false) khiến mã bị vô hiệu hóa hoặc gây sai lệch logic đếm số lượt.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp form nhập giá trị âm trên UI Admin:*  
+  ![Form nhập -1](./screenshots/BUG_FR17_11_form_input_neg.png)
+- *Ảnh chụp terminal thực thi API và nhận mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_11_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/32](https://github.com/faker26052005-lgtm/SUT-EShop/issues/32)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 474:
+    ```javascript
+    max_uses_per_user || 1,
+    ```
+    Thiếu hoàn toàn bước kiểm tra `Number(max_uses_per_user) < 1`.
 - **Khắc phục:**
   - Thêm kiểm tra đầu vào trước khi insert:
     ```javascript
