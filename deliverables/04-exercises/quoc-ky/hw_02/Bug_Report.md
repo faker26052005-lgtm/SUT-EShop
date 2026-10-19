@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 9 | 0 | 0 | **9** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 10 | 0 | 0 | **10** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **14** | **1** | **0** | **18** |
+| **TỔNG CỘNG** | | | **3** | **15** | **1** | **0** | **19** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -39,6 +39,7 @@
 | `BUG-FR07-07` | Xóa trống ô số lượng khiến giỏ hàng bị tính toán sai thành "NaN ₫" | FR-07 | `TC_FR07_07` | Major | [Issue #15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15) | Open |
 | `BUG-FR07-08` | Nhập số lượng thập phân (1.5) được chấp nhận, giao diện tự làm tròn xuống 1 và API trả về 200 OK | FR-07 | `TC_FR07_09` | Major | [Issue #16](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16) | Open |
 | `BUG-FR07-09` | Endpoint POST /api/cart chấp nhận payload khuyết hoặc null trường quantity với 200 OK | FR-07 | `TC_FR07_10` | Major | [Issue #17](https://github.com/faker26052005-lgtm/SUT-EShop/issues/17) | Open |
+| `BUG-FR07-10` | Bảng giỏ hàng thiếu hoàn toàn nút +/- để điều chỉnh số lượng sản phẩm theo đặc tả | FR-07 | `TC_FR07_13` | Major | [Issue #18](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -1198,6 +1199,93 @@
     if (!Number.isInteger(numQty) || numQty < 1) {
       return res.status(400).json({ error: "Quantity must be a positive integer" });
     }
+    ```
+
+
+---
+
+#### [BUG-FR07-10] Bảng giỏ hàng thiếu hoàn toàn nút +/- để điều chỉnh số lượng sản phẩm theo đặc tả
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-10` |
+| **Tiêu đề Bug** | `[FR-07][Web UI] Cart table lacks '+' and '-' interactive buttons to adjust product quantity as specified in SRS` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Thiếu tính năng tương tác cốt lõi trên giao diện giỏ hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_13`](Main_Report.md#tc_fr07_13) (Verify quantity decrement via '-' button when quantity exceeds minimum) |
+| **GitHub Issue Link** | [Issue #18: [BUG] [FR-07][Web UI] Cart table lacks '+' and '-' interactive buttons to adjust product quantity as specified in SRS](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- Giỏ hàng có sản phẩm `iPhone 15 Pro Max` với số lượng $Q = 2$.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/product/1`.
+2. Nhập số lượng `2`, bấm "Thêm vào giỏ hàng".
+3. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+4. Quan sát cột "Số lượng" trong bảng danh sách sản phẩm.
+5. Tìm kiếm nút bấm tương tác `-` hoặc `+` để điều chỉnh giảm số lượng sản phẩm từ 2 xuống 1.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Sản phẩm: `iPhone 15 Pro Max` (ID 1)
+- Số lượng hiện tại: `2`
+- Thao tác kỳ vọng: Bấm nút `-` để giảm xuống `1`.
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07 (Mục 1):* "Giỏ hàng hiển thị danh sách sản phẩm gồm: Tên sản phẩm, Đơn giá, **Số lượng (có nút +/- để chỉnh)**, Thành tiền, và nút Xóa."
+- Tại cột "Số lượng", giao diện phải cung cấp các nút bấm tương tác (nút `-`, số lượng hiển thị, nút `+`) cho phép người dùng thay đổi số lượng trực tiếp trong giỏ mà không cần quay lại trang chi tiết sản phẩm.
+- Khi bấm nút `-`, số lượng giảm từ 2 xuống 1, thành tiền và tổng tạm tính cập nhật giảm tương ứng.
+
+**5. Kết quả thực tế (Actual Result):**
+- Cột "Số lượng" trong file `Cart.jsx` chỉ render text thuần: `<td>{item.quantity}</td>`.
+- Hoàn toàn không có bất kỳ nút `-` hay `+` nào trên bảng giỏ hàng. Người dùng không thể điều chỉnh số lượng sản phẩm.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp bảng giỏ hàng chỉ có số lượng tĩnh, thiếu nút +/-:*  
+  ![Cột Số lượng chỉ hiển thị text tĩnh không có nút +/-](./screenshots/BUG_FR07_10_missing_adjustment_buttons.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/18](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/Cart.jsx`, dòng 47: `<td>{item.quantity}</td>`.
+  - `frontend-web/src/context/CartContext.jsx`: Chưa xây dựng hàm cập nhật số lượng (`updateQuantity`).
+- **Khắc phục:**
+  - Trong `CartContext.jsx`, bổ sung hàm cập nhật số lượng:
+    ```javascript
+    const updateQuantity = (index, delta) => {
+      setCart((prev) =>
+        prev.map((item, i) => {
+          if (i === index) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : item;
+          }
+          return item;
+        })
+      );
+    };
+    ```
+  - Trong `Cart.jsx`, thay thế dòng hiển thị số lượng bằng bộ điều khiển tương tác:
+    ```jsx
+    <td className="py-2">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => updateQuantity(index, -1)}
+          className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+        >
+          -
+        </button>
+        <span className="w-8 text-center">{item.quantity}</span>
+        <button
+          onClick={() => updateQuantity(index, 1)}
+          className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+        >
+          +
+        </button>
+      </div>
+    </td>
     ```
 
 ---
