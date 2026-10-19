@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 6 | 0 | 0 | **6** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 7 | 0 | 0 | **7** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **20** | **3** | **0** | **26** |
+| **TỔNG CỘNG** | | | **3** | **21** | **3** | **0** | **27** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -49,6 +49,7 @@
 | `BUG-FR17-04` | Endpoint POST /api/admin/coupons chấp nhận enum type không hợp lệ ('free_shipping') tạo coupon 200 OK | FR-17 | `TC_FR17_13` | Major | [Issue #25](https://github.com/faker26052005-lgtm/SUT-EShop/issues/25) | Open |
 | `BUG-FR17-05` | Form Admin và API cho phép tạo coupon giảm giá 0% (discount_value = 0) | FR-17 | `TC_FR17_14` | Major | [Issue #26](https://github.com/faker26052005-lgtm/SUT-EShop/issues/26) | Open |
 | `BUG-FR17-06` | Form Admin và API chấp nhận giá trị giảm giá âm (-10) cho loại percent | FR-17 | `TC_FR17_15` | Major | [Issue #27](https://github.com/faker26052005-lgtm/SUT-EShop/issues/27) | Open |
+| `BUG-FR17-07` | Form Admin và API chấp nhận tỷ lệ giảm giá vượt 100% (101%) cho loại percent | FR-17 | `TC_FR17_16` | Major | [Issue #28](https://github.com/faker26052005-lgtm/SUT-EShop/issues/28) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -1980,6 +1981,87 @@
 - **Khắc phục:**
   - Frontend: Thêm `min={couponForm.type === 'percent' ? "1" : "1000"}` vào thẻ input.
   - Backend: Thêm `if (discount_value === undefined || discount_value === null || Number(discount_value) <= 0) return res.status(400).json({ error: "Giá trị giảm giá phải lớn hơn 0" });`.
+
+---
+
+#### [BUG-FR17-07] Form Admin và API cho phép tạo coupon có tỷ lệ giảm giá vượt 100% (101%)
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-07` |
+| **Tiêu đề Bug** | `[FR-17][Admin Web & API] Coupon creation accepts discount_value > 100% and creates 101% discount coupon` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm ràng buộc tỷ lệ phần trăm tối đa 100% của đặc tả, tạo mã voucher giảm vượt quá giá trị đơn hàng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_16`](Main_Report.md#tc_fr17_16) (Biên Off-point $V = 101\%$, BVA & Conditional IEP) |
+| **GitHub Issue Link** | [Issue #28: [BUG] [FR-17][Admin Web & API] Coupon creation accepts discount_value > 100% and creates 101% discount coupon](https://github.com/faker26052005-lgtm/SUT-EShop/issues/28) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá".
+2. Tại form "Tạo mã giảm giá mới", điền thông tin:
+   - Mã coupon: `OVER101`
+   - Loại: `Phần trăm (%)`
+   - Giá trị %: `101`
+   - Đơn tối thiểu: `100000`
+   - Ngày hết hạn: `10/31/2026`
+   - Giới hạn/người: `1`
+3. Nhấn nút "Tạo mã" $\to$ Form submit thành công, bảng bên dưới hiển thị dòng mã `OVER101` với `Giá trị: 101%`.
+4. Hoặc gửi request trực tiếp qua curl tới API backend:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"OVER101","type":"percent","discount_value":101,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+5. Kiểm tra CSDL SQLite: `SELECT * FROM coupons WHERE discount_value > 100;`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "OVER101",
+  "type": "percent",
+  "discount_value": 101,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: ... `discount_value` (dương)... Tỷ lệ phần trăm giảm giá tối đa 100%."
+- Trong toán học và phân tích biên ISTQB, tỷ lệ giảm giá theo phần trăm bắt buộc $V \le 100\%$. Điểm biên $V = 101\%$ thuộc Invalid Equivalence Partition (`EP-17-19`, `BVA-17-04-OFF`).
+- Ô nhập liệu giao diện Admin phải có thuộc tính `max="100"` khi chọn loại `percent`.
+- Cả UI và backend API phải từ chối giá trị phần trăm $> 100$ với mã lỗi **HTTP 400 Bad Request** (`{"error": "Tỷ lệ giảm giá theo phần trăm không được vượt quá 100%"}`).
+- Không lưu bất kỳ bản ghi coupon nào có tỷ lệ phần trăm $> 100\%$ vào CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Ô nhập `discount_value` trên Admin Web thiếu thuộc tính `max="100"`, cho phép người dùng nhập và submit số `101`.
+- Endpoint `POST /api/admin/coupons` trả về **`HTTP 200 OK`**: `{"message":"Coupon created","id":5}`.
+- Bảng CSDL SQLite lưu trữ bản ghi có `type = 'percent'` và `discount_value = 101`.
+- Bảng quản trị hiển thị dòng coupon `OVER101` với `Giá trị: 101%`, gây trừ vượt giá trị đơn hàng khi thanh toán.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp form nhập giá trị 101%:*  
+  ![Form nhập 101%](./screenshots/BUG_FR17_07_form_input_101.png)
+- *Ảnh chụp bảng Admin hiển thị coupon 101%:*  
+  ![Bảng Admin hiển thị 101%](./screenshots/BUG_FR17_07_table_101_pct.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_07_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/28](https://github.com/faker26052005-lgtm/SUT-EShop/issues/28)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `frontend-admin/src/App.jsx`, dòng 659–675: Ô input chỉ có `type="number"` và `required`, không có `max={couponForm.type === 'percent' ? "100" : undefined}`.
+  - File `backend/server.js`, dòng 457–481: Không kiểm tra `if (type === 'percent' && Number(discount_value) > 100)` trước khi insert.
+- **Khắc phục:**
+  - Frontend: Thêm `max={couponForm.type === 'percent' ? "100" : undefined}` vào thẻ input.
+  - Backend: Thêm `if (type === 'percent' && Number(discount_value) > 100) return res.status(400).json({ error: "Tỷ lệ giảm giá theo phần trăm không được vượt quá 100%" });`.
 
 ---
 
