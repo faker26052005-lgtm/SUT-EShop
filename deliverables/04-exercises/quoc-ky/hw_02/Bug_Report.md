@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 7 | 0 | 0 | **7** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 8 | 0 | 0 | **8** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **12** | **1** | **0** | **16** |
+| **TỔNG CỘNG** | | | **3** | **13** | **1** | **0** | **17** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -37,6 +37,7 @@
 | `BUG-FR07-05` | Nhập số lượng 0 hệ thống vẫn chấp nhận, lưu bản ghi có thành tiền 0 ₫ | FR-07 | `TC_FR07_05` | Major | [Issue #13](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13) | Open |
 | `BUG-FR07-06` | Hệ thống chấp nhận số lượng âm (-1), hiển thị thành tiền âm trong giỏ | FR-07 | `TC_FR07_06` | Major | [Issue #14](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14) | Open |
 | `BUG-FR07-07` | Xóa trống ô số lượng khiến giỏ hàng bị tính toán sai thành "NaN ₫" | FR-07 | `TC_FR07_07` | Major | [Issue #15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15) | Open |
+| `BUG-FR07-08` | Nhập số lượng thập phân (1.5) được chấp nhận, giao diện tự làm tròn xuống 1 và API trả về 200 OK | FR-07 | `TC_FR07_09` | Major | [Issue #16](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -1031,6 +1032,88 @@
     ```javascript
     if (quantity === undefined || quantity === null || String(quantity).trim() === "") {
       return res.status(400).json({ error: "Quantity is required" });
+    }
+    ```
+
+
+---
+
+#### [BUG-FR07-08] Nhập số lượng thập phân (1.5) được chấp nhận, giao diện tự làm tròn xuống 1 và API trả về 200 OK
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-08` |
+| **Tiêu đề Bug** | `[FR-07][Web UI / API] Decimal quantity (1.5) accepted without integer validation, silently truncated on UI and returning 200 OK on API` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Sai lệch dữ liệu số lượng, tự động cắt xén giá trị của người dùng mà không có thông báo/xác nhận) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_09`](Main_Report.md#tc_fr07_09) (Validate rejection of decimal quantity near lower boundary) |
+| **GitHub Issue Link** | [Issue #16: [BUG] [FR-07][Web UI / API] Decimal quantity (1.5) accepted without integer validation, silently truncated on UI and returning 200 OK on API](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- CSDL SQLite có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/product/1`.
+2. Nhập số lượng thập phân `1.5` vào ô số lượng.
+3. Bấm nút "Thêm vào giỏ hàng". Nút đổi sang trạng thái "Đã thêm".
+4. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+5. Quan sát cột Số lượng của sản phẩm (bị âm thầm cắt bớt thành `1` mà không hề có bất kỳ cảnh báo nào).
+6. (API Verification):
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000, "quantity": 1.5}'
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": 1,
+  "price": 30000000,
+  "quantity": 1.5
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07):**
+> *Trích dẫn SRS FR-07:* "Số lượng là trường thông tin bắt buộc và phải là số nguyên dương ($Q \ge 1$, $Q \in \mathbb{N}^*$)."
+- Form chi tiết sản phẩm trên Web UI phải ràng buộc kiểu số nguyên (ví dụ dùng thuộc tính `step="1"`) hoặc chặn submit và hiển thị thông báo lỗi yêu cầu nhập số nguyên dương.
+- Hệ thống tuyệt đối không được tự ý âm thầm cắt bớt phần thập phân làm thay đổi số lượng người dùng yêu cầu mà không thông báo.
+- API `POST /api/cart` phải từ chối `quantity: 1.5` với HTTP `400 Bad Request` (`{"error": "Quantity must be a positive integer"}`).
+
+**5. Kết quả thực tế (Actual Result):**
+- Web UI cho phép nhập và gửi `1.5`, sau đó hàm `parseInt(quantity, 10)` âm thầm ép kiểu thành `1`, dẫn tới giỏ hàng chỉ có 1 sản phẩm.
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` cho `quantity: 1.5` mà không hề có bước validate số nguyên.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp Web UI nhập số lượng 1.5:*  
+  ![Ô số lượng nhập 1.5](./screenshots/BUG_FR07_08_input_decimal.png)
+- *Ảnh chụp giỏ hàng bị âm thầm cắt thành 1:*  
+  ![Bảng giỏ hàng âm thầm cắt thành 1](./screenshots/BUG_FR07_08_cart_truncated.png)
+- *Ảnh chụp terminal API trả về 200 OK:*  
+  ![API POST /api/cart với quantity 1.5 trả về 200 OK](./screenshots/BUG_FR07_08_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/16](https://github.com/faker26052005-lgtm/SUT-EShop/issues/16)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/ProductDetail.jsx`: Thẻ `<input type="number">` thiếu thuộc tính `step="1"`, và gọi `parseInt(quantity)` làm mất phần thập phân thay vì báo lỗi.
+  - `backend/server.js`: Chưa kiểm tra điều kiện `Number.isInteger(quantity)`.
+- **Khắc phục:**
+  - Trong `ProductDetail.jsx`: Thêm `step="1"` và kiểm tra hợp lệ:
+    ```javascript
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 1) {
+      alert("Số lượng phải là số nguyên dương.");
+      return;
+    }
+    ```
+  - Trong `backend/server.js`:
+    ```javascript
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 1) {
+      return res.status(400).json({ error: "Quantity must be a positive integer" });
     }
     ```
 
