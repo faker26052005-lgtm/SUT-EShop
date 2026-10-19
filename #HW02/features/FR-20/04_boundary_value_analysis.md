@@ -1,8 +1,5 @@
 # FR-20 – Mobile: Đăng ký và Hủy đơn · Bước 5: Boundary Value Analysis
 
-> BVA chỉ áp dụng cho biến có thứ tự hoặc là số. Biến thể dùng: **3-value** (min−1, min, min+1 và max−1, max, max+1); miền không có biên trên thì bỏ phần max.
-> TODO: ghi lại biến thể BVA theo đúng cách giảng viên dạy (2-value / 3-value / robust).
-
 ## 4.1 Biến được chọn cho BVA và lý do
 | Biến | Miền hợp lệ | Biên dưới | Biên trên | Lý do chọn |
 | :--- | :--- | :--- | :--- | :--- |

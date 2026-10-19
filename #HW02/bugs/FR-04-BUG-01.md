@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-04: "Số điện thoại hợp lệ: bắt đầu bằng số `0`, từ 10–11 chữ số." |
 | Môi trường | Backend localhost:3000 (`node server.js`), SUT commit TODO (chạy `git rev-parse --short HEAD` trong thư mục eshop-sut) |
 | Test case liên quan | DT-03, DT-04, DT-05, DT-06, DT-07, DT-08, DT-08b, DT-08c, BV-01, BV-04, BV-05, BV-07 (12 test, cùng một nguyên nhân gốc) |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/43 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện

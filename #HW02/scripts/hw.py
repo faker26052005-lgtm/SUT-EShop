@@ -3,6 +3,11 @@
 
   python3 scripts/hw.py new-feature FR-09 "Mã giảm giá" B
   python3 scripts/hw.py new-entry   FR-09 "Bước 3 - lớp tương đương" --tool "Claude Sonnet 5.5"
+  python3 scripts/hw.py new-entry   GENERAL "Hỏi cách dùng Postman" --tool "Claude Sonnet 5.5"
+  python3 scripts/hw.py new-entry   SKILL "Soạn SKILL.md" --when "2026-10-18 20:15"   (ghi bổ sung)
+  python3 scripts/hw.py issues FR-04 --repo OWNER/REPO --dry-run   (xem trước)
+  python3 scripts/hw.py issues FR-04 --repo OWNER/REPO              (tạo Issue bằng GitHub CLI)
+  python3 scripts/hw.py issues FR-04 --repo OWNER/REPO --url        (in link mở sẵn form Issue)
   python3 scripts/hw.py build-report
   python3 scripts/hw.py check
   python3 scripts/hw.py package 25127001 090
@@ -13,20 +18,11 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import unicodedata
+import urllib.parse
 import zipfile
 from pathlib import Path
-
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
-if hasattr(sys.stderr, "reconfigure"):
-    try:
-        sys.stderr.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
 
 ROOT = Path(__file__).resolve().parent.parent
 TPL_FEATURE = ROOT / "templates" / "feature"
@@ -46,6 +42,17 @@ def norm_fr(s):
     if not m:
         sys.exit("Mã feature phải có dạng FR-09 (hoặc fr09).")
     return "FR-%02d" % int(m.group(1))
+
+
+def norm_scope(s):
+    """Phạm vi của một entry: mã feature (FR-09) hoặc một từ như GENERAL, SKILL, REPORT."""
+    s = s.strip()
+    m = re.fullmatch(r"(?i)fr-?(\d{1,2})", s)
+    if m:
+        return "FR-%02d" % int(m.group(1))
+    if re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", s):
+        return s.upper()
+    sys.exit("Phạm vi phải là mã feature (FR-09) hoặc một từ như GENERAL, SKILL, REPORT.")
 
 
 def slugify(s):
@@ -82,13 +89,16 @@ def cmd_new_feature(a):
 
 
 def cmd_new_entry(a):
-    fr = norm_fr(a.fr)
+    fr = norm_scope(a.fr)
     d = ROOT / "ai_audit" / "entries" / fr
     d.mkdir(parents=True, exist_ok=True)
     n = len(list(d.glob("*.md"))) + 1
     entry_id = "%s-%02d" % (fr, n)
     now = datetime.datetime.now().astimezone()
-    stamp = now.strftime("%Y-%m-%d %H:%M:%S (UTC%z)")
+    if a.when:
+        stamp = "%s (nhập tay, ghi bổ sung)" % a.when.strip()
+    else:
+        stamp = now.strftime("%Y-%m-%d %H:%M:%S (UTC%z)")
     tool = a.tool or "TODO: tên công cụ + model"
     fname = "%02d_%s.md" % (n, slugify(a.step))
     t = read(ENTRY_TPL)
@@ -109,6 +119,97 @@ def cmd_new_entry(a):
 def feature_dirs():
     base = ROOT / "features"
     return sorted(p for p in base.glob("FR-*") if p.is_dir()) if base.exists() else []
+
+
+def parse_bug(path):
+    t = read(path)
+    m = re.search(r"\*\*Tiêu đề Issue:\*\*\s*`(.+?)`", t)
+    if not m:
+        return None
+    head, *secs = re.split(r"(?m)^## ", t)
+    rows, link = [], None
+    for ln in head.splitlines():
+        if not ln.startswith("|"):
+            continue
+        if ln.startswith("| GitHub Issue"):
+            val = ln.split("|")[2].strip()
+            link = val if val.startswith("http") else None
+            continue
+        rows.append(ln)
+    parts = ["\n".join(rows)]
+    for sec in secs:
+        name, _, rest = sec.partition("\n")
+        if name.strip().startswith("Bằng chứng"):
+            continue
+        parts.append("## " + name + "\n" + rest.rstrip())
+    parts.append("_Ảnh chụp được đính kèm ở bình luận bên dưới._")
+    return {"id": path.stem, "title": m.group(1), "body": "\n\n".join(parts).strip() + "\n", "link": link, "path": path}
+
+
+def set_link(bug, url):
+    t = read(bug["path"])
+    t = re.sub(r"(?m)^\| GitHub Issue \| .*\|$", "| GitHub Issue | %s |" % url, t, count=1)
+    write(bug["path"], t)
+    bl = ROOT / "bugs" / "BUG_LIST.md"
+    if bl.exists():
+        lines = read(bl).splitlines()
+        for i, ln in enumerate(lines):
+            if ln.startswith("| %s |" % bug["id"]):
+                cells = ln.split("|")
+                if len(cells) >= 8:
+                    cells[6] = " %s " % url
+                    lines[i] = "|".join(cells)
+        write(bl, "\n".join(lines) + "\n")
+
+
+def cmd_issues(a):
+    prefix = (norm_scope(a.filter) + "-") if a.filter else ""
+    files = sorted(p for p in (ROOT / "bugs").glob("*-BUG-*.md") if p.name.upper().startswith(prefix))
+    bugs = [b for b in (parse_bug(p) for p in files) if b]
+    if not bugs:
+        sys.exit("Không tìm thấy file bug nào trong bugs/ (tên dạng FR-04-BUG-01.md, có dòng 'Tiêu đề Issue').")
+    for b in bugs:
+        mark = "ĐÃ CÓ LINK, sẽ bỏ qua: " + b["link"] if b["link"] else "chưa có Issue"
+        print("- %s | %s | %s" % (b["id"], b["title"], mark))
+    todo = [b for b in bugs if not b["link"]]
+    if a.url:
+        for b in todo:
+            q = {"title": b["title"], "body": b["body"]}
+            if a.labels:
+                q["labels"] = a.labels
+            url = "https://github.com/%s/issues/new?%s" % (a.repo, urllib.parse.urlencode(q, quote_via=urllib.parse.quote))
+            warn = "  (CẢNH BÁO: link dài %d ký tự, có thể bị cắt; hãy dùng chế độ gh)" % len(url) if len(url) > 7000 else ""
+            print("\n%s%s\n%s" % (b["id"], warn, url))
+        print("\nMở từng link, kéo thả ảnh vào khung mô tả rồi bấm Submit. Sau đó tự điền link Issue vào file bug và BUG_LIST.md.")
+        return
+    if a.dry_run:
+        for b in todo:
+            print("\n[dry-run] gh issue create --repo %s --title %r (%d ký tự nội dung)" % (a.repo, b["title"], len(b["body"])))
+        return
+    if not shutil.which("gh"):
+        sys.exit("Chưa cài GitHub CLI (gh). Cài từ https://cli.github.com rồi chạy `gh auth login`, hoặc dùng --url.")
+    if not todo:
+        print("Không còn bug nào cần tạo Issue.")
+        return
+    if not a.yes:
+        if input("Sẽ tạo %d Issue trong %s. Gõ y để tiếp tục: " % (len(todo), a.repo)).strip().lower() != "y":
+            sys.exit("Đã hủy.")
+    for b in todo:
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(b["body"])
+            body_path = f.name
+        cmd = ["gh", "issue", "create", "--repo", a.repo, "--title", b["title"], "--body-file", body_path]
+        if a.labels:
+            cmd += ["--label", a.labels]
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+        Path(body_path).unlink(missing_ok=True)
+        if r.returncode != 0:
+            print("LỖI khi tạo %s: %s" % (b["id"], (r.stderr or r.stdout).strip()))
+            continue
+        url = r.stdout.strip().splitlines()[-1]
+        set_link(b, url)
+        print("Đã tạo %s -> %s (đã ghi link vào file bug và BUG_LIST.md)" % (b["id"], url))
+    print("Việc còn lại: mở từng Issue, kéo thả ảnh chụp vào bình luận, và chụp trang danh sách Issues.")
 
 
 def cmd_build_report(_):
@@ -194,7 +295,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("new-feature"); s.add_argument("fr"); s.add_argument("name"); s.add_argument("pool", choices=list("ABCD")); s.set_defaults(f=cmd_new_feature)
-    s = sub.add_parser("new-entry"); s.add_argument("fr"); s.add_argument("step"); s.add_argument("--tool"); s.set_defaults(f=cmd_new_entry)
+    s = sub.add_parser("new-entry"); s.add_argument("fr", help="FR-09 hoặc phạm vi chung: GENERAL, SKILL, REPORT..."); s.add_argument("step"); s.add_argument("--tool"); s.add_argument("--when", help="giờ thật nếu ghi bổ sung, vd \"2026-10-18 20:15\""); s.set_defaults(f=cmd_new_entry)
+    s = sub.add_parser("issues")
+    s.add_argument("filter", nargs="?", help="chỉ xử lý bug của feature này, vd FR-04")
+    s.add_argument("--repo", required=True, help="repo GitHub của nhóm, dạng OWNER/REPO")
+    s.add_argument("--labels", help="nhãn đã tồn tại trong repo, vd bug,FR-04")
+    s.add_argument("--url", action="store_true", help="in link mở sẵn form tạo Issue (không cần gh)")
+    s.add_argument("--dry-run", action="store_true", help="chỉ xem trước")
+    s.add_argument("--yes", action="store_true", help="không hỏi xác nhận")
+    s.set_defaults(f=cmd_issues)
     s = sub.add_parser("build-report"); s.set_defaults(f=cmd_build_report)
     s = sub.add_parser("check"); s.set_defaults(f=lambda a: sys.exit(1 if cmd_check(a) else 0))
     s = sub.add_parser("package"); s.add_argument("student_id"); s.add_argument("grade"); s.set_defaults(f=cmd_package)

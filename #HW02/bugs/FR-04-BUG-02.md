@@ -10,7 +10,7 @@
 | Yêu cầu SRS liên quan | FR-04: người dùng "có thể cập nhật" Họ Tên, SĐT, Địa chỉ giao hàng. **Giả định A1:** cập nhật một trường không được làm mất các trường còn lại (SRS không nói rõ, đã đưa vào `clarifications.md`, mục 8) |
 | Môi trường | Backend localhost:3000 (`node server.js`), SUT commit TODO (chạy `git rev-parse --short HEAD` trong thư mục eshop-sut) |
 | Test case liên quan | BL-02 (kiểm tra trực tiếp). Hiện tượng xuất hiện trong **31 trên 34** test (cột side-effect) |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/44 |
 | Trạng thái | Open (chờ xác nhận giả định A1 với GV/TA) |
 
 ## Các bước tái hiện

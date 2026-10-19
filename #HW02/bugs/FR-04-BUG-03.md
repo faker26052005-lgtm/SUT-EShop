@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-04: "không thể tự thay đổi thuộc tính `role`"; SEC-06 |
 | Môi trường | Backend localhost:3000 (`node server.js`), SUT commit TODO (chạy `git rev-parse --short HEAD` trong thư mục eshop-sut) |
 | Test case liên quan | BL-04 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/45 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện
