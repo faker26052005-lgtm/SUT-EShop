@@ -62,6 +62,7 @@
 | `BUG-FR17-17` | Endpoint /api/apply-coupon từ chối đơn hàng bằng đúng ngưỡng tối thiểu tại điểm biên On-point | FR-17 | `TC_FR17_30` | Major | [Issue #38](https://github.com/faker26052005-lgtm/SUT-EShop/issues/38) | Open |
 | `BUG-FR17-18` | Endpoint /api/apply-coupon cho phép số tiền thanh toán bị âm khi mức giảm vượt quá giá trị đơn | FR-17 | `TC_FR17_34` | Critical | [Issue #39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39) | Open |
 | `BUG-FR20-01` | Endpoint PUT /api/orders/:id/cancel cho phép khách hàng tự hủy đơn ở trạng thái shipping | FR-20 | `TC_MOB_05` | Critical | [Issue #40](https://github.com/faker26052005-lgtm/SUT-EShop/issues/40) | Open |
+| `BUG-FR20-02` | Endpoint PUT /api/orders/:id/cancel chấp nhận trạng thái dị thường (corrupted_state) và đổi thành canceled | FR-20 | `TC_MOB_08` | Medium | [Issue #41](https://github.com/faker26052005-lgtm/SUT-EShop/issues/41) | Open |
 
 ---
 
@@ -3030,8 +3031,86 @@
     }
     ```
 
+---
+
+#### [BUG-FR20-02] Endpoint PUT /api/orders/:id/cancel chấp nhận trạng thái dị thường (corrupted_state) và đổi thành canceled
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR20-02` |
+| **Tiêu đề Bug** | `[FR-20][Backend API] Endpoint PUT /api/orders/:id/cancel mutates orders with corrupted/unknown status to 'canceled'` |
+| **Chức năng (Feature)** | FR-20: Tra cứu & Hủy đơn hàng Mobile / FR-10: Máy trạng thái Đơn hàng |
+| **Môi trường thử nghiệm**| Backend: `http://localhost:3000` • SQLite 3 • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Medium** (Thiếu phòng thủ Robustness khi trạng thái đơn không nằm trong tập hợp trạng thái hợp lệ) |
+| **Mức ưu tiên (Priority)**| **Medium (P2)** |
+| **Test Case phát hiện** | [`TC_MOB_08`](Main_Report.md#tc_mob_08) (Robustness & State Integrity Verification) |
+| **GitHub Issue Link** | [Issue #41: [BUG] [FR-20][Backend API] Endpoint PUT /api/orders/:id/cancel mutates orders with corrupted/unknown status to 'canceled'](https://github.com/faker26052005-lgtm/SUT-EShop/issues/41) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Trong bảng `orders`, đơn hàng `#106` thuộc sở hữu của User 1 (`user_id = 1`) có `status = 'corrupted_state'`.
+- Người dùng User 1 đã đăng nhập thành công và sở hữu token JWT hợp lệ.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Kiểm tra CSDL xác nhận đơn hàng `#106` mang trạng thái dị thường `'corrupted_state'`:
+   ```bash
+   SELECT id, user_id, status FROM orders WHERE id = 106;
+   ```
+2. Gửi HTTP PUT request đến endpoint hủy đơn:
+   ```bash
+   curl -i -X PUT http://localhost:3000/api/orders/106/cancel \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{}'
+   ```
+3. Quan sát mã phản hồi HTTP và dữ liệu JSON trả về.
+4. Kiểm tra lại trạng thái đơn hàng `#106` trong SQLite DB.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Endpoint: `PUT /api/orders/106/cancel`
+- Headers: `Authorization: Bearer <user1_jwt>`, `Content-Type: application/json`
+- Body: `{}`
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-10):**
+> *Trích dẫn SRS FR-10:* "Hệ thống chỉ cho phép hủy đơn hàng khi trạng thái hiện tại là `pending` hoặc `confirmed`. Mọi trạng thái khác không nằm trong danh mục chuyển đổi hợp lệ đều phải bị từ chối và giữ nguyên trạng thái cũ."
+- Tầng API: Trả về HTTP Status **`400 Bad Request`** kèm thông báo lỗi từ chối.
+- Tầng CSDL: Trường `orders.status` của đơn `#106` **bắt buộc giữ nguyên `'corrupted_state'`**, không bị ghi đè.
+
+**5. Kết quả thực tế (Actual Result):**
+- Backend chấp nhận yêu cầu và phản hồi HTTP **`200 OK`**:
+  ```json
+  {"message": "Order canceled successfully"}
+  ```
+- Tầng CSDL: Bản ghi đơn hàng `#106` bị cập nhật trường `status` từ `'corrupted_state'` sang **`'canceled'`**.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal thực thi API và truy vấn CSDL SQLite:*  
+  ![Terminal Execution Proof](./screenshots/BUG_FR20_02_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/41](https://github.com/faker26052005-lgtm/SUT-EShop/issues/41)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 328–331:
+    ```javascript
+    // Lẽ ra phải là: if (order.status !== 'pending' && order.status !== 'confirmed')
+    if (order.status === "delivered" || order.status === "canceled") {
+      return res.status(400).json({ error: "Cannot cancel this order." });
+    }
+    ```
+    Logic kiểm tra áp dụng chiến lược Blacklisting không triệt để thay vì Whitelisting. Khi gặp các trạng thái dị thường ngoài mong đợi, backend vẫn cho phép cập nhật đơn sang `canceled`.
+- **Khắc phục:**
+  - Áp dụng nguyên tắc Whitelisting nghiêm ngặt:
+    ```javascript
+    if (order.status !== "pending" && order.status !== "confirmed") {
+      return res.status(400).json({ error: "Cannot cancel this order." });
+    }
+    ```
+
+---
 
 ## 3. PHÂN TÍCH NGUYÊN NHÂN LỖI & ĐÁNH GIÁ CHẤT LƯỢNG SUT
+
 
 ### 3.1 Phân Loại Lỗi Theo Bản Chất Kỹ Thuật
 1. **Lỗi vi phạm giá trị biên (Boundary Off-by-one & Unbounded Inputs):**
