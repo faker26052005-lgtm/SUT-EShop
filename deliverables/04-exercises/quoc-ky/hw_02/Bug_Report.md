@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 5 | 0 | 0 | **5** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 6 | 0 | 0 | **6** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **10** | **1** | **0** | **14** |
+| **TỔNG CỘNG** | | | **3** | **11** | **1** | **0** | **15** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -35,6 +35,7 @@
 | `BUG-FR07-03` | Endpoint POST /api/cart chấp nhận ID sản phẩm không tồn tại (9999) | FR-07 | `TC_FR07_03` | Major | [Issue #11](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11) | Open |
 | `BUG-FR07-04` | Endpoint POST /api/cart chấp nhận ID sai kiểu dữ liệu ("abc") không validate | FR-07 | `TC_FR07_04` | Major | [Issue #12](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12) | Open |
 | `BUG-FR07-05` | Nhập số lượng 0 hệ thống vẫn chấp nhận, lưu bản ghi có thành tiền 0 ₫ | FR-07 | `TC_FR07_05` | Major | [Issue #13](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13) | Open |
+| `BUG-FR07-06` | Hệ thống chấp nhận số lượng âm (-1), hiển thị thành tiền âm trong giỏ | FR-07 | `TC_FR07_06` | Major | [Issue #14](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -856,6 +857,95 @@
     ```javascript
     if (!quantity || Number(quantity) < 1) {
       return res.status(400).json({ error: "Quantity must be at least 1" });
+    }
+    ```
+
+---
+
+#### [BUG-FR07-06] Hệ thống chấp nhận số lượng âm (-1), hiển thị thành tiền âm và làm sai lệch tổng tiền giỏ hàng
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-06` |
+| **Tiêu đề Bug** | `[FR-07][Web UI / API] Negative quantity (-1) accepted, producing negative subtotal and total amount` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi số học logic nghiêm trọng: cho phép số lượng âm dẫn tới thành tiền âm và tổng tiền âm) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_06`](Main_Report.md#tc_fr07_06) (Validate rejection of negative integer quantity input) |
+| **GitHub Issue Link** | [Issue #14: [BUG] [FR-07][Web UI / API] Negative quantity (-1) accepted, producing negative subtotal and total amount](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- CSDL SQLite có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/product/1`.
+2. Tại ô nhập số lượng, xóa số 1 và nhập số âm `-1`.
+3. Bấm nút "Thêm vào giỏ hàng".
+4. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+5. Quan sát giá trị hiển thị tại các cột Số lượng, Thành tiền và Tổng tạm tính.
+6. (API Verification):
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000, "quantity": -1}'
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": 1,
+  "price": 30000000,
+  "quantity": -1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-06 & FR-07):**
+> *Trích dẫn SRS FR-06 & FR-07:* "Số lượng sản phẩm trong giỏ hàng phải là số nguyên dương, tối thiểu là 1 ($Q \in \mathbb{Z}^+, Q \ge 1$)."
+- Web UI input phải chặn nhập ký tự âm `-` hoặc tự động reset về 1 kèm cảnh báo lỗi.
+- API `POST /api/cart` phải từ chối `quantity < 0` với HTTP `400 Bad Request` (`{"error": "Quantity must be a positive integer"}`).
+- Bảng giỏ hàng tuyệt đối không bao giờ hiển thị số lượng âm hoặc thành tiền mang giá trị âm.
+
+**5. Kết quả thực tế (Actual Result):**
+- Input số lượng tại `ProductDetail.jsx` nhận ký tự âm `-1`.
+- Bảng giỏ hàng hiển thị dòng sản phẩm với:
+  - `Số lượng: -1`
+  - `Thành tiền: -30,000,000 ₫` (tiền âm)
+  - `Tổng tạm tính: -30,000,000 ₫` (tổng tiền âm phi lý)
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` (`{"message":"Added to cart"}`) và lưu thẳng bản ghi $Q=-1$ vào backend state.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp Web UI nhập Q = -1:*  
+  ![Nhập Q=-1 trên trang chi tiết](./screenshots/BUG_FR07_06_input_negative.png)
+- *Ảnh chụp bảng giỏ hàng lưu Q=-1 và tiền âm (-30tr):*  
+  ![Bảng giỏ hàng hiển thị Q=-1 và -30tr](./screenshots/BUG_FR07_06_cart_negative.png)
+- *Ảnh chụp terminal API trả về 200 OK:*  
+  ![API POST /api/cart với Q=-1 trả về 200 OK](./screenshots/BUG_FR07_06_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/14](https://github.com/faker26052005-lgtm/SUT-EShop/issues/14)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/ProductDetail.jsx`, dòng 56–62.
+  - `backend/server.js`, dòng 290–295.
+- **Khắc phục:**
+  - Chặn giá trị âm tại input:
+    ```jsx
+    <input
+      type="number"
+      min="1"
+      value={quantity}
+      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+      className="border p-2 w-20 rounded"
+    />
+    ```
+  - Thêm kiểm tra `quantity > 0` tại backend `server.js`:
+    ```javascript
+    const numQty = Number(quantity);
+    if (!Number.isInteger(numQty) || numQty <= 0) {
+      return res.status(400).json({ error: "Quantity must be a positive integer" });
     }
     ```
 
