@@ -57,13 +57,13 @@ Sinh viên lựa chọn 4 chức năng từ 4 Pool độc lập theo quy định
 *Căn cứ quy định mục 14 của đề tài HW02, trước khi nén nộp bài trên Moodle cần kiểm tra đầy đủ các mục sau:*
 
 - [ ] **Định dạng tên file nén (.zip):** `23120138_HW02_AI_DomainTesting_100.zip`
-- [ ] **Báo cáo chính (Main Report):** Có cả file [`Main_Report.md`](Main_Report.md) và file PDF kết xuất tương ứng (`Main_Report.pdf`), bao gồm đầy đủ báo cáo Domain Testing và BVA cho cả 4 chức năng.
-- [ ] **Báo cáo lỗi (Bug Report):** Có file [`Bug_Report.md`](Bug_Report.md) và file PDF kết xuất, chứa danh sách chi tiết các bug phát hiện kèm link trực tiếp đến GitHub Issues và ảnh chụp màn hình minh chứng.
-- [ ] **Báo cáo kiểm toán AI (AI Audit Report):** Có file [`AI Audit Report.md`](AI%20Audit%20Report.md) và file PDF kết xuất, tuân thủ đúng biểu mẫu `[AI-02]`, log đầy đủ prompt/output và có phần **AI Critique** từ 200–300 từ theo mục 10.
-- [ ] **Nhật ký Git Commit (Git Commit Log):** Có file `git_commit_log.txt` chứng minh rõ ràng quy trình làm việc từng bước (1 commit / 1 step cho mỗi chức năng).
+- [x] **Báo cáo chính (Main Report):** Có cả file [`Main_Report.md`](Main_Report.md) và file PDF kết xuất tương ứng (`Main_Report.pdf`), bao gồm đầy đủ báo cáo Domain Testing và BVA cho cả 4 chức năng.
+- [x] **Báo cáo lỗi (Bug Report):** Có file [`Bug_Report.md`](Bug_Report.md) và file PDF kết xuất, chứa danh sách chi tiết các bug phát hiện kèm link trực tiếp đến GitHub Issues và ảnh chụp màn hình minh chứng.
+- [x] **Báo cáo kiểm toán AI (AI Audit Report):** Có file [`AI Audit Report.md`](AI%20Audit%20Report.md) và file PDF kết xuất, tuân thủ đúng biểu mẫu `[AI-02]`, log đầy đủ prompt/output và có phần **AI Critique** từ 200–300 từ theo mục 10.
+- [x] **Nhật ký Git Commit (Git Commit Log):** Có file `git_commit_log.txt` chứng minh rõ ràng quy trình làm việc từng bước (1 commit / 1 step cho mỗi chức năng).
 - [ ] **Tài liệu README.md:** Chứa đầy đủ thông tin sinh viên, bảng tự đánh giá 100 điểm, số liệu thống kê kiểm thử và đường link Video Demo YouTube.
-- [ ] **Thư mục ảnh minh chứng (`screenshots/`):** Chứa toàn bộ ảnh chụp màn hình lỗi trên hệ thống EShop và ảnh chụp màn hình các Issue đã đăng trên GitHub.
-- [ ] **Mã nguồn Agent Skills:** Đã lưu trữ và tài liệu hóa cách sử dụng hai skill (`domain-testing-value-analysis` và `hw-ai-audit`).
+- [x] **Thư mục ảnh minh chứng (`screenshots/`):** Chứa toàn bộ ảnh chụp màn hình lỗi trên hệ thống EShop và ảnh chụp màn hình các Issue đã đăng trên GitHub.
+- [x] **Mã nguồn Agent Skills:** Đã lưu trữ và tài liệu hóa cách sử dụng hai skill (`domain-testing-value-analysis` và `hw-ai-audit`).
 
 ---
 
