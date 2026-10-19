@@ -43,8 +43,8 @@ Sinh viên lựa chọn 4 chức năng từ 4 Pool độc lập theo quy định
 | :--- | :---: | :--- |
 | **Số tính năng kiểm thử (Features)** | 4 | Đại diện cho cả 4 Pools: Web, Admin, Mobile, API |
 | **Tổng số Test Cases thiết kế** | 108| Thiết kế theo ISTQB FL v4.0 §4.2.1 & §4.2.2 |
-| **Số Test Cases đã thực thi (Executed)** | 85| Chạy trực tiếp trên SUT EShop |
-| **Số Test Cases ĐẠT (Passed)** | 42| Hoạt động đúng như SRS mô tả |
+| **Số Test Cases đã thực thi (Executed)** | 86| Chạy trực tiếp trên SUT EShop |
+| **Số Test Cases ĐẠT (Passed)** | 43| Hoạt động đúng như SRS mô tả |
 | **Số Test Cases THẤT BẠI (Failed)** | 43| Phát hiện sai lệch so với SRS |
 | **Số Test Cases BỊ CHẶN (Blocked)** | 0| Phụ thuộc lỗi khác hoặc thiếu cấu hình |
 | **Tổng số Lỗi (Bugs) phát hiện & báo cáo** | 38 | Báo cáo chi tiết trên Markdown & GitHub Issues |
