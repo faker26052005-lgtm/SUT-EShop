@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 3 | 0 | 0 | **3** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 4 | 0 | 0 | **4** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **8** | **1** | **0** | **12** |
+| **TỔNG CỘNG** | | | **3** | **9** | **1** | **0** | **13** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -33,6 +33,7 @@
 | `BUG-FR07-01` | Nút "Thêm vào giỏ hàng" tại trang chi tiết sản phẩm bỏ qua lần bấm đầu tiên | FR-07 | `TC_FR07_01` | Major | [Issue #9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9) | Open |
 | `BUG-FR07-02` | Thêm cùng sản phẩm tạo dòng mới riêng biệt thay vì tăng số lượng | FR-07 | `TC_FR07_02` | Major | [Issue #10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10) | Open |
 | `BUG-FR07-03` | Endpoint POST /api/cart chấp nhận ID sản phẩm không tồn tại (9999) | FR-07 | `TC_FR07_03` | Major | [Issue #11](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11) | Open |
+| `BUG-FR07-04` | Endpoint POST /api/cart chấp nhận ID sai kiểu dữ liệu ("abc") không validate | FR-07 | `TC_FR07_04` | Major | [Issue #12](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -676,6 +677,96 @@
     if (!id) return res.status(400).json({ error: "Product ID is required" });
 
     db.get("SELECT id, name, price FROM products WHERE id = ?", [id], (err, product) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (!product) return res.status(404).json({ error: "Product not found" });
+
+      if (!userCarts[userId]) userCarts[userId] = [];
+      userCarts[userId].push({ ...product, quantity: quantity || 1 });
+      res.json({ message: "Added to cart" });
+    });
+  });
+  ```
+
+---
+
+#### [BUG-FR07-04] Endpoint POST /api/cart chấp nhận ID sai kiểu dữ liệu ("abc") mà không thực hiện Schema Validation
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-04` |
+| **Tiêu đề Bug** | `[FR-07][Backend API] Endpoint POST /api/cart accepts malformed non-numeric product ID ("abc") without validation` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart API - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm Schema/Type Validation, dẫn tới sai lệch kiểu dữ liệu trong state hệ thống) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_04`](Main_Report.md#tc_fr07_04) (Validate rejection when submitting malformed product ID via API) |
+| **GitHub Issue Link** | [Issue #12: [BUG] [FR-07][Backend API] Endpoint POST /api/cart accepts malformed non-numeric product ID ("abc") without validation](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại cổng `:3000`.
+- Người dùng `test@eshop.com` có JWT Bearer token hợp lệ.
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Lấy Bearer token đăng nhập cho tài khoản `test@eshop.com`.
+2. Gửi request HTTP `POST /api/cart` kèm payload chứa `id = "abc"` (chuỗi ký tự):
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": "abc", "price": 100000, "quantity": 1}'
+   ```
+3. Gửi request `GET http://localhost:3000/api/cart` để kiểm tra giỏ hàng người dùng.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": "abc",
+  "price": 100000,
+  "quantity": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-07 & API Spec §4.2):**
+> *Trích dẫn API Spec §4.2:* "HTTP 400 Bad Request; từ chối xử lý dữ liệu sai kiểu."
+- Backend API bắt buộc phải thực hiện Schema/Type Validation đối với trường `id`.
+- Trường `id` phải là số nguyên dương ($id \in \mathbb{Z}^+$).
+- Khi nhận ID mang định dạng chuỗi chữ không hợp lệ, hệ thống phải từ chối ngay với mã lỗi HTTP `400 Bad Request` (`{"error": "Invalid product ID format"}`).
+- Giỏ hàng của người dùng không được phép lưu trữ phần tử chứa ID sai kiểu.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` (`{"message":"Added to cart"}`).
+- Gọi `GET /api/cart` phát hiện bản ghi malformed `{"id":"abc", "price":100000, "quantity":1}` bị lưu thẳng vào mảng giỏ hàng của user.
+- Backend hoàn toàn bỏ qua bước kiểm tra kiểu dữ liệu đầu vào.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp terminal kiểm thử API (200 OK & chèn bản ghi id="abc"):*  
+  ![API POST /api/cart chấp nhận ID abc](./screenshots/BUG_FR07_04_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/12](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, các dòng 290–295.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  app.post("/api/cart", authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    if (!userCarts[userId]) userCarts[userId] = [];
+    userCarts[userId].push(req.body);
+    res.json({ message: "Added to cart" });
+  });
+  ```
+- **Khắc phục:** Bổ sung bước kiểm tra số nguyên dương cho `id`:
+  ```javascript
+  app.post("/api/cart", authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { id, quantity } = req.body;
+    const numId = Number(id);
+
+    if (!id || !Number.isInteger(numId) || numId <= 0) {
+      return res.status(400).json({ error: "Invalid product ID format" });
+    }
+
+    db.get("SELECT id, name, price FROM products WHERE id = ?", [numId], (err, product) => {
       if (err) return res.status(500).json({ error: err.message });
       if (!product) return res.status(404).json({ error: "Product not found" });
 
