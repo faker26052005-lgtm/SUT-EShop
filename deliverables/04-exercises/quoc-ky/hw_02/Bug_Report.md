@@ -17,10 +17,10 @@
 | Phân hệ / Pool | Mã FR | Tên tính năng | Critical | Major | Medium | Minor | Tổng số Bug |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
-| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 4 | 0 | 0 | **4** |
+| **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 5 | 0 | 0 | **5** |
 | **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **9** | **1** | **0** | **13** |
+| **TỔNG CỘNG** | | | **3** | **10** | **1** | **0** | **14** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -34,6 +34,7 @@
 | `BUG-FR07-02` | Thêm cùng sản phẩm tạo dòng mới riêng biệt thay vì tăng số lượng | FR-07 | `TC_FR07_02` | Major | [Issue #10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10) | Open |
 | `BUG-FR07-03` | Endpoint POST /api/cart chấp nhận ID sản phẩm không tồn tại (9999) | FR-07 | `TC_FR07_03` | Major | [Issue #11](https://github.com/faker26052005-lgtm/SUT-EShop/issues/11) | Open |
 | `BUG-FR07-04` | Endpoint POST /api/cart chấp nhận ID sai kiểu dữ liệu ("abc") không validate | FR-07 | `TC_FR07_04` | Major | [Issue #12](https://github.com/faker26052005-lgtm/SUT-EShop/issues/12) | Open |
+| `BUG-FR07-05` | Nhập số lượng 0 hệ thống vẫn chấp nhận, lưu bản ghi có thành tiền 0 ₫ | FR-07 | `TC_FR07_05` | Major | [Issue #13](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13) | Open |
 | `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
@@ -776,6 +777,87 @@
     });
   });
   ```
+
+---
+
+#### [BUG-FR07-05] Hệ thống chấp nhận số lượng 0 (Boundary Off-point), cho phép lưu bản ghi có thành tiền 0 ₫ vào giỏ hàng
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR07-05` |
+| **Tiêu đề Bug** | `[FR-07][Web UI / API] Quantity zero (0) accepted, rendering zero-priced item and 200 OK` |
+| **Chức năng (Feature)** | FR-07: Giỏ hàng (Shopping Cart - Pool B) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi vi phạm giá trị biên BVA Off-point $Q=0$; tạo bản ghi đơn hàng vô nghĩa 0 ₫) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR07_05`](Main_Report.md#tc_fr07_05) (Validate rejection of quantity zero input on Cart item) |
+| **GitHub Issue Link** | [Issue #13: [BUG] [FR-07][Web UI / API] Quantity zero (0) accepted, rendering zero-priced item and 200 OK](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend và frontend-web đang hoạt động bình thường.
+- CSDL SQLite có sẵn sản phẩm ID 1 (`iPhone 15 Pro Max`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở trình duyệt, truy cập `http://localhost:5173/product/1`.
+2. Tại ô nhập số lượng, xóa số 1 và nhập số `0` (Boundary Off-point).
+3. Bấm nút "Thêm vào giỏ hàng".
+4. Điều hướng vào trang giỏ hàng `http://localhost:5173/cart`.
+5. Quan sát giá trị hiển thị tại các cột Số lượng, Thành tiền và Tổng tạm tính.
+6. (API Verification):
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/cart \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1, "price": 30000000, "quantity": 0}'
+   ```
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "id": 1,
+  "price": 30000000,
+  "quantity": 0
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-06 & FR-07):**
+> *Trích dẫn SRS FR-06 & FR-07:* "Số lượng sản phẩm trong giỏ hàng phải là số nguyên dương, tối thiểu là 1 ($Q \ge 1$)."
+- Ô nhập số lượng trên Web Client phải có thuộc tính `min="1"`, chặn không cho nhập 0 hoặc tự động khôi phục về 1.
+- API `POST /api/cart` phải từ chối `quantity = 0` với HTTP `400 Bad Request` (`{"error": "Quantity must be greater than or equal to 1"}`).
+- Bảng giỏ hàng tuyệt đối không được phép lưu hoặc hiển thị dòng sản phẩm có $Q = 0$ và thành tiền = 0 ₫.
+
+**5. Kết quả thực tế (Actual Result):**
+- Input số lượng tại `ProductDetail.jsx` cho phép nhập `0` mà không hề có validation chặn lại.
+- Bảng giỏ hàng hiển thị dòng sản phẩm với:
+  - `Số lượng: 0`
+  - `Thành tiền: 0 ₫`
+  - `Tổng tạm tính: 0 ₫`
+- Endpoint `POST /api/cart` trả về HTTP `200 OK` (`{"message":"Added to cart"}`) và lưu thẳng bản ghi $Q=0$ vào backend state.
+- Ngoài ra, bảng `/cart` hiển thị text tĩnh `<td>{item.quantity}</td>`, hoàn toàn thiếu ô input hoặc hai nút `+` và `-` để điều chỉnh số lượng trực tiếp trong giỏ hàng.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp Web UI nhập Q=0:*  
+  ![Nhập Q=0 trên trang chi tiết](./screenshots/BUG_FR07_05_input_zero.png)
+- *Ảnh chụp bảng giỏ hàng lưu Q=0 và 0đ:*  
+  ![Bảng giỏ hàng hiển thị Q=0](./screenshots/BUG_FR07_05_cart_zero.png)
+- *Ảnh chụp terminal API trả về 200 OK:*  
+  ![API POST /api/cart với Q=0 trả về 200 OK](./screenshots/BUG_FR07_05_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/13](https://github.com/faker26052005-lgtm/SUT-EShop/issues/13)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - `frontend-web/src/pages/ProductDetail.jsx`, dòng 56–62.
+  - `frontend-web/src/pages/Cart.jsx`, dòng 47.
+  - `backend/server.js`, dòng 290–295.
+- **Khắc phục:**
+  - Bổ sung `min="1"` và kiểm tra chặn giá trị `< 1` trên form.
+  - Bổ sung validation kiểm tra `quantity >= 1` tại backend `server.js`:
+    ```javascript
+    if (!quantity || Number(quantity) < 1) {
+      return res.status(400).json({ error: "Quantity must be at least 1" });
+    }
+    ```
 
 ---
 
