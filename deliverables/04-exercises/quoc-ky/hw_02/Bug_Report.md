@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 4 | 0 | 0 | **4** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 5 | 0 | 0 | **5** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **18** | **3** | **0** | **24** |
+| **TỔNG CỘNG** | | | **3** | **19** | **3** | **0** | **25** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -47,6 +47,7 @@
 | `BUG-FR17-02` | Endpoint POST /api/admin/coupons chấp nhận mã rỗng tạo coupon 200 OK | FR-17 | `TC_FR17_11` | Major | [Issue #23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23) | Open |
 | `BUG-FR17-03` | Nhập mã coupon chỉ chứa khoảng trắng được chấp nhận, hiển thị dòng trống trên bảng Admin | FR-17 | `TC_FR17_12` | Major | [Issue #24](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24) | Open |
 | `BUG-FR17-04` | Endpoint POST /api/admin/coupons chấp nhận enum type không hợp lệ ('free_shipping') tạo coupon 200 OK | FR-17 | `TC_FR17_13` | Major | [Issue #25](https://github.com/faker26052005-lgtm/SUT-EShop/issues/25) | Open |
+| `BUG-FR17-05` | Form Admin và API cho phép tạo coupon giảm giá 0% (discount_value = 0) | FR-17 | `TC_FR17_14` | Major | [Issue #26](https://github.com/faker26052005-lgtm/SUT-EShop/issues/26) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -1816,6 +1817,87 @@
     return res.status(400).json({ error: "Loại mã giảm giá không hợp lệ. Chỉ chấp nhận 'percent' hoặc 'fixed'" });
   }
   ```
+
+---
+
+#### [BUG-FR17-05] Form Admin và API cho phép tạo coupon giảm giá 0%, lưu và hiển thị trên hệ thống
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-05` |
+| **Tiêu đề Bug** | `[FR-17][Admin Web & API] Coupon creation accepts discount_value = 0 and creates 0% discount coupon in database` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm ràng buộc giá trị giảm dương $V > 0$ của đặc tả, tạo mã voucher 0% vô nghĩa) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_14`](Main_Report.md#tc_fr17_14) (Biên On-point $V = 0\%$) |
+| **GitHub Issue Link** | [Issue #26: [BUG] [FR-17][Admin Web & API] Coupon creation accepts discount_value = 0 and creates 0% discount coupon in database](https://github.com/faker26052005-lgtm/SUT-EShop/issues/26) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá".
+2. Tại form "Tạo mã giảm giá mới", điền thông tin:
+   - Mã coupon: `PCTZERO`
+   - Loại: `Phần trăm (%)`
+   - Giá trị %: `0`
+   - Đơn tối thiểu: `100000`
+   - Ngày hết hạn: `10/21/2026`
+   - Giới hạn/người: `1`
+3. Nhấn nút "Tạo mã" $\to$ Form cho phép submit thành công, bảng bên dưới hiển thị dòng mã `PCTZERO` với `Giá trị: 0%`.
+4. Hoặc gửi request trực tiếp qua curl tới API backend:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"PCTZERO0","type":"percent","discount_value":0,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+5. Kiểm tra CSDL SQLite: `SELECT * FROM coupons WHERE discount_value=0;`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "PCTZERO",
+  "type": "percent",
+  "discount_value": 0,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: ... `discount_value` (dương)..."
+- Trong toán học và chuẩn kiểm thử giá trị biên ISTQB, thuật ngữ "dương" bắt buộc giá trị $V > 0$.
+- Ô nhập liệu giao diện Admin phải bổ sung thuộc tính `min="1"` (cho %) hoặc `min="1000"` (cho cố định).
+- Cả UI và backend API phải từ chối `discount_value <= 0` với mã lỗi **HTTP 400 Bad Request** (`{"error": "Giá trị giảm giá phải lớn hơn 0"}`).
+- Không lưu bất kỳ bản ghi coupon nào có giá trị giảm bằng 0 vào CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Ô nhập `discount_value` trên Admin Web thiếu thuộc tính `min="1"`, cho phép người dùng nhập và submit số `0`.
+- Endpoint `POST /api/admin/coupons` trả về **`HTTP 200 OK`**: `{"message":"Coupon created","id":22}`.
+- Bảng CSDL SQLite lưu trữ bản ghi có `discount_value = 0`.
+- Bảng quản trị hiển thị dòng coupon `PCTZERO` với `Giá trị: 0%`, hoàn toàn không mang lại giá trị giảm giá cho khách hàng khi áp dụng.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp form nhập giá trị 0:*  
+  ![Form nhập 0%](./screenshots/BUG_FR17_05_form_input_zero.png)
+- *Ảnh chụp bảng Admin hiển thị coupon 0%:*  
+  ![Bảng Admin hiển thị 0%](./screenshots/BUG_FR17_05_table_zero_pct.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_05_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/26](https://github.com/faker26052005-lgtm/SUT-EShop/issues/26)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `frontend-admin/src/App.jsx`, dòng 665–675: Ô input chỉ có `type="number"` và `required`, không có `min="1"`.
+  - File `backend/server.js`, dòng 457–481: Không kiểm tra `Number(discount_value) > 0` trước khi insert.
+- **Khắc phục:**
+  - Frontend: Thêm `min={couponForm.type === 'percent' ? "1" : "1000"}` vào thẻ input.
+  - Backend: Thêm `if (discount_value === undefined || discount_value === null || Number(discount_value) <= 0) return res.status(400).json({ error: "Giá trị giảm giá phải lớn hơn 0" });`.
 
 ---
 
