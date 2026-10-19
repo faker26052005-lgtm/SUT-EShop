@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 3 | 0 | 0 | **3** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 4 | 0 | 0 | **4** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **17** | **3** | **0** | **23** |
+| **TỔNG CỘNG** | | | **3** | **18** | **3** | **0** | **24** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -46,6 +46,7 @@
 | `BUG-FR17-01` | Tạo trùng mã coupon gây lỗi unhandled HTTP 500 rò rỉ ngoại lệ SQLite | FR-17 | `TC_FR17_10` | Major | [Issue #22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22) | Open |
 | `BUG-FR17-02` | Endpoint POST /api/admin/coupons chấp nhận mã rỗng tạo coupon 200 OK | FR-17 | `TC_FR17_11` | Major | [Issue #23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23) | Open |
 | `BUG-FR17-03` | Nhập mã coupon chỉ chứa khoảng trắng được chấp nhận, hiển thị dòng trống trên bảng Admin | FR-17 | `TC_FR17_12` | Major | [Issue #24](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24) | Open |
+| `BUG-FR17-04` | Endpoint POST /api/admin/coupons chấp nhận enum type không hợp lệ ('free_shipping') tạo coupon 200 OK | FR-17 | `TC_FR17_13` | Major | [Issue #25](https://github.com/faker26052005-lgtm/SUT-EShop/issues/25) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -1733,6 +1734,88 @@
 - **Khắc phục:**
   - Frontend: Bổ sung kiểm tra `if (!couponForm.code.trim()) { alert("Mã coupon không được chỉ chứa khoảng trắng!"); return; }`.
   - Backend: Thêm `if (!code || typeof code !== "string" || !code.trim()) return res.status(400).json({ error: "Mã coupon không được để trống hoặc chỉ chứa khoảng trắng" });`.
+
+---
+
+#### [BUG-FR17-04] Endpoint POST /api/admin/coupons chấp nhận loại giảm giá (type) không hợp lệ, lưu vào CSDL 200 OK
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-04` |
+| **Tiêu đề Bug** | `[FR-17][REST API] Endpoint POST /api/admin/coupons accepts invalid coupon type enum and creates coupon with HTTP 200 OK` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Vi phạm toàn vẹn enum dữ liệu khiến luồng tính toán tài chính đơn hàng bị sai lệch) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_13`](Main_Report.md#tc_fr17_13) (Enum không hợp lệ `type = "free_shipping"`) |
+| **GitHub Issue Link** | [Issue #25: [BUG] [FR-17][REST API] Endpoint POST /api/admin/coupons accepts invalid coupon type enum and creates coupon with HTTP 200 OK](https://github.com/faker26052005-lgtm/SUT-EShop/issues/25) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá", kiểm tra dropdown loại giảm giá chỉ cho phép chọn `Phần trăm (%)` và `Số tiền cố định (₫)`.
+2. Gửi request trực tiếp tới API endpoint `POST /api/admin/coupons` với payload chứa giá trị enum không hỗ trợ `type: "free_shipping"` kèm JWT Admin:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"FREESHIP","type":"free_shipping","discount_value":20000,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+3. Truy vấn kiểm tra CSDL SQLite: `SELECT * FROM coupons WHERE code='FREESHIP';`.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "FREESHIP",
+  "type": "free_shipping",
+  "discount_value": 20000,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: ... `type` (percent/fixed)..."
+- Tầng backend API phải kiểm tra chặt chẽ giá trị enum của `type` nằm trong tập hợp hợp lệ `['percent', 'fixed']`.
+- Từ chối các giá trị ngoài tập hợp với mã lỗi **HTTP 400 Bad Request** (`{"error": "Loại coupon không hợp lệ. Chỉ chấp nhận 'percent' hoặc 'fixed'"}`).
+- Không chèn bất kỳ bản ghi nào có enum sai vào CSDL.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/admin/coupons` chấp nhận bất kỳ chuỗi nào cho `type` và trả về mã **`HTTP 200 OK`**: `{"message":"Coupon created","id":19}`.
+- CSDL SQLite lưu trữ bản ghi mang `type = 'free_shipping'`.
+- Khi tính toán coupon tại Checkout (`/api/apply-coupon`), logic phân nhánh kiểm tra `coupon.type === "percent"`, dẫn đến việc coi mọi loại không phải percent thành `fixed` và trừ trực tiếp `discount_value` vào tổng tiền, gây sai lệch nghiêm trọng về tài chính đơn hàng.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp dropdown chọn loại mã trên Admin Web:*  
+  ![Dropdown chọn loại mã Admin](./screenshots/BUG_FR17_04_ui_dropdown.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_04_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/25](https://github.com/faker26052005-lgtm/SUT-EShop/issues/25)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 457–481.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  app.post("/api/admin/coupons", authenticateToken, (req, res) => {
+    const { code, type, discount_value, min_order_amount, expired_at, max_uses_per_user } = req.body;
+    db.run(
+      "INSERT INTO coupons (code, type, discount_value, min_order_amount, expired_at, max_uses_per_user) VALUES (?, ?, ?, ?, ?, ?)",
+      [code, type, discount_value, min_order_amount, expired_at, max_uses_per_user || 1],
+      ...
+    );
+  });
+  ```
+- **Khắc phục:** Thêm kiểm tra enum ở đầu route handler:
+  ```javascript
+  const validTypes = ["percent", "fixed"];
+  if (!type || !validTypes.includes(type)) {
+    return res.status(400).json({ error: "Loại mã giảm giá không hợp lệ. Chỉ chấp nhận 'percent' hoặc 'fixed'" });
+  }
+  ```
 
 ---
 
