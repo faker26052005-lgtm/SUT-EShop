@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 2 | 0 | 0 | **2** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 0 | 3 | 0 | 0 | **3** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **3** | **16** | **3** | **0** | **22** |
+| **TỔNG CỘNG** | | | **3** | **17** | **3** | **0** | **23** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -45,6 +45,7 @@
 | `BUG-FR07-13` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" theo đặc tả | FR-07 | `TC_FR07_18` | Medium | [Issue #21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21) | Open |
 | `BUG-FR17-01` | Tạo trùng mã coupon gây lỗi unhandled HTTP 500 rò rỉ ngoại lệ SQLite | FR-17 | `TC_FR17_10` | Major | [Issue #22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22) | Open |
 | `BUG-FR17-02` | Endpoint POST /api/admin/coupons chấp nhận mã rỗng tạo coupon 200 OK | FR-17 | `TC_FR17_11` | Major | [Issue #23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23) | Open |
+| `BUG-FR17-03` | Nhập mã coupon chỉ chứa khoảng trắng được chấp nhận, hiển thị dòng trống trên bảng Admin | FR-17 | `TC_FR17_12` | Major | [Issue #24](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -1657,6 +1658,81 @@
     return res.status(400).json({ error: "Mã coupon là trường bắt buộc và không được để trống" });
   }
   ```
+
+---
+
+#### [BUG-FR17-03] Form Admin và API chấp nhận mã coupon chỉ chứa khoảng trắng, tạo dòng rỗng trên bảng quản lý
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-03` |
+| **Tiêu đề Bug** | `[FR-17][Admin Web & API] Coupon creation accepts whitespace-only code and displays blank coupons in management table` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Bypass validation qua khoảng trắng, tạo mã voucher rỗng vô dụng và làm biến dạng giao diện quản lý) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_12`](Main_Report.md#tc_fr17_12) (Mã chỉ chứa 5 khoảng trắng `"     "`) |
+| **GitHub Issue Link** | [Issue #24: [BUG] [FR-17][Admin Web & API] Coupon creation accepts whitespace-only code and displays blank coupons in management table](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Mở Admin Web `:5174`, vào tab "Mã Giảm Giá".
+2. Tại form "Tạo mã giảm giá mới", nhập chuỗi gồm 5 dấu cách `"     "` vào ô "Mã coupon".
+3. Điền các trường còn lại hợp lệ (Phần trăm, 15%, Đơn tối thiểu 100.000 ₫, Hạn dùng 2026-12-31, 1 lần/người).
+4. Nhấn nút "Tạo mã" $\to$ Form submit thành công mà không bị chặn hay hiển thị cảnh báo.
+5. Hoặc gửi request API trực tiếp:
+   ```bash
+   curl -i -s -X POST http://localhost:3000/api/admin/coupons \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -d '{"code":"     ","type":"percent","discount_value":10,"min_order_amount":100000,"expired_at":"2026-12-31","max_uses_per_user":1}'
+   ```
+6. Quan sát bảng danh sách mã giảm giá bên dưới form.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "     ",
+  "type": "percent",
+  "discount_value": 10,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: `code` (duy nhất)..."
+- Cả giao diện người dùng và backend API phải tự động cắt bỏ khoảng trắng thừa (`trim()`); từ chối chuỗi chỉ gồm khoảng trắng với HTTP 400 Bad Request (`{"error": "Mã coupon không được để trống hoặc chỉ chứa khoảng trắng"}`).
+- Giao diện Admin phải chặn form submit và hiển thị thông báo lỗi yêu cầu nhập mã hợp lệ.
+- Không lưu bất kỳ bản ghi nào có mã khoảng trắng vào CSDL SQLite.
+
+**5. Kết quả thực tế (Actual Result):**
+- Giao diện Admin cho phép submit vì thuộc tính `required` của HTML5 chỉ kiểm tra độ dài thô (`length > 0`) mà không trim khoảng trắng.
+- Endpoint `POST /api/admin/coupons` trả về **`HTTP 200 OK`**: `{"message":"Coupon created","id":17}`.
+- Bảng CSDL SQLite lưu trữ bản ghi có `code = '     '`.
+- Bảng hiển thị trên trang Admin xuất hiện các dòng coupon có cột Mã hoàn toàn trống, khiến người quản trị không thể nhận biết hay phân biệt mã, và khách hàng không thể áp dụng.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp form nhập 5 khoảng trắng:*  
+  ![Form nhập 5 khoảng trắng](./screenshots/BUG_FR17_03_form_whitespace.png)
+- *Ảnh chụp terminal thực thi API và mã HTTP 200 OK:*  
+  ![Terminal API 200 OK](./screenshots/BUG_FR17_03_api_terminal.png)
+- *Ảnh chụp bảng Admin hiển thị các dòng coupon rỗng mã:*  
+  ![Bảng Admin hiển thị dòng rỗng](./screenshots/BUG_FR17_03_table_blank_row.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/24](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `frontend-admin/src/App.jsx`, dòng 641–646: Chỉ gọi `toUpperCase()` mà không `trim()`.
+  - File `backend/server.js`, dòng 457–481: Gán trực tiếp chuỗi vào câu lệnh SQL mà không kiểm tra tính hợp lệ của chuỗi sau khi cắt khoảng trắng.
+- **Khắc phục:**
+  - Frontend: Bổ sung kiểm tra `if (!couponForm.code.trim()) { alert("Mã coupon không được chỉ chứa khoảng trắng!"); return; }`.
+  - Backend: Thêm `if (!code || typeof code !== "string" || !code.trim()) return res.status(400).json({ error: "Mã coupon không được để trống hoặc chỉ chứa khoảng trắng" });`.
 
 ---
 
