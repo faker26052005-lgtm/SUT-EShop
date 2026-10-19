@@ -43,7 +43,7 @@
 | `BUG-FR07-11` | Nút Xóa sản phẩm xóa trực tiếp không có dialog xác nhận theo yêu cầu SRS | FR-07 | `TC_FR07_15`, `TC_FR07_16`, `TC_FR07_19` | Major | [Issue #19](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19) | Open |
 | `BUG-FR07-12` | Giao diện giỏ hàng trống chỉ có text thuần, thiếu hình ảnh minh họa theo đặc tả | FR-07 | `TC_FR07_17` | Medium | [Issue #20](https://github.com/faker26052005-lgtm/SUT-EShop/issues/20) | Open |
 | `BUG-FR07-13` | Footer giỏ hàng hiển thị nhãn "Tổng tạm tính" thay vì "Tổng cộng" theo đặc tả | FR-07 | `TC_FR07_18` | Medium | [Issue #21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21) | Open |
-| `BUG-FR17-01` | Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công | FR-17 | `TC_FR17_05` | Major | [Issue #16](https://github.com/ttbhanh/eshop-sut/issues/16) | Open |
+| `BUG-FR17-01` | Tạo trùng mã coupon gây lỗi unhandled HTTP 500 rò rỉ ngoại lệ SQLite | FR-17 | `TC_FR17_10` | Major | [Issue #22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22) | Open |
 | `BUG-FR17-02` | Không ràng buộc Unique mã Coupon, cho phép tạo trùng lặp | FR-17 | `TC_FR17_08` | Major | [Issue #17](https://github.com/ttbhanh/eshop-sut/issues/17) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
@@ -1495,29 +1495,89 @@
 
 ### 2.3 Các lỗi thuộc Pool C: FR-17 – Quản lý Mã Giảm Giá (Admin)
 
-#### [BUG-FR17-01] Form Admin cho phép nhập `min_order_amount = -1` và lưu thành công
+#### [BUG-FR17-01] Tạo trùng mã coupon gây lỗi unhandled HTTP 500 rò rỉ ngoại lệ SQLite
 
 | Trường thông tin | Chi tiết |
 | :--- | :--- |
 | **Bug ID** | `BUG-FR17-01` |
-| **Tiêu đề Bug** | `[FR-17][Admin] Coupon creation form accepts negative min_order_amount (-1)` |
-| **Mức độ (Severity)** | **Major** (Lỗi logic biên số học) |
-| **Test Case phát hiện** | `TC_FR17_05` (BVA Off-point $M = -1$) |
-| **GitHub Issue Link** | [Issue #16: [FR-17] Negative min_order_amount accepted](https://github.com/ttbhanh/eshop-sut/issues/16) |
+| **Tiêu đề Bug** | `[FR-17][Admin Web & API] Creating duplicate coupon code results in unhandled HTTP 500 error leaking raw SQLite constraint` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Major** (Lỗi sập server 500 không được kiểm soát và rò rỉ thông tin kỹ thuật hạ tầng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_10`](Main_Report.md#tc_fr17_10) (Tạo mã trùng lặp `SAVE10`) |
+| **GitHub Issue Link** | [Issue #22: [BUG] [FR-17][Admin Web & API] Creating duplicate coupon code results in unhandled HTTP 500 error leaking raw SQLite constraint](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
 
-**1. Các bước tái hiện:**
-1. Đăng nhập Admin (`admin@eshop.com` / `Admin123!`).
-2. Vào mục Quản lý Mã giảm giá `http://localhost:5174/coupons`.
-3. Bấm "Thêm mã giảm giá mới".
-4. Điền: Code = `NEGMIN`, Type = `fixed`, Discount = `10000`, Min order amount = `-1`.
-5. Bấm Lưu.
+**1. Tiền điều kiện (Preconditions):**
+- Mã giảm giá `SAVE10` đã tồn tại sẵn trong CSDL SQLite (`coupons.code = 'SAVE10'`).
+- SUT backend đang chạy tại `http://localhost:3000`, Admin Web tại `http://localhost:5174`.
+- Đã đăng nhập tài khoản Quản trị viên (`admin@eshop.com`).
 
-**2. Kết quả mong đợi (SRS FR-17):**
-> *Trích dẫn SRS:* "Các trường bắt buộc: ... `min_order_amount` (>= 0)".
-- Hệ thống từ chối và báo lỗi: "Giá trị đơn hàng tối thiểu phải lớn hơn hoặc bằng 0".
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Truy cập Admin Web tại `http://localhost:5174`, điều hướng vào mục "Mã Giảm Giá".
+2. Tại form "Tạo mã giảm giá mới", điền thông tin:
+   - Mã coupon: `SAVE10` (trùng mã đã tồn tại)
+   - Loại: `Phần trăm (%)`
+   - Giá trị: `15`
+   - Đơn tối thiểu: `100000`
+   - Ngày hết hạn: `2026-12-31`
+   - Giới hạn/người: `1`
+3. Nhấn nút "Tạo mã" (kích hoạt `POST /api/admin/coupons`).
+4. Quan sát mã phản hồi HTTP trong DevTools Network tab và popup alert trên giao diện.
 
-**3. Kết quả thực tế:**
-- Hệ thống tạo thành công mã giảm giá với `min_order_amount = -1`.
+**3. Dữ liệu thử nghiệm (Test Data):**
+```json
+{
+  "code": "SAVE10",
+  "type": "percent",
+  "discount_value": 15,
+  "min_order_amount": 100000,
+  "expired_at": "2026-12-31",
+  "max_uses_per_user": 1
+}
+```
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-17):**
+> *Trích dẫn SRS FR-17:* "Các trường bắt buộc: `code` (duy nhất), `type` (percent/fixed), `discount_value` (dương)..."
+- Endpoint `POST /api/admin/coupons` phải kiểm tra tính duy nhất và trả về client error HTTP 400 Bad Request hoặc 409 Conflict với thông báo lỗi thân thiện (ví dụ: `{"error": "Mã giảm giá này đã tồn tại trong hệ thống"}`).
+- Giao diện Admin Web hiển thị thông báo nghiệp vụ rõ ràng cho người dùng; tuyệt đối không ném lỗi unhandled HTTP 500 hay làm lộ exception CSDL thô.
+- Trong CSDL SQLite, bảng `coupons` giữ nguyên bản ghi ban đầu, không tạo bản ghi mới.
+
+**5. Kết quả thực tế (Actual Result):**
+- Endpoint `POST /api/admin/coupons` trả về mã lỗi **`HTTP 500 Internal Server Error`**.
+- Response payload: `{"error":"SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code"}`.
+- Giao diện Admin Web bật popup cảnh báo lỗi thô: `Lỗi: SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code`.
+- Tên bảng và cấu trúc schema CSDL (`coupons.code`) bị rò rỉ trực tiếp tới client.
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp popup cảnh báo trên Admin Web:*  
+  ![Popup cảnh báo lỗi SQLite](./screenshots/BUG_FR17_01_ui.png)
+- *Ảnh chụp terminal thực thi API và mã lỗi 500:*  
+  ![Terminal API 500 Error](./screenshots/BUG_FR17_01_api_terminal.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:** File `backend/server.js`, dòng 477.
+- **Đoạn mã gây lỗi:**
+  ```javascript
+  db.run(
+    "INSERT INTO coupons (code, type, discount_value, min_order_amount, expired_at, max_uses_per_user) VALUES (?, ?, ?, ?, ?, ?)",
+    [code, type, discount_value, min_order_amount, expired_at, max_uses_per_user || 1],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Coupon created", id: this.lastID });
+    }
+  );
+  ```
+- **Khắc phục:** Bổ sung bước kiểm tra trùng mã trước khi insert hoặc bắt lỗi `SQLITE_CONSTRAINT` để trả về HTTP 409 Conflict:
+  ```javascript
+  db.get("SELECT id FROM coupons WHERE code = ?", [code], (err, row) => {
+    if (err) return res.status(500).json({ error: "Lỗi hệ thống CSDL" });
+    if (row) return res.status(409).json({ error: "Mã giảm giá này đã tồn tại trong hệ thống" });
+    // Tiến hành INSERT khi mã chưa tồn tại...
+  });
+  ```
 
 ---
 
