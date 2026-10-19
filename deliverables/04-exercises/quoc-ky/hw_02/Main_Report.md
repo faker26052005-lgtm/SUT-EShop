@@ -3394,10 +3394,10 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 
 | Chỉ số Thực Thi (Execution Metric) | Số lượng Test Cases | Tỷ lệ phần trăm (%) |
 | :--- | :---: | :---: |
-| **Tổng số Test Cases đã thiết kế** | **97** | **100.0%** |
-| **Số Test Cases Đạt (Passed - Đúng đặc tả)** | *Chờ thực thi* | --% |
-| **Số Test Cases Thất bại (Failed - Phát hiện khiếm khuyết SUT)** | *Chờ thực thi* | --% |
-| **Số Test Cases Bị chặn (Blocked - Lỗi môi trường / phụ thuộc)** | *Chờ thực thi* | --% |
+| **Tổng số Test Cases đã thiết kế** | **108** | **100.0%** |
+| **Số Test Cases Đạt (Passed - Đúng đặc tả)** | **63** | 58.3% |
+| **Số Test Cases Thất bại (Failed - Phát hiện khiếm khuyết SUT)** | **45** | 41.7% |
+| **Số Test Cases Bị chặn (Blocked - Lỗi môi trường / phụ thuộc)** | **0** | 0.0% |
 
 ---
 
