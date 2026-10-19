@@ -41,7 +41,9 @@ Trước khi bắt đầu, hãy thu thập đủ 3 thông tin sau từ người 
 ### PHẦN A: DOMAIN TESTING (Kiểm thử miền)
 
 > Tham khảo lý thuyết chi tiết tại:
-> - Bài giảng môn học: [S04_Domain_Testing_Notes.md](./references/S04_Domain_Testing_Notes.md)
+> - Bài giảng môn học S04: [S04_Domain_Testing_Notes.md](./references/S04_Domain_Testing_Notes.md)
+> - Bài giảng môn học S07 (Test Case): [S07_Test_Case_Notes.md](./references/S07_Test_Case_Notes.md)
+> - Bài giảng môn học S08 (Test Report): [S08_Test_Report_Notes.md](./references/S08_Test_Report_Notes.md)
 > - Tài liệu mở rộng: [domain-testing-theory.md](./references/domain-testing-theory.md)
 
 #### Bước 1 — Xác định các biến đầu vào (Input Variables)
@@ -170,44 +172,64 @@ biên cần ít nhất 1 test case.
 
 ### PHẦN C: TỔNG HỢP VÀ KIỂM TRA CHẤT LƯỢNG
 
-#### Bước 6 — Xuất bảng Test Case tổng hợp cuối cùng
+#### Bước 6 — Xuất bảng Test Case tổng hợp cuối cùng (Theo Mẫu Slide S07)
 
 Gộp tất cả test case từ Phần A (Domain) và Phần B (BVA) vào **một bảng tổng hợp
-duy nhất**, đánh số TC-ID liên tục. Phân biệt nguồn gốc của từng test case
-(Domain hay BVA).
+duy nhất**, đánh số TC-ID liên tục. Áp dụng chuẩn mẫu trình bày Test Case từ **Slide S07**:
 
 **Format bảng tổng hợp cuối cùng:**
 
 ```markdown
-| TC-ID | Nguồn gốc | Mô tả | Preconditions | Input Data | Test Steps | Expected Result | Actual Result | Pass/Fail |
-|-------|-----------|-------|---------------|------------|------------|-----------------|---------------|-----------|
-| TC-FR01-D01 | Domain/EC-PW-V1 | Đăng ký với mật khẩu hợp lệ | Chưa có tài khoản | Name: "Nguyen A", Email: "a@test.com", Password: "Test@123", Confirm: "Test@123" | 1. Mở /register 2. Điền form 3. Bấm Đăng ký | Chuyển hướng sang trang Đăng nhập | (chưa chạy) | - |
-| TC-FR01-B01 | BVA/Min-Invalid | Mật khẩu 7 ký tự (dưới biên) | Chưa có tài khoản | Password: "Te@1abc" (7 ký tự) | 1. Mở /register 2. Điền form 3. Bấm Đăng ký | Báo lỗi: mật khẩu quá ngắn | (chưa chạy) | - |
+| TC ID | Description (Action + Function + Operating Condition) | Steps (Pre-conditions & Test Steps) | Expected Result | Observed / Actual Result | Status |
+|:---|:---|:---|:---|:---|:---:|
+| TC-FR01-D01 | Verify Registration with Valid Credentials (Baseline) | **Pre-condition:** SUT sẵn sàng, CSDL reset seed data.<br>**Steps:**<br>1. Mở trang /register.<br>2. Nhập Name, Email, Password, Confirm.<br>3. Bấm Đăng ký. | Chuyển hướng sang trang /login | (Ghi lại kết quả thực tế trên SUT & ghi chú workaround nếu có) | Passed / Failed |
 ```
+
+---
+
+### PHẦN D: QUẢN LÝ LỖI & BÁO CÁO TỔNG KẾT (THEO CHUẨN S08)
+
+#### 1. Quản lý Lỗi (Bug Report theo 10 Thành Phần Bắt Buộc - Slide S08)
+Mỗi lỗi phát hiện được bắt buộc phải lập hồ sơ chi tiết theo 10 thành phần cốt lõi:
+1. **Bug ID:** Mã định danh duy nhất (ví dụ: `BUG-FR01-01`). Khác với `Test Case ID`.
+2. **Function name:** Tên chức năng/màn hình phát hiện lỗi.
+3. **Problem summary:** Cú pháp chuẩn: `Test Objective + Actual result (vs. Expected result)`.
+4. **How to reproduce the defect:**
+   * **Environment:** Hệ điều hành, Trình duyệt, Nền tảng (OS, Browser, Device, Server Ports).
+   * **Steps to Reproduce:** Các bước tuần tự `1, 2, 3...` kèm dữ liệu nhập cụ thể.
+   * **Expected Behavior:** Hệ thống đáng lẽ phải xử lý như thế nào.
+   * **Actual Behavior:** Hệ thống thực tế xử lý ra sao (kèm log, mã lỗi HTTP, bằng chứng lỗi).
+5. **Reported by:** Họ tên và MSSV của Tester.
+6. **Date:** Ngày ghi nhận lỗi.
+7. **Assign to:** Người chịu trách nhiệm sửa (Frontend Dev / Backend Dev).
+8. **Status:** `New` / `In-Progress` / `Fixed` / `Closed` / `Reopened`.
+9. **Priority (Thời gian sửa):** `Immediate (Critical)` (1 ngày), `High` (2-4 ngày), `Medium` (5-8 ngày), `Low`.
+10. **Severity (Mức độ nghiêm trọng):** `Fatal` (crash, mất data, bảo mật), `Serious` (tính năng chính), `Medium` (sai lệch nhỏ), `Cosmetic` (thẩm mỹ UI).
+
+#### 2. Báo Cáo Tổng Kết Kiểm Thử (Test Summary Report - Slide S08)
+Bắt buộc phải có 3 bảng thống kê chuẩn mực:
+* **Thống kê theo Chức năng (Statistics by Function):** Số lượng Tested, Passed, Failed, Blocked, Skipped, Coverage %.
+* **Thống kê theo Bản chất Lỗi (Statistics by Defect Type):** `Business logic`, `Coding logic`, `Data - Database integrity`, `Feature missing`, `Security - Access Control`, `User Interface`.
+* **Thống kê theo Mức độ Nghiêm trọng (Statistics by Defect Severity):** Tỷ lệ phân bổ `Fatal`, `Serious`, `Medium`, `Cosmetic`.
 
 ---
 
 ## CHECKLIST KIỂM TRA CHẤT LƯỢNG (Self-Review)
 
-Sau khi hoàn thành Bước 6, hãy tự kiểm tra bộ test case theo danh sách sau.
-Nếu phát hiện thiếu sót, quay lại bước tương ứng để bổ sung.
+Sau khi hoàn thành Bước 6 và Phần D, hãy tự kiểm tra bộ test case theo danh sách sau:
 
 - [ ] **Đầy đủ biến:** Đã liệt kê tất cả biến đầu vào có trong đặc tả?
-- [ ] **Đầy đủ lớp tương đương:** Mỗi ràng buộc có ít nhất 1 lớp Valid và 1 lớp
-      Invalid?
+- [ ] **Đầy đủ lớp tương đương:** Mỗi ràng buộc có ít nhất 1 lớp Valid và 1 lớp Invalid?
 - [ ] **Baseline chuẩn ban đầu:** Đã xác lập Test Case Chuẩn Ban Đầu (All Valid) làm mỏ neo cố định?
 - [ ] **Cô lập lỗi & Tái sử dụng Baseline:** Mỗi test case tìm lỗi có tái sử dụng toàn bộ dữ liệu hợp lệ từ Baseline và chỉ thay đổi duy nhất phần/biến cần kiểm tra?
+- [ ] **Cú pháp tiêu đề chuẩn S07:** Tiêu đề test case có tuân thủ đúng `Action + Function + Operating Condition` không?
+- [ ] **Mẫu bảng test case chuẩn S07:** Bảng có đầy đủ: TC ID, Description, Steps (Pre-conditions & Steps), Expected Result, Observed Result, Status?
+- [ ] **Hồ sơ lỗi chuẩn 10 thành phần S08:** Mỗi bug có đủ 10 trường thông tin (Problem summary, How to reproduce, Priority, Severity...)?
+- [ ] **Thống kê báo cáo S08:** Đã có đủ bảng thống kê theo Chức năng, Defect Type và Defect Severity?
 - [ ] **Minh bạch Workaround:** Nếu dùng workaround để bypass lỗi che giấu lỗi, đã ghi chú giải thích rõ ràng và minh bạch trong cột kết quả thực tế chưa?
-- [ ] **Đầy đủ biên:** Tất cả điểm biên (min, min±1, max, max±1) đều có test
-      case?
-- [ ] **Trường hợp đặc biệt:** Đã xem xét các giá trị: chuỗi rỗng `""`, null,
-      khoảng trắng `"   "`, ký tự Unicode/emoji, ký tự HTML `<script>`, SQL
-      injection `' OR 1=1 --`?
-- [ ] **Trường hợp nghiệp vụ:** Đã xem xét: trùng lặp dữ liệu (email đã tồn
-      tại), quan hệ giữa các biến (password ≠ confirm password), trạng thái hệ
-      thống (đã đăng nhập vs chưa đăng nhập)?
-- [ ] **Format chuẩn:** Mỗi test case có đủ: TC-ID, Input, Steps, Expected,
-      Actual, Verdict?
+- [ ] **Đầy đủ biên:** Tất cả điểm biên (min, min±1, max, max±1) đều có test case?
+- [ ] **Trường hợp đặc biệt & Bảo mật:** Đã xem xét chuỗi rỗng `""`, khoảng trắng `"   "`, XSS `<script>`, số, ký tự đặc biệt ngoài tập?
+- [ ] **Tự dọn dẹp (Self-cleaning):** Đã chạy teardown dọn dẹp CSDL sau khi test xong?
 
 ---
 
