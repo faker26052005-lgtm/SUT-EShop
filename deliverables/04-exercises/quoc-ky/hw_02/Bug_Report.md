@@ -18,9 +18,9 @@
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Pool A (Web/Auth)** | **FR-02** | Đăng nhập & Khóa tài khoản | 2 | 3 | 0 | 0 | **5** |
 | **Pool B (Web/Cart)** | **FR-07** | Giỏ hàng (Shopping Cart) | 0 | 11 | 2 | 0 | **13** |
-| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 1 | 11 | 3 | 0 | **15** |
+| **Pool C (Admin/Coupon)** | **FR-17** | Quản lý Mã Giảm Giá | 2 | 11 | 3 | 0 | **16** |
 | **Pool D (Mobile/Order)** | **FR-20 & FR-10**| Hủy đơn hàng theo trạng thái | 1 | 0 | 1 | 0 | **2** |
-| **TỔNG CỘNG** | | | **4** | **25** | **6** | **0** | **35** |
+| **TỔNG CỘNG** | | | **5** | **25** | **6** | **0** | **36** |
 
 ### 1.2 Bảng Ma Trận Truy Vết Lỗi (Traceability: Test Case ↔ Bug ID ↔ GitHub Issue)
 | Bug ID | Tóm tắt lỗi | Tính năng | TC phát hiện | Mức độ | GitHub Issue | Trạng thái |
@@ -58,6 +58,7 @@
 | `BUG-FR17-13` | Endpoint DELETE /api/admin/coupons/:id trả về 200 OK khi xóa ID không tồn tại (9999) thay vì 404 Not Found | FR-17 | `TC_FR17_24` | Medium | [Issue #34](https://github.com/faker26052005-lgtm/SUT-EShop/issues/34) | Open |
 | `BUG-FR17-14` | Endpoint DELETE /api/admin/coupons/:id chấp nhận ID âm (-1) trả về 200 OK thay vì 400/404 | FR-17 | `TC_FR17_25` | Medium | [Issue #35](https://github.com/faker26052005-lgtm/SUT-EShop/issues/35) | Open |
 | `BUG-FR17-15` | Endpoint DELETE /api/admin/coupons/:id chấp nhận ID dạng chuỗi ('abc') trả về 200 OK thay vì 400 Bad Request | FR-17 | `TC_FR17_26` | Medium | [Issue #36](https://github.com/faker26052005-lgtm/SUT-EShop/issues/36) | Open |
+| `BUG-FR17-16` | Công thức tính tiền giảm giá coupon loại percent bị đảo ngược khiến tổng thanh toán tăng gấp 10 lần | FR-17 | `TC_FR17_27` | Critical | [Issue #37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37) | Open |
 | `BUG-FR20-01` | Đơn hàng đã ở trạng thái `shipping` nhưng User vẫn bấm Hủy được trên Mobile | Mobile | `TC_MOB_03` | Critical | [Issue #18](https://github.com/ttbhanh/eshop-sut/issues/18) | Open |
 | `BUG-FR20-02` | Sau khi hủy thành công, trạng thái không tự refresh sang `canceled` | Mobile | `TC_MOB_01` | Medium | [Issue #19](https://github.com/ttbhanh/eshop-sut/issues/19) | Open |
 
@@ -2735,6 +2736,87 @@
         res.json({ message: "Coupon deleted" });
       });
     });
+    ```
+
+#### [BUG-FR17-16] Công thức tính tiền giảm giá coupon loại percent bị đảo ngược khiến tổng thanh toán tăng gấp 10 lần
+
+| Trường thông tin | Chi tiết |
+| :--- | :--- |
+| **Bug ID** | `BUG-FR17-16` |
+| **Tiêu đề Bug** | `[FR-17][Checkout] Percent coupon discount calculation formula is inverted causing 10x order total increase` |
+| **Chức năng (Feature)** | FR-17: Quản lý Mã Giảm Giá & FR-09: Áp dụng mã giảm giá tại Checkout (Pool C) |
+| **Môi trường thử nghiệm**| Web: `http://localhost:5173` • Admin: `http://localhost:5174` • Backend: `http://localhost:3000` • Node v24.21 • Linux |
+| **Mức độ (Severity)** | **Critical** (Lỗi tính toán số học tài chính / Chiết khấu âm làm đội giá đơn hàng nghiêm trọng) |
+| **Mức ưu tiên (Priority)**| **High (P1)** |
+| **Test Case phát hiện** | [`TC_FR17_27`](Main_Report.md#tc_fr17_27) (Tính toán số học chiết khấu phần trăm, Quy tắc `CPN-BR-01`) |
+| **GitHub Issue Link** | [Issue #37: [BUG] [FR-17][Checkout] Percent coupon discount calculation formula is inverted causing 10x order total increase](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37) |
+| **Người báo cáo** | Nguyễn Quốc Kỳ (23120138) |
+
+**1. Tiền điều kiện (Preconditions):**
+- SUT backend đang chạy tại `http://localhost:3000`.
+- Web Frontend đang chạy tại `http://localhost:5173`.
+- Mã giảm giá theo phần trăm `SAVE10` đang kích hoạt (`type="percent"`, `discount_value=10`, `min_order_amount=300000`).
+- Đã đăng nhập tài khoản Khách hàng (`test@eshop.com`).
+
+**2. Các bước tái hiện (Steps to Reproduce):**
+1. Đăng nhập Web Client tại `http://localhost:5173/login`.
+2. Thêm sản phẩm (ví dụ: iPhone 15 Pro Max) vào giỏ hàng và tiến hành vào trang Xác nhận Đơn hàng (`http://localhost:5173/checkout`).
+3. Giá trị đơn hàng là `30.000.000 ₫`.
+4. Tại ô "Mã Giảm Giá", nhập `SAVE10` và bấm nút **"Áp dụng"**.
+5. Quan sát dòng thông báo giảm giá, số tiền tiết kiệm và tổng thanh toán hiển thị.
+
+**3. Dữ liệu thử nghiệm (Test Data):**
+- Tổng đơn hàng: `30.000.000 ₫`
+- Mã coupon: `SAVE10` (`type="percent"`, `discount_value=10`)
+- Endpoint API: `POST /api/apply-coupon` với payload `{"code":"SAVE10","total_amount":30000000,"user_id":2}`
+
+**4. Kết quả mong đợi (Expected Result theo SRS FR-09 & FR-17 / CPN-BR-01):**
+> *Trích dẫn SRS FR-09 & FR-17:* "Khi áp dụng mã theo phần trăm, số tiền giảm = Tổng giá trị đơn hàng * (Phần trăm giảm / 100). Tổng thanh toán sau giảm = Tổng đơn hàng - Số tiền giảm."
+- Với đơn hàng `30.000.000 ₫` và mã giảm giá `10%`:
+  - Số tiền tiết kiệm (giảm giá): $30.000.000 \times 10\% = 3.000.000\text{ ₫}$.
+  - Tổng thanh toán: $30.000.000 - 3.000.000 = 27.000.000\text{ ₫}$.
+
+**5. Kết quả thực tế (Actual Result):**
+- Hệ thống tính toán sai lệch hoàn toàn về mặt số học tài chính:
+  - Thông báo: `✅ Áp dụng thành công! Giảm 10%`
+  - Tiết kiệm: **`-270.000.000 ₫`** (Chiết khấu thành một số âm 270 triệu đồng!)
+  - Thành tiền: **`300.000.000 ₫`** (Tăng vọt gấp 10 lần so với đơn gốc!)
+  - Tổng thanh toán: **`300.000.000 ₫`**
+- Phản hồi từ Backend API `POST /api/apply-coupon`:
+  ```json
+  {"success":true,"coupon_id":1,"discount_amount":-270000000,"final_amount":300000000,"message":"Áp dụng thành công! Giảm 10%"}
+  ```
+
+**6. Bằng chứng kiểm thử (Screenshots & Logs):**
+- *Ảnh chụp màn hình Web Checkout áp dụng mã SAVE10 bị tính âm tiền tiết kiệm và đội giá gấp 10 lần:*  
+  ![Web Checkout Actual](./screenshots/BUG_FR17_16_actual.png)
+- *Đường dẫn GitHub Issue:* [https://github.com/faker26052005-lgtm/SUT-EShop/issues/37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37)
+
+**7. Phân tích nguyên nhân & Khắc phục (Root Cause Analysis):**
+- **Vị trí lỗi:**
+  - File `backend/server.js`, dòng 398–406 và 418–425:
+    ```javascript
+    let discount_amount = 0;
+    if (coupon.type === "percent") {
+      discount_amount = Math.floor(
+        total_amount * (1 - coupon.discount_value),
+      );
+    } else {
+      discount_amount = coupon.discount_value;
+    }
+    const final_amount = total_amount - discount_amount;
+    ```
+    Trường `discount_value` được lưu trong CSDL dưới dạng số nguyên (ví dụ: `10` cho 10%). Biểu thức `total_amount * (1 - coupon.discount_value)` tính ra $30.000.000 \times (1 - 10) = -270.000.000\text{ ₫}$. Kế đó `final_amount = total_amount - discount_amount` tính ra $30.000.000 - (-270.000.000) = 300.000.000\text{ ₫}$.
+- **Khắc phục:**
+  - Viết lại công thức tính tỷ lệ phần trăm chính xác:
+    ```javascript
+    let discount_amount = 0;
+    if (coupon.type === "percent") {
+      discount_amount = Math.floor(total_amount * (coupon.discount_value / 100));
+    } else {
+      discount_amount = coupon.discount_value;
+    }
+    const final_amount = Math.max(0, total_amount - discount_amount);
     ```
 
 ---
