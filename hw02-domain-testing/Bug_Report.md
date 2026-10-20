@@ -157,3 +157,142 @@
 8. **Status:** `Open / New`
 9. **Priority:** `High` — Sửa trong 02-04 ngày.
 10. **Severity:** `Serious` — Gây nguy cơ tấn công Stored XSS khi trang Admin hiển thị danh sách người dùng và nguy cơ sập tiến trình Backend khi gửi mail tới domain không hợp lệ.
+
+
+---
+
+## PHẦN 2: DANH SÁCH LỖI PHÁT HIỆN TẠI FEATURE B — FR-09: ÁP DỤNG MÃ GIẢM GIÁ (COUPON)
+
+---
+
+### BUG-FR09-01: Sai công thức toán học khi tính giảm giá theo phần trăm (SAVE10)
+1. **Bug ID:** `BUG-FR09-01`
+2. **Function name:** `FR-09: Tính toán giảm giá theo phần trăm (Backend API)`
+3. **Problem summary:** `Calculate Percentage Discount: Backend multiplies total by negative factor (1 - discount_value) instead of (total * discount_value / 100), increasing order total 10-fold.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `http://localhost:3000/api/apply-coupon`, Node.js Express.
+   * **Steps to Reproduce:**
+     1. Gửi request `POST /api/apply-coupon` với body: `{"code": "SAVE10", "total_amount": 400000, "user_id": 2}`.
+     2. Quan sát kết quả JSON trả về.
+   * **Expected Behavior:** Giảm 10% của 400,000 ₫ là 40,000 ₫; `discount_amount: 40000`, `final_amount: 360000`.
+   * **Actual Behavior:** Hệ thống trả về `discount_amount: -3600000`, `final_amount: 4000000` (khách hàng bị đội giá gấp 10 lần).
+   * **Root Cause & Code Reference:** Tại file `backend/server.js` dòng 406:
+     ```javascript
+     discount_amount = Math.floor(total_amount * (1 - coupon.discount_value));
+     ```
+     Với `coupon.discount_value = 10`, `(1 - 10) = -9`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)` — Tính toán sai tiền của khách hàng, đe dọa trực tiếp hoạt động kinh doanh.
+10. **Severity:** `Fatal` — Gây thiệt hại tài chính nghiêm trọng và tính sai giá trị thanh toán.
+
+---
+
+### BUG-FR09-02: Sai toán tử so sánh ngưỡng tối thiểu (sử dụng '>' thay vì '>=')
+1. **Bug ID:** `BUG-FR09-02`
+2. **Function name:** `FR-09: Kiểm tra ngưỡng giá trị tối thiểu (Backend API)`
+3. **Problem summary:** `Validate Minimum Order Amount: Backend uses strict inequality '>' instead of '>=', falsely rejecting orders exactly equal to min_order_amount.`
+4. **How to reproduce the defect:**
+   * **Environment:** Web Client `:5173` & Backend `:3000`.
+   * **Steps to Reproduce:**
+     1. Nhập đơn hàng có tổng tiền đúng `500,000 ₫`.
+     2. Nhập mã `'BIGBUY'` (có `min_order_amount = 500,000 ₫`).
+     3. Nhấp "Áp dụng".
+   * **Expected Behavior:** Hệ thống chấp nhận mã hợp lệ vì $500,000 \ge 500,000$ (thỏa mãn điều kiện C3).
+   * **Actual Behavior:** Hệ thống từ chối với HTTP 400: *"Đơn hàng chưa đủ giá trị tối thiểu 500,000 ₫ để áp dụng mã này"*.
+   * **Root Cause & Code Reference:** Tại `backend/server.js` dòng 385:
+     ```javascript
+     if (total_amount > coupon.min_order_amount) { // Thiếu dấu =
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Từ chối sai các khách hàng đạt đủ điều kiện khuyến mãi tối thiểu.
+
+---
+
+### BUG-FR09-03: Endpoint áp dụng coupon không yêu cầu xác thực JWT (Vi phạm C4)
+1. **Bug ID:** `BUG-FR09-03`
+2. **Function name:** `FR-09: Xác thực người dùng khi áp coupon (Security / API)`
+3. **Problem summary:** `Authenticate Coupon Application: POST /api/apply-coupon lacks authenticateToken middleware, violating C4 requirement.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Gửi request `POST /api/apply-coupon` với body `{"code": "BIGBUY", "total_amount": 600000}` mà không kèm header `Authorization: Bearer <token>`.
+   * **Expected Behavior:** Backend trả về HTTP 401 Unauthorized yêu cầu đăng nhập theo quy định C4.
+   * **Actual Behavior:** Backend trả về HTTP 200 thành công cho khách vãng lai.
+   * **Root Cause:** Route `app.post("/api/apply-coupon", ...)` trong `server.js` thiếu middleware `authenticateToken`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Vi phạm ràng buộc bảo mật và quản lý khuyến mãi của hệ thống.
+
+---
+
+### BUG-FR09-04: Backend nhận user_id từ request body gây nguy cơ ID Spoofing
+1. **Bug ID:** `BUG-FR09-04`
+2. **Function name:** `FR-09: Kiểm soát định danh người dùng (Security / API)`
+3. **Problem summary:** `Authorize User Identity: Backend trusts client-provided user_id in body instead of extracting from verified JWT token, allowing quota bypass.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Tài khoản A (User ID 2) đã dùng hết lượt mã `BIGBUY`.
+     2. Gửi request với body `{"code": "BIGBUY", "total_amount": 600000, "user_id": 999}`.
+   * **Expected Behavior:** Backend lấy `req.user.id` từ token, phát hiện đã hết lượt và từ chối.
+   * **Actual Behavior:** Backend truy vấn `user_id = 999`, không thấy lịch sử dùng và cho phép áp dụng thành công.
+   * **Root Cause:** `server.js:370` lấy `const { code, total_amount, user_id } = req.body;`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Lỗ hổng cho phép kẻ gian giả mạo ID người dùng khác để qua mặt hạn ngạch sử dụng coupon.
+
+---
+
+### BUG-FR09-05: Giao diện Checkout cho phép người dùng tự do nhập và sửa tổng tiền thanh toán
+1. **Bug ID:** `BUG-FR09-05`
+2. **Function name:** `FR-08 / FR-09: Toàn vẹn dữ liệu đơn hàng (Web Client / Security)`
+3. **Problem summary:** `Enforce Order Total Integrity: Checkout page exposes an editable input for total amount, allowing price tampering.`
+4. **How to reproduce the defect:**
+   * **Environment:** Web Client `http://localhost:5173/checkout`.
+   * **Steps to Reproduce:**
+     1. Mở trang Checkout.
+     2. Tại ô "Tổng tiền thanh toán (VND)", gõ trực tiếp số tiền `600,000 ₫` (mặc dù giỏ hàng chỉ có món 50,000 ₫).
+     3. Nhập mã `'BIGBUY'` và bấm Áp dụng.
+   * **Expected Behavior:** Tổng tiền thanh toán là trường chỉ đọc (read-only), tự động tính từ giỏ hàng (theo đặc tả FR-08 dòng 105).
+   * **Actual Behavior:** Input cho phép sửa tự do, người dùng có thể kích hoạt các mã giảm giá giá trị cao hoặc giảm giá tiền thanh toán tùy ý.
+   * **Root Cause:** `frontend-web/src/pages/Checkout.jsx` dòng 93-103 render `<input type="number" value={editableTotal} onChange=... />`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Fullstack Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)`
+10. **Severity:** `Fatal` — Lỗ hổng cho phép người mua gian lận tùy ý giá trị thanh toán của đơn hàng.
+
+---
+
+### BUG-FR09-06: Ghi nhận lượt sử dụng coupon tách rời khỏi transaction thanh toán
+1. **Bug ID:** `BUG-FR09-06`
+2. **Function name:** `FR-09: Quản lý tính nguyên tử của giao dịch (Architecture / Fullstack)`
+3. **Problem summary:** `Persist Coupon Usage: Frontend executes separate uncoordinated call to /api/coupon-usage, risking unrecorded single-use coupons.`
+4. **How to reproduce the defect:**
+   * **Environment:** Web Client `:5173` & Backend `:3000`.
+   * **Steps to Reproduce:**
+     1. Áp dụng mã `BIGBUY` (mã dùng 1 lần) và tiến hành đặt hàng.
+     2. Dùng DevTools chặn request thứ hai gửi tới `/api/coupon-usage` sau khi `/api/checkout` đã thành công.
+   * **Expected Behavior:** Đơn hàng và việc ghi nhận trừ lượt dùng coupon phải nằm chung trong 1 transaction nguyên tử tại Backend.
+   * **Actual Behavior:** Đơn hàng được tạo thành công nhưng bảng `coupon_usage` không có bản ghi nào, người dùng có thể tiếp tục dùng mã này cho các đơn hàng tiếp theo.
+   * **Root Cause:** `Checkout.jsx` dòng 54-59 thực hiện 2 request HTTP độc lập thay vì backend xử lý trong cùng 1 transaction.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Fullstack Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Thiếu tính nguyên tử (Atomicity), gây rủi ro lạm dụng mã giảm giá nhiều lần.
