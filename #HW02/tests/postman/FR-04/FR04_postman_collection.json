@@ -1,0 +1,2312 @@
+{
+  "info": {
+    "name": "FR-04 Domain Testing + BVA (EShop)",
+    "description": "Chạy server: node server.js (localhost:3000). Folder A: Runner + FR04_testdata.json. Folder B: tái hiện 4 bug FR-04-BUG-01..04, Send lần lượt từ trên xuống để chụp ảnh evidence.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "C. BẤM SEND LIÊN TIẾP - không cần Runner (khuyên dùng)",
+      "description": "C0 reset -> bấm Send ở C1 nhiều lần (mỗi lần = 1 test, 1 user mới) -> C2 xem tổng hợp. Xem kết quả ở tab Test Results.",
+      "item": [
+        {
+          "name": "C0. Reset (idx=0, xóa nhật ký)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('idx', '0');",
+                  "pm.collectionVariables.set('log', '[]');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Đã reset: idx = 0, nhật ký rỗng. Giờ bấm Send ở C1 để chạy test đầu tiên', () => {});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C1. Chạy test kế tiếp (bấm Send nhiều lần)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Mỗi lần Send: tạo user mới, gửi body của test số idx, kiểm tra, rồi idx tăng 1. Muốn chạy lại 1 test: đặt biến collection idx = số thứ tự (bắt đầu từ 0)."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const CASES = [{\"id\": \"DT-01\", \"group\": \"EP phone\", \"desc\": \"Hợp lệ: 10 chữ số, bắt đầu 0\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912345678\"}}, {\"id\": \"DT-02\", \"group\": \"EP phone\", \"desc\": \"Hợp lệ: 11 chữ số, bắt đầu 0\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"09123456789\"}}, {\"id\": \"DT-03\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: không bắt đầu bằng 0 (10 số)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"9123456789\"}}, {\"id\": \"DT-04\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: chứa chữ cái\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"09123abcde\"}}, {\"id\": \"DT-05\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: có khoảng trắng\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912 345 678\"}}, {\"id\": \"DT-06\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: định dạng +84\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"+84912345678\"}}, {\"id\": \"DT-07\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: ký tự đặc biệt\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0912-345-678\"}}, {\"id\": \"DT-08\", \"group\": \"EP phone\", \"desc\": \"Không hợp lệ: kiểu số (number) thay vì chuỗi\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": 912345678}}, {\"id\": \"DT-08b\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: sai kiểu boolean (tách riêng lỗi kiểu)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": true}}, {\"id\": \"DT-08c\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: sai kiểu mảng chứa SĐT hợp lệ\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": [\"0912345678\"]}}, {\"id\": \"DT-08d\", \"group\": \"EP phone\", \"desc\": \"Bổ sung: phone = null (SRS không nói)\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"phone\": null}}, {\"id\": \"DT-09\", \"group\": \"EP phone\", \"desc\": \"Rỗng '' (SRS không nói rõ)\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"phone\": \"\"}}, {\"id\": \"BV-01\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 9 (min-1)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"012345678\"}}, {\"id\": \"BV-02\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 10 (min)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0123456789\"}}, {\"id\": \"BV-03\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 11 (max)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"01234567890\"}}, {\"id\": \"BV-04\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 12 (max+1)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"012345678901\"}}, {\"id\": \"BV-05\", \"group\": \"BVA phone\", \"desc\": \"Độ dài 1 ('0')\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"0\"}}, {\"id\": \"BV-06\", \"group\": \"BVA phone\", \"desc\": \"Chữ số đầu '0' (biên hợp lệ)\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"phone\": \"0987654321\"}}, {\"id\": \"BV-07\", \"group\": \"BVA phone\", \"desc\": \"Chữ số đầu '1' (sát biên không hợp lệ)\", \"expected\": \"REJECT\", \"auth\": \"valid\", \"body\": {\"phone\": \"1987654321\"}}, {\"id\": \"DT-10\", \"group\": \"EP name\", \"desc\": \"Hợp lệ: tên thường\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Nguyen Van A\"}}, {\"id\": \"DT-11\", \"group\": \"EP name\", \"desc\": \"Tên có dấu tiếng Việt\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Nguyễn Văn Ánh\"}}, {\"id\": \"DT-12\", \"group\": \"EP name\", \"desc\": \"Tên rỗng ''\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"name\": \"\"}}, {\"id\": \"DT-13\", \"group\": \"EP name\", \"desc\": \"Tên toàn khoảng trắng\", \"expected\": \"REJECT?\", \"auth\": \"valid\", \"body\": {\"name\": \"   \"}}, {\"id\": \"DT-14\", \"group\": \"EP name\", \"desc\": \"Tên chứa thẻ HTML (UI phải escape - SEC-04)\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"name\": \"<b>x</b>\"}}, {\"id\": \"DT-15\", \"group\": \"EP address\", \"desc\": \"Địa chỉ hợp lệ\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"shipping_address\": \"123 Le Loi, Q1, TP.HCM\"}}, {\"id\": \"DT-16\", \"group\": \"EP address\", \"desc\": \"Địa chỉ rỗng ''\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"shipping_address\": \"\"}}, {\"id\": \"DT-17\", \"group\": \"EP name\", \"desc\": \"Tên rất dài (1000 ký tự)\", \"expected\": \"OK?\", \"auth\": \"valid\", \"body\": {\"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}, {\"id\": \"BL-01\", \"group\": \"Business\", \"desc\": \"Cập nhật cả 3 trường hợp lệ\", \"expected\": \"OK\", \"auth\": \"valid\", \"body\": {\"name\": \"Ten Moi\", \"phone\": \"0911111111\", \"shipping_address\": \"Dia chi moi\"}}, {\"id\": \"BL-02\", \"group\": \"Business\", \"desc\": \"Chỉ gửi phone -> name và address phải giữ nguyên\", \"expected\": \"KEEP\", \"auth\": \"valid\", \"body\": {\"phone\": \"0922222222\"}}, {\"id\": \"BL-03\", \"group\": \"Business\", \"desc\": \"Email không được đổi\", \"expected\": \"EMAIL_SAME\", \"auth\": \"valid\", \"body\": {\"email\": \"hacker@evil.com\"}}, {\"id\": \"BL-04\", \"group\": \"Business\", \"desc\": \"Không tự đổi role (SEC-06)\", \"expected\": \"ROLE_USER\", \"auth\": \"valid\", \"body\": {\"role\": \"admin\"}}, {\"id\": \"BL-05\", \"group\": \"Business\", \"desc\": \"Gửi kèm id=1 không được ghi đè id tài khoản\", \"expected\": \"ID_SAME\", \"auth\": \"valid\", \"body\": {\"id\": 1, \"name\": \"X\"}}, {\"id\": \"AC-01\", \"group\": \"Access\", \"desc\": \"Không có token\", \"expected\": \"401/403\", \"auth\": \"none\", \"body\": {\"name\": \"X\"}}, {\"id\": \"AC-02\", \"group\": \"Access\", \"desc\": \"Token sai\", \"expected\": \"401/403\", \"auth\": \"bad\", \"body\": {\"name\": \"X\"}}];",
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const i = Number(pm.collectionVariables.get('idx') || 0);",
+                  "if (i >= CASES.length) {",
+                  "  throw new Error('Đã chạy hết ' + CASES.length + ' test. Chạy C0 (Reset) để làm lại, hoặc đặt biến idx để chạy lại 1 test.');",
+                  "}",
+                  "const tc = CASES[i];",
+                  "pm.collectionVariables.set('cur', String(i));",
+                  "pm.collectionVariables.set('total', String(CASES.length));",
+                  "pm.collectionVariables.set('tc', JSON.stringify(tc));",
+                  "pm.collectionVariables.set('token', '');",
+                  "pm.collectionVariables.set('before', '');",
+                  "const email = `fr04.${Date.now().toString(16)}.${Math.floor(Math.random()*1e6)}@test.com`;",
+                  "pm.collectionVariables.set('email', email);",
+                  "",
+                  "const send = (method, path, body, token, cb) => pm.sendRequest({",
+                  "  url: base + path, method: method,",
+                  "  header: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),",
+                  "  body: body ? { mode: 'raw', raw: JSON.stringify(body) } : undefined",
+                  "}, cb);",
+                  "",
+                  "// Tạo user MỚI cho mỗi test: register -> login -> đặt hồ sơ gốc -> GET before",
+                  "send('POST', '/api/register', { name: 'Ten Goc', email: email, password: 'Pass1234!' }, null, () => {",
+                  "  send('POST', '/api/login', { email: email, password: 'Pass1234!' }, null, (e2, r2) => {",
+                  "    let token = '';",
+                  "    try { token = r2.json().token || ''; } catch (x) {}",
+                  "    pm.collectionVariables.set('token', token);",
+                  "    send('PUT', '/api/users/me', { name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc' }, token, () => {",
+                  "      send('GET', '/api/users/me', null, token, (e4, r4) => {",
+                  "        try { pm.collectionVariables.set('before', r4.text()); } catch (x) {}",
+                  "        pm.request.body.update({ mode: 'raw', raw: JSON.stringify(tc.body) });",
+                  "        if (tc.auth === 'none') { pm.request.headers.remove('Authorization'); }",
+                  "        else if (tc.auth === 'bad') { pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer abc.def.ghi' }); }",
+                  "      });",
+                  "    });",
+                  "  });",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const tc = JSON.parse(pm.collectionVariables.get('tc'));",
+                  "const token = pm.collectionVariables.get('token');",
+                  "const email = pm.collectionVariables.get('email');",
+                  "const cur = Number(pm.collectionVariables.get('cur'));",
+                  "const total = pm.collectionVariables.get('total');",
+                  "const code = pm.response.code;",
+                  "let before = null;",
+                  "try { before = JSON.parse(pm.collectionVariables.get('before')); } catch (e) {}",
+                  "",
+                  "if (!token || !before) {",
+                  "  pm.test('SETUP LỖI: không tạo được user/token (server đã chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                  "} else {",
+                  "  // GET sau khi PUT để xem dữ liệu đã lưu thật sự",
+                  "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + token } }, (err, res) => {",
+                  "    const after = res.json();",
+                  "    const body = tc.body, exp = tc.expected;",
+                  "    const FIELDS = ['name', 'phone', 'shipping_address', 'email', 'role', 'id'];",
+                  "    const changed = FIELDS.filter(k => before[k] !== after[k]);",
+                  "    const ok2xx = code >= 200 && code < 300;",
+                  "    const is4xx = code >= 400 && code < 500;",
+                  "    const sent = ['name', 'phone', 'shipping_address'].filter(k => k in body);",
+                  "    const persisted = sent.every(k => after[k] === body[k]);",
+                  "",
+                  "    let verdict;",
+                  "    switch (exp) {",
+                  "      case 'OK':         verdict = ok2xx && persisted; break;",
+                  "      case 'REJECT':     verdict = is4xx && changed.length === 0; break;",
+                  "      case 'KEEP':       verdict = ok2xx && after.name === before.name && after.shipping_address === before.shipping_address && after.phone === body.phone; break;",
+                  "      case 'EMAIL_SAME': verdict = after.email === email; break;",
+                  "      case 'ROLE_USER':  verdict = after.role === 'user'; break;",
+                  "      case 'ID_SAME':    verdict = after.id === before.id; break;",
+                  "      case '401/403':    verdict = (code === 401 || code === 403) && changed.length === 0; break;",
+                  "      default:           verdict = null;",
+                  "    }",
+                  "",
+                  "    const label = `[${cur + 1}/${total}] ${tc.id} | ${tc.desc} | HTTP ${code}`;",
+                  "    if (verdict === null) {",
+                  "      pm.test(`[CẦN LÀM RÕ] ${label} | hệ thống ${ok2xx ? 'CHẤP NHẬN' : 'TỪ CHỐI'}`, () => {});",
+                  "    } else {",
+                  "      pm.test(label, () => {",
+                  "        pm.expect(verdict, `expected=${exp}; trường bị đổi: ${JSON.stringify(changed)}`).to.be.true;",
+                  "      });",
+                  "    }",
+                  "",
+                  "    let wiped = [];",
+                  "    if (exp !== '401/403') {",
+                  "      wiped = ['name', 'phone', 'shipping_address'].filter(k => !(k in body) && before[k] !== after[k]);",
+                  "      pm.test(`[SIDE-EFFECT] ${tc.id} | trường không gửi phải giữ nguyên`, () => {",
+                  "        pm.expect(wiped, `bị đổi ngoài ý muốn: ${wiped.join(', ')}`).to.be.empty;",
+                  "      });",
+                  "    }",
+                  "",
+                  "    // ghi nhật ký để C2 tổng hợp; chạy lại cùng test thì ghi đè",
+                  "    let log = [];",
+                  "    try { log = JSON.parse(pm.collectionVariables.get('log') || '[]'); } catch (e) {}",
+                  "    log = log.filter(x => x.id !== tc.id);",
+                  "    log.push({ id: tc.id, desc: tc.desc, code: code, wiped: wiped, verdict: verdict === null ? 'CLARIFY' : (verdict ? 'PASS' : 'FAIL') });",
+                  "    pm.collectionVariables.set('log', JSON.stringify(log));",
+                  "    pm.collectionVariables.set('idx', String(cur + 1));",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C2. Tổng hợp kết quả",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let log = [];",
+                  "try { log = JSON.parse(pm.collectionVariables.get('log') || '[]'); } catch (e) {}",
+                  "const c = { PASS: 0, FAIL: 0, CLARIFY: 0 };",
+                  "log.forEach(x => { c[x.verdict]++; });",
+                  "const side = log.filter(x => x.wiped.length).length;",
+                  "pm.test(`TỔNG ${log.length} test: PASS ${c.PASS} | FAIL ${c.FAIL} | CẦN LÀM RÕ ${c.CLARIFY} | có side-effect ${side}`, () => {});",
+                  "log.forEach(x => {",
+                  "  const extra = x.wiped.length ? ` | side-effect: ${x.wiped.join(',')}` : '';",
+                  "  if (x.verdict === 'CLARIFY') { pm.test(`[CẦN LÀM RÕ] ${x.id} | ${x.desc} | HTTP ${x.code}`, () => {}); }",
+                  "  else { pm.test(`${x.id} | ${x.desc} | HTTP ${x.code}${extra}`, () => { pm.expect(x.verdict === 'PASS').to.be.true; }); }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "A. AUTO - chạy bằng Runner (cần nạp FR04_testdata.json)",
+      "description": "Mỗi iteration = 1 test case, dùng 1 user mới. Chọn Run folder, nạp file data, bấm Run.",
+      "item": [
+        {
+          "name": "A1. Register user mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Ten Goc\",\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const email = `fr04.${Date.now().toString(16)}.${Math.floor(Math.random()*1e6)}@test.com`;",
+                  "pm.collectionVariables.set('email', email);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A2. Login (lưu token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{email}}\",\"password\":\"Pass1234!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let t = '';",
+                  "try { t = pm.response.json().token || ''; } catch (e) {}",
+                  "pm.collectionVariables.set('token', t);",
+                  "if (!t) { pm.test('SETUP LỖI: login không lấy được token (server đã chạy chưa?)', () => { throw new Error('no token'); }); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A3. Baseline: đặt hồ sơ gốc",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Ten Goc\",\"phone\":\"0900000000\",\"shipping_address\":\"Dia chi goc\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "A4. GET trước khi test",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('before', pm.response.text());"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A5. PUT cần test (body lấy từ data file)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const id = pm.iterationData.get('id');",
+                  "if (!id) { throw new Error('Chưa nạp FR04_testdata.json trong Runner (mục Data). Hãy chọn file dữ liệu rồi chạy lại.'); }",
+                  "let b = pm.iterationData.get('body');",
+                  "if (typeof b === 'string') { b = JSON.parse(b); }",
+                  "pm.request.body.update({ mode: 'raw', raw: JSON.stringify(b) });",
+                  "const auth = pm.iterationData.get('auth') || 'valid';",
+                  "if (auth === 'none') { pm.request.headers.remove('Authorization'); }",
+                  "else if (auth === 'bad') { pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer abc.def.ghi' }); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('putStatus', String(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A6. GET sau + chấm verdict",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = k => pm.iterationData.get(k);",
+                  "const id = d('id'), desc = d('desc'), exp = d('expected');",
+                  "let body = d('body'); if (typeof body === 'string') { body = JSON.parse(body); }",
+                  "const before = JSON.parse(pm.collectionVariables.get('before'));",
+                  "const after = pm.response.json();",
+                  "const code = Number(pm.collectionVariables.get('putStatus'));",
+                  "const email = pm.collectionVariables.get('email');",
+                  "",
+                  "const FIELDS = ['name', 'phone', 'shipping_address', 'email', 'role', 'id'];",
+                  "const changed = FIELDS.filter(k => before[k] !== after[k]);",
+                  "const ok2xx = code >= 200 && code < 300;",
+                  "const is4xx = code >= 400 && code < 500;",
+                  "const sent = ['name', 'phone', 'shipping_address'].filter(k => k in body);",
+                  "const persisted = sent.every(k => after[k] === body[k]);",
+                  "",
+                  "let verdict;",
+                  "switch (exp) {",
+                  "  case 'OK':         verdict = ok2xx && persisted; break;",
+                  "  case 'REJECT':     verdict = is4xx && changed.length === 0; break;",
+                  "  case 'KEEP':       verdict = ok2xx && after.name === before.name && after.shipping_address === before.shipping_address && after.phone === body.phone; break;",
+                  "  case 'EMAIL_SAME': verdict = after.email === email; break;",
+                  "  case 'ROLE_USER':  verdict = after.role === 'user'; break;",
+                  "  case 'ID_SAME':    verdict = after.id === before.id; break;",
+                  "  case '401/403':    verdict = (code === 401 || code === 403) && changed.length === 0; break;",
+                  "  default:           verdict = null;   // mong đợi '?' => CẦN LÀM RÕ, chỉ ghi nhận",
+                  "}",
+                  "",
+                  "const label = `${id} | ${desc} | HTTP ${code}`;",
+                  "if (verdict === null) {",
+                  "  pm.test(`[CẦN LÀM RÕ] ${label} | hệ thống ${ok2xx ? 'CHẤP NHẬN' : 'TỪ CHỐI'}`, () => {});",
+                  "} else {",
+                  "  pm.test(label, () => {",
+                  "    pm.expect(verdict, `expected=${exp}; trường bị đổi: ${JSON.stringify(changed)}`).to.be.true;",
+                  "  });",
+                  "}",
+                  "",
+                  "// Kiểm tra tác dụng phụ: trường KHÔNG gửi lên phải giữ nguyên",
+                  "if (exp !== '401/403') {",
+                  "  const wiped = ['name', 'phone', 'shipping_address'].filter(k => !(k in body) && before[k] !== after[k]);",
+                  "  pm.test(`[SIDE-EFFECT] ${id} | trường không gửi phải giữ nguyên`, () => {",
+                  "    pm.expect(wiped, `bị đổi ngoài ý muốn: ${wiped.join(', ')}`).to.be.empty;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "B. TÁI HIỆN BUG ĐỂ CHỤP ẢNH EVIDENCE (Send lần lượt từ trên xuống)",
+      "description": "Tái hiện 4 bug FR-04-BUG-01..04 để chụp ảnh evidence; bấm Send lần lượt từ B0 xuống, không cần Runner. Request nào có test màu đỏ là bằng chứng bug; nhóm nào xanh hết thì không có bug. Mỗi nhóm tự tạo user mới (lưu {{bugToken}}, {{bugEmail}}, {{bugBefore}}) nên bấm Send lại bao nhiêu lần cũng được, không cần reset DB. B5 là ghi nhận ngoài FR-04, không tính vào bug. Folder này độc lập với folder A và C.",
+      "item": [
+        {
+          "name": "B0. CHUẨN BỊ (chạy trước): kiểm tra server và tạo thử 1 user",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "description": "Gửi trước các request bên dưới. Kiểm tra server chạy ở {{baseUrl}} và tạo được user mới có hồ sơ gốc. Các request ghi hồ sơ bên dưới tự tạo user riêng nên B0 không bắt buộc, chỉ để phát hiện sớm lỗi môi trường."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                  "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                  "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                  "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                  "(async () => {",
+                  "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                  "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                  "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                  "  const token = l.token || '';",
+                  "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                  "  const before = j(await send('GET', '/api/users/me', null, token));",
+                  "  pm.collectionVariables.set('bugEmail', email);",
+                  "  pm.collectionVariables.set('bugToken', token);",
+                  "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                  "})();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let b = null; try { b = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                  "pm.test('Chuẩn bị xong: server phản hồi HTTP ' + pm.response.code + ', user thử ' + pm.collectionVariables.get('bugEmail') + ', hồ sơ gốc name=' + (b && b.name) + ', phone=' + (b && b.phone), () => {",
+                  "  pm.expect(pm.response.code, 'server chưa chạy hoặc baseUrl sai').to.be.within(200, 299);",
+                  "  pm.expect(pm.collectionVariables.get('bugToken'), 'không đăng nhập được user mới').to.not.be.empty;",
+                  "  pm.expect(b && b.phone, 'không đặt được hồ sơ gốc').to.eql('0900000000');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-04-BUG-01: PUT /api/users/me không validate số điện thoại, nhận mọi giá trị",
+          "description": "Ca liên quan ở Folder C/A: DT-03, DT-04, DT-05, DT-06, DT-07, DT-08, DT-08b, DT-08c, BV-01, BV-04, BV-05, BV-07. Mức độ High. Chi tiết: FR-04-BUG-01.md. Mỗi request 01a..01l tạo user mới nên gửi theo thứ tự nào cũng được; muốn chụp ảnh SĐT đã lưu thì gửi 01m ngay sau request cần chụp.",
+          "item": [
+            {
+              "name": "FR-04-BUG-01a. Số điện thoại không bắt đầu bằng 0: \"9123456789\" (DT-03)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"9123456789\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-03: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01b. Số điện thoại chứa chữ cái: \"09123abcde\" (DT-04)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"09123abcde\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-04: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01c. Số điện thoại có khoảng trắng: \"0912 345 678\" (DT-05)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"0912 345 678\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-05: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01d. Số điện thoại dạng quốc tế: \"+84912345678\" (DT-06)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"+84912345678\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-06: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01e. Số điện thoại có ký tự đặc biệt: \"0912-345-678\" (DT-07)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"0912-345-678\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-07: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01f. Số điện thoại kiểu number: 912345678 (DT-08)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": 912345678}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-08: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01g. Số điện thoại kiểu boolean: true (DT-08b)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": true}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-08b: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01h. Số điện thoại kiểu mảng: [\"0912345678\"] (DT-08c)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": [\"0912345678\"]}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('DT-08c: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01i. Số điện thoại 9 chữ số (min-1): \"012345678\" (BV-01)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"012345678\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('BV-01: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01j. Số điện thoại 12 chữ số (max+1): \"012345678901\" (BV-04)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"012345678901\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('BV-04: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01k. Số điện thoại 1 chữ số: \"0\" (BV-05)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"0\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('BV-05: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01l. Số điện thoại có chữ số đầu là 1: \"1987654321\" (BV-07)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"1987654321\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "SRS FR-04: Số điện thoại hợp lệ: bắt đầu bằng số 0, từ 10-11 chữ số. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('bugToken');",
+                      "const code = pm.response.code;",
+                      "let before = null; try { before = JSON.parse(pm.collectionVariables.get('bugBefore')); } catch (e) {}",
+                      "if (!tok || !before) {",
+                      "  pm.test('SETUP LỖI: không tạo được user/hồ sơ gốc (server chạy chưa? baseUrl đúng chưa?)', () => { throw new Error('setup'); });",
+                      "} else {",
+                      "  pm.sendRequest({ url: base + '/api/users/me', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (err, res) => {",
+                      "    let after = null; try { after = res.json(); } catch (e) {}",
+                      "    const A = after || {};",
+                      "    pm.test('BV-07: kỳ vọng từ chối (4xx) và SĐT giữ nguyên ' + JSON.stringify(before.phone) + '; thực tế HTTP ' + code + ', SĐT đã lưu = ' + JSON.stringify(A.phone), () => {",
+                      "      pm.expect(code, 'phải bị từ chối (4xx)').to.be.within(400, 499);",
+                      "      pm.expect(A.phone, 'SĐT đã bị đổi thành giá trị sai').to.eql(before.phone);",
+                      "    });",
+                      "  });",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-01m. Đọc lại: SĐT hiện đang lưu của user ở request ngay trước (ảnh evidence B4)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "description": "Gửi ngay sau một request 01a..01l để chụp dữ liệu đã lưu thật. Kỳ vọng SĐT vẫn là 0900000000."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "pm.test('Sau PUT SĐT sai: SĐT phải còn \"0900000000\"; thực tế HTTP ' + pm.response.code + ', phone = ' + JSON.stringify(j && j.phone), () => { pm.expect(j && j.phone).to.eql('0900000000'); });"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "FR-04-BUG-02: PUT /api/users/me xóa các trường không gửi lên (name, shipping_address bị đặt thành null)",
+          "description": "Ca liên quan ở Folder C/A: BL-02 (kiểm tra trực tiếp); hiện tượng lộ ra ở hầu hết các test chỉ gửi một trường (cột side-effect). Mức độ High, trạng thái Open (chờ xác nhận giả định A1: cập nhật một trường không được làm mất các trường còn lại). Chi tiết: FR-04-BUG-02.md. Gửi lần lượt 02a → 02b → 02c.",
+          "item": [
+            {
+              "name": "FR-04-BUG-02a. Trước: tạo user mới và đọc hồ sơ gốc (đủ 3 trường)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "description": "SRS FR-04: người dùng có thể cập nhật Họ Tên, SĐT, Địa chỉ giao hàng. Giả định A1: cập nhật một trường không làm mất các trường còn lại. Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "pm.test('Hồ sơ gốc đủ 3 trường: name=' + JSON.stringify(j && j.name) + ', phone=' + JSON.stringify(j && j.phone) + ', shipping_address=' + JSON.stringify(j && j.shipping_address), () => {",
+                      "  pm.expect(j && j.name).to.eql('Ten Goc'); pm.expect(j && j.phone).to.eql('0900000000'); pm.expect(j && j.shipping_address).to.eql('Dia chi goc');",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-02b. Chỉ gửi phone = \"0922222222\" (BL-02)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"phone\": \"0922222222\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Chỉ gửi một trường, name và shipping_address không có trong body."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('BL-02: kỳ vọng chấp nhận (2xx); thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-02c. Sau: chỉ phone đổi, name và shipping_address phải giữ nguyên (BL-02)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "const A = j || {};",
+                      "pm.test('BL-02: phone đã đổi thành \"0922222222\"; thực tế ' + JSON.stringify(A.phone), () => { pm.expect(A.phone).to.eql('0922222222'); });",
+                      "pm.test('BL-02: name phải giữ nguyên \"Ten Goc\"; thực tế ' + JSON.stringify(A.name), () => { pm.expect(A.name, 'name bị xóa/đổi').to.eql('Ten Goc'); });",
+                      "pm.test('BL-02: shipping_address phải giữ nguyên \"Dia chi goc\"; thực tế ' + JSON.stringify(A.shipping_address), () => { pm.expect(A.shipping_address, 'shipping_address bị xóa/đổi').to.eql('Dia chi goc'); });"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "FR-04-BUG-03: PUT /api/users/me cho phép người dùng tự đổi role thành admin (SEC-06)",
+          "description": "Ca liên quan ở Folder C/A: BL-04. Mức độ Critical (leo thang đặc quyền). Chi tiết: FR-04-BUG-03.md. Gửi lần lượt 03a → 03b → 03c.",
+          "item": [
+            {
+              "name": "FR-04-BUG-03a. Trước: tạo user mới và đọc role (phải là user)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "description": "SRS FR-04: người dùng không thể tự thay đổi thuộc tính role (SEC-06). Request này tự tạo user mới với hồ sơ gốc (Ten Goc / 0900000000 / Dia chi goc)."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                      "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                      "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                      "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                      "(async () => {",
+                      "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                      "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                      "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                      "  const token = l.token || '';",
+                      "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                      "  const before = j(await send('GET', '/api/users/me', null, token));",
+                      "  pm.collectionVariables.set('bugEmail', email);",
+                      "  pm.collectionVariables.set('bugToken', token);",
+                      "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "pm.test('Trước: role phải là \"user\"; thực tế ' + JSON.stringify(j && j.role), () => { pm.expect(j && j.role).to.eql('user'); });"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-03b. Gửi {\"role\": \"admin\"} (BL-04)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"role\": \"admin\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Kỳ vọng server bỏ qua hoặc từ chối trường role."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('[GHI NHẬN] BL-04: HTTP ' + pm.response.code + ' ' + pm.response.text().slice(0, 80), () => {});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-03c. Sau: role phải vẫn là user (BL-04)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "pm.test('BL-04: role phải giữ nguyên \"user\"; thực tế ' + JSON.stringify(j && j.role), () => { pm.expect(j && j.role, 'user tự nâng quyền thành admin').to.eql('user'); });"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "FR-04-BUG-04: GET /api/users/me trả về mật khẩu dạng plaintext và các trường nhạy cảm (SEC-01)",
+          "description": "Ca liên quan: BL-06 (ca mới, chỉ có trong folder này). Mức độ Critical. Chi tiết: FR-04-BUG-04.md. Gửi lần lượt 04a (đăng ký) → 04b (đăng nhập) → 04c (GET).",
+          "item": [
+            {
+              "name": "FR-04-BUG-04a. Đăng ký user mới với mật khẩu Pass1234!",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "register"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"name\": \"U\", \"email\": \"{{bugEmail}}\", \"password\": \"Pass1234!\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Tạo email mới mỗi lần gửi."
+              },
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.collectionVariables.set('bugEmail', 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com');"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Đăng ký thành công (2xx); thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-04b. Đăng nhập (lưu token)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\": \"{{bugEmail}}\", \"password\": \"Pass1234!\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let t = ''; try { t = pm.response.json().token || ''; } catch (e) {}",
+                      "pm.collectionVariables.set('bugToken', t);",
+                      "pm.test('Đăng nhập lấy được token; thực tế HTTP ' + pm.response.code, () => { pm.expect(t).to.not.be.empty; });"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FR-04-BUG-04c. GET /users/me: response không được chứa mật khẩu và trường nhạy cảm (BL-06)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{bugToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me"
+                  ]
+                },
+                "description": "SRS SEC-01: Mật khẩu không được lưu dưới dạng plaintext."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let j = null; try { j = pm.response.json(); } catch (e) {}",
+                      "const A = j || {}, keys = Object.keys(A);",
+                      "pm.test('BL-06: response không có trường password và reset_token; thực tế các trường: ' + keys.join(', '), () => {",
+                      "  pm.expect(keys.filter(k => ['password', 'reset_token'].includes(k)), 'đang trả về trường nhạy cảm').to.be.empty;",
+                      "});",
+                      "pm.test('BL-06: nếu có password thì không phải plaintext \"Pass1234!\"; thực tế password = ' + JSON.stringify(A.password), () => {",
+                      "  pm.expect(A.password, 'mật khẩu trả về dạng plaintext').to.not.eql('Pass1234!');",
+                      "});",
+                      "pm.test('BL-06: không lộ trường nội bộ login_attempts, locked_until; thực tế: ' + keys.filter(k => ['login_attempts', 'locked_until'].includes(k)).join(', '), () => {",
+                      "  pm.expect(keys.filter(k => ['login_attempts', 'locked_until'].includes(k)), 'đang lộ trường nội bộ').to.be.empty;",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "B5. (Ngoài FR-04, ghi nhận riêng) User thường gọi GET /api/admin/users: kỳ vọng 403 (SEC-03)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bugToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": "Ngoài phạm vi FR-04 (thuộc SEC-03). Gọi bằng token của user thường: kỳ vọng 403. Nếu trả 200 thì API admin không kiểm tra role - ghi nhận riêng, đừng gộp vào bug của FR-04 (không dùng làm bằng chứng cho FR-04-BUG-03). Request này tự tạo user mới nên role luôn là user."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                  "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                  "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                  "const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                  "(async () => {",
+                  "  const email = 'fr04bug.' + Date.now().toString(36) + Math.floor(Math.random() * 1e6) + '@test.com';",
+                  "  await send('POST', '/api/register', {name: 'Ten Goc', email: email, password: 'Pass1234!'});",
+                  "  const l = j(await send('POST', '/api/login', {email: email, password: 'Pass1234!'})) || {};",
+                  "  const token = l.token || '';",
+                  "  await send('PUT', '/api/users/me', {name: 'Ten Goc', phone: '0900000000', shipping_address: 'Dia chi goc'}, token);",
+                  "  const before = j(await send('GET', '/api/users/me', null, token));",
+                  "  pm.collectionVariables.set('bugEmail', email);",
+                  "  pm.collectionVariables.set('bugToken', token);",
+                  "  pm.collectionVariables.set('bugBefore', before ? JSON.stringify(before) : '');",
+                  "})();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('[GHI NHẬN, ngoài FR-04] SEC-03: user thường gọi API admin, kỳ vọng 403; thực tế HTTP ' + pm.response.code, () => {});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "before",
+      "value": ""
+    },
+    {
+      "key": "putStatus",
+      "value": ""
+    },
+    {
+      "key": "idx",
+      "value": "0"
+    },
+    {
+      "key": "log",
+      "value": "[]"
+    },
+    {
+      "key": "cur",
+      "value": ""
+    },
+    {
+      "key": "total",
+      "value": ""
+    },
+    {
+      "key": "tc",
+      "value": ""
+    },
+    {
+      "key": "bugEmail",
+      "value": ""
+    },
+    {
+      "key": "bugToken",
+      "value": ""
+    },
+    {
+      "key": "bugBefore",
+      "value": ""
+    }
+  ]
+}

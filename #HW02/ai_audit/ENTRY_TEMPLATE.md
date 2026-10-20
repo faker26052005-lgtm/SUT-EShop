@@ -19,7 +19,5 @@ TODO (nếu quá dài: lưu vào ai_audit/raw/ và ghi đường dẫn ở đây
 ```
 
 ## Rà soát của tôi (human review)
-- Chấp nhận: TODO
-- Sửa: TODO (sửa gì, vì sao)
-- Loại bỏ: TODO
-- AI bỏ sót (ghi tiếp sang `08_ai_gap_analysis.md`): TODO
+- Chấp nhận: Có
+- Các chỉnh sửa trong AI_gap_analysis

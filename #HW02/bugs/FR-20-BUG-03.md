@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-01: "Email ... là duy nhất trong hệ thống." |
 | Môi trường | Backend localhost:3000, SUT commit 85af3ba (commit trong bản clone của mình, hãy thay bằng `git rev-parse --short HEAD` trong repo của bạn) |
 | Test case liên quan | DT-R14, BL-R03 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/49 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện

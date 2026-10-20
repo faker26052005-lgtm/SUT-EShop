@@ -27,6 +27,27 @@ Mỗi lần dùng AI: `python3 scripts/hw.py new-entry FR-xx "<bước>" --tool 
 | FR-04-05 | 2026-10-19 13:39:26 (UTC+0700) | Gemini 3.1 Pro | FR-04 – Bước 5 - Phân tích boundary value | [entry](entries/FR-04/05_buoc-5-phan-tich-boundary-value.md) |
 | FR-04-06 | 2026-10-19 13:42:02 (UTC+0700) | Gemini 3.1 Pro | FR-04 – Bước 6 - Nghiệp vụ, bảo mật, truy cập (dạng trung lập) | [entry](entries/FR-04/06_buoc-6-nghiep-vu-bao-mat-truy-cap-dang-trung-lap.md) |
 | FR-04-07 | 2026-10-19 13:45:03 (UTC+0700) | Gemini 3.1 Pro | FR-04 – Bước 7 - Kiểm tra lại | [entry](entries/FR-04/07_buoc-7-kiem-tra-lai.md) |
+| FR-09-01 | 2026-10-20 06:35:06 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 1 - trích yêu cầu | [entry](entries/FR-09/01_buoc-1-trich-yeu-cau.md) |
+| FR-09-02 | 2026-10-20 06:37:17 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 2 - chia lớp tương đương | [entry](entries/FR-09/02_buoc-2-chia-lop-tuong-duong.md) |
+| FR-09-03 | 2026-10-20 06:39:54 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 3 - chia lớp tương đương | [entry](entries/FR-09/03_buoc-3-chia-lop-tuong-duong.md) |
+| FR-09-04 | 2026-10-20 06:41:27 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 4 - Testcase domain testing | [entry](entries/FR-09/04_buoc-4-testcase-domain-testing.md) |
+| FR-09-05 | 2026-10-20 06:43:53 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 5 - Phân tích boundary value | [entry](entries/FR-09/05_buoc-5-phan-tich-boundary-value.md) |
+| FR-09-06 | 2026-10-20 06:45:09 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 6 - Nghiệp vụ, bảo mật, truy cập (dạng trung lập) | [entry](entries/FR-09/06_buoc-6-nghiep-vu-bao-mat-truy-cap-dang-trung-lap.md) |
+| FR-09-07 | 2026-10-20 06:49:32 (UTC+0700) | Gemini 3.1 Pro | FR-09 – Bước 7 - Kiểm tra lại | [entry](entries/FR-09/07_buoc-7-kiem-tra-lai.md) |
+| FR-20-01 | 2026-10-20 08:27:42 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 1 - trích yêu cầu | [entry](entries/FR-20/01_buoc-1-trich-yeu-cau.md) |
+| FR-20-02 | 2026-10-20 08:33:50 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 2 - chia lớp tương đương | [entry](entries/FR-20/02_buoc-2-chia-lop-tuong-duong.md) |
+| FR-20-03 | 2026-10-20 08:35:44 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 3 - chia lớp tương đương | [entry](entries/FR-20/03_buoc-3-chia-lop-tuong-duong.md) |
+| FR-20-04 | 2026-10-20 08:38:18 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 4 - Testcase domain testing | [entry](entries/FR-20/04_buoc-4-testcase-domain-testing.md) |
+| FR-20-05 | 2026-10-20 08:40:23 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 5 - Phân tích boundary value | [entry](entries/FR-20/05_buoc-5-phan-tich-boundary-value.md) |
+| FR-20-06 | 2026-10-20 08:41:44 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 6 - Nghiệp vụ, bảo mật, truy cập (dạng trung lập) | [entry](entries/FR-20/06_buoc-6-nghiep-vu-bao-mat-truy-cap-dang-trung-lap.md) |
+| FR-20-07 | 2026-10-20 08:44:06 (UTC+0700) | Gemini 3.1 Pro | FR-20 – Bước 7 - Kiểm tra lại | [entry](entries/FR-20/07_buoc-7-kiem-tra-lai.md) |
+| FR-15-01 | 2026-10-20 08:52:12 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 1 - trích yêu cầu | [entry](entries/FR-15/01_buoc-1-trich-yeu-cau.md) |
+| FR-15-02 | 2026-10-20 08:54:57 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 2 - chia lớp tương đương | [entry](entries/FR-15/02_buoc-2-chia-lop-tuong-duong.md) |
+| FR-15-03 | 2026-10-20 08:56:16 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 3 - chia lớp tương đương | [entry](entries/FR-15/03_buoc-3-chia-lop-tuong-duong.md) |
+| FR-15-04 | 2026-10-20 08:57:41 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 4 - Testcase domain testing | [entry](entries/FR-15/04_buoc-4-testcase-domain-testing.md) |
+| FR-15-05 | 2026-10-20 09:00:37 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 5 - Phân tích boundary value | [entry](entries/FR-15/05_buoc-5-phan-tich-boundary-value.md) |
+| FR-15-06 | 2026-10-20 09:02:18 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 6 - Nghiệp vụ, bảo mật, truy cập (dạng trung lập) | [entry](entries/FR-15/06_buoc-6-nghiep-vu-bao-mat-truy-cap-dang-trung-lap.md) |
+| FR-15-07 | 2026-10-20 09:05:01 (UTC+0700) | Gemini 3.1 Pro | FR-15 – Bước 7 - Kiểm tra lại | [entry](entries/FR-15/07_buoc-7-kiem-tra-lai.md) |
 <!-- ENTRIES -->
 
 ## 4. Ghi chú về cách làm việc với AI

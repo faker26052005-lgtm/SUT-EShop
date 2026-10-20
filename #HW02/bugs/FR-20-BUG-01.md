@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-01: "Người dùng phải cung cấp: Họ Tên, Email, Mật khẩu." |
 | Môi trường | Backend localhost:3000, SUT commit 85af3ba (commit trong bản clone của mình, hãy thay bằng `git rev-parse --short HEAD` trong repo của bạn) |
 | Test case liên quan | DT-R03, DT-R13, DT-R28 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/47 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện
@@ -28,8 +28,7 @@ Cả 3 request trả HTTP 200 và tài khoản được tạo (id lần lượt 
 Trả 4xx kèm thông báo lỗi, không tạo tài khoản.
 
 ## Bằng chứng
-![ảnh](screenshots/FR-20-BUG-01.png)
-TODO: chụp request + response trong Postman (tab Body và Test Results) và đính kèm vào Issue.
+(screenshots/FR-20-BUG-01.png)
 
 ## Ghi chú
 Ảnh hưởng: tài khoản rác, không đăng nhập hoặc liên hệ được. Mật khẩu rỗng cũng thuộc yêu cầu độ mạnh mật khẩu (xem BUG-04) nhưng được xếp vào đây vì vi phạm trực tiếp "phải cung cấp".

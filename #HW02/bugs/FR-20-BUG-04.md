@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-01: "Tối thiểu 8 ký tự, có ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 ký tự đặc biệt (`@`, `$`, `!`, `%`, `*`, `?`, `&`)." |
 | Môi trường | Backend localhost:3000, SUT commit 85af3ba (commit trong bản clone của mình, hãy thay bằng `git rev-parse --short HEAD` trong repo của bạn) |
 | Test case liên quan | DT-R23, DT-R24, DT-R25, DT-R26, BV-R01, BV-R04; phụ thuộc giả định #3: DT-R27, DT-R29 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/50 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện

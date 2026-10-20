@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-10: "Khi đơn hàng đã ở trạng thái `shipping`, User không được phép tự hủy"; FR-20: "chỉ được hủy khi `pending` hoặc `confirmed`". |
 | Môi trường | Backend localhost:3000, SUT commit 85af3ba (commit trong bản clone của mình, hãy thay bằng `git rev-parse --short HEAD` trong repo của bạn) |
 | Test case liên quan | DT-C03, BV-C01 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/51 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện

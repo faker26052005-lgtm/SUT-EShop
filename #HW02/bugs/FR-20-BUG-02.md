@@ -10,7 +10,7 @@
 | Yêu cầu SRS bị vi phạm | FR-01: "Email phải có định dạng hợp lệ (`user@domain.com`)." |
 | Môi trường | Backend localhost:3000, SUT commit 85af3ba (commit trong bản clone của mình, hãy thay bằng `git rev-parse --short HEAD` trong repo của bạn) |
 | Test case liên quan | DT-R08, DT-R09, DT-R10, DT-R12 |
-| GitHub Issue | TODO (link) |
+| GitHub Issue | https://github.com/faker26052005-lgtm/SUT-EShop/issues/48 |
 | Trạng thái | Open |
 
 ## Các bước tái hiện
