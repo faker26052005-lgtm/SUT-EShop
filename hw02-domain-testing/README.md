@@ -81,7 +81,7 @@ hw02-domain-testing/
 ## 4. Link Video Demo và GitHub Issues
 
 * **Đường dẫn Video Demo Agent Skill (YouTube):** `[Dán link YouTube tại đây sau khi quay demo]`
-* **Kho lưu trữ GitHub Issues:** [https://github.com/faker26052005-lgtm/SUT-EShop/issues](https://github.com/faker26052005-lgtm/SUT-EShop/issues)
+* **Kho lưu trữ GitHub Issues:** [25 Issues đã tạo trên GitHub (#52 đến #76)](https://github.com/faker26052005-lgtm/SUT-EShop/issues) — Chi tiết bảng tra cứu: [Evidence/GitHub_Issues/README.md](./Evidence/GitHub_Issues/README.md)
 
 ---
 
