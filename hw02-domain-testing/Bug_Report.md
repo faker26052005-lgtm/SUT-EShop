@@ -296,3 +296,171 @@
 8. **Status:** `Open / New`
 9. **Priority:** `High`
 10. **Severity:** `Serious` — Thiếu tính nguyên tử (Atomicity), gây rủi ro lạm dụng mã giảm giá nhiều lần.
+
+
+---
+
+## PHẦN 3: DANH SÁCH LỖI PHÁT HIỆN TẠI FEATURE C — FR-15: QUẢN LÝ SẢN PHẨM (PRODUCT CRUD)
+
+---
+
+### BUG-FR15-01: Tuyến API CRUD sản phẩm thiếu hoàn toàn xác thực JWT và phân quyền Admin (Broken Access Control)
+1. **Bug ID:** `BUG-FR15-01`
+2. **Function name:** `FR-12 / FR-15: Kiểm soát truy cập API Sản phẩm (Security / API)`
+3. **Problem summary:** `Enforce Access Control: POST, PUT, DELETE /api/products lack authenticateToken middleware, allowing unauthenticated guests and regular users to manipulate products.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `http://localhost:3000/api/products`.
+   * **Steps to Reproduce:**
+     1. Mở terminal, gửi request `POST /api/products` tạo sản phẩm mới mà không gửi Header `Authorization`.
+     2. Gửi request `DELETE /api/products/1` mà không gửi Header `Authorization`.
+   * **Expected Behavior:** Backend từ chối với HTTP 401 Unauthorized (hoặc HTTP 403 Forbidden nếu là tài khoản User thường) theo đặc tả FR-12.
+   * **Actual Behavior:** Cả hai request đều trả về HTTP 200 thành công, cho phép khách vãng lai tùy ý tạo và xóa sản phẩm trong CSDL.
+   * **Root Cause & Code Reference:** Tại file `backend/server.js` dòng 173, 185, 197: các route định nghĩa là public `app.post("/api/products", (req, res) => ...)` thiếu middleware xác thực.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer / Security Engineer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)` — Lỗ hổng bảo mật cấp cao (OWASP Top 1: Broken Access Control).
+10. **Severity:** `Fatal` — Cho phép bất kỳ ai can thiệp, xóa sạch hoặc chèn dữ liệu giả vào kho sản phẩm.
+
+---
+
+### BUG-FR15-02: Giao diện Web Admin tự động đổi tên hàng loạt toàn bộ sản phẩm trên UI khi sửa một sản phẩm
+1. **Bug ID:** `BUG-FR15-02`
+2. **Function name:** `FR-15: Cập nhật sản phẩm trên Web Admin (Web Client UI)`
+3. **Problem summary:** `Maintain Product Update Isolation: Editing a product causes all other products in the UI state to be erroneously renamed to the same name.`
+4. **How to reproduce the defect:**
+   * **Environment:** Web Admin `http://localhost:5174`, Chrome Browser.
+   * **Steps to Reproduce:**
+     1. Đăng nhập Admin, chuyển sang tab "Sản phẩm".
+     2. Bấm "Sửa" tại sản phẩm đầu tiên (iPhone 15 Pro Max).
+     3. Sửa tên thành `"iPhone 15 Pro Max Mới"`.
+     4. Bấm "Lưu sản phẩm".
+     5. Quan sát danh sách sản phẩm trong bảng bên dưới.
+   * **Expected Behavior:** Chỉ sản phẩm ID 1 được đổi tên; các sản phẩm Samsung, Macbook, AirPods vẫn giữ nguyên tên cũ (theo đặc tả FR-15 dòng 198).
+   * **Actual Behavior:** Toàn bộ 5 sản phẩm trong bảng đều bị đổi tên thành `"iPhone 15 Pro Max Mới"`.
+   * **Root Cause & Code Reference:** Tại file `frontend-admin/src/App.jsx` dòng 110-114:
+     ```javascript
+     const fakeMassUpdatedProducts = products.map((p) => ({
+       ...p,
+       name: productForm.name,
+     }));
+     setProducts(fakeMassUpdatedProducts);
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Frontend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Gây sai lệch nghiêm trọng hiển thị dữ liệu quản lý.
+
+---
+
+### BUG-FR15-03: Backend không kiểm tra giá tiền, chấp nhận lưu giá bằng 0 và số âm vào CSDL
+1. **Bug ID:** `BUG-FR15-03`
+2. **Function name:** `FR-15: Validation giá sản phẩm (Backend API)`
+3. **Problem summary:** `Validate Product Price: Backend accepts zero and negative prices instead of enforcing positive price constraint (> 0).`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Gửi request `POST /api/products` với body: `{"name": "Sản phẩm lỗi giá", "price": 0, "category_id": 1}`.
+     2. Gửi request `POST /api/products` với body: `{"name": "Sản phẩm giá âm", "price": -50000, "category_id": 1}`.
+   * **Expected Behavior:** Backend từ chối với HTTP 400 Bad Request kèm thông báo lỗi giá tiền phải là số dương $> 0$.
+   * **Actual Behavior:** Cả hai sản phẩm đều được tạo thành công với HTTP 200 và lưu giá `0` và `-50000` vào CSDL SQLite.
+   * **Root Cause:** Tuyến `POST /api/products` và `PUT /api/products/:id` thiếu validation `if (!price || price <= 0) return res.status(400)...`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)`
+10. **Severity:** `Fatal` — Gây tổn hại tài chính khi bán hàng giá 0 ₫ hoặc số âm.
+
+---
+
+### BUG-FR15-04: Backend không kiểm tra độ dài tên sản phẩm, chấp nhận tên rỗng và vượt quá 255 ký tự
+1. **Bug ID:** `BUG-FR15-04`
+2. **Function name:** `FR-15: Validation tên sản phẩm (Backend API)`
+3. **Problem summary:** `Validate Product Name: Backend accepts empty names and names exceeding 255 characters without validation.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Gửi `POST /api/products` với `name: ""`.
+     2. Gửi `POST /api/products` với `name: "A" * 256` (chuỗi 256 ký tự).
+   * **Expected Behavior:** Backend từ chối với HTTP 400 báo tên bắt buộc và không quá 255 ký tự.
+   * **Actual Behavior:** Hệ thống tạo sản phẩm thành công với tên rỗng và tên 256 ký tự trong CSDL.
+   * **Root Cause:** Backend thiếu kiểm tra `if (!name || name.trim().length === 0 || name.length > 255)`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Serious` — Vi phạm đặc tả trường dữ liệu bắt buộc và độ dài tối đa.
+
+---
+
+### BUG-FR15-05: Lỗ hổng SQL Injection nghiêm trọng tại API tìm kiếm sản phẩm GET /api/products?search=
+1. **Bug ID:** `BUG-FR15-05`
+2. **Function name:** `FR-05 / FR-15: Tìm kiếm sản phẩm (Security / API)`
+3. **Problem summary:** `Prevent SQL Injection: Search endpoint concatenates raw user query into SQL string, exposing full database.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `http://localhost:3000/api/products?search=`.
+   * **Steps to Reproduce:**
+     1. Gửi request `GET http://localhost:3000/api/products?search=' OR '1'='1`.
+     2. Quan sát kết quả JSON trả về.
+   * **Expected Behavior:** Hệ thống xử lý chuỗi tìm kiếm an toàn dưới dạng tham số (parameterized query), không trả về các sản phẩm không khớp tên.
+   * **Actual Behavior:** Toàn bộ danh sách sản phẩm trong CSDL bị dump ra ngoài do điều kiện `'1'='1` luôn đúng.
+   * **Root Cause & Code Reference:** Tại file `backend/server.js` dòng 150:
+     ```javascript
+     const query = `SELECT * FROM products WHERE name LIKE '%${searchQuery}%'`;
+     db.all(query, [], ...);
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)`
+10. **Severity:** `Fatal` — Lỗ hổng bảo mật cấp độ cao (OWASP Top 3: Injection).
+
+---
+
+### BUG-FR15-06: Backend không validate khóa ngoại danh mục, chấp nhận category_id không tồn tại
+1. **Bug ID:** `BUG-FR15-06`
+2. **Function name:** `FR-15: Toàn vẹn dữ liệu danh mục (Database Integrity)`
+3. **Problem summary:** `Enforce Foreign Key Constraint: Backend accepts non-existent category_id (e.g. 9999), creating orphaned product records.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Gửi `POST /api/products` với body `{"name": "Sản phẩm mồ côi", "price": 500000, "category_id": 9999}`.
+   * **Expected Behavior:** Backend kiểm tra danh mục tồn tại, từ chối với HTTP 400 Bad Request nếu không tìm thấy ID danh mục.
+   * **Actual Behavior:** Sản phẩm được tạo thành công với `category_id: 9999` trong CSDL, gây lỗi khi client hiển thị danh mục theo sản phẩm.
+   * **Root Cause:** CSDL SQLite không bật ràng buộc khóa ngoại và backend thiếu câu truy vấn kiểm tra `SELECT id FROM categories WHERE id = ?`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Medium`
+10. **Severity:** `Serious` — Gây phá vỡ tính toàn vẹn tham chiếu của CSDL.
+
+---
+
+### BUG-FR15-07: Bất nhất kiểu dữ liệu trường price giữa sản phẩm ID chẵn (String) và ID lẻ (Number)
+1. **Bug ID:** `BUG-FR15-07`
+2. **Function name:** `FR-15: API Chi tiết sản phẩm GET /api/products/:id (API Data Type)`
+3. **Problem summary:** `Ensure Type Consistency: Backend converts price to String on even IDs and leaves Number on odd IDs.`
+4. **How to reproduce the defect:**
+   * **Environment:** Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Gọi `GET /api/products/1` $\rightarrow$ Quan sát kiểu của `price` (kết quả: `30000000` - Number).
+     2. Gọi `GET /api/products/2` $\rightarrow$ Quan sát kiểu của `price` (kết quả: `"28000000"` - String).
+   * **Expected Behavior:** Trường `price` luôn luôn đồng nhất là kiểu dữ liệu số (`Number`).
+   * **Actual Behavior:** Sản phẩm ID chẵn bị ép kiểu thành chuỗi `"28000000"`, gây lỗi tính toán số học trên ứng dụng client.
+   * **Root Cause & Code Reference:** Tại file `backend/server.js` dòng 168:
+     ```javascript
+     if (row.id % 2 === 0) row.price = row.price.toString();
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Backend Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Low`
+10. **Severity:** `Medium` — Lỗi sai chuẩn hợp đồng dữ liệu API (API Schema Contract Violation).
