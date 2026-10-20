@@ -61,6 +61,9 @@ hw02-domain-testing/
 ├── Feature_C_FR15_Report.md           # Báo cáo chi tiết Domain Testing & BVA cho FR-15 (Pool C)
 ├── Feature_D_MobileCart_Report.md     # Báo cáo chi tiết Domain Testing & BVA cho Mobile Cart (Pool D)
 ├── Bug_Report.md                      # Tập hợp 25 báo cáo lỗi chi tiết chuẩn Slide S08
+├── [AI-02] - FIT@HCMUS - AI Audit Report_Vn.docx # Biểu mẫu khai báo AI chính thức của FIT@HCMUS (đã điền)
+├── AI_Audit_Report.md                 # Báo cáo AI Audit Report & AI Critique định dạng Markdown
+├── git_commit_log.txt                 # Nhật ký lịch sử các bước Git commit chi tiết
 ├── Test_Cases/                        # Thư mục chứa 4 bộ Test Case dạng CSV (chuẩn Slide S07)
 │   ├── FR01_TestCases.csv             # 28 test cases FR-01
 │   ├── FR09_TestCases.csv             # 31 test cases FR-09
