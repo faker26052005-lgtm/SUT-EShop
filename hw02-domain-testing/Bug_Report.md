@@ -470,6 +470,11 @@
 
 ## PHẦN 4: DANH SÁCH LỖI PHÁT HIỆN TẠI FEATURE D — POOL D: MOBILE CART & CHECKOUT
 
+> [!IMPORTANT]
+> **Tuyên Bố Phương Pháp Luận & Tính Minh Bạch Môi Trường Thực Thi (Methodology & Scope Transparency):**
+> * **Phương pháp kiểm thử:** Đối với phân hệ Mobile App (Pool D), Tester áp dụng phương pháp **Kiểm thử hộp trắng / Phân tích mã nguồn tĩnh (White-box Static Code Inspection)** trên toàn bộ file logic giao diện [`frontend-mobile/App.js`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/frontend-mobile/App.js) kết hợp **Kiểm thử tích hợp Backend API (Backend API Integration Testing)** trên máy chủ local (`http://localhost:3000`).
+> * **Lý do kỹ thuật & Phạm vi:** Thư mục `frontend-mobile` của dự án SUT chưa cài đặt `node_modules` và không khởi chạy máy ảo giả lập Expo. Mã nguồn `App.js` thể hiện tường minh các đoạn mã lỗi được cài cắm có chủ đích (Deliberate Defect Injection) của SUT như: `parsed + 1` (dòng 620), `cart.slice(0, -1)` (dòng 391), hardcode IP LAN (dòng 16), và thiếu confirm dialog (dòng 155). Toàn bộ hành vi của giỏ hàng, cập nhật state React và payload gửi qua mạng được phân tích và chứng minh trực tiếp từ mã nguồn và dữ liệu thực tế tại Backend.
+
 ---
 
 ### BUG-MOB-01: Giao diện Giỏ hàng tự động cộng thêm 1 khi người dùng chỉnh sửa số lượng
@@ -477,7 +482,7 @@
 2. **Function name:** `FR-07: Cập nhật số lượng trong giỏ hàng (Mobile App UI)`
 3. **Problem summary:** `Update Cart Quantity: Cart screen erroneously increments entered quantity by 1 (parsed + 1), making it impossible to set exact desired quantity.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App (`frontend-mobile`), iOS/Android Simulator.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js) & Backend API http://localhost:3000.
    * **Steps to Reproduce:**
      1. Thêm 1 sản phẩm vào giỏ hàng.
      2. Mở màn hình Giỏ hàng (`Giỏ`).
@@ -506,7 +511,7 @@
 2. **Function name:** `FR-08: Đặt hàng từ Giỏ hàng trên Mobile (Mobile Checkout Flow)`
 3. **Problem summary:** `Submit Order Items: Mobile app drops the last cart item (cart.slice(0, -1)) when cart has multiple items while charging full total.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App & Backend API `:3000`.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js) & Backend API http://localhost:3000.
    * **Steps to Reproduce:**
      1. Thêm 2 sản phẩm khác nhau vào giỏ (Ví dụ: iPhone 15 Pro Max 30tr và AirPods Pro 6tr). Tổng tiền: 36,000,000 ₫.
      2. Mở Giỏ hàng, bấm "Thanh toán".
@@ -536,7 +541,7 @@
 2. **Function name:** `Configuration: Cấu hình kết nối mạng (Mobile Network Config)`
 3. **Problem summary:** `Configure API Endpoint: Mobile app hardcodes LAN private IP http://192.168.10.13:3000/api, breaking connectivity on other networks.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js).
    * **Steps to Reproduce:**
      1. Chạy ứng dụng mobile trên máy hoặc mạng Wi-Fi khác với dải mạng `192.168.10.x`.
      2. Mở ứng dụng.
@@ -560,7 +565,7 @@
 2. **Function name:** `FR-07: Xóa sản phẩm khỏi giỏ hàng (Mobile App UI)`
 3. **Problem summary:** `Confirm Cart Deletion: Deleting an item immediately removes it without Alert confirmation, violating FR-07 line 97.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js).
    * **Steps to Reproduce:**
      1. Mở màn hình Giỏ hàng có sản phẩm.
      2. Nhấp chữ "Xóa" màu đỏ cạnh sản phẩm.
@@ -588,7 +593,7 @@
 2. **Function name:** `FR-07: Hiển thị tổng tiền giỏ hàng (Mobile App UI / Label)`
 3. **Problem summary:** `Enforce Label Standard: Cart screen displays 'Tổng tạm tính' instead of required 'Tổng cộng' label.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js).
    * **Steps to Reproduce:**
      1. Mở Giỏ hàng có sản phẩm.
      2. Quan sát dòng hiển thị tổng tiền phía trên các nút bấm thao tác.
@@ -614,7 +619,7 @@
 2. **Function name:** `FR-07: Bộ điều khiển số lượng trên Mobile (Mobile UI / UX)`
 3. **Problem summary:** `Provide Quantity Controls: Cart screen lacks +/- buttons, forcing manual virtual keyboard input.`
 4. **How to reproduce the defect:**
-   * **Environment:** Expo Mobile App.
+   * **Environment:** React Native Expo App (White-box Static Code Inspection on App.js).
    * **Steps to Reproduce:**
      1. Mở Giỏ hàng có sản phẩm.
      2. Quan sát khu vực điều chỉnh số lượng của từng mặt hàng.

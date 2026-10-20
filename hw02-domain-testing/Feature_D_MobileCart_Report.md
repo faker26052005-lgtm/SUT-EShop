@@ -3,10 +3,16 @@
 * **Phân hệ (Pool):** Pool D — Mobile App
 * **Chức năng:** Mobile Shopping Cart & Checkout Flow (FR-07 / FR-08 trên Mobile)
 * **Nền tảng kiểm thử:** React Native / Expo Mobile App (`Seminar/src/eshop-sut/frontend-mobile/App.js`) & Backend API (`http://localhost:3000/api`)
+* **Phương pháp thực thi:** **Kiểm thử hộp trắng / Phân tích mã nguồn tĩnh (White-box Code Inspection & Static Analysis)** kết hợp **Kiểm thử tích hợp Backend API (Backend API Integration Testing)**.
 * **Tiêu chuẩn học thuật áp dụng:**
   * **Slide S04:** Domain Testing & Boundary Value Analysis (BVA)
   * **Slide S07:** Test Case Essentials, Objective Syntax (`Action + Function + Operating Condition`) & Template 6 cột
   * **Slide S08:** Bug Report 10 Essentials & Test Summary Report 3-table Statistics
+
+> [!IMPORTANT]
+> **Tuyên Bố Phương Pháp Luận & Tính Minh Bạch Môi Trường Thực Thi (Methodology & Scope Transparency):**
+> * **Phương pháp kiểm thử:** Khác với phân hệ Web (được chạy trực tiếp trên trình duyệt Chrome), đối với phân hệ Mobile App (Pool D), Tester áp dụng kỹ thuật **Phân tích mã nguồn hộp trắng (White-box Source Code Inspection)** trên toàn bộ file logic giao diện [`frontend-mobile/App.js`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/frontend-mobile/App.js) kết hợp **Kiểm thử tích hợp các API Backend liên quan** (`/api/checkout`, `/api/orders`, `/api/products`).
+> * **Lý do kỹ thuật & Phạm vi:** Dự án `frontend-mobile` chưa cài đặt `node_modules` và không khởi chạy máy ảo giả lập Expo. Mã nguồn `App.js` thể hiện rõ các đoạn mã lỗi được cài cắm có chủ đích (Deliberate Defect Injection) của SUT như: `parsed + 1` (dòng 620), `cart.slice(0, -1)` (dòng 391), hardcode IP LAN (dòng 16), và thiếu confirm dialog (dòng 155). Toàn bộ hành vi của giỏ hàng, cập nhật state React và payload gửi qua mạng được phân tích và chứng minh trực tiếp từ mã nguồn và dữ liệu thực tế tại Backend.
 
 ---
 
