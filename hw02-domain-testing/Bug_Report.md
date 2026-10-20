@@ -464,3 +464,166 @@
 8. **Status:** `Open / New`
 9. **Priority:** `Low`
 10. **Severity:** `Medium` — Lỗi sai chuẩn hợp đồng dữ liệu API (API Schema Contract Violation).
+
+
+---
+
+## PHẦN 4: DANH SÁCH LỖI PHÁT HIỆN TẠI FEATURE D — POOL D: MOBILE CART & CHECKOUT
+
+---
+
+### BUG-MOB-01: Giao diện Giỏ hàng tự động cộng thêm 1 khi người dùng chỉnh sửa số lượng
+1. **Bug ID:** `BUG-MOB-01`
+2. **Function name:** `FR-07: Cập nhật số lượng trong giỏ hàng (Mobile App UI)`
+3. **Problem summary:** `Update Cart Quantity: Cart screen erroneously increments entered quantity by 1 (parsed + 1), making it impossible to set exact desired quantity.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App (`frontend-mobile`), iOS/Android Simulator.
+   * **Steps to Reproduce:**
+     1. Thêm 1 sản phẩm vào giỏ hàng.
+     2. Mở màn hình Giỏ hàng (`Giỏ`).
+     3. Tại ô nhập số lượng, gõ số `2`.
+     4. Quan sát giá trị hiển thị và thành tiền.
+   * **Expected Behavior:** Số lượng cập nhật đúng bằng `2`, thành tiền bằng `đơn giá x 2`.
+   * **Actual Behavior:** Số lượng bị ép thành `3` ($2 + 1$), thành tiền bị tính đội lên thành `đơn giá x 3`.
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 618-621:
+     ```javascript
+     newCart[index].quantity =
+       Number.isFinite(parsed) && parsed > 0
+         ? parsed + 1 // Cố tình cộng thêm 1
+         : 1;
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)` — Làm sai lệch số lượng đặt mua của người dùng.
+10. **Severity:** `Serious`
+
+---
+
+### BUG-MOB-02: Ứng dụng Mobile âm thầm vứt bỏ sản phẩm cuối cùng khỏi đơn hàng khi giỏ hàng có nhiều sản phẩm
+1. **Bug ID:** `BUG-MOB-02`
+2. **Function name:** `FR-08: Đặt hàng từ Giỏ hàng trên Mobile (Mobile Checkout Flow)`
+3. **Problem summary:** `Submit Order Items: Mobile app drops the last cart item (cart.slice(0, -1)) when cart has multiple items while charging full total.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App & Backend API `:3000`.
+   * **Steps to Reproduce:**
+     1. Thêm 2 sản phẩm khác nhau vào giỏ (Ví dụ: iPhone 15 Pro Max 30tr và AirPods Pro 6tr). Tổng tiền: 36,000,000 ₫.
+     2. Mở Giỏ hàng, bấm "Thanh toán".
+     3. Bấm "Xác Nhận Đơn Hàng".
+     4. Kiểm tra dữ liệu đơn hàng đã tạo trong lịch sử đơn hoặc CSDL bảng `orders`.
+   * **Expected Behavior:** Đơn hàng lưu trọn vẹn cả 2 sản phẩm.
+   * **Actual Behavior:** Khách hàng bị tính tiền trọn vẹn 36,000,000 ₫ nhưng payload gửi lên backend bị cắt mất sản phẩm AirPods Pro 2 do `cart.slice(0, -1)`. Khách trả tiền 2 món nhưng chỉ nhận 1 món!
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 391:
+     ```javascript
+     body: JSON.stringify({
+       items: cart.length > 1 ? cart.slice(0, -1) : cart, // Cắt bỏ phần tử cuối!
+       total_amount: finalAmount,
+       coupon_id: couponResult?.coupon_id || null,
+     }),
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Immediate (Critical)` — Lỗi gian lận nghiêm trọng làm thất thoát hàng hóa hoặc bớt xén quyền lợi người mua.
+10. **Severity:** `Fatal`
+
+---
+
+### BUG-MOB-03: Hardcode địa chỉ IP mạng nội bộ trong cấu hình API_URL
+1. **Bug ID:** `BUG-MOB-03`
+2. **Function name:** `Configuration: Cấu hình kết nối mạng (Mobile Network Config)`
+3. **Problem summary:** `Configure API Endpoint: Mobile app hardcodes LAN private IP http://192.168.10.13:3000/api, breaking connectivity on other networks.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App.
+   * **Steps to Reproduce:**
+     1. Chạy ứng dụng mobile trên máy hoặc mạng Wi-Fi khác với dải mạng `192.168.10.x`.
+     2. Mở ứng dụng.
+   * **Expected Behavior:** Ứng dụng đọc cấu hình từ file `.env` hoặc cho phép cấu hình URL động, kết nối tới backend thành công.
+   * **Actual Behavior:** Mọi API gọi ra ngoài đều bị lỗi Network Request Failed, ứng dụng không tải được sản phẩm.
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 16:
+     ```javascript
+     const API_URL = "http://192.168.10.13:3000/api";
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Lead Developer
+8. **Status:** `Open / New`
+9. **Priority:** `High`
+10. **Severity:** `Fatal` — Khiến ứng dụng tê liệt hoàn toàn khi triển khai ngoài mạng nội bộ của dev.
+
+---
+
+### BUG-MOB-04: Thao tác xóa sản phẩm trong giỏ thiếu hoàn toàn hộp thoại xác nhận (Confirmation Dialog)
+1. **Bug ID:** `BUG-MOB-04`
+2. **Function name:** `FR-07: Xóa sản phẩm khỏi giỏ hàng (Mobile App UI)`
+3. **Problem summary:** `Confirm Cart Deletion: Deleting an item immediately removes it without Alert confirmation, violating FR-07 line 97.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App.
+   * **Steps to Reproduce:**
+     1. Mở màn hình Giỏ hàng có sản phẩm.
+     2. Nhấp chữ "Xóa" màu đỏ cạnh sản phẩm.
+   * **Expected Behavior:** Xuất hiện Alert dialog hỏi "Bạn có chắc chắn muốn xóa sản phẩm này không?" với 2 lựa chọn [Hủy] và [Đồng ý] theo đặc tả FR-07 dòng 97.
+   * **Actual Behavior:** Sản phẩm bị xóa ngay lập tức khỏi mảng `cart` mà không có bất kỳ bước xác nhận nào, gây nguy cơ bấm nhầm rất cao trên màn hình cảm ứng di động.
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 155-159:
+     ```javascript
+     const removeFromCart = (index) => {
+       const newCart = [...cart];
+       newCart.splice(index, 1);
+       setCart(newCart);
+     };
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Medium`
+10. **Severity:** `Medium`
+
+---
+
+### BUG-MOB-05: Nhãn tổng tiền hiển thị sai quy chuẩn đặc tả ("Tổng tạm tính" thay vì "Tổng cộng")
+1. **Bug ID:** `BUG-MOB-05`
+2. **Function name:** `FR-07: Hiển thị tổng tiền giỏ hàng (Mobile App UI / Label)`
+3. **Problem summary:** `Enforce Label Standard: Cart screen displays 'Tổng tạm tính' instead of required 'Tổng cộng' label.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App.
+   * **Steps to Reproduce:**
+     1. Mở Giỏ hàng có sản phẩm.
+     2. Quan sát dòng hiển thị tổng tiền phía trên các nút bấm thao tác.
+   * **Expected Behavior:** Nhãn hiển thị là `"Tổng cộng: ..."` theo đúng yêu cầu tại đặc tả FR-07 dòng 99.
+   * **Actual Behavior:** Nhãn hiển thị là `"Tổng tạm tính: ..."`.
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 637-639:
+     ```javascript
+     <Text style={styles.totalText}>
+       Tổng tạm tính: {formatMoney(cartTotal)}
+     </Text>
+     ```
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Low`
+10. **Severity:** `Cosmetic`
+
+---
+
+### BUG-MOB-06: Giao diện Giỏ hàng mobile thiếu hoàn toàn các nút tăng/giảm (+/-) số lượng
+1. **Bug ID:** `BUG-MOB-06`
+2. **Function name:** `FR-07: Bộ điều khiển số lượng trên Mobile (Mobile UI / UX)`
+3. **Problem summary:** `Provide Quantity Controls: Cart screen lacks +/- buttons, forcing manual virtual keyboard input.`
+4. **How to reproduce the defect:**
+   * **Environment:** Expo Mobile App.
+   * **Steps to Reproduce:**
+     1. Mở Giỏ hàng có sản phẩm.
+     2. Quan sát khu vực điều chỉnh số lượng của từng mặt hàng.
+   * **Expected Behavior:** Có 2 nút bấm [+] và [-] đặt cạnh ô số lượng để người dùng chạm nhanh theo đặc tả FR-07 dòng 95.
+   * **Actual Behavior:** Chỉ hiển thị 1 ô `TextInput` nhập chữ số, buộc người dùng phải kích hoạt bàn phím ảo di động và dính lỗi `BUG-MOB-01`.
+   * **Root Cause & Code Reference:** Tại file `frontend-mobile/App.js` dòng 609-625 chỉ render thẻ `<TextInput style={styles.cartQuantityInput} ... />`.
+5. **Reported by:** Nguyễn Hoàng Anh Tú (MSSV: 23120183)
+6. **Date:** 20/10/2026
+7. **Assign to:** Mobile Developer
+8. **Status:** `Open / New`
+9. **Priority:** `Medium`
+10. **Severity:** `Medium`
