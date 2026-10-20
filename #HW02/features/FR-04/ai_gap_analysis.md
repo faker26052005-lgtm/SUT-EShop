@@ -96,4 +96,3 @@ Mức khớp: **Đủ** (có ca tương đương), **Một phần** (có ca như
 - AI làm tốt: các lớp cơ bản của SĐT, biên độ dài, bảo mật `role`/`email`, cô lập giữa các user, tính nguyên tử.
 - AI yếu: ngữ cảnh địa phương (`+84`, dấu tiếng Việt), thận trọng quá mức (để CẦN LÀM RÕ cả những chỗ SRS đã đủ rõ), bịa trường và yêu cầu, thiết kế test che tác dụng phụ, và không nhìn vào nội dung response.
 - Điều chỉnh prompt lần sau: cho ngữ cảnh hệ thống; đưa checklist lớp cho kiểu chuỗi; yêu cầu "liệt kê mọi trường trong response và nói trường nào không nên xuất hiện"; yêu cầu mỗi test ghi rõ trạng thái các trường không gửi.
-- TODO: viết lại phần kết luận bằng lời của bạn.

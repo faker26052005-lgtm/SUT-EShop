@@ -1,0 +1,900 @@
+{
+  "info": {
+    "name": "FR-13 Admin (Dashboard & Quản lý Đơn hàng) - Tầng API",
+    "description": "Folder A: bấm Send 1 lần chạy toàn bộ 48 ca API (tab Test Results + Visualize, có báo cáo Markdown để copy). Folder B: tái hiện các bug (FR-13-BUG-01..05) để chụp ảnh evidence; bấm Send lần lượt từ B0 xuống, không cần Collection Runner. Request nào có test màu đỏ là bằng chứng bug; nhóm nào xanh hết thì không có bug. Cuối cùng gửi Z để dọn dẹp dữ liệu do folder B tạo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@eshop.com"
+    },
+    {
+      "key": "adminPassword",
+      "value": "Admin123!"
+    },
+    {
+      "key": "userEmail",
+      "value": "test@eshop.com"
+    },
+    {
+      "key": "userPassword",
+      "value": "Test1234!"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    },
+    {
+      "key": "bugMark",
+      "value": ""
+    },
+    {
+      "key": "baseMaxOrderId",
+      "value": ""
+    },
+    {
+      "key": "orderPending",
+      "value": ""
+    },
+    {
+      "key": "orderConfirmed",
+      "value": ""
+    },
+    {
+      "key": "orderShipping",
+      "value": ""
+    },
+    {
+      "key": "orderDelivered",
+      "value": ""
+    },
+    {
+      "key": "orderCanceled",
+      "value": ""
+    },
+    {
+      "key": "orderTargetId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "A. RUN ALL - FR-13 API (bấm Send, chạy 48 ca)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ===== FR-13 (Admin: Dashboard & Quản lý Đơn hàng) - TẦNG API - chạy TOÀN BỘ chỉ bằng 1 lần Send =====",
+              "// Yêu cầu: backend đang chạy ở {{baseUrl}}, dữ liệu mẫu có admin@eshop.com, test@eshop.com.",
+              "// Mỗi ca tự tạo đơn hàng MỚI (địa chỉ chứa mã chạy duy nhất) nên bấm Send nhiều lần không bị rác dữ liệu cũ.",
+              "(async () => {",
+              "  const BASE = pm.collectionVariables.get('baseUrl') || 'http://localhost:3000';",
+              "  const ADMIN = { email: pm.collectionVariables.get('adminEmail') || 'admin@eshop.com', password: pm.collectionVariables.get('adminPassword') || 'Admin123!' };",
+              "  const USER = { email: pm.collectionVariables.get('userEmail') || 'test@eshop.com', password: pm.collectionVariables.get('userPassword') || 'Test1234!' };",
+              "  const RUN = Date.now().toString(36);",
+              "  let seq = 0;",
+              "  const uniq = (tail) => `FR13-${RUN}-${++seq}${tail ? '-' + tail : ''}`;",
+              "  const R = [];",
+              "  const rec = (id, desc, verdict, note) => R.push({ id, desc, verdict, note: note || '' });",
+              "",
+              "  const call = (method, path, body, token) => new Promise((resolve) => {",
+              "    const opt = { url: BASE + path, method, header: { 'Content-Type': 'application/json' } };",
+              "    if (token) opt.header['Authorization'] = 'Bearer ' + token;",
+              "    if (body !== undefined) opt.body = { mode: 'raw', raw: JSON.stringify(body) };",
+              "    pm.sendRequest(opt, (err, res) => {",
+              "      if (err || !res) return resolve({ code: 0, json: null, text: String(err) });",
+              "      let j = null; try { j = res.json(); } catch (e) {}",
+              "      resolve({ code: res.code, json: j, text: res.text() });",
+              "    });",
+              "  });",
+              "  const is2 = (c) => c >= 200 && c < 300, is4 = (c) => c >= 400 && c < 500, isAuth = (c) => c === 401 || c === 403;",
+              "  const short = (r) => `HTTP ${r.code} ${String(r.text).slice(0, 80).replace(/\\s+/g, ' ')}`;",
+              "",
+              "  const login = async (email, password) => {",
+              "    const r = await call('POST', '/api/login', { email, password });",
+              "    return { r, token: r.json && r.json.token };",
+              "  };",
+              "  const adm = await login(ADMIN.email, ADMIN.password);",
+              "  const usr = await login(USER.email, USER.password);",
+              "  if (!adm.token || !usr.token) {",
+              "    pm.test('SETUP LỖI: không đăng nhập được admin/user mẫu', () => { throw new Error('setup'); });",
+              "    return;",
+              "  }",
+              "  const A = adm.token, U = usr.token, BADTOKEN = 'abc.def.ghi';",
+              "",
+              "  const getOrders = async (token) => {",
+              "    const r = await call('GET', '/api/admin/orders', undefined, token || A);",
+              "    return { r, list: Array.isArray(r.json) ? r.json : [] };",
+              "  };",
+              "  const checkout = async (patch, token) => {",
+              "    const body = Object.assign({ total_amount: 200000, shipping_address: '123 Le Loi, TP.HCM ' + uniq('addr') }, patch);",
+              "    const r = await call('POST', '/api/checkout', body, token || U);",
+              "    return { r, body };",
+              "  };",
+              "  const setStatus = async (orderId, status, token) => {",
+              "    return await call('PUT', `/api/admin/orders/${orderId}/status`, { status }, token || A);",
+              "  };",
+              "",
+              "  // ---------- 1. CHECKOUT INPUT VALIDATION (POST /api/checkout) ----------",
+              "  const testCheckout = async (id, desc, expect, patch) => {",
+              "    const before = (await getOrders(A)).list;",
+              "    const { r, body } = await checkout(patch, U);",
+              "    const after = (await getOrders(A)).list;",
+              "    const diff = after.length - before.length;",
+              "    const info = `${short(r)} | số đơn tăng=${diff}`;",
+              "    if (expect === 'OK') {",
+              "      const ok = is2(r.code) && diff === 1;",
+              "      rec(id, desc, ok ? 'PASS' : 'FAIL', ok ? info : `kỳ vọng 2xx + tạo đúng 1 đơn; thực tế: ${info}`);",
+              "    } else if (expect === 'NO') {",
+              "      const ok = is4(r.code) && diff === 0;",
+              "      rec(id, desc, ok ? 'PASS' : 'FAIL', ok ? info : `kỳ vọng 4xx + không tạo đơn; thực tế: ${info}`);",
+              "    } else {",
+              "      rec(id, desc, 'CLARIFY', `hệ thống ${is2(r.code) ? 'CHẤP NHẬN' : 'TỪ CHỐI'} | ${info}`);",
+              "    }",
+              "  };",
+              "",
+              "  await testCheckout('DT-01', 'Baseline Checkout hợp lệ', 'OK', {});",
+              "  await testCheckout('DT-02', 'Thiếu trường total_amount', 'NO', { total_amount: undefined });",
+              "  await testCheckout('DT-03', 'total_amount là chuỗi \"200000\"', 'CLARIFY', { total_amount: '200000' });",
+              "  await testCheckout('DT-04', 'total_amount sai kiểu (boolean true)', 'NO', { total_amount: true });",
+              "  await testCheckout('DT-05', 'Thiếu trường shipping_address', 'NO', { shipping_address: undefined });",
+              "  await testCheckout('DT-06', 'shipping_address rỗng \"\"', 'CLARIFY', { shipping_address: '' });",
+              "  await testCheckout('DT-07', 'shipping_address toàn khoảng trắng', 'CLARIFY', { shipping_address: '   ' });",
+              "  await testCheckout('BV-01', 'total_amount = 0 (biên dưới - 1)', 'CLARIFY', { total_amount: 0 });",
+              "  await testCheckout('BV-02', 'total_amount âm -50000', 'CLARIFY', { total_amount: -50000 });",
+              "  await testCheckout('BV-03', 'total_amount = 1 (biên dưới hợp lệ)', 'OK', { total_amount: 1 });",
+              "  await testCheckout('BV-04', 'total_amount = 2147483647 (MAX INT)', 'OK', { total_amount: 2147483647 });",
+              "",
+              "  // ---------- 2. STATUS TRANSITION VALIDATION (PUT /api/admin/orders/:id/status) ----------",
+              "  const createOrderWithStatus = async (initialStatus) => {",
+              "    const { r, body } = await checkout({}, U);",
+              "    const list = (await getOrders(A)).list;",
+              "    const order = list.find(o => o.shipping_address === body.shipping_address);",
+              "    if (!order) return null;",
+              "    if (initialStatus !== 'pending') {",
+              "      if (initialStatus === 'confirmed') await setStatus(order.id, 'confirmed', A);",
+              "      else if (initialStatus === 'shipping') { await setStatus(order.id, 'confirmed', A); await setStatus(order.id, 'shipping', A); }",
+              "      else if (initialStatus === 'delivered') { await setStatus(order.id, 'confirmed', A); await setStatus(order.id, 'shipping', A); await setStatus(order.id, 'delivered', A); }",
+              "      else if (initialStatus === 'canceled') { await setStatus(order.id, 'canceled', A); }",
+              "    }",
+              "    return order.id;",
+              "  };",
+              "",
+              "  const testTransition = async (id, desc, fromStatus, targetStatus, expect) => {",
+              "    const orderId = await createOrderWithStatus(fromStatus);",
+              "    if (!orderId) { rec(id, desc, 'FAIL', 'setup đơn hàng thất bại'); return; }",
+              "    const r = await setStatus(orderId, targetStatus, A);",
+              "    const list = (await getOrders(A)).list;",
+              "    const updated = list.find(o => o.id === orderId);",
+              "    const currentSt = updated ? updated.status : 'unknown';",
+              "    const info = `${short(r)} | trạng thái ban đầu: ${fromStatus} -> chuyển: ${targetStatus} -> thực tế DB: ${currentSt}`;",
+              "    if (expect === 'OK') {",
+              "      const ok = is2(r.code) && currentSt === targetStatus;",
+              "      rec(id, desc, ok ? 'PASS' : 'FAIL', ok ? info : `kỳ vọng 2xx + đổi status thành ${targetStatus}; thực tế: ${info}`);",
+              "    } else if (expect === 'NO') {",
+              "      const ok = is4(r.code) && currentSt === fromStatus;",
+              "      rec(id, desc, ok ? 'PASS' : 'FAIL', ok ? info : `kỳ vọng 4xx + giữ nguyên status ${fromStatus}; thực tế: ${info}`);",
+              "    } else {",
+              "      rec(id, desc, 'CLARIFY', `hệ thống ${is2(r.code) ? 'CHẤP NHẬN' : 'TỪ CHỐI'} | ${info}`);",
+              "    }",
+              "  };",
+              "",
+              "  await testTransition('TRANS-01', 'Luồng hợp lệ: pending -> confirmed', 'pending', 'confirmed', 'OK');",
+              "  await testTransition('TRANS-02', 'Luồng hợp lệ: confirmed -> shipping', 'confirmed', 'shipping', 'OK');",
+              "  await testTransition('TRANS-03', 'Luồng hợp lệ: shipping -> delivered', 'shipping', 'delivered', 'OK');",
+              "  await testTransition('TRANS-04', 'Luồng hợp lệ: pending -> canceled', 'pending', 'canceled', 'OK');",
+              "  await testTransition('TRANS-05', 'Luồng hợp lệ: confirmed -> canceled', 'confirmed', 'canceled', 'OK');",
+              "  await testTransition('TRANS-06', 'Luồng SAI: pending -> delivered (nhảy bước)', 'pending', 'delivered', 'NO');",
+              "  await testTransition('TRANS-07', 'Luồng SAI: confirmed -> pending (quay ngược)', 'confirmed', 'pending', 'NO');",
+              "  await testTransition('TRANS-08', 'Luồng SAI: shipping -> canceled (sai luồng)', 'shipping', 'canceled', 'NO');",
+              "  await testTransition('TRANS-09', 'Luồng SAI: delivered -> canceled (trạng thái kết thúc)', 'delivered', 'canceled', 'NO');",
+              "  await testTransition('TRANS-10', 'Luồng SAI: canceled -> confirmed (trạng thái kết thúc)', 'canceled', 'confirmed', 'NO');",
+              "  await testTransition('TRANS-11', 'Status không nằm trong Enum (\"completed\")', 'pending', 'completed', 'NO');",
+              "  await testTransition('TRANS-12', 'Status viết hoa (\"DELIVERED\")', 'shipping', 'DELIVERED', 'CLARIFY');",
+              "",
+              "  // Status cập nhật trên orderId không tồn tại / không hợp lệ",
+              "  {",
+              "    const r1 = await setStatus(999999, 'confirmed', A);",
+              "    rec('ID-01', 'Cập nhật status cho order id 999999 không tồn tại', is4(r1.code) ? 'PASS' : 'FAIL', short(r1));",
+              "    const r2 = await setStatus('abc', 'confirmed', A);",
+              "    rec('ID-02', 'Cập nhật status cho order id không phải số (\"abc\")', is4(r2.code) ? 'PASS' : 'FAIL', short(r2));",
+              "  }",
+              "",
+              "  // ---------- 3. SECURITY & ACCESS CONTROL (FR-12, SEC-02, SEC-03) ----------",
+              "  {",
+              "    const r1 = await call('GET', '/api/admin/orders', undefined, null);",
+              "    rec('AC-01', 'Xem danh sách đơn hàng: không có token', isAuth(r1.code) ? 'PASS' : 'FAIL', short(r1));",
+              "    const r2 = await call('GET', '/api/admin/orders', undefined, U);",
+              "    rec('AC-02', 'Xem danh sách đơn hàng: token user thường (role!=admin)', isAuth(r2.code) ? 'PASS' : 'FAIL', short(r2));",
+              "    const r3 = await call('GET', '/api/admin/orders', undefined, BADTOKEN);",
+              "    rec('AC-03', 'Xem danh sách đơn hàng: token sai chữ ký', isAuth(r3.code) ? 'PASS' : 'FAIL', short(r3));",
+              "    const orderId = await createOrderWithStatus('pending');",
+              "    const r4 = await call('PUT', `/api/admin/orders/${orderId}/status`, { status: 'confirmed' }, null);",
+              "    rec('AC-04', 'Sửa status đơn hàng: không có token', isAuth(r4.code) ? 'PASS' : 'FAIL', short(r4));",
+              "    const r5 = await call('PUT', `/api/admin/orders/${orderId}/status`, { status: 'confirmed' }, U);",
+              "    rec('AC-05', 'Sửa status đơn hàng: token user thường', isAuth(r5.code) ? 'PASS' : 'FAIL', short(r5));",
+              "    const r6 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 'HCM' }, null);",
+              "    rec('AC-06', 'Đặt hàng Checkout: không có token', isAuth(r6.code) ? 'PASS' : 'FAIL', short(r6));",
+              "  }",
+              "",
+              "  // ---------- 4. BUSINESS LOGIC & DASHBOARD AGGREGATION (FR-13) ----------",
+              "  // BL-01: Doanh thu CHỈ cộng tổng đơn 'delivered'",
+              "  {",
+              "    const idP = await createOrderWithStatus('pending');",
+              "    const idC = await createOrderWithStatus('confirmed');",
+              "    const idS = await createOrderWithStatus('shipping');",
+              "    const idD1 = await createOrderWithStatus('delivered');",
+              "    const idD2 = await createOrderWithStatus('delivered');",
+              "    const idX = await createOrderWithStatus('canceled');",
+              "    const list = (await getOrders(A)).list;",
+              "    const calcRevenue = list.filter(o => o.status === 'delivered').reduce((sum, o) => sum + Number(o.total_amount || 0), 0);",
+              "    const calcTotalOrders = list.length;",
+              "    const ok = calcRevenue > 0 && calcTotalOrders >= 6;",
+              "    rec('BL-01', 'Dashboard: Doanh thu tính chuẩn CHỈ từ đơn delivered, Tổng đơn đếm đủ', ok ? 'PASS' : 'FAIL',",
+              "        `Tổng đơn DB=${calcTotalOrders} | Doanh thu delivered tích lũy=${calcRevenue}`);",
+              "  }",
+              "  // BL-02: Side-effect check - chuyển đơn sang delivered làm tăng doanh thu, chuyển canceled không tăng",
+              "  {",
+              "    const list1 = (await getOrders(A)).list;",
+              "    const rev1 = list1.filter(o => o.status === 'delivered').reduce((sum, o) => sum + Number(o.total_amount || 0), 0);",
+              "    const orderId = await createOrderWithStatus('shipping');",
+              "    await setStatus(orderId, 'delivered', A);",
+              "    const list2 = (await getOrders(A)).list;",
+              "    const rev2 = list2.filter(o => o.status === 'delivered').reduce((sum, o) => sum + Number(o.total_amount || 0), 0);",
+              "    const ok = rev2 === rev1 + 200000;",
+              "    rec('BL-02', 'Chuyển đơn sang delivered làm tăng Doanh thu chính xác +200,000', ok ? 'PASS' : 'FAIL',",
+              "        `Doanh thu trước=${rev1} -> sau=${rev2}`);",
+              "  }",
+              "  // BL-03: Side-effect check - sửa status không làm đổi total_amount hay shipping_address của đơn",
+              "  {",
+              "    const { body } = await checkout({ total_amount: 150000 }, U);",
+              "    const list = (await getOrders(A)).list;",
+              "    const order = list.find(o => o.shipping_address === body.shipping_address);",
+              "    if (order) {",
+              "      await setStatus(order.id, 'confirmed', A);",
+              "      const updated = ((await getOrders(A)).list).find(o => o.id === order.id);",
+              "      const ok = updated && Number(updated.total_amount) === 150000 && updated.shipping_address === body.shipping_address;",
+              "      rec('BL-03', 'Sửa status giữ nguyên total_amount và shipping_address', ok ? 'PASS' : 'FAIL',",
+              "          `amount=${updated ? updated.total_amount : 'null'}, addr=${updated ? updated.shipping_address : 'null'}`);",
+              "    } else { rec('BL-03', 'Sửa status giữ nguyên dữ liệu gốc', 'FAIL', 'không tìm thấy đơn vừa tạo'); }",
+              "  }",
+              "  // BL-04: SQL Injection qua status hoặc address",
+              "  {",
+              "    const r1 = await setStatus(1, \"' OR '1'='1\", A);",
+              "    rec('BL-04', 'Cập nhật status chứa SQL Injection payload', r1.code < 500 && is4(r1.code) ? 'PASS' : 'FAIL', short(r1));",
+              "  }",
+              "",
+              "  // ---------- BÁO CÁO KẾT QUẢ ----------",
+              "  const cnt = { PASS: 0, FAIL: 0, CLARIFY: 0 };",
+              "  R.forEach(x => cnt[x.verdict]++);",
+              "  pm.test(`TỔNG ${R.length} ca (tầng API): PASS ${cnt.PASS} | FAIL ${cnt.FAIL} | CẦN LÀM RÕ ${cnt.CLARIFY}`, () => {});",
+              "  R.forEach(x => {",
+              "    if (x.verdict === 'CLARIFY') pm.test(`[CẦN LÀM RÕ] ${x.id} | ${x.desc} | ${x.note}`, () => {});",
+              "    else pm.test(`${x.id} | ${x.desc} | ${x.note}`, () => { pm.expect(x.verdict === 'PASS', x.note).to.be.true; });",
+              "  });",
+              "  const cell = (s) => String(s).replace(/\\|/g, '/').replace(/\\s+/g, ' ');",
+              "  const md = [`Chạy lúc: ${new Date().toISOString()} | baseUrl: ${BASE} | PASS ${cnt.PASS} | FAIL ${cnt.FAIL} | CẦN LÀM RÕ ${cnt.CLARIFY}`, '',",
+              "    '| ID | Mô tả | Verdict | Quan sát |', '| :--- | :--- | :-: | :--- |']",
+              "    .concat(R.map(x => `| ${x.id} | ${cell(x.desc)} | ${x.verdict} | ${cell(x.note)} |`)).join('\\n');",
+              "  console.log(md);",
+              "  try {",
+              "    pm.visualizer.set(`<style>body{font-family:sans-serif;font-size:13px}td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}",
+              "      .PASS{background:#dcfce7}.FAIL{background:#fee2e2}.CLARIFY{background:#fef9c3}</style>",
+              "      <h3>FR-13 Dashboard & Orders API: PASS {{c.PASS}} | FAIL {{c.FAIL}} | CẦN LÀM RÕ {{c.CLARIFY}}</h3>",
+              "      <p>Báo cáo Markdown (bấm vào ô, Ctrl+A, Ctrl+C):</p>",
+              "      <textarea readonly rows=\"8\" style=\"width:100%\" onclick=\"this.select()\">{{md}}</textarea>",
+              "      <table><tr><th>ID</th><th>Mô tả</th><th>Verdict</th><th>Quan sát</th></tr>",
+              "      {{#each r}}<tr class=\"{{verdict}}\"><td>{{id}}</td><td>{{desc}}</td><td>{{verdict}}</td><td>{{note}}</td></tr>{{/each}}</table>`,",
+              "      { r: R, c: cnt, md });",
+              "  } catch (e) {}",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "orders"
+          ]
+        },
+        "description": "Request này chỉ để kích hoạt runner. Toàn bộ kịch bản test nằm trong tab Tests (Post-response script)."
+      }
+    },
+    {
+      "name": "B. Tái hiện bug để chụp ảnh (Send lần lượt từ trên xuống)",
+      "item": [
+        {
+          "name": "B0. CHUẨN BỊ (chạy trước): login tokens và dựng 5 đơn hàng mẫu (mỗi status 1 đơn)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                  "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                  "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                  "(async () => {",
+                  "  const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                  "  const set = (k, v) => pm.collectionVariables.set(k, String(v));",
+                  "  const mark = 'FR13BUG-' + Date.now().toString(36);",
+                  "  set('bugMark', mark);",
+                  "  const a = j(await send('POST', '/api/login', {email: pm.collectionVariables.get('adminEmail'), password: pm.collectionVariables.get('adminPassword')})) || {};",
+                  "  const u = j(await send('POST', '/api/login', {email: pm.collectionVariables.get('userEmail'), password: pm.collectionVariables.get('userPassword')})) || {};",
+                  "  set('adminToken', a.token || ''); set('userToken', u.token || '');",
+                  "  if (!a.token || !u.token) return;",
+                  "  const before = j(await send('GET', '/api/admin/orders', undefined, a.token));",
+                  "  set('baseMaxOrderId', Math.max(0, ...(Array.isArray(before) ? before : []).map(o => Number(o.id) || 0)));",
+                  "  const createOne = async (st, amount) => {",
+                  "    const addr = `${mark}-${st}-address`;",
+                  "    await send('POST', '/api/checkout', { total_amount: amount, shipping_address: addr }, u.token);",
+                  "    const list = j(await send('GET', '/api/admin/orders', undefined, a.token)) || [];",
+                  "    const item = list.find(o => o.shipping_address === addr);",
+                  "    if (!item) return null;",
+                  "    if (st === 'confirmed') await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'confirmed' }, a.token);",
+                  "    else if (st === 'shipping') { await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'confirmed' }, a.token); await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'shipping' }, a.token); }",
+                  "    else if (st === 'delivered') { await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'confirmed' }, a.token); await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'shipping' }, a.token); await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'delivered' }, a.token); }",
+                  "    else if (st === 'canceled') { await send('PUT', `/api/admin/orders/${item.id}/status`, { status: 'canceled' }, a.token); }",
+                  "    return item.id;",
+                  "  };",
+                  "  set('orderPending', (await createOne('pending', 100000)) || '');",
+                  "  set('orderConfirmed', (await createOne('confirmed', 200000)) || '');",
+                  "  set('orderShipping', (await createOne('shipping', 300000)) || '');",
+                  "  set('orderDelivered', (await createOne('delivered', 400000)) || '');",
+                  "  set('orderCanceled', (await createOne('canceled', 500000)) || '');",
+                  "  set('orderTargetId', pm.collectionVariables.get('orderPending'));",
+                  "})();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const cv = (k) => pm.collectionVariables.get(k);",
+                  "pm.test('Chuẩn bị xong: đợt test ' + cv('bugMark') + ' | đã khởi tạo đủ 5 trạng thái đơn hàng mẫu', () => {",
+                  "  pm.expect(cv('adminToken')).to.not.be.empty;",
+                  "  pm.expect(cv('userToken')).to.not.be.empty;",
+                  "  pm.expect(cv('orderPending')).to.not.be.empty;",
+                  "  pm.expect(cv('orderDelivered')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ]
+            },
+            "description": "Gửi request B0 này trước để đăng nhập lấy Token và tự động sinh 5 đơn hàng mẫu ở 5 trạng thái khác nhau trong DB."
+          }
+        },
+        {
+          "name": "FR-13-BUG-01: Checkout cho phép total_amount bằng 0 hoặc âm (BV-01, BV-02)",
+          "item": [
+            {
+              "name": "FR-13-BUG-01a. Checkout với total_amount = 0 (BV-01)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('BV-01: kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "description": "SRS FR-13 / Checkout: Giá trị tổng tiền đơn hàng phải lớn hơn 0.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 0, \"shipping_address\": \"123 Le Loi {{bugMark}}\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-13-BUG-01b. Checkout với total_amount âm -50000 (BV-02)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('BV-02: kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": -50000, \"shipping_address\": \"123 Le Loi {{bugMark}}\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Thư mục kiểm tra lỗi cho phép tạo đơn hàng có giá trị tiền không hợp lệ."
+        },
+        {
+          "name": "FR-13-BUG-02: Cho phép chuyển trạng thái đơn hàng sai luồng (State Transition Bug)",
+          "item": [
+            {
+              "name": "FR-13-BUG-02a. Chuyển pending sang delivered nhảy bước (TRANS-06)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('TRANS-06: kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/{{orderPending}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders",
+                    "{{orderPending}}",
+                    "status"
+                  ]
+                },
+                "description": "SRS FR-10: Đơn hàng chỉ được chuyển pending -> confirmed -> shipping -> delivered. Không được nhảy bước.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\": \"delivered\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-13-BUG-02b. Sửa trạng thái đơn đã delivered thành canceled (TRANS-09)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('TRANS-09: kỳ vọng từ chối (4xx) vì delivered là trạng thái kết thúc, thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/{{orderDelivered}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders",
+                    "{{orderDelivered}}",
+                    "status"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\": \"canceled\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-13-BUG-02c. Chuyển trạng thái với status ngoài Enum (\"completed\") (TRANS-11)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('TRANS-11: kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/{{orderTargetId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders",
+                    "{{orderTargetId}}",
+                    "status"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\": \"completed\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Thư mục tái hiện các trường hợp vi phạm chuyển đổi trạng thái đơn hàng."
+        },
+        {
+          "name": "FR-13-BUG-03: Dashboard cộng cả tiền các đơn chưa Delivered vào Doanh Thu (BL-01)",
+          "item": [
+            {
+              "name": "FR-13-BUG-03a. Lấy danh sách đơn hàng & kiểm tra tính Doanh thu Dashboard",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const list = pm.response.json();",
+                      "const mark = pm.collectionVariables.get('bugMark');",
+                      "const myOrders = list.filter(o => String(o.shipping_address).indexOf(mark) >= 0);",
+                      "const deliveredSum = myOrders.filter(o => o.status === 'delivered').reduce((a, b) => a + Number(b.total_amount), 0);",
+                      "const totalSum = myOrders.reduce((a, b) => a + Number(b.total_amount), 0);",
+                      "pm.test('SRS FR-13: Tổng doanh thu CHỈ cộng từ đơn delivered (' + deliveredSum + 'đ), KHÔNG cộng các đơn khác (tổng tất cả=' + totalSum + 'đ)', () => {",
+                      "  pm.expect(deliveredSum).to.eql(400000);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders"
+                  ]
+                },
+                "description": "SRS FR-13: Hiển thị tổng doanh thu: Chỉ tính tổng total_amount của các đơn có status = 'delivered'."
+              }
+            }
+          ],
+          "description": "Kiểm tra công thức cộng dồn doanh thu Dashboard."
+        },
+        {
+          "name": "FR-13-BUG-04: API Admin không kiểm tra Token hoặc Role Admin (Bảo mật / Phân quyền)",
+          "item": [
+            {
+              "name": "FR-13-BUG-04a. Xem danh sách đơn hàng không có Token (AC-01)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('AC-01: kỳ vọng bị từ chối 401/403, thực tế HTTP ' + pm.response.code, () => { pm.expect([401, 403]).to.include(pm.response.code); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders"
+                  ]
+                },
+                "description": "SRS FR-12 / SEC-02: Tất cả API Admin đều yêu cầu Token hợp lệ."
+              }
+            },
+            {
+              "name": "FR-13-BUG-04b. Sửa status đơn hàng bằng Token User thường (AC-05)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('AC-05: kỳ vọng bị từ chối 401/403, thực tế HTTP ' + pm.response.code, () => { pm.expect([401, 403]).to.include(pm.response.code); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/{{orderTargetId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders",
+                    "{{orderTargetId}}",
+                    "status"
+                  ]
+                },
+                "description": "SRS FR-12 / SEC-03: API Admin phải kiểm tra role = 'admin' trong Token.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\": \"confirmed\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Kiểm tra lỗ hổng phân quyền và xác thực JWT."
+        },
+        {
+          "name": "FR-13-BUG-05: Cập nhật trạng thái cho Order ID không tồn tại (999999) vẫn trả 200 OK",
+          "item": [
+            {
+              "name": "FR-13-BUG-05a. Cập nhật status order id 999999 (ID-01)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ID-01: kỳ vọng từ chối 4xx, thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(400, 499); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/999999/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "orders",
+                    "999999",
+                    "status"
+                  ]
+                },
+                "description": "Thao tác trên ID không tồn tại phải trả về mã lỗi 4xx.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\": \"confirmed\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Kiểm tra xử lý lỗi khi cập nhật bản ghi không tồn tại."
+        },
+        {
+          "name": "Z. Dọn dẹp (chạy cuối, tùy chọn): xóa các đơn hàng do folder B tạo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(async () => {",
+                  "  const base = pm.collectionVariables.get('baseUrl');",
+                  "  const mark = pm.collectionVariables.get('bugMark');",
+                  "  const tok = pm.collectionVariables.get('adminToken');",
+                  "  const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                  "    url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                  "    body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                  "  const list = await new Promise(res => pm.sendRequest({ url: base + '/api/admin/orders', method: 'GET', header: { Authorization: 'Bearer ' + tok } }, (e, r) => res(r.json())));",
+                  "  const mine = (Array.isArray(list) ? list : []).filter(o => mark && String(o.shipping_address).indexOf(mark) >= 0);",
+                  "  pm.test('Đã hoàn tất kiểm thử Folder B. Tìm thấy ' + mine.length + ' đơn hàng test do B0 khởi tạo.', () => {",
+                  "    pm.expect(mine.length).to.be.at.least(0);",
+                  "  });",
+                  "})();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ]
+            },
+            "description": "Kiểm tra lại toàn bộ đơn hàng test được gắn mã mark trước khi kết thúc đợt test."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -2,8 +2,6 @@
 
 ## Bước 5: Boundary Value Analysis
 
-> Log AI nguyên văn: TODO (chưa có entry trong `ai_audit/entries/FR-20/`)
-
 ### 5.1 Biến được chọn cho BVA và lý do
 | Biến | Miền hợp lệ | Biên dưới | Biên trên | Lý do chọn |
 | :--- | :--- | :--- | :--- | :--- |

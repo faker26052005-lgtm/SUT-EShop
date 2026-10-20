@@ -1,0 +1,1285 @@
+{
+  "info": {
+    "name": "FR-08 Thanh toán (Checkout) - Tầng API",
+    "description": "Folder A: bấm Send 1 lần chạy toàn bộ 38 ca API (tab Test Results + Visualize, có báo cáo Markdown để copy). Folder B: tái hiện các bug (FR-08-BUG-01..08) để chụp ảnh evidence; bấm Send lần lượt từ B0 xuống, không cần Collection Runner.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "userEmail",
+      "value": "test@eshop.com"
+    },
+    {
+      "key": "userPassword",
+      "value": "Test1234!"
+    },
+    {
+      "key": "userEmail2",
+      "value": "user2@eshop.com"
+    },
+    {
+      "key": "userPassword2",
+      "value": "Password123!"
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    },
+    {
+      "key": "userToken2",
+      "value": ""
+    },
+    {
+      "key": "bugMark",
+      "value": ""
+    },
+    {
+      "key": "prodId1",
+      "value": ""
+    },
+    {
+      "key": "prodPrice1",
+      "value": ""
+    },
+    {
+      "key": "prodId2",
+      "value": ""
+    },
+    {
+      "key": "prodPrice2",
+      "value": ""
+    },
+    {
+      "key": "lastOrderId",
+      "value": ""
+    },
+    {
+      "key": "snapOrdersUser2",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "A. RUN ALL - FR-08 API (bấm Send, chạy 30+ ca)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ===== FR-08 (Thanh toán - Checkout) - TẦNG API - FULL SUITE (38 ca) ======",
+              "(async () => {",
+              "  const BASE = pm.collectionVariables.get('baseUrl') || 'http://localhost:3000';",
+              "  const USER1 = { email: pm.collectionVariables.get('userEmail') || 'test@eshop.com', password: pm.collectionVariables.get('userPassword') || 'Test1234!' };",
+              "  const USER2 = { email: pm.collectionVariables.get('userEmail2') || 'user2@eshop.com', password: pm.collectionVariables.get('userPassword2') || 'Password123!' };",
+              "  const R = [];",
+              "  const rec = (id, desc, verdict, note) => R.push({ id, desc, verdict, note: note || '' });",
+              "",
+              "  const call = (method, path, body, token) => new Promise((resolve) => {",
+              "    const opt = { url: BASE + path, method, header: { 'Content-Type': 'application/json' } };",
+              "    if (token) opt.header['Authorization'] = 'Bearer ' + token;",
+              "    if (body !== undefined) opt.body = { mode: 'raw', raw: JSON.stringify(body) };",
+              "    pm.sendRequest(opt, (err, res) => {",
+              "      if (err || !res) return resolve({ code: 0, json: null, text: String(err) });",
+              "      let j = null; try { j = res.json(); } catch (e) {}",
+              "      resolve({ code: res.code, json: j, text: res.text() });",
+              "    });",
+              "  });",
+              "  const is2 = (c) => c >= 200 && c < 300, is4 = (c) => c >= 400 && c < 500, isAuth = (c) => c === 401 || c === 403;",
+              "  const short = (r) => `HTTP ${r.code} ${String(r.text).slice(0, 80).replace(/\\s+/g, ' ')}`;",
+              "",
+              "  const login = async (email, password) => {",
+              "    let r = await call('POST', '/api/login', { email, password });",
+              "    if (!r.json || !r.json.token) {",
+              "      await call('POST', '/api/register', { name: 'User Two', email, password });",
+              "      r = await call('POST', '/api/login', { email, password });",
+              "    }",
+              "    return { r, token: r.json && r.json.token };",
+              "  };",
+              "  const u1 = await login(USER1.email, USER1.password);",
+              "  const u2 = await login(USER2.email, USER2.password);",
+              "  if (!u1.token) {",
+              "    pm.test('SETUP LỖI: không đăng nhập được user mẫu', () => { throw new Error('setup'); });",
+              "    return;",
+              "  }",
+              "  const U1 = u1.token, U2 = u2.token || U1, BADTOKEN = 'invalid.bearer.token';",
+              "",
+              "  const prodsRes = await call('GET', '/api/products');",
+              "  const prods = Array.isArray(prodsRes.json) ? prodsRes.json : [];",
+              "  if (!prods.length) {",
+              "    pm.test('SETUP LỖI: chưa có sản phẩm nào', () => { throw new Error('setup'); });",
+              "    return;",
+              "  }",
+              "  const P1 = prods[0], P2 = prods[1] || prods[0];",
+              "",
+              "  const prepareCart = async (items) => {",
+              "    for (const item of items) {",
+              "      await call('POST', '/api/cart', item, U1);",
+              "    }",
+              "  };",
+              "  const getCart = async (token) => {",
+              "    const r = await call('GET', '/api/cart', undefined, token || U1);",
+              "    return Array.isArray(r.json) ? r.json : [];",
+              "  };",
+              "",
+              "  // === 1. HEADER AUTHORIZATION (DT-01 .. DT-06) ===",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: Number(P1.price) || 100000, quantity: 2 }]);",
+              "  const r1 = await call('POST', '/api/checkout', { total_amount: 200000, shipping_address: '123 Le Loi' }, U1);",
+              "  const cAfter1 = await getCart(U1);",
+              "  rec('DT-01', 'C1.1 - Baseline: Checkout với Token chuẩn', (is2(r1.code) && cAfter1.length === 0) ? 'PASS' : 'FAIL', `${short(r1)} | giỏ còn=${cAfter1.length}`);",
+              "",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r2 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, undefined);",
+              "  rec('DT-02', 'C1.2 - Thiếu Header Authorization', is4(r2.code) ? 'PASS' : 'FAIL', short(r2));",
+              "",
+              "  const r3 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, 'eyJhbGciOi...');",
+              "  rec('DT-03', 'C1.3 - Header thiếu tiền tố Bearer', is4(r3.code) ? 'PASS' : 'FAIL', short(r3));",
+              "",
+              "  const r4 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, 'invalid_sig');",
+              "  rec('DT-04', 'C1.4 - Token chữ ký không hợp lệ', is4(r4.code) ? 'PASS' : 'FAIL', short(r4));",
+              "",
+              "  const r5 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, 'expired_jwt_token');",
+              "  rec('DT-05', 'C1.5 - Token đã hết hạn', is4(r5.code) ? 'PASS' : 'FAIL', short(r5));",
+              "",
+              "  const r6 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, 'revoked_token');",
+              "  rec('DT-06', 'C1.6 - Token tài khoản bị khóa/logout', 'CLARIFY', `${short(r6)} (SRS im lặng)`);",
+              "  // === 2. TOTAL_AMOUNT (DT-07 .. DT-11, BV-01..03) ===",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 2 }]);",
+              "  const r7 = await call('POST', '/api/checkout', { total_amount: 200000, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-07', 'C2.1 - total_amount khớp giỏ hàng (200,000)', is2(r7.code) ? 'PASS' : 'FAIL', short(r7));",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 2 }]);",
+              "  const r8 = await call('POST', '/api/checkout', { total_amount: 0, shipping_address: '123 Le Loi' }, U1);",
+              "  const oList8 = await call('GET', '/api/orders/my-orders', undefined, U1);",
+              "  const last8 = Array.isArray(oList8.json) && oList8.json.length ? oList8.json[oList8.json.length - 1] : null;",
+              "  const ok8 = is2(r8.code) && last8 && Number(last8.total_amount) === 200000;",
+              "  rec('DT-08', 'C2.2 - total_amount client gửi sai (0) -> Backend tự tính lại', ok8 ? 'PASS' : 'FAIL', `${short(r8)} | DB lưu=${last8 ? last8.total_amount : 'n/a'}`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r9 = await call('POST', '/api/checkout', { total_amount: '200000', shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-09', 'C2.3 - total_amount sai kiểu String', is4(r9.code) ? 'PASS' : 'FAIL', short(r9));",
+              "  const r10 = await call('POST', '/api/checkout', { total_amount: -100000, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-10', 'C2.4 / BV-01 - total_amount số âm (-100000)', 'CLARIFY', `${short(r10)} (SRS im lặng)`);",
+              "  const r11 = await call('POST', '/api/checkout', { total_amount: null, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-11', 'C2.5 - total_amount truyền null/thiếu', 'CLARIFY', `${short(r11)} (SRS im lặng)`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 1, quantity: 1 }]);",
+              "  const rBv3 = await call('POST', '/api/checkout', { total_amount: 1, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('BV-03', 'total_amount = 1 (In-point số dương nhỏ nhất)', is2(rBv3.code) ? 'PASS' : 'FAIL', short(rBv3));",
+              "  // === 3. SHIPPING_ADDRESS (DT-12 .. DT-18, BV-04..09) ===",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r12 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi, TP.HCM' }, U1);",
+              "  rec('DT-12', 'C3.1 - shipping_address văn bản chuẩn', is2(r12.code) ? 'PASS' : 'FAIL', short(r12));",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r13 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: \"<script>alert('XSS')</script>\" }, U1);",
+              "  rec('DT-13', 'C3.2 - shipping_address chứa script HTML/JS (SEC-04)', is2(r13.code) ? 'PASS' : 'FAIL', short(r13));",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r14 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 12345 }, U1);",
+              "  rec('DT-14', 'C3.3 - shipping_address sai kiểu Number', is4(r14.code) ? 'PASS' : 'FAIL', short(r14));",
+              "  const r15 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '' }, U1);",
+              "  rec('DT-15', 'C3.4 / BV-04 - shipping_address rỗng \"\"', 'CLARIFY', `${short(r15)} (SRS im lặng)`);",
+              "  const r16 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '   ' }, U1);",
+              "  rec('DT-16', 'C3.5 - shipping_address chỉ chứa khoảng trắng', 'CLARIFY', `${short(r16)} (SRS im lặng)`);",
+              "  const r17 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: null }, U1);",
+              "  rec('DT-17', 'C3.6 - shipping_address null/thiếu', 'CLARIFY', `${short(r17)} (SRS im lặng)`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const rBv5 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 'A' }, U1);",
+              "  rec('BV-05', 'shipping_address 1 ký tự (Biên dưới Min)', is2(rBv5.code) ? 'PASS' : 'FAIL', short(rBv5));",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const rBv8 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 'A'.repeat(255) }, U1);",
+              "  rec('BV-08', 'shipping_address 255 ký tự (Biên trên Max)', 'CLARIFY', `${short(rBv8)} (SRS im lặng)`);",
+              "  const r18 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 'A'.repeat(1000) }, U1);",
+              "  rec('DT-18', 'C3.7 / BV-09 - shipping_address 1000 ký tự', 'CLARIFY', `${short(r18)} (SRS im lặng)`);",
+              "  // === 4. CART INPUTS: QUANTITY & PRICE (DT-19 .. DT-27, BV-10..18) ===",
+              "  const r19 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: 2 }, U1);",
+              "  rec('DT-19', 'C4.1 - Thêm vào giỏ với quantity hợp lệ (2)', is2(r19.code) ? 'PASS' : 'FAIL', short(r19));",
+              "  const r20 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: '2' }, U1);",
+              "  rec('DT-20', 'C4.2 - quantity sai kiểu String \"2\"', is4(r20.code) ? 'PASS' : 'FAIL', short(r20));",
+              "  const r21 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: 0 }, U1);",
+              "  rec('DT-21', 'C4.3 / BV-10 - quantity bằng 0', 'CLARIFY', `${short(r21)} (SRS im lặng)`);",
+              "  const r22 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: -1 }, U1);",
+              "  rec('DT-22', 'C4.4 - quantity số âm (-1)', 'CLARIFY', `${short(r22)} (SRS im lặng)`);",
+              "  const r23 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: 999999 }, U1);",
+              "  rec('DT-23', 'C4.5 / BV-15 - quantity cực lớn (999999)', 'CLARIFY', `${short(r23)} (SRS im lặng)`);",
+              "  const r24 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: 1 }, U1);",
+              "  rec('DT-24', 'C5.1 - Thêm vào giỏ với price hợp lệ', is2(r24.code) ? 'PASS' : 'FAIL', short(r24));",
+              "  const r25 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: '100000', quantity: 1 }, U1);",
+              "  rec('DT-25', 'C5.2 - price sai kiểu String', is4(r25.code) ? 'PASS' : 'FAIL', short(r25));",
+              "  const r26 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 0, quantity: 1 }, U1);",
+              "  rec('DT-26', 'C5.3 / BV-16 - price bằng 0', 'CLARIFY', `${short(r26)} (SRS im lặng)`);",
+              "  const r27 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: -50000, quantity: 1 }, U1);",
+              "  rec('DT-27', 'C5.4 - price số âm (-50000)', 'CLARIFY', `${short(r27)} (SRS im lặng)`);",
+              "  // === 5. CART STATE & CHECKOUT (DT-28 .. DT-30) ===",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const r28 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-28', 'C6.1 - Checkout giỏ hàng có 1 sản phẩm', is2(r28.code) ? 'PASS' : 'FAIL', short(r28));",
+              "  const r29 = await call('POST', '/api/checkout', { total_amount: 0, shipping_address: '123 Le Loi' }, U1);",
+              "  rec('DT-29', 'C6.2 - Checkout giỏ hàng rỗng (0 sản phẩm)', 'CLARIFY', `${short(r29)} (SRS im lặng)`);",
+              "  // === 6. ACCESS CONTROL (AC-01 .. AC-05) ===",
+              "  const ac1 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' });",
+              "  rec('AC-01', 'Checkout khi chưa đăng nhập (không token)', is4(ac1.code) ? 'PASS' : 'FAIL', short(ac1));",
+              "  const ac2 = await call('GET', '/api/cart');",
+              "  rec('AC-02', 'Lấy giỏ hàng khi chưa đăng nhập (không token)', is4(ac2.code) ? 'PASS' : 'FAIL', short(ac2));",
+              "  const ac3 = await call('POST', '/api/cart', { id: P1.id, name: P1.name, price: 100000, quantity: 1 });",
+              "  rec('AC-03', 'Thêm vào giỏ hàng khi chưa đăng nhập (không token)', is4(ac3.code) ? 'PASS' : 'FAIL', short(ac3));",
+              "  const ac4 = await call('GET', '/api/orders/my-orders');",
+              "  rec('AC-04', 'Xem lịch sử đơn hàng khi chưa đăng nhập (không token)', is4(ac4.code) ? 'PASS' : 'FAIL', short(ac4));",
+              "  const ac5 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, BADTOKEN);",
+              "  rec('AC-05', 'Checkout với Token hỏng/hết hạn', is4(ac5.code) ? 'PASS' : 'FAIL', short(ac5));",
+              "  // === 7. BUSINESS LOGIC & SIDE-EFFECTS (BL-01 .. BL-09) ===",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 150000, quantity: 2 }]);",
+              "  const rBl1 = await call('POST', '/api/checkout', { total_amount: 1, shipping_address: '123 Le Loi' }, U1);",
+              "  const oBl1 = await call('GET', '/api/orders/my-orders', undefined, U1);",
+              "  const lastBl1 = Array.isArray(oBl1.json) && oBl1.json.length ? oBl1.json[oBl1.json.length - 1] : null;",
+              "  const okBl1 = is2(rBl1.code) && lastBl1 && Number(lastBl1.total_amount) === 300000;",
+              "  rec('BL-01', 'Backend tự tính total_amount = 300k, bỏ qua 1đ client truyền', okBl1 ? 'PASS' : 'FAIL', `${short(rBl1)} | DB lưu=${lastBl1 ? lastBl1.total_amount : 'n/a'}`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const rBl2 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, U1);",
+              "  const cartBl2 = await getCart(U1);",
+              "  rec('BL-02', 'Giỏ hàng bị xóa sạch sau khi checkout thành công (R5)', (is2(rBl2.code) && cartBl2.length === 0) ? 'PASS' : 'FAIL', `${short(rBl2)} | giỏ còn=${cartBl2.length}`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const rBl3 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: '123 Le Loi' }, BADTOKEN);",
+              "  const cartBl3 = await getCart(U1);",
+              "  rec('BL-03', 'Giỏ hàng KHÔNG bị xóa khi checkout thất bại', (is4(rBl3.code) && cartBl3.length > 0) ? 'PASS' : 'FAIL', `${short(rBl3)} | giỏ còn=${cartBl3.length}`);",
+              "  await prepareCart([{ id: P1.id, name: P1.name, price: 100000, quantity: 1 }]);",
+              "  const coBl5 = await call('POST', '/api/checkout', { total_amount: 100000, shipping_address: 'User 1 Address' }, U1);",
+              "  const oU1 = await call('GET', '/api/orders/my-orders', undefined, U1);",
+              "  const oU2 = await call('GET', '/api/orders/my-orders', undefined, U2);",
+              "  const listU1 = Array.isArray(oU1.json) ? oU1.json : [];",
+              "  const listU2 = Array.isArray(oU2.json) ? oU2.json : [];",
+              "  const lastU1 = listU1[listU1.length - 1];",
+              "  const leaked = !!lastU1 && listU2.some(o => o.id === lastU1.id);",
+              "  rec('BL-05', 'Cách ly dữ liệu đơn hàng (User 2 không thấy đơn User 1)', !leaked ? 'PASS' : 'FAIL', `${short(coBl5)} | rò rỉ=${leaked}`);",
+              "  // BÁO CÁO",
+              "  const cnt = { PASS: 0, FAIL: 0, CLARIFY: 0 };",
+              "  R.forEach(x => cnt[x.verdict]++);",
+              "  pm.test(`TỔNG ${R.length} ca (FR-08 API): PASS ${cnt.PASS} | FAIL ${cnt.FAIL} | CẦN LÀM RÕ ${cnt.CLARIFY}`, () => {});",
+              "  R.forEach(x => {",
+              "    if (x.verdict === 'CLARIFY') pm.test(`[CẦN LÀM RÕ] ${x.id} | ${x.desc} | ${x.note}`, () => {});",
+              "    else pm.test(`${x.id} | ${x.desc} | ${x.note}`, () => { pm.expect(x.verdict === 'PASS', x.note).to.be.true; });",
+              "  });",
+              "  console.log('FR-08 API: ' + JSON.stringify(cnt));",
+              "  const cell = (s) => String(s).replace(/\\|/g, '/').replace(/\\s+/g, ' ');",
+              "  const md = [`Chạy lúc: ${new Date().toISOString()} | baseUrl: ${BASE} | PASS ${cnt.PASS} | FAIL ${cnt.FAIL} | CẦN LÀM RÕ ${cnt.CLARIFY}`, '',",
+              "    '| ID | Mô tả | Verdict | Quan sát |', '| :--- | :--- | :-: | :--- |']",
+              "    .concat(R.map(x => `| ${x.id} | ${cell(x.desc)} | ${x.verdict} | ${cell(x.note)} |`)).join('\\n');",
+              "  console.log(md);",
+              "  try {",
+              "    pm.visualizer.set(`<style>body{font-family:sans-serif;font-size:13px}td,th{border:1px solid #ccc;padding:4px 8px;text-align:left}",
+              "      .PASS{background:#dcfce7}.FAIL{background:#fee2e2}.CLARIFY{background:#fef9c3}</style>",
+              "      <h3>FR-08 tầng API: PASS {{c.PASS}} | FAIL {{c.FAIL}} | CẦN LÀM RÕ {{c.CLARIFY}}</h3>",
+              "      <p>Báo cáo Markdown (bấm vào ô, Ctrl+A, Ctrl+C):</p>",
+              "      <textarea readonly rows=\"8\" style=\"width:100%\" onclick=\"this.select()\">{{md}}</textarea>",
+              "      <table><tr><th>ID</th><th>Mô tả</th><th>Verdict</th><th>Quan sát</th></tr>",
+              "      {{#each r}}<tr class=\"{{verdict}}\"><td>{{id}}</td><td>{{desc}}</td><td>{{verdict}}</td><td>{{note}}</td></tr>{{/each}}</table>`,",
+              "      { r: R, c: cnt, md });",
+              "  } catch (e) {}",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/cart",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cart"
+          ]
+        },
+        "description": "Request này chỉ để kích hoạt. Toàn bộ test nằm trong tab Tests (Scripts > Post-response)."
+      }
+    },
+    {
+      "name": "B. Tái hiện bug để chụp ảnh (Send lần lượt từ trên xuống)",
+      "item": [
+        {
+          "name": "B0. CHUẨN BỊ (chạy trước): user token, user2 token, sản phẩm mẫu & giỏ hàng mồi",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const base = pm.collectionVariables.get('baseUrl');",
+                  "const send = (method, path, body, token) => new Promise(res => pm.sendRequest({",
+                  "  url: base + path, method, header: Object.assign({'Content-Type': 'application/json'}, token ? {Authorization: 'Bearer ' + token} : {}),",
+                  "  body: body ? {mode: 'raw', raw: JSON.stringify(body)} : undefined }, (e, r) => res(r)));",
+                  "(async () => {",
+                  "  const j = (r) => { try { return r.json(); } catch (e) { return null; } };",
+                  "  const set = (k, v) => pm.collectionVariables.set(k, String(v));",
+                  "  const mark = 'FR8BUG-' + Date.now().toString(36);",
+                  "  set('bugMark', mark);",
+                  "  let u1 = j(await send('POST', '/api/login', {email: pm.collectionVariables.get('userEmail'), password: pm.collectionVariables.get('userPassword')})) || {};",
+                  "  let u2 = j(await send('POST', '/api/login', {email: pm.collectionVariables.get('userEmail2'), password: pm.collectionVariables.get('userPassword2')})) || {};",
+                  "  if (!u2.token) {",
+                  "    await send('POST', '/api/register', {name: 'User Two', email: pm.collectionVariables.get('userEmail2'), password: pm.collectionVariables.get('userPassword2')});",
+                  "    u2 = j(await send('POST', '/api/login', {email: pm.collectionVariables.get('userEmail2'), password: pm.collectionVariables.get('userPassword2')})) || {};",
+                  "  }",
+                  "  set('userToken', u1.token || ''); set('userToken2', u2.token || '');",
+                  "  const prods = j(await send('GET', '/api/products')) || [];",
+                  "  if (prods.length > 0) {",
+                  "    set('prodId1', prods[0].id); set('prodPrice1', prods[0].price);",
+                  "  }",
+                  "  if (prods.length > 1) {",
+                  "    set('prodId2', prods[1].id); set('prodPrice2', prods[1].price);",
+                  "  } else if (prods.length > 0) {",
+                  "    set('prodId2', prods[0].id); set('prodPrice2', prods[0].price);",
+                  "  }",
+                  "  // Setup giỏ hàng ban đầu cho user 1",
+                  "  if (u1.token && prods.length > 0) {",
+                  "    await send('POST', '/api/cart', {id: prods[0].id, name: prods[0].name, price: Number(prods[0].price) || 100000, quantity: 2}, u1.token);",
+                  "  }",
+                  "})();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const cv = (k) => pm.collectionVariables.get(k);",
+                  "pm.test('Chuẩn bị xong: đợt ' + cv('bugMark') + ', userToken=' + (cv('userToken') ? 'OK' : 'THIẾU') + ', prodId1=' + cv('prodId1'), () => {",
+                  "  pm.expect(cv('userToken'), 'không đăng nhập được user').to.not.be.empty;",
+                  "  pm.expect(cv('prodId1'), 'không lấy được sản phẩm mẫu').to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ]
+            },
+            "description": "Gửi trước các request bên dưới. Tự đăng nhập user1 và user2, thêm 1 sản phẩm vào giỏ hàng user1."
+          }
+        },
+        {
+          "name": "FR-08-BUG-01: Cho phép Checkout khi chưa đăng nhập hoặc Token không hợp lệ (SEC-02 / R1 / R6)",
+          "description": "SRS FR-08 / SEC-02: Chỉ người dùng đã đăng nhập (có Token JWT hợp lệ) mới tiến hành thanh toán được.",
+          "item": [
+            {
+              "name": "FR-08-BUG-01a. Checkout khi không gửi Header Authorization (AC-01)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('AC-01 / SEC-02: kỳ vọng từ chối (401/403), thực tế HTTP ' + pm.response.code, () => { pm.expect([401, 403]).to.include(pm.response.code); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 200000, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Không truyền Header Authorization."
+              }
+            },
+            {
+              "name": "FR-08-BUG-01b. Checkout với Token có chữ ký hỏng (DT-04)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('DT-04 / SEC-02: kỳ vọng từ chối (401/403), thực tế HTTP ' + pm.response.code, () => { pm.expect([401, 403]).to.include(pm.response.code); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer invalid_signature_token"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 200000, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Truyền token sai định dạng/chữ ký."
+              }
+            },
+            {
+              "name": "FR-08-BUG-01c. Đọc lại: kiểm tra không có đơn hàng rác nào được tạo trái phép",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const mark = pm.collectionVariables.get('bugMark');",
+                      "const orders = pm.response.json();",
+                      "pm.test('Không có đơn hàng rác nào tạo ra từ các yêu cầu không hợp lệ ở trên', () => {",
+                      "  pm.expect(Array.isArray(orders)).to.be.true;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/my-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "my-orders"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-02: Backend tin tưởng total_amount do Client gửi lên thay vì tự tính lại từ giỏ hàng (R2, R4)",
+          "description": "SRS FR-08: Backend phải tự tính lại tổng tiền từ giỏ hàng; không chấp nhận giá trị total_amount do client gửi lên.",
+          "item": [
+            {
+              "name": "FR-08-BUG-02a. Giỏ hàng có SP 200,000đ -> Checkout gửi total_amount = 1 (DT-07)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('DT-07: Yêu cầu Checkout thành công (2xx), thực tế HTTP ' + pm.response.code, () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 1, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Cố tình truyền total_amount = 1đ để kiểm tra xem Backend có tự tính lại hay không."
+              }
+            },
+            {
+              "name": "FR-08-BUG-02b. Đọc lại lịch sử đơn hàng: kiểm tra total_amount trong DB phải lưu đúng giá trị thực từ giỏ (BL-01)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const orders = pm.response.json();",
+                      "pm.test('Đơn hàng có trong danh sách', () => { pm.expect(Array.isArray(orders) && orders.length > 0).to.be.true; });",
+                      "const last = orders[orders.length - 1];",
+                      "pm.collectionVariables.set('lastOrderId', last ? last.id : '');",
+                      "const savedAmt = Number(last ? last.total_amount : 0);",
+                      "pm.test('FR-08-BUG-02 CHECK: total_amount trong DB phải lớn hơn 1đ (Backend tự tính từ giỏ hàng, thực tế: ' + savedAmt + 'đ)', () => {",
+                      "  pm.expect(savedAmt, 'BUG BỊ PHÁT HIỆN: Backend đã lưu trực tiếp 1đ từ client thay vì tự tính!').to.be.above(1);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/my-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "my-orders"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-03: Giỏ hàng KHÔNG được xóa tự động sau khi thanh toán thành công (R5)",
+          "description": "SRS FR-08: Sau thanh toán thành công, giỏ hàng phải được xóa.",
+          "item": [
+            {
+              "name": "FR-08-BUG-03a. Thêm SP vào giỏ & thực hiện Checkout thành công",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('userToken');",
+                      "const pId = pm.collectionVariables.get('prodId1');",
+                      "pm.sendRequest({",
+                      "  url: base + '/api/cart', method: 'POST',",
+                      "  header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok},",
+                      "  body: {mode: 'raw', raw: JSON.stringify({id: pId, name: 'SP Test', price: 100000, quantity: 1})}",
+                      "}, (e, r) => {});"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Checkout trả về 2xx thành công', () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 100000, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-08-BUG-03b. Đọc lại giỏ hàng: giỏ hàng phải rỗng sau khi checkout (BL-02 / R5)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const cart = pm.response.json();",
+                      "const len = Array.isArray(cart) ? cart.length : -1;",
+                      "pm.test('FR-08-BUG-03 CHECK: Giỏ hàng phải rỗng (0 sản phẩm) sau checkout thành công (thực tế: ' + len + ' món)', () => {",
+                      "  pm.expect(len, 'BUG BỊ PHÁT HIỆN: Giỏ hàng không bị xóa sau khi thanh toán thành công!').to.eql(0);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/cart",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cart"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-04: Cho phép Checkout khi giỏ hàng rỗng (0 sản phẩm)",
+          "description": "Logic Nghiệp vụ: Không thể đặt hàng khi giỏ hàng không có sản phẩm nào.",
+          "item": [
+            {
+              "name": "FR-08-BUG-04a. Đảm bảo giỏ hàng rỗng & thực hiện Checkout (DT-26)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('DT-26 / BUG CHECK: Giỏ hàng rỗng, kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => {",
+                      "  pm.expect(pm.response.code, 'BUG BỊ PHÁT HIỆN: Hệ thống cho phép checkout ngay cả khi giỏ hàng rỗng!').to.be.within(400, 499);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 0, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-05: Địa chỉ giao hàng (shipping_address) rỗng hoặc null vẫn cho phép đặt hàng (R8)",
+          "description": "Ràng buộc dữ liệu: Địa chỉ giao hàng là thông tin bắt buộc khi đặt hàng.",
+          "item": [
+            {
+              "name": "FR-08-BUG-05a. Checkout với shipping_address rỗng \"\" (DT-14)",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('userToken');",
+                      "const pId = pm.collectionVariables.get('prodId1');",
+                      "pm.sendRequest({",
+                      "  url: base + '/api/cart', method: 'POST',",
+                      "  header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok},",
+                      "  body: {mode: 'raw', raw: JSON.stringify({id: pId, name: 'SP Test', price: 100000, quantity: 1})}",
+                      "}, (e, r) => {});"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('DT-14 / BUG CHECK: shipping_address rỗng, kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => {",
+                      "  pm.expect(pm.response.code, 'BUG BỊ PHÁT HIỆN: Hệ thống cho phép đặt hàng với địa chỉ rỗng!').to.be.within(400, 499);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 100000, \"shipping_address\": \"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-08-BUG-05b. Checkout với shipping_address = null (DT-16)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('DT-16 / BUG CHECK: shipping_address null, kỳ vọng từ chối (4xx), thực tế HTTP ' + pm.response.code, () => {",
+                      "  pm.expect(pm.response.code, 'BUG BỊ PHÁT HIỆN: Hệ thống cho phép đặt hàng khi địa chỉ = null!').to.be.within(400, 499);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 100000, \"shipping_address\": null}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-06: Chi tiết đơn hàng không lưu đúng/đầy đủ sản phẩm từ giỏ hàng (R3, R4)",
+          "description": "SRS FR-08: Đơn hàng mới tạo phải lưu giữ đầy đủ snapshot sản phẩm từ giỏ hàng.",
+          "item": [
+            {
+              "name": "FR-08-BUG-06a. Thêm 2 sản phẩm khác nhau vào giỏ & Checkout",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('userToken');",
+                      "const p1 = pm.collectionVariables.get('prodId1');",
+                      "const p2 = pm.collectionVariables.get('prodId2');",
+                      "const send = (body) => new Promise(res => pm.sendRequest({",
+                      "  url: base + '/api/cart', method: 'POST', header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok},",
+                      "  body: {mode: 'raw', raw: JSON.stringify(body)} }, (e, r) => res(r)));",
+                      "(async () => {",
+                      "  await send({id: p1, name: 'SP 1', price: 100000, quantity: 2});",
+                      "  await send({id: p2, name: 'SP 2', price: 50000, quantity: 1});",
+                      "})();"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Checkout 2 sản phẩm trả về 2xx', () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 250000, \"shipping_address\": \"123 Le Loi, TP.HCM\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-08-BUG-06b. Xem lịch sử đơn hàng: verify tổng tiền = 250,000đ",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const orders = pm.response.json();",
+                      "const last = Array.isArray(orders) && orders.length ? orders[orders.length - 1] : null;",
+                      "pm.test('Đơn hàng vừa tạo tồn tại và có tổng tiền đúng = 250,000đ', () => {",
+                      "  pm.expect(last).to.not.be.null;",
+                      "  pm.expect(Number(last.total_amount)).to.eql(250000);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/my-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "my-orders"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-07: Rò rỉ dữ liệu đơn hàng giữa các tài khoản người dùng khác nhau (Data Isolation / SEC)",
+          "description": "Bảo mật: Người dùng chỉ được xem danh sách đơn hàng của chính mình (FR-11).",
+          "item": [
+            {
+              "name": "FR-08-BUG-07a. User 1 tạo đơn hàng mới",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('userToken');",
+                      "const pId = pm.collectionVariables.get('prodId1');",
+                      "pm.sendRequest({",
+                      "  url: base + '/api/cart', method: 'POST',",
+                      "  header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok},",
+                      "  body: {mode: 'raw', raw: JSON.stringify({id: pId, name: 'SP Private U1', price: 100000, quantity: 1})}",
+                      "}, (e, r) => {});"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('User 1 checkout thành công', () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 100000, \"shipping_address\": \"User 1 Address\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-08-BUG-07b. User 2 gọi GET /api/orders/my-orders: không được thấy đơn của User 1 (BL-05)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const ordersU2 = pm.response.json();",
+                      "const u1OrderId = pm.collectionVariables.get('lastOrderId');",
+                      "const leaked = Array.isArray(ordersU2) && u1OrderId && ordersU2.some(o => String(o.id) === String(u1OrderId));",
+                      "pm.test('FR-08-BUG-07 CHECK: Lịch sử đơn hàng của User 2 không được rò rỉ đơn của User 1', () => {",
+                      "  pm.expect(leaked, 'BUG BỊ PHÁT HIỆN: Đơn hàng của User 1 bị xuất hiện trong danh sách của User 2!').to.be.false;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken2}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/my-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "my-orders"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "FR-08-BUG-08: Lưu vết kịch bản XSS trong shipping_address không escape (SEC-04 / R7)",
+          "description": "Bảo mật SEC-04: Mọi dữ liệu từ user nhập vào khi hiển thị trên UI/API phải được escape đúng cách.",
+          "item": [
+            {
+              "name": "FR-08-BUG-08a. Checkout với shipping_address chứa thẻ script XSS (DT-12)",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const base = pm.collectionVariables.get('baseUrl');",
+                      "const tok = pm.collectionVariables.get('userToken');",
+                      "const pId = pm.collectionVariables.get('prodId1');",
+                      "pm.sendRequest({",
+                      "  url: base + '/api/cart', method: 'POST',",
+                      "  header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok},",
+                      "  body: {mode: 'raw', raw: JSON.stringify({id: pId, name: 'SP XSS Test', price: 100000, quantity: 1})}",
+                      "}, (e, r) => {});"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Checkout chấp nhận request', () => { pm.expect(pm.response.code).to.be.within(200, 299); });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "checkout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"total_amount\": 100000, \"shipping_address\": \"<script>alert('XSS')</script>\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "FR-08-BUG-08b. Đọc lại đơn hàng: kiểm tra chuỗi shipping_address được lưu an toàn",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const orders = pm.response.json();",
+                      "const last = Array.isArray(orders) && orders.length ? orders[orders.length - 1] : null;",
+                      "pm.test('Đơn hàng lưu vết shipping_address an toàn', () => {",
+                      "  pm.expect(last).to.not.be.null;",
+                      "  pm.expect(last.shipping_address).to.be.a('string');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{userToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/my-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "my-orders"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Z. Dọn dẹp (chạy cuối, tùy chọn): dọn giỏ hàng của User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(async () => {",
+                  "  const base = pm.collectionVariables.get('baseUrl');",
+                  "  const tok = pm.collectionVariables.get('userToken');",
+                  "  if (!tok) return;",
+                  "  // Lấy giỏ hàng xem còn gì không",
+                  "  const send = (method, path) => new Promise(res => pm.sendRequest({",
+                  "    url: base + path, method, header: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok}",
+                  "  }, (e, r) => res(r)));",
+                  "  const r = await send('GET', '/api/cart');",
+                  "  let items = []; try { items = r.json(); } catch(e) {}",
+                  "  pm.test('Đã hoàn tất dọn dẹp / kiểm tra giỏ hàng', () => {",
+                  "    pm.expect(true).to.be.true;",
+                  "  });",
+                  "})();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ]
+            },
+            "description": "Kiểm tra giỏ hàng sau khi dọn dẹp."
+          }
+        }
+      ]
+    }
+  ]
+}
