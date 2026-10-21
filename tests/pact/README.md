@@ -18,7 +18,9 @@ tests/pact/
 ├── pacts/
 │   └── EShopMobile-EShopBackend.json # File hợp đồng chính thức do C1 sinh ra
 ├── breaking-change/
-│   └── verify-breaking.js          # Kịch bản C3: Mô phỏng tiêm lỗi phá vỡ hợp đồng
+│   ├── pact-c3-runner.js           # Kịch bản C3: Trình điều phối 3 pha tiêm lỗi & rollback tự động
+│   ├── verify-breaking.js          # Script mô phỏng nhanh vi phạm hợp đồng (cổng 3001)
+│   └── Pact_C3_Execution_Guide.md  # Tài liệu kỹ thuật chuyên sâu về Breaking Change (Nguyễn Quốc Kỳ)
 ├── package.json                    # Cấu hình thư viện (@pact-foundation/pact v13, mocha, chai)
 └── README.md                       # Tài liệu hướng dẫn thực thi
 ```
@@ -46,19 +48,28 @@ npm run test:provider
 ```
 * **Kết quả:** Script tự động thăm dò cổng 3000 (khởi động backend nếu chưa chạy), đối chiếu schema và in ra kết quả `VERIFICATION SUCCESSFUL (Hợp đồng khớp 100%)`.
 
-### Kịch bản C3: Phát Hiện Breaking Change (Tiêm Lỗi Lệch Hợp Đồng)
-Mô phỏng trường hợp lập trình viên Backend đổi tên trường `price` thành `unit_price` trong khi API vẫn trả về mã `HTTP 200 OK`.
+### Kịch bản C3: Phát Hiện Breaking Change & Khôi Phục (3 Pha Toàn Diện)
+Phụ trách chính bởi: **Nguyễn Quốc Kỳ** (MSSV: 23120138). Thực hiện quy trình đối soát khép kín:
+1. **Pha 1 (Baseline):** Xác minh Provider đáp ứng 100% hợp đồng.
+2. **Pha 2 (Mutation):** Tiêm 2 dạng breaking change kinh điển:
+   - *Dạng 1:* Đổi tên trường `price` $\to$ `unit_price` (HTTP 200 OK nhưng thiếu key bắt buộc).
+   - *Dạng 2:* Sai lệch kiểu dữ liệu (trả về chuỗi format tiền tệ `'30.000.000 ₫'` thay vì số nguyên thô).
+3. **Pha 3 (Rollback):** Tự động hoàn nguyên mã nguồn và xác nhận hệ thống an toàn trở lại.
+
 ```bash
+# Chạy toàn bộ quy trình 3 pha C3 (Khuyến nghị):
+npm run test:c3
+
+# Hoặc chạy mô phỏng nhanh vi phạm đổi tên trường:
 npm run test:breaking
 ```
-* **Kết quả:** Pact Verifier lập tức bắt lỗi:
+* **Kết quả:** Pact Verifier lập tức chặn đứng cả 2 biến thể lỗi và in bảng tổng kết chi tiết:
   ```text
   Failures:
-  1) Verifying a pact between EShopMobile and EShopBackend
-     has a matching body (FAILED)
-     $ -> Actual map is missing the following keys: price
+  1) $ -> Actual map is missing the following keys: price
+  2) $.price -> Expected '30.000.000 ₫' (String) to be an integer number
   ```
-  Nhờ có Pact, bản build Backend lỗi này sẽ bị chặn đứng trong pipeline CI/CD trước khi kịp deploy lên production làm sập ứng dụng Mobile của khách hàng!
+  Nhờ có Pact, các bản build Backend lỗi này bị chặn đứng hoàn toàn trong pipeline CI/CD trước khi kịp deploy lên production làm sập ứng dụng Mobile của khách hàng! Chi tiết xem tại [`Pact_C3_Execution_Guide.md`](./breaking-change/Pact_C3_Execution_Guide.md).
 
 ---
 
