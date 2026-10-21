@@ -1,55 +1,43 @@
-# HW02-AI – Domain Testing & Boundary Value Analysis trên EShop
+# Project Test Summary & Self-Assessment
 
-- Sinh viên: TODO (họ tên) – MSSV: TODO
-- Nhóm: TODO
-- SUT: https://github.com/ttbhanh/eshop-sut – nhánh `main`, commit: TODO
-- Công cụ test: Postman (collection trong `tests/postman/`), TODO (Expo/thiết bị cho mobile)
-- Sử dụng AI: có – xem `ai_audit/00_AI_AUDIT_REPORT.md`
-
-## 1. Bảng tự đánh giá
+## 1. Self-Assessment Table
 
 | No. | Criteria | Grade | Self-Assessed Grade |
-| :-: | :--- | :-: | :-: |
-| 1 | Feature A (Pool A): FR-TODO (Domain + Boundary) | 25 | |
-| 2 | Feature B (Pool B): FR-09 (Domain + Boundary) | 25 | |
-| 3 | Feature C (Pool C): FR-15 (Domain + Boundary) | 25 | |
-| 4 | Feature D (Mobile): FR-20 (Domain + Boundary) | 15 | |
-| 5 | Agent Skills | 10 | |
-| | **Total** | **100** | |
+| :---: | :--- | :---: | :---: |
+| **1** | Feature A (Domain + Boundary) | 25 | 21 |
+| **2** | Feature B (Domain + Boundary) | 25 | 21 |
+| **3** | Feature C (Domain + Boundary) | 25 | 21 |
+| **4** | Feature D (Mobile, Domain + Boundary) | 15 | 11 |
+| **5** | Agent Skills | 10 | 6 |
+| | **Total** | **100** | 80 |
+
+---
 
 ## 2. Test Summary Report
 
-Số feature: TODO
+### Overall Metrics
 
-| Feature | Pool | Designed | Executed | Passed | Failed | Cần làm rõ | Not executed | Bugs |
-| :--- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| FR-TODO | A | | | | | | | |
-| FR-09 | B | | | | | | | |
-| FR-15 | C | | | | | | | |
-| FR-20 | D | | | | | | | |
-| **Tổng** | | | | | | | | |
+- **Number of Features Tested:** 4 (FR-04, FR-08, FR-13, FR-20)
+- **Total Test Cases Designed:** 173
+- **Total Test Cases Executed:** 163
+- **Total Test Cases Passed:** 83
+- **Total Test Cases Failed:** 45
+- **Total Test Cases Clarify (SRS Ambiguity):** 35
+- **Total Test Cases Not Yet Executed:** 10
+- **Total Number of Bugs Found:** 18
 
-Quy ước: `Executed = Passed + Failed + Cần làm rõ`; `Designed = Executed + Not executed`.
-"Cần làm rõ" là ca SRS không nêu kỳ vọng nên chưa kết luận được; KHÔNG tính vào Passed.
+### Breakdown by Feature
 
-## 3. Demo videos
+| Feature | Designed | Executed | Passed | Failed | Clarify | Not Executed | Bugs |
+| :--- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| **FR-04** (Profile Management) | 34 | 34 | 13 | 14 | 7 | 0 | 3 |
+| **FR-08** (Checkout) | 41 | 41 | 20 | 7 | 14 | 0 | 8 |
+| **FR-13** (Dashboard & Orders) | 35 | 35 | 24 | 5 | 6 | 0 | 2 |
+| **FR-20** (Mobile: Register & Cancel) | 63 | 53 | 26 | 19 | 8 | 10 | 5 |
 
-| Nội dung | Link YouTube |
-| :--- | :--- |
-| Demo Agent Skill trên một feature hoàn chỉnh | TODO |
+*(Note: "Clarify" refers to cases where the SRS was silent or ambiguous, resulting in system behaviors that could not be strictly classified as Pass or Fail without further confirmation from BA/Lecturer).*
 
-## 4. Cấu trúc thư mục
+---
 
-```
-README.md                 bảng tự đánh giá + test summary (file này)
-CHECKLIST.md              quy trình mỗi feature + checklist nộp bài
-report/                   báo cáo chính (Domain Testing + BVA)
-features/FR-xx/           tài liệu từng feature (tạo bằng scripts/hw.py new-feature)
-bugs/                     báo cáo bug + ảnh chụp GitHub Issues
-ai_audit/                 AI Audit Report, log từng lần dùng AI, AI Critique
-evidence/FR-xx/           ảnh chụp kết quả chạy test
-tests/postman/            collection + dữ liệu test
-skills/                   Agent Skill + hướng dẫn
-scripts/hw.py             công cụ hỗ trợ (log AI, kiểm tra, đóng gói)
-git_log.txt               (tự sinh khi đóng gói)
-```
+## 3. Demo Videos
+Link : https://youtu.be/7v3xaYAfTeE

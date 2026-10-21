@@ -1,0 +1,75 @@
+ok   TỔNG 34 ca: PASS 13 | FAIL 17 | CẦN LÀM RÕ 4 | LỖI SCRIPT 0
+ok   DT-01 | Tạo coupon hợp lệ — type percent (baseline) | HTTP 200 {"message":"Coupon created","id":90}
+ok   DT-02 | Tạo coupon hợp lệ — type fixed | HTTP 200 {"message":"Coupon created","id":91}
+FAIL DT-03 | Tạo coupon — code rỗng | HTTP 200 {"message":"Coupon created","id":92} | KHÔNG ĐẠT: số lượng coupon không đổi
+FAIL DT-04 | Tạo coupon — code trùng (SAVE10) | HTTP 500 {"error":"SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code"}
+FAIL DT-05 | Tạo coupon — type không hợp lệ (amount) | HTTP 200 {"message":"Coupon created","id":93}
+FAIL DT-06 | Tạo coupon — type thiếu | HTTP 200 {"message":"Coupon created","id":94}
+FAIL DT-07 | Tạo coupon — discount_value âm (-5) | HTTP 200 {"message":"Coupon created","id":95}
+FAIL DT-08 | Tạo coupon — discount_value thiếu | HTTP 200 {"message":"Coupon created","id":96}
+FAIL DT-09 | Tạo coupon — expired_at thiếu | HTTP 200 {"message":"Coupon created","id":97}
+FAIL DT-10 | Tạo coupon — min_order_amount thiếu | HTTP 200 {"message":"Coupon created","id":98}
+FAIL DT-11 | Tạo coupon — max_uses_per_user âm (-1) | HTTP 200 {"message":"Coupon created","id":99}
+FAIL DT-12 | Tạo coupon — max_uses_per_user thiếu | HTTP 200 {"message":"Coupon created","id":100}
+ok   [CẦN LÀM RÕ] DT-13 | Tạo coupon — expired_at ngày quá khứ | HTTP 200 {"message":"Coupon created","id":101} (SRS im lặng) | SRS không nêu ngày quá khứ có được tạo không (CLR-6)
+ok   [CẦN LÀM RÕ] DT-14 | Tạo coupon — expired_at sai định dạng (31-12-2099) | HTTP 200 {"message":"Coupon created","id":102} (SRS im lặng) | SRS không nêu định dạng bắt buộc (CLR-6)
+ok   DT-15 | Xóa coupon tồn tại | HTTP 200 {"message":"Coupon deleted"}
+FAIL DT-16 | Xóa coupon — id không tồn tại (99999) | HTTP 200 {"message":"Coupon deleted"}
+FAIL BV-01 | discount_value = -1 (B−1, dưới biên > 0) | HTTP 200 {"message":"Coupon created","id":104}
+FAIL BV-02 | discount_value = 0 (B, đúng biên — không dương) | HTTP 200 {"message":"Coupon created","id":105}
+ok   BV-03 | discount_value = 1 (B+1, dương tối thiểu — hợp lệ) | HTTP 200 {"message":"Coupon created","id":106}
+FAIL BV-04 | min_order_amount = -1 (B−1, dưới biên >= 0) | HTTP 200 {"message":"Coupon created","id":107}
+ok   BV-05 | min_order_amount = 0 (B, đúng biên — hợp lệ) | HTTP 200 {"message":"Coupon created","id":108}
+ok   BV-06 | min_order_amount = 1 (B+1, dương nhỏ nhất — hợp lệ) | HTTP 200 {"message":"Coupon created","id":109}
+FAIL BV-07 | max_uses_per_user = 0 (B−1, dưới biên >= 1) | HTTP 200 {"message":"Coupon created","id":110}
+ok   AC-01 | POST /api/admin/coupons — thiếu Authorization header | HTTP 401 {"error":"Unauthorized"}
+ok   AC-02 | POST /api/admin/coupons — header sai định dạng (không có Bearer) | HTTP 401 {"error":"Unauthorized"}
+ok   AC-03 | POST /api/admin/coupons — token bị giả mạo (signature sai) | HTTP 403 {"error":"Forbidden"}
+FAIL AC-04 | POST /api/admin/coupons — token user thường (role sai) | HTTP 200 {"message":"Coupon created","id":111} | KHÔNG ĐẠT: user thường không thể tạo coupon
+ok   AC-05 | DELETE /api/admin/coupons/:id — thiếu Authorization header | HTTP 401 {"error":"Unauthorized"}
+FAIL AC-06 | DELETE /api/admin/coupons/:id — token user thường (role sai) | HTTP 200 {"message":"Coupon deleted"} | KHÔNG ĐẠT: coupon vẫn còn — user không thể xóa coupon admin
+ok   BL-01 | GET /api/coupons — admin xem danh sách đầy đủ | HTTP 200 [{"id":1,"code":"SAVE10","type":"percent","discount_value":10,"min_order_amount"
+ok   BL-02 | Tạo coupon thành công → xuất hiện trong list | HTTP 200 {"message":"Coupon created","id":114}
+ok   BL-03 | Xóa coupon thành công → biến mất khỏi list | HTTP 200 {"message":"Coupon deleted"}
+ok   [CẦN LÀM RÕ] BL-04 | Mass assignment — gửi thêm is_active=0 | HTTP 200 {"message":"Coupon created","id":116} (SRS im lặng) | SRS không nêu client có đặt is_active không (CLR-9). Ghi lại hành vi thực tế.
+ok   [CẦN LÀM RÕ] BL-05 | Double delete — xóa coupon đã xóa (lần 2) | HTTP 200 {"message":"Coupon deleted"} (SRS im lặng) | SRS không nêu hành vi xóa id không còn tồn tại (CLR-8)
+
+{"PASS":13,"FAIL":17,"CLARIFY":4,"ERROR":0}
+Chạy lúc: 2026-10-21T02:46:27.059Z | baseUrl: http://localhost:3000 | PASS 13 | FAIL 17 | CẦN LÀM RÕ 4
+
+| ID | Mô tả | Verdict | Quan sát |
+| :--- | :--- | :-: | :--- |
+| DT-01 | Tạo coupon hợp lệ — type percent (baseline) | PASS | HTTP 200 {"message":"Coupon created","id":90} |
+| DT-02 | Tạo coupon hợp lệ — type fixed | PASS | HTTP 200 {"message":"Coupon created","id":91} |
+| DT-03 | Tạo coupon — code rỗng | FAIL | HTTP 200 {"message":"Coupon created","id":92} / KHÔNG ĐẠT: số lượng coupon không đổi |
+| DT-04 | Tạo coupon — code trùng (SAVE10) | FAIL | HTTP 500 {"error":"SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code"} |
+| DT-05 | Tạo coupon — type không hợp lệ (amount) | FAIL | HTTP 200 {"message":"Coupon created","id":93} |
+| DT-06 | Tạo coupon — type thiếu | FAIL | HTTP 200 {"message":"Coupon created","id":94} |
+| DT-07 | Tạo coupon — discount_value âm (-5) | FAIL | HTTP 200 {"message":"Coupon created","id":95} |
+| DT-08 | Tạo coupon — discount_value thiếu | FAIL | HTTP 200 {"message":"Coupon created","id":96} |
+| DT-09 | Tạo coupon — expired_at thiếu | FAIL | HTTP 200 {"message":"Coupon created","id":97} |
+| DT-10 | Tạo coupon — min_order_amount thiếu | FAIL | HTTP 200 {"message":"Coupon created","id":98} |
+| DT-11 | Tạo coupon — max_uses_per_user âm (-1) | FAIL | HTTP 200 {"message":"Coupon created","id":99} |
+| DT-12 | Tạo coupon — max_uses_per_user thiếu | FAIL | HTTP 200 {"message":"Coupon created","id":100} |
+| DT-13 | Tạo coupon — expired_at ngày quá khứ | CLARIFY | HTTP 200 {"message":"Coupon created","id":101} (SRS im lặng) / SRS không nêu ngày quá khứ có được tạo không (CLR-6) |
+| DT-14 | Tạo coupon — expired_at sai định dạng (31-12-2099) | CLARIFY | HTTP 200 {"message":"Coupon created","id":102} (SRS im lặng) / SRS không nêu định dạng bắt buộc (CLR-6) |
+| DT-15 | Xóa coupon tồn tại | PASS | HTTP 200 {"message":"Coupon deleted"} |
+| DT-16 | Xóa coupon — id không tồn tại (99999) | FAIL | HTTP 200 {"message":"Coupon deleted"} |
+| BV-01 | discount_value = -1 (B−1, dưới biên > 0) | FAIL | HTTP 200 {"message":"Coupon created","id":104} |
+| BV-02 | discount_value = 0 (B, đúng biên — không dương) | FAIL | HTTP 200 {"message":"Coupon created","id":105} |
+| BV-03 | discount_value = 1 (B+1, dương tối thiểu — hợp lệ) | PASS | HTTP 200 {"message":"Coupon created","id":106} |
+| BV-04 | min_order_amount = -1 (B−1, dưới biên >= 0) | FAIL | HTTP 200 {"message":"Coupon created","id":107} |
+| BV-05 | min_order_amount = 0 (B, đúng biên — hợp lệ) | PASS | HTTP 200 {"message":"Coupon created","id":108} |
+| BV-06 | min_order_amount = 1 (B+1, dương nhỏ nhất — hợp lệ) | PASS | HTTP 200 {"message":"Coupon created","id":109} |
+| BV-07 | max_uses_per_user = 0 (B−1, dưới biên >= 1) | FAIL | HTTP 200 {"message":"Coupon created","id":110} |
+| AC-01 | POST /api/admin/coupons — thiếu Authorization header | PASS | HTTP 401 {"error":"Unauthorized"} |
+| AC-02 | POST /api/admin/coupons — header sai định dạng (không có Bearer) | PASS | HTTP 401 {"error":"Unauthorized"} |
+| AC-03 | POST /api/admin/coupons — token bị giả mạo (signature sai) | PASS | HTTP 403 {"error":"Forbidden"} |
+| AC-04 | POST /api/admin/coupons — token user thường (role sai) | FAIL | HTTP 200 {"message":"Coupon created","id":111} / KHÔNG ĐẠT: user thường không thể tạo coupon |
+| AC-05 | DELETE /api/admin/coupons/:id — thiếu Authorization header | PASS | HTTP 401 {"error":"Unauthorized"} |
+| AC-06 | DELETE /api/admin/coupons/:id — token user thường (role sai) | FAIL | HTTP 200 {"message":"Coupon deleted"} / KHÔNG ĐẠT: coupon vẫn còn — user không thể xóa coupon admin |
+| BL-01 | GET /api/coupons — admin xem danh sách đầy đủ | PASS | HTTP 200 [{"id":1,"code":"SAVE10","type":"percent","discount_value":10,"min_order_amount" |
+| BL-02 | Tạo coupon thành công → xuất hiện trong list | PASS | HTTP 200 {"message":"Coupon created","id":114} |
+| BL-03 | Xóa coupon thành công → biến mất khỏi list | PASS | HTTP 200 {"message":"Coupon deleted"} |
+| BL-04 | Mass assignment — gửi thêm is_active=0 | CLARIFY | HTTP 200 {"message":"Coupon created","id":116} (SRS im lặng) / SRS không nêu client có đặt is_active không (CLR-9). Ghi lại hành vi thực tế. |
+| BL-05 | Double delete — xóa coupon đã xóa (lần 2) | CLARIFY | HTTP 200 {"message":"Coupon deleted"} (SRS im lặng) / SRS không nêu hành vi xóa id không còn tồn tại (CLR-8) |

@@ -28,8 +28,11 @@ a. Các prompt hỗ trợ
 | P-08 | 2026-10-20 22:44:08 (UTC+0700) | Claude Sonnet 5.5 | Kiểm tra | Hãy kiểm tra các file kết quả mà mình đã tổng hợp lại từ test thực nghiệm, sau đó đọc qua cả 7 file respond từ agent mà mình thu thập được, so sánh và rút ra kết luận về kết quả của mình và respond của agent có gì khác biệt, có cải thiện không? Các câu trả lời của agent có gì hạn chế, chỉ rõ ra |
 | P-09 | 2026-10-20 22:46:15 (UTC+0700) | Claude Sonnet 5.5 | Kiểm tra | Hãy kiểm tra các file kết quả mà mình đã tổng hợp lại từ test thực nghiệm, sau đó đọc qua cả 7 file respond từ agent mà mình thu thập được, so sánh và rút ra kết luận về kết quả của mình và respond của agent có gì khác biệt, có cải thiện không? Các câu trả lời của agent có gì hạn chế, chỉ rõ ra |
 | P-10 | 2026-10-20 22:49:51 (UTC+0700) | Claude Sonnet 5.5 | Kiểm tra | Hãy kiểm tra các file kết quả mà mình đã tổng hợp lại từ test thực nghiệm, sau đó đọc qua cả 7 file respond từ agent mà mình thu thập được, so sánh và rút ra kết luận về kết quả của mình và respond của agent có gì khác biệt, có cải thiện không? Các câu trả lời của agent có gì hạn chế, chỉ rõ ra |
+| P-11 | 2026-10-21 6:11:23 (UTC+0700) | Claude Sonnet 5.5 | Giải thích | Hãy nói thêm cho mình biết cấu trúc của 1 bộ skill cho agent và một số ví về chúng |
+| P-12 | 2026-10-21 6:13:57 (UTC+0700) | Claude Sonnet 5.5 | Giải thích | Giải thích cho mình quy trình tạo skill một cách chi tiết (xem như mình chưa từng dùng agent skill), bạn có thể thêm một số nguồn có liên quan đến vấn đề này cũng được |
+| P-13 | 2026-10-21 8:47:34 (UTC+0700) | Claude Sonnet 5.5 | Kiểm tra | Hãy kiểm tra các skill này lại giúp mình, cải thiện nó nếu cần, sau đó clone repo về cloud của bạn và tiến hành test giúp mình 1 FR bất kì, nếu có thắc mắc gì thì bạn cứ việc nói |
 
-> Các prompt cuối được tái sử dụng cho các feature
+> Một số prompt cuối được tái sử dụng cho các feature
 
 b. Các prompt liên quan đến test khả năng model
 | ID | Ngày giờ | Công cụ | Feature – bước | File |

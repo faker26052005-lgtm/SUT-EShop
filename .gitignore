@@ -197,3 +197,4 @@ target/
 karate.log*
 karate-reports/
 
+.agents/

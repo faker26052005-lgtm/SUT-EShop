@@ -1,0 +1,889 @@
+{
+  "feature": "FR-17",
+  "title": "Quản lý Mã Giảm Giá (Coupon CRUD)",
+  "baseUrl": "http://localhost:3000",
+  "carrier": "/api/products",
+  "users": {
+    "user1": {"email": "test@eshop.com",  "password": "Test1234!"},
+    "admin": {"email": "admin@eshop.com", "password": "Admin123!"}
+  },
+  "init_js": "const coupons = await call('GET','/api/coupons',undefined,tok.admin); ctx.initialCount = Array.isArray(coupons.json) ? coupons.json.length : 0;",
+
+  "tests": [
+
+    {
+      "id": "DT-01",
+      "technique": "DT",
+      "req": "R1,R4,R5,R6,R7,R8,R9,R10",
+      "title": "Tạo coupon hợp lệ — type percent (baseline)",
+      "auth": "admin",
+      "setup": [
+        {"js": "const code01 = 'NEWTEST01_' + Date.now();"}
+      ],
+      "before": [
+        {"as": "before_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code01",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "Array.isArray(v.json) && v.json.some(c => c.code === code01)",
+         "note": "coupon mới xuất hiện trong GET /api/coupons"},
+        {"check": "r.json && (r.json.id || r.json.message)",
+         "note": "response chứa id hoặc message thành công"}
+      ]
+    },
+
+    {
+      "id": "DT-02",
+      "technique": "DT",
+      "req": "R6",
+      "title": "Tạo coupon hợp lệ — type fixed",
+      "auth": "admin",
+      "setup": [
+        {"js": "const code02 = 'NEWTEST02_' + Date.now();"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code02",
+        "type": "fixed",
+        "discount_value": 50000,
+        "min_order_amount": 300000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 2
+      }},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "Array.isArray(v.json) && v.json.some(c => c.code === code02)",
+         "note": "coupon type fixed xuất hiện trong list"}
+      ]
+    },
+
+    {
+      "id": "DT-03",
+      "technique": "DT",
+      "req": "R4",
+      "title": "Tạo coupon — code rỗng",
+      "auth": "admin",
+      "setup": [
+        {"js": "const list03 = await call('GET','/api/coupons',undefined,tok.admin); const emptyC = Array.isArray(list03.json) ? list03.json.find(c => c.code === '') : null; if (emptyC) await call('DELETE', '/api/admin/coupons/' + emptyC.id, undefined, tok.admin);"}
+      ],
+      "before": [
+        {"as": "snap_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.snap_list.json.length",
+         "note": "số lượng coupon không đổi"}
+      ]
+    },
+
+    {
+      "id": "DT-04",
+      "technique": "DT",
+      "req": "R5",
+      "title": "Tạo coupon — code trùng (SAVE10)",
+      "auth": "admin",
+      "before": [
+        {"as": "snap_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "SAVE10",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.snap_list.json.length",
+         "note": "số lượng coupon không đổi — SAVE10 không bị nhân đôi"}
+      ]
+    },
+
+    {
+      "id": "DT-05",
+      "technique": "DT",
+      "req": "R6",
+      "title": "Tạo coupon — type không hợp lệ (amount)",
+      "auth": "admin",
+      "setup": [{"js": "const code05 = 'NEWTEST05_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code05",
+        "type": "amount",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-06",
+      "technique": "DT",
+      "req": "R6",
+      "title": "Tạo coupon — type thiếu",
+      "auth": "admin",
+      "setup": [{"js": "const code06 = 'NEWTEST06_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code06",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-07",
+      "technique": "DT",
+      "req": "R7",
+      "title": "Tạo coupon — discount_value âm (-5)",
+      "auth": "admin",
+      "setup": [{"js": "const code07 = 'NEWTEST07_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code07",
+        "type": "percent",
+        "discount_value": -5,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-08",
+      "technique": "DT",
+      "req": "R7",
+      "title": "Tạo coupon — discount_value thiếu",
+      "auth": "admin",
+      "setup": [{"js": "const code08 = 'NEWTEST08_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code08",
+        "type": "percent",
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-09",
+      "technique": "DT",
+      "req": "R8",
+      "title": "Tạo coupon — expired_at thiếu",
+      "auth": "admin",
+      "setup": [{"js": "const code09 = 'NEWTEST09_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code09",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-10",
+      "technique": "DT",
+      "req": "R9",
+      "title": "Tạo coupon — min_order_amount thiếu",
+      "auth": "admin",
+      "setup": [{"js": "const code10 = 'NEWTEST10_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code10",
+        "type": "percent",
+        "discount_value": 10,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-11",
+      "technique": "DT",
+      "req": "R10",
+      "title": "Tạo coupon — max_uses_per_user âm (-1)",
+      "auth": "admin",
+      "setup": [{"js": "const code11 = 'NEWTEST11_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code11",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": -1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-12",
+      "technique": "DT",
+      "req": "R10",
+      "title": "Tạo coupon — max_uses_per_user thiếu",
+      "auth": "admin",
+      "setup": [{"js": "const code12 = 'NEWTEST12_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code12",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31"
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "DT-13",
+      "technique": "DT",
+      "req": "R8",
+      "title": "Tạo coupon — expired_at ngày quá khứ",
+      "auth": "admin",
+      "setup": [{"js": "const code13 = 'NEWTEST13_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code13",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2020-01-01",
+        "max_uses_per_user": 1
+      }},
+      "expect": "clarify",
+      "note": "SRS không nêu ngày quá khứ có được tạo không (CLR-6)"
+    },
+
+    {
+      "id": "DT-14",
+      "technique": "DT",
+      "req": "R8",
+      "title": "Tạo coupon — expired_at sai định dạng (31-12-2099)",
+      "auth": "admin",
+      "setup": [{"js": "const code14 = 'NEWTEST14_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:code14",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "31-12-2099",
+        "max_uses_per_user": 1
+      }},
+      "expect": "clarify",
+      "note": "SRS không nêu định dạng bắt buộc (CLR-6)"
+    },
+
+    {
+      "id": "DT-15",
+      "technique": "DT",
+      "req": "R3",
+      "title": "Xóa coupon tồn tại",
+      "auth": "admin",
+      "setup": [
+        {"js": "const delCode = 'DELTARGET_' + Date.now();"},
+        {"method": "POST", "path": "/api/admin/coupons", "auth": "admin",
+         "body": {"code": "@js:delCode", "type": "percent", "discount_value": 5,
+                  "min_order_amount": 0, "expired_at": "2099-12-31", "max_uses_per_user": 1}},
+        {"js": "const listAfterCreate = await call('GET','/api/coupons',undefined,tok.admin); const created = listAfterCreate.json.find(c => c.code === delCode); ctx.delId = created ? created.id : null;"}
+      ],
+      "request": {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.delId}`", "auth": "admin"},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "!v.json.some(c => c.code === delCode)",
+         "note": "coupon đã xóa không còn trong list"}
+      ]
+    },
+
+    {
+      "id": "DT-16",
+      "technique": "DT",
+      "req": "R3",
+      "title": "Xóa coupon — id không tồn tại (99999)",
+      "auth": "admin",
+      "before": [
+        {"as": "snap_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "DELETE", "path": "/api/admin/coupons/99999", "auth": "admin"},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.snap_list.json.length",
+         "note": "số lượng coupon không đổi"}
+      ]
+    },
+
+    {
+      "id": "BV-01",
+      "technique": "BVA",
+      "req": "R7",
+      "title": "discount_value = -1 (B−1, dưới biên > 0)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV01 = 'BV01_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV01",
+        "type": "percent",
+        "discount_value": -1,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "BV-02",
+      "technique": "BVA",
+      "req": "R7",
+      "title": "discount_value = 0 (B, đúng biên — không dương)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV02 = 'BV02_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV02",
+        "type": "percent",
+        "discount_value": 0,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "BV-03",
+      "technique": "BVA",
+      "req": "R7",
+      "title": "discount_value = 1 (B+1, dương tối thiểu — hợp lệ)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV03 = 'BV03_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV03",
+        "type": "percent",
+        "discount_value": 1,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "Array.isArray(v.json) && v.json.some(c => c.code === codeBV03)",
+         "note": "discount_value=1 được chấp nhận"}
+      ]
+    },
+
+    {
+      "id": "BV-04",
+      "technique": "BVA",
+      "req": "R9",
+      "title": "min_order_amount = -1 (B−1, dưới biên >= 0)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV04 = 'BV04_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV04",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": -1,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "BV-05",
+      "technique": "BVA",
+      "req": "R9",
+      "title": "min_order_amount = 0 (B, đúng biên — hợp lệ)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV05 = 'BV05_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV05",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 0,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "Array.isArray(v.json) && v.json.some(c => c.code === codeBV05 && c.min_order_amount === 0)",
+         "note": "min_order_amount=0 lưu đúng"}
+      ]
+    },
+
+    {
+      "id": "BV-06",
+      "technique": "BVA",
+      "req": "R9",
+      "title": "min_order_amount = 1 (B+1, dương nhỏ nhất — hợp lệ)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV06 = 'BV06_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV06",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 1,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "success"
+    },
+
+    {
+      "id": "BV-07",
+      "technique": "BVA",
+      "req": "R10",
+      "title": "max_uses_per_user = 0 (B−1, dưới biên >= 1)",
+      "auth": "admin",
+      "setup": [{"js": "const codeBV07 = 'BV07_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBV07",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 0
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "AC-01",
+      "technique": "AC",
+      "req": "R12,SEC-02",
+      "title": "POST /api/admin/coupons — thiếu Authorization header",
+      "auth": "none",
+      "before": [
+        {"as": "snap_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "AC01_TEST",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.snap_list.json.length",
+         "note": "coupon không được tạo khi thiếu token"}
+      ]
+    },
+
+    {
+      "id": "AC-02",
+      "technique": "AC",
+      "req": "R12,SEC-02",
+      "title": "POST /api/admin/coupons — header sai định dạng (không có Bearer)",
+      "auth": "@js:'RAW:rawtoken_invalid'",
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "AC02_TEST",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "AC-03",
+      "technique": "AC",
+      "req": "R12,SEC-02",
+      "title": "POST /api/admin/coupons — token bị giả mạo (signature sai)",
+      "auth": "token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIn0.TAMPERED_SIG",
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "AC03_TEST",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject"
+    },
+
+    {
+      "id": "AC-04",
+      "technique": "AC",
+      "req": "R11,R13,SEC-03",
+      "title": "POST /api/admin/coupons — token user thường (role sai)",
+      "auth": "user1",
+      "setup": [
+        {"js": "const codeAC04 = 'AC04_' + Date.now();"}
+      ],
+      "before": [
+        {"as": "snap_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeAC04",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.snap_list.json.length",
+         "note": "user thường không thể tạo coupon"}
+      ]
+    },
+
+    {
+      "id": "AC-05",
+      "technique": "AC",
+      "req": "R12,SEC-02",
+      "title": "DELETE /api/admin/coupons/:id — thiếu Authorization header",
+      "auth": "none",
+      "setup": [
+        {"js": "const codeAC05 = 'AC05_' + Date.now();"},
+        {"method": "POST", "path": "/api/admin/coupons", "auth": "admin",
+         "body": {"code": "@js:codeAC05", "type": "percent", "discount_value": 5,
+                  "min_order_amount": 0, "expired_at": "2099-12-31", "max_uses_per_user": 1}},
+        {"js": "const listAC05 = await call('GET','/api/coupons',undefined,tok.admin); const cAC05 = listAC05.json.find(c => c.code === codeAC05); ctx.ac05Id = cAC05 ? cAC05.id : 99998;"}
+      ],
+      "request": {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.ac05Id}`"},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.some(c => c.code === codeAC05)",
+         "note": "coupon vẫn còn — DELETE không thực hiện khi thiếu token"}
+      ]
+    },
+
+    {
+      "id": "AC-06",
+      "technique": "AC",
+      "req": "R11,R13,SEC-03",
+      "title": "DELETE /api/admin/coupons/:id — token user thường (role sai)",
+      "auth": "user1",
+      "setup": [
+        {"js": "const codeAC06 = 'AC06_' + Date.now();"},
+        {"method": "POST", "path": "/api/admin/coupons", "auth": "admin",
+         "body": {"code": "@js:codeAC06", "type": "percent", "discount_value": 5,
+                  "min_order_amount": 0, "expired_at": "2099-12-31", "max_uses_per_user": 1}},
+        {"js": "const listAC06 = await call('GET','/api/coupons',undefined,tok.admin); const cAC06 = listAC06.json.find(c => c.code === codeAC06); ctx.ac06Id = cAC06 ? cAC06.id : 99997;"}
+      ],
+      "request": {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.ac06Id}`"},
+      "expect": "reject",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.some(c => c.code === codeAC06)",
+         "note": "coupon vẫn còn — user không thể xóa coupon admin"}
+      ]
+    },
+
+    {
+      "id": "BL-01",
+      "technique": "BL",
+      "req": "R2",
+      "title": "GET /api/coupons — admin xem danh sách đầy đủ",
+      "auth": "admin",
+      "request": {"method": "GET", "path": "/api/coupons"},
+      "expect": "success",
+      "verify": [
+        {"check": "Array.isArray(r.json) && r.json.length >= 4",
+         "note": "list chứa ít nhất 4 coupon mẫu (SAVE10, BIGBUY, VIP100, EXPIRED)"},
+        {"check": "r.json.some(c => c.code === 'SAVE10')",
+         "note": "SAVE10 có trong list"},
+        {"check": "r.json.some(c => c.code === 'BIGBUY')",
+         "note": "BIGBUY có trong list"}
+      ]
+    },
+
+    {
+      "id": "BL-02",
+      "technique": "BL",
+      "req": "R1,R2",
+      "title": "Tạo coupon thành công → xuất hiện trong list",
+      "auth": "admin",
+      "setup": [
+        {"js": "const codeBL02 = 'BL02_' + Date.now();"}
+      ],
+      "before": [
+        {"as": "before_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBL02",
+        "type": "fixed",
+        "discount_value": 20000,
+        "min_order_amount": 100000,
+        "expired_at": "2099-06-30",
+        "max_uses_per_user": 3
+      }},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "Array.isArray(v.json) && v.json.length === snap.before_list.json.length + 1",
+         "note": "số coupon tăng đúng 1"},
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.some(c => c.code === codeBL02 && c.type === 'fixed' && c.discount_value === 20000 && c.max_uses_per_user === 3)",
+         "note": "coupon mới lưu đúng tất cả field"}
+      ]
+    },
+
+    {
+      "id": "BL-03",
+      "technique": "BL",
+      "req": "R3",
+      "title": "Xóa coupon thành công → biến mất khỏi list",
+      "auth": "admin",
+      "setup": [
+        {"js": "const codeBL03 = 'BL03_' + Date.now();"},
+        {"method": "POST", "path": "/api/admin/coupons", "auth": "admin",
+         "body": {"code": "@js:codeBL03", "type": "percent", "discount_value": 15,
+                  "min_order_amount": 150000, "expired_at": "2099-12-31", "max_uses_per_user": 1}},
+        {"js": "const listBL03 = await call('GET','/api/coupons',undefined,tok.admin); const cBL03 = listBL03.json.find(c => c.code === codeBL03); ctx.bl03Id = cBL03 ? cBL03.id : null;"}
+      ],
+      "before": [
+        {"as": "before_list", "method": "GET", "path": "/api/coupons", "auth": "admin"}
+      ],
+      "request": {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.bl03Id}`", "auth": "admin"},
+      "expect": "success",
+      "verify": [
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "!v.json.some(c => c.code === codeBL03)",
+         "note": "coupon đã xóa không còn trong list"},
+        {"method": "GET", "path": "/api/coupons", "auth": "admin",
+         "check": "v.json.length === snap.before_list.json.length - 1",
+         "note": "số coupon giảm đúng 1"}
+      ]
+    },
+
+    {
+      "id": "BL-04",
+      "technique": "BL",
+      "req": "R1",
+      "title": "Mass assignment — gửi thêm is_active=0",
+      "auth": "admin",
+      "setup": [{"js": "const codeBL04 = 'BL04_' + Date.now();"}],
+      "request": {"method": "POST", "path": "/api/admin/coupons", "body": {
+        "code": "@js:codeBL04",
+        "type": "percent",
+        "discount_value": 10,
+        "min_order_amount": 200000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1,
+        "is_active": 0
+      }},
+      "expect": "clarify",
+      "note": "SRS không nêu client có đặt is_active không (CLR-9). Ghi lại hành vi thực tế."
+    },
+
+    {
+      "id": "BL-05",
+      "technique": "BL",
+      "req": "R3",
+      "title": "Double delete — xóa coupon đã xóa (lần 2)",
+      "auth": "admin",
+      "setup": [
+        {"js": "const codeBL05 = 'BL05_' + Date.now();"},
+        {"method": "POST", "path": "/api/admin/coupons", "auth": "admin",
+         "body": {"code": "@js:codeBL05", "type": "percent", "discount_value": 5,
+                  "min_order_amount": 0, "expired_at": "2099-12-31", "max_uses_per_user": 1}},
+        {"js": "const listBL05 = await call('GET','/api/coupons',undefined,tok.admin); const cBL05 = listBL05.json.find(c => c.code === codeBL05); ctx.bl05Id = cBL05 ? cBL05.id : null;"},
+        {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.bl05Id}`", "auth": "admin"}
+      ],
+      "request": {"method": "DELETE", "path": "@js:`/api/admin/coupons/${ctx.bl05Id}`", "auth": "admin"},
+      "expect": "clarify",
+      "note": "SRS không nêu hành vi xóa id không còn tồn tại (CLR-8)"
+    }
+
+  ],
+
+  "bugs": [
+    {
+      "id": "FR-17-BUG-01",
+      "title": "Thiếu phân quyền Admin (RBAC) trên POST và DELETE /api/admin/coupons (R1, R3)",
+      "steps": [
+        {
+          "name": "FR-17-BUG-01a. User thường gọi POST /api/admin/coupons tạo coupon (AC-04)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "user1",
+          "body": {
+            "code": "USER_COUPON_1",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": 100000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx",
+          "js": "pm.test('Kỳ vọng từ chối 403 Forbidden cho user thường', () => pm.expect(pm.response.code === 403, 'Server cho phép user thường tạo coupon (HTTP ' + pm.response.code + ')').to.be.true);"
+        },
+        {
+          "name": "FR-17-BUG-01b. User thường gọi DELETE /api/admin/coupons/:id xóa coupon (AC-06)",
+          "method": "DELETE",
+          "path": "/api/admin/coupons/1",
+          "auth": "user1",
+          "expect_status": "4xx",
+          "js": "pm.test('Kỳ vọng từ chối 403 Forbidden cho user thường', () => pm.expect(pm.response.code === 403, 'Server cho phép user thường xóa coupon (HTTP ' + pm.response.code + ')').to.be.true);"
+        }
+      ]
+    },
+    {
+      "id": "FR-17-BUG-02",
+      "title": "POST /api/admin/coupons thiếu validation dữ liệu đầu vào (R4, R6, R7, R8, R9, R10)",
+      "steps": [
+        {
+          "name": "FR-17-BUG-02a. Tạo coupon với code rỗng (DT-03 - R4)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": 100000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx"
+        },
+        {
+          "name": "FR-17-BUG-02b. Tạo coupon với type không hợp lệ amount (DT-05 - R6)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "BUG_TYPE_01",
+            "type": "amount",
+            "discount_value": 10,
+            "min_order_amount": 100000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx"
+        },
+        {
+          "name": "FR-17-BUG-02c. Tạo coupon với discount_value âm -5 (DT-07 - R7)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "BUG_DV_01",
+            "type": "percent",
+            "discount_value": -5,
+            "min_order_amount": 100000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx"
+        },
+        {
+          "name": "FR-17-BUG-02d. Tạo coupon thiếu trường bắt buộc expired_at (DT-09 - R8)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "BUG_NO_EXP_01",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": 100000,
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx"
+        },
+        {
+          "name": "FR-17-BUG-02e. Tạo coupon với min_order_amount âm -1 (BV-04 - R9)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "BUG_MIN_01",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": -1,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx"
+        },
+        {
+          "name": "FR-17-BUG-02f. Tạo coupon với max_uses_per_user = 0 (BV-07 - R10)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "BUG_MAX_01",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": 100000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 0
+          },
+          "expect_status": "4xx"
+        }
+      ]
+    },
+    {
+      "id": "FR-17-BUG-03",
+      "title": "Trùng code coupon gây lỗi 500 SQLite Unhandled Exception thay vì 4xx (R5)",
+      "steps": [
+        {
+          "name": "FR-17-BUG-03a. Tạo coupon với mã đã tồn tại SAVE10 (DT-04 - R5)",
+          "method": "POST",
+          "path": "/api/admin/coupons",
+          "auth": "admin",
+          "body": {
+            "code": "SAVE10",
+            "type": "percent",
+            "discount_value": 10,
+            "min_order_amount": 300000,
+            "expired_at": "2099-12-31",
+            "max_uses_per_user": 1
+          },
+          "expect_status": "4xx",
+          "js": "pm.test('Không được trả về lỗi server 500 SQLite unhandled', () => pm.expect(pm.response.code !== 500, 'Lỗi SQLITE_CONSTRAINT chưa được bắt, server trả HTTP 500').to.be.true);"
+        }
+      ]
+    },
+    {
+      "id": "FR-17-BUG-04",
+      "title": "DELETE /api/admin/coupons/:id với id không tồn tại trả về 200 OK thay vì 4xx (R12)",
+      "steps": [
+        {
+          "name": "FR-17-BUG-04a. Xóa coupon với id=99999 không tồn tại (DT-16 - R12)",
+          "method": "DELETE",
+          "path": "/api/admin/coupons/99999",
+          "auth": "admin",
+          "expect_status": "4xx",
+          "js": "pm.test('Kỳ vọng báo lỗi 404 Không tìm thấy mã giảm giá', () => pm.expect(pm.response.code === 404 || pm.response.code === 400, 'Server báo 200 xóa thành công dù ID không tồn tại').to.be.true);"
+        }
+      ]
+    }
+  ],
+
+  "cleanup": []
+}
