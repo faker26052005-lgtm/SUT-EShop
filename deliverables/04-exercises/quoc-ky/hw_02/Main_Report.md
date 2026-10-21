@@ -2450,9 +2450,9 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 | `BVA-17-07` | Lượt dùng tối đa / người ($U \ge 1$) | **On-point** | $U = 1\text{ lượt}$ (Mỗi user dùng 1 lần) | `TC_FR17_06` | **Covered** |
 | | | **Off-point** | $U = 0\text{ lượt}$ (Vi phạm $U \ge 1$) | `TC_FR17_19` | **Covered** |
 | | | **In-point** | $U = 2\text{ lượt}$ (Kề cận trong vùng hợp lệ) | `TC_FR17_33` | **Covered** |
-| `BVA-17-08` | Ranh giới hạn dùng khi tạo ($expired\_at \ge \text{today}$) | **On-point** | $expired\_at = \text{today}$ (Hạn là hôm nay) | `TC_FR17_21` | **Covered** |
-| | | **Off-point** | $expired\_at = \text{yesterday}$ (Ngày quá khứ) | `TC_FR17_21` | **Covered** |
-| | | **In-point** | $expired\_at = \text{tomorrow}$ (Ngày mai) | `TC_FR17_01` | **Covered** |
+| `BVA-17-08` | Ranh giới hạn dùng khi tạo ($expired\_at \ge \text{now}$) | **On-point** | $expired\_at = \text{now}$ (Thời điểm hiện tại) | `TC_FR17_21` | **Covered** |
+| | | **Off-point** | $expired\_at = \text{now} - 1\text{s}$ (Quá khứ kề sát 1s) | `TC_FR17_21` | **Covered** |
+| | | **In-point** | $expired\_at = \text{now} + 1\text{s}$ (Tương lai kề sát 1s) | `TC_FR17_01` | **Covered** |
 | `BVA-17-09` | Ngưỡng đơn Checkout ($Total \ge M=300.000\text{ ₫}$) | **On-point** | $Total = 300.000\text{ ₫}$ (Đạt đúng ngưỡng) | `TC_FR17_30` | **Covered** |
 | | | **Off-point** | $Total = 299.999\text{ ₫}$ (Thiếu 1 ₫, từ chối) | `TC_FR17_29` | **Covered** |
 | | | **In-point** | $Total = 300.001\text{ ₫}$ (Vượt ngưỡng 1 ₫) | `TC_FR17_27` | **Covered** |
