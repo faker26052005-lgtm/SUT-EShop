@@ -93,8 +93,6 @@ Tất cả API bảo mật yêu cầu Header: `Authorization: Bearer <token>`
 
 ## Bước 3–4: Chia lớp tương đương và test case Domain Testing
 
-> Quy tắc: Mỗi test case chỉ vi phạm đúng MỘT điều kiện không hợp lệ, các trường khác dùng giá trị hợp lệ chuẩn.
-
 ### 3.1 Lớp tương đương theo từng biến
 
 #### 1. Biến `Authorization` (Header)

@@ -86,11 +86,6 @@ Chỗ SRS im lặng ghi `CẦN LÀM RÕ`, đã chuyển sang Phụ lục A của
 
 ## Bước 3–4: Chia lớp tương đương và test case Domain Testing
 
-> Log AI nguyên văn: `ai_audit/entries/FR-04/03_...`, `04_...`
-
-> Ý tưởng: chia mọi giá trị của một biến thành các lớp mà hệ thống phải xử lý như nhau, rồi chọn một đại diện cho mỗi lớp.
-> Quy tắc: mỗi test chỉ vi phạm đúng một điều kiện.
-
 ### 3.1 Lớp tương đương theo từng biến
 
 #### Biến `phone` (R2)
@@ -168,8 +163,7 @@ Tổng: 20 test (17 test gốc DT-01..DT-17 cộng 3 test bổ sung DT-08b, DT-0
 
 ## Bước 6: Nghiệp vụ, bảo mật, truy cập
 
-
-Danh sách tự hỏi:
+Danh sách câu hỏi:
 - [x] Truy cập: không token, token sai (AC-01, AC-02); chưa dựng được token hết hạn
 - [x] Quyền: sửa hồ sơ người khác (BL-05 kiểm tra `id` trong body; ca user A/B ở mục 6.3)
 - [x] Trường bị cấm đổi: `email` (BL-03), `role` (BL-04), `id` (BL-05)

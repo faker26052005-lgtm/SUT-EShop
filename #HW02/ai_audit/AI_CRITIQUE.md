@@ -1,22 +1,13 @@
-# AI Critique (200–300 từ – bắt buộc)
+# AI Critique (200–300 từ)
 
-> Tự viết bằng lời của bạn, dựa trên trải nghiệm thật trong bài này. Trả lời ba câu hỏi:
-> 1. AI sai, thiên lệch hoặc thiếu ở đâu?
-> 2. Vì sao AI không phát hiện ra?
-> 3. Bạn rút ra nguyên tắc nào khi cộng tác với AI?
+Qua các feature đã phân tích, AI phù hợp nhất với vai trò người tạo bản thảo. Nó phủ nhanh và đều các lớp tương đương cơ bản, ma trận xác thực và phân quyền, chuyển trạng thái, cách ly dữ liệu giữa các người dùng. Nó cũng liệt kê khá đầy đủ những chỗ SRS im lặng, và đó chính là nguồn của phần lớn câu hỏi làm rõ. Ở FR-08 và FR-13, nhiều ca AI viết đã trực tiếp bắt được lỗi thật, như giỏ hàng không bị xóa hay phân quyền hỏng.
 
-## Nhật ký sự cố AI (ghi ngay khi gặp; dùng làm nguyên liệu)
+Điểm yếu nằm ở ba chỗ:
 
-| # | Ngày | Feature / bước | AI sai hoặc thiếu điều gì | Bạn phát hiện bằng cách nào | Nguyên nhân (prompt / giới hạn AI / độ phức tạp) |
-| :-: | :--- | :--- | :--- | :--- | :--- |
-| 1 | 2026-10-18 | FR-04 (chạy thử) | Bảng tổng hợp do agent tạo tính 7 ca CẦN LÀM RÕ vào PASSED (20/34) và bỏ trống side-effect của 7 ca đó | Đối chiếu với dữ liệu chạy gốc | TODO |
-| 2 | 2026-10-18 | FR-04 (chạy thử) | Trợ lý đề xuất chứng minh ảnh hưởng của BL-04 bằng API admin, nhưng API admin trả 200 cả với user thường nên bằng chứng đó không phân biệt được | Chạy thử với server thật | TODO |
-| 3 | | | | | |
+- Bịa thông tin ngoài SRS: AI tự đặt các biên như 255, 999, MAX_INT, thêm trường như is_active hay order_id, và khẳng định hệ thống có tầng validation dù thực tế không có.
+- Phản hồi thiếu nhất quán: AI diễn giải lại SRS rồi áp dụng khác nhau giữa các ca, và đặt kỳ vọng 4xx ở chỗ SRS không nói.
+Thiết kế test thiếu thực tế: AI dùng token giả, dựng trạng thái qua DB, không cô lập dữ liệu giữa các ca, bỏ qua nội dung response và sinh nhiều ca trùng.
 
-(Hai dòng đầu là ví dụ từ lần chạy thử FR-04: hãy tự kiểm tra, chỉnh lại hoặc xóa nếu không dùng.)
+Cách khắc phục là kiểm soát prompt chặt chẽ hơn thay vì ghi mông lung. Cần bắt trích nguyên văn SRS, cấm đoán edge case khi SRS không nêu, và buộc ghi trạng thái ban đầu cùng side effect ngay từ đầu.
 
-## Bài viết chính thức
-
-<!-- CRITIQUE_START -->
-TODO: viết 200–300 từ ở đây.
-<!-- CRITIQUE_END -->
+Sau cùng thì em có đề xuất là dùng AI để sinh bản nháp, gợi ý góc nhìn và sàng lọc điểm mơ hồ. Việc chốt kết quả cuối, loại bỏ ca trùng hoặc bịa, chạy thực tế và kết luận bug phải do chúng ta thực hiện

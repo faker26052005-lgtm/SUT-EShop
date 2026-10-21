@@ -2,10 +2,10 @@
 
 | Bug ID | Feature | Tiêu đề | Mức độ | Test liên quan | Issue |
 | :--- | :--- | :--- | :-: | :--- | :-: |
-| FR-04-BUG-01 | FR-04 | PUT /users/me không validate SĐT | High | DT-03..08, DT-08b, DT-08c, BV-01, BV-04, BV-05, BV-07 | Open |
-| FR-04-BUG-02 | FR-04 | PUT /users/me xóa các trường không gửi | High | BL-02 (+ side-effect 31 test) | Open |
-| FR-04-BUG-03 | FR-04 | Tự đổi role thành admin | Critical | BL-04 | Open |
- FR-08-BUG-01 | FR-08 | Cho phép Checkout khi chưa đăng nhập hoặc Token không hợp lệ | Critical | AC-01, DT-04, AC-05 | Open |
+| FR-04-BUG-01 | FR-04 | PUT /users/me không validate SĐT | High | DT-03..08, DT-08b, DT-08c, BV-01, BV-04, BV-05, BV-07 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/43 |
+| FR-04-BUG-02 | FR-04 | PUT /users/me xóa các trường không gửi | High | BL-02 (+ side-effect 31 test) | https://github.com/faker26052005-lgtm/SUT-EShop/issues/44 |
+| FR-04-BUG-03 | FR-04 | Tự đổi role thành admin | Critical | BL-04 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/45 |
+ FR-08-BUG-01 | FR-08 | Cho phép Checkout khi chưa đăng nhập hoặc Token không hợp lệ | Critical | AC-01, DT-04, AC-05 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/95 |
 | FR-08-BUG-02 | FR-08 | Backend tin tưởng total_amount do Client gửi lên thay vì tự tính lại từ giỏ hàng | High | DT-07, DT-08, BL-01 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/93 |
 | FR-08-BUG-03 | FR-08 | Giỏ hàng KHÔNG được xóa tự động sau khi thanh toán thành công | Critical | DT-01, BL-01, BL-02 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/94 |
 | FR-08-BUG-04 | FR-08 | Cho phép Checkout khi giỏ hàng rỗng (0 sản phẩm) | High | DT-26, DT-29 | https://github.com/faker26052005-lgtm/SUT-EShop/issues/95 |

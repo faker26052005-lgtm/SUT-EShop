@@ -56,13 +56,13 @@ Mức khớp: **Đủ** (có ca tương đương), **Một phần** (có ca như
 | AC-02 | AI DT-21 | Đủ |  |
 
 ### 9.3 Ca và bug AI bỏ sót, và vì sao
-| # | Ca / vấn đề bỏ sót | Vì sao AI bỏ sót | Nhóm nguyên nhân (đề xuất) | Bằng chứng |
+| # | Ca / vấn đề bỏ sót | Vì sao AI bỏ sót | Nhóm nguyên nhân | Bằng chứng |
 | :-: | :--- | :--- | :-: | :--- |
 | 1 | DT-06: SĐT dạng `+84...` | AI chỉ xét lỗi ký tự thông thường, không nghĩ đến định dạng quốc tế; đầu vào cũng không nói đây là hệ thống Việt Nam | Giới hạn của AI (phụ: Prompt) | FR-04-03 |
 | 2 | DT-11: tên có dấu tiếng Việt (lớp hợp lệ) | Đầu vào không cho biết ngữ cảnh tiếng Việt nên AI chỉ chọn tên không dấu | Prompt | FR-04-03 |
 | 3 | DT-13: tên toàn khoảng trắng | Lớp chuẩn của chuỗi nhưng AI không liệt kê; Prompt 3 cũng không đưa checklist lớp chuỗi | Giới hạn của AI | FR-04-03 |
 | 4 | BV-05: SĐT độ dài 1 | Prompt chỉ yêu cầu biên 3-value, không yêu cầu giá trị cực trị | Prompt | FR-04-05 |
-| 5 | DT-08b/08c: sai kiểu boolean, mảng | Theo EP chỉ cần một đại diện cho lớp "sai kiểu", nên AI không sai kỹ thuật. Các ca này bắt lỗi ép kiểu của cài đặt (`true` → `1`, mảng → `[object Object]`), chỉ lộ khi chạy | Độ phức tạp của feature | Kết quả chạy |
+| 5 | DT-08b/08c: sai kiểu boolean, mảng | Theo EP chỉ cần một đại diện cho lớp "sai kiểu", nên AI không sai kỹ thuật. Các ca này bắt lỗi ép kiểu của cài đặt (`true` -> `1`, mảng -> `[object Object]`), chỉ lộ khi chạy | Độ phức tạp của feature | Kết quả chạy |
 | 6 | DT-05/07: khoảng trắng và dấu gạch bị để CẦN LÀM RÕ | AI quá thận trọng. SRS ghi "chữ số" nên kỳ vọng hợp lý là 4xx; hệ quả là nếu chỉ theo AI thì lỗi này không được kết luận | Giới hạn của AI | FR-04-03, FR-04-04 |
 | 7 | Mọi test của AI đều gửi đủ 3 trường hợp lệ → che mất BUG-02 (trường không gửi bị xóa) | Cách thiết kế test: chỉ BL-02 mới gửi một trường, mà kỳ vọng lại để CẦN LÀM RÕ; không có kiểm tra "trường không gửi giữ nguyên" nào khác | Độ phức tạp của feature (phụ: Prompt) | FR-04-04, FR-04-06 |
 | 8 | **BUG-04: `GET /api/users/me` trả mật khẩu dạng plaintext và các trường nhạy cảm** | Không bộ nào (AI, bản mẫu, bộ cuối) xem xét nội dung response, chỉ xem dữ liệu đã gửi. Prompt 2 hỏi "đầu ra cần quan sát" nhưng AI chỉ liệt kê mã HTTP và dữ liệu vừa cập nhật | Độ phức tạp của feature (phụ: Prompt) | FR-04-02, mục 9.6 |

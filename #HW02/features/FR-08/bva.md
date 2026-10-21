@@ -56,8 +56,6 @@
 
 ### 5.4 Phân biệt với Domain Testing
 
-Domain Testing hỏi *"giá trị này thuộc lớp tương đương nào?"*, BVA hỏi *"sát ranh giới chuyển đổi thì hệ thống xử lý ra sao?"*.
-
 | Test BVA | Trùng lớp với | Quyết định |
 | :--- | :--- | :--- |
 | BV-02 (`total_amount = 0`) | DT-08 (`total_amount = 0`) | **Giữ BV-02, loại DT-08**: BV-02 định danh chính xác điểm biên dưới. |

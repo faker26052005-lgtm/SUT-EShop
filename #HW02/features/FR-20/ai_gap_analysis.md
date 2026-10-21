@@ -102,7 +102,7 @@ Kiểm tra: Đủ 17 (đăng ký) + 6 (hủy đơn) + 4 (BVA) + 4 (nghiệp vụ
 | 9 | BL-C05: Admin hủy đơn `shipping` | AI không nhận ra mơ hồ của FR-10: sơ đồ không có mũi tên `shipping` → `canceled`, nhưng văn bản nói "chỉ Admin mới có thể thao tác". Thực tế hệ thống từ chối HTTP 400 (Phụ lục A mục 9) | Giới hạn của AI | FR-20-01, FR-20-06 |
 | 10 | Chỗ SRS mơ hồ AI không nêu: ký tự đặc biệt ngoài tập (#3), email hoa/thường (#4), FR-22 có áp dụng cho mobile không (#5), `user@domain` (#8), Admin hủy `shipping` (#9) | Trong 9 mục của Phụ lục A, AI chỉ nêu được 4 (#1 tên, #2 độ dài tối đa password, #6 mã lỗi/thông báo, #7 hoàn tồn kho); bỏ sót 5 mục còn lại | Giới hạn của AI | FR-20-01, FR-20-07 |
 
-### 9.4 AI sai hoặc bịa (nguyên liệu cho AI Critique)
+### 9.4 AI sai hoặc bịa
 - **Vi phạm chỉ dẫn "không dùng kiến thức về cài đặt" / black-box:** BL-04 yêu cầu "truy cập trực tiếp vào Database" để xem mật khẩu đã hash (FR-20-06); DT-REG-01 kỳ vọng "dữ liệu User được tạo trong DB, password được hash" và Bước 2 ghi "kiểm tra DB hoặc tài liệu kiến trúc" (FR-20-02, FR-20-04).
 - **Tự chốt điều chính AI đã đánh dấu CẦN LÀM RÕ:** Bước 1 hỏi "Xác nhận mật khẩu xử lý ở Frontend hay Backend?", nhưng Bước 3 đặt tên biến là "Frontend" và DT-REG-16/17 kỳ vọng "API không được gọi" (FR-20-01, 03, 04). Tương tự, Bước 1 và 3 để độ dài `name` là CẦN LÀM RÕ, còn Bước 5 lại kết luận biên dưới "ngầm định là 1" và kỳ vọng 2xx cho BV-NAM-02/03 (FR-20-05).
 - **Dữ liệu sai so với tài liệu:** Bước 2 và DT-REG-09 dùng `test@domain.com` làm tài khoản "đã tồn tại", trong khi tài khoản mẫu theo đặc tả là `test@eshop.com` (`test@domain.com` chỉ là email ví dụ trong body đăng ký). Nếu chạy đúng như AI viết, ca này có thể không đại diện cho "email đã tồn tại" (FR-20-02, 04).
@@ -129,7 +129,6 @@ Kiểm tra: Đủ 17 (đăng ký) + 6 (hủy đơn) + 4 (BVA) + 4 (nghiệp vụ
 | SC-04: giỏ hàng sau checkout | Không thực hiện | Ngoài phạm vi FR-20, SRS im lặng |
 
 ### 9.6 Bug thực tế và bộ test của AI
-Không có phát hiện mới ngoài cả hai bộ: cả 5 bug đều nằm trong bộ cuối. Số liệu hiện là tạm tính vì mới chạy tầng API; nếu chạy 10 ca chỉ-UI và tầng UI của các ca UI+API lộ thêm lỗi, cập nhật lại mục này và hàng "Phát hiện mới" ở 9.1.
 
 | Bug | Ca của AI cùng nguyên nhân | Ca AI bỏ sót |
 | :--- | :--- | :--- |
@@ -138,8 +137,6 @@ Không có phát hiện mới ngoài cả hai bộ: cả 5 bug đều nằm tron
 | FR-20-BUG-03 (cho đăng ký trùng email) | DT-REG-09 | BL-R03 (bấm đăng ký hai lần) |
 | FR-20-BUG-04 (không áp dụng luật mật khẩu mạnh) | DT-REG-11..15, BV-PWD-01 | BV-R04, DT-R27, DT-R29 |
 | FR-20-BUG-05 (user hủy được đơn `shipping`) | DT-CAN-03 | BV-C01 |
-
-Nếu chỉ chạy bộ của AI vẫn chạm tới cả 5 nguyên nhân gốc. Phần AI bỏ sót chủ yếu là ca cho thêm bằng chứng cho cùng một bug (BV-C01, BL-R03), các ca CẦN LÀM RÕ, và các ca UI.
 
 ### 9.7 Kết luận
 - AI làm tốt: các lớp cơ bản của đăng ký (thiếu từng loại ký tự, biên 7/8/9, định dạng email, bỏ trống), 5 trạng thái đơn và các ca truy cập (không token, token sai, đơn của người khác); Bước 7 đề xuất được test mass assignment và cô lập bản ghi.

@@ -48,5 +48,5 @@ Khác với FR-08, ở FR-13 này AI đã thể hiện sự tiến bộ rõ rệ
 Trong FR-13, AI đóng vai trò như một kỹ sư kiểm thử cốt lõi (Core Tester) rất tốt. Kịch bản của AI sinh ra đã trực tiếp giúp "săn" được 2 Bug bự (Thiếu Validation và Phân quyền hỏng). Khoảng cách duy nhất giữa AI và con người ở đây là **sự tối ưu hóa** (con người biết vứt bỏ những ca test dư thừa/lý thuyết) và **sự đối chiếu thực tế** (AI dự đoán 4xx, con người chạy ra 200).
 
 **Điều chỉnh Prompt cho các Feature tiếp theo:**
-*   **Chặn việc bịa giới hạn (Stop Hallucinating Bounds):** Thêm rule ở Bước 5 (BVA): *"Nếu SRS không quy định rõ biên trên hoặc biên dưới (Max/Min), TUYỆT ĐỐI KHÔNG tự giả định theo chuẩn Database (như 255 hay MAX_INT). Hãy ghi là 'Không có biên trên/dưới xác định để test'."*
+*   **Tạo giới hạn để giảm việc halluciante:** Thêm rule ở Bước 5 (BVA): *"Nếu SRS không quy định rõ biên trên hoặc biên dưới (Max/Min), TUYỆT ĐỐI KHÔNG tự giả định theo chuẩn Database (như 255 hay MAX_INT). Hãy ghi là 'Không có biên trên/dưới xác định để test'."*
 *   **Quy tắc rút gọn (Deduplication Rule):** Thêm rule khi tổng hợp Test Case: *"Nếu một ca test BVA có input trùng hoàn toàn với một ca test Domain, hãy loại bỏ ca Domain và chỉ giữ lại ca BVA để tránh phình to bộ test suite."*
