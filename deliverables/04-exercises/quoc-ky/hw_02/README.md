@@ -48,7 +48,7 @@ Sinh viên lựa chọn 4 chức năng từ 4 Pool độc lập theo quy định
 | **Số Test Cases THẤT BẠI (Failed)** | 45| Phát hiện sai lệch so với SRS |
 | **Số Test Cases BỊ CHẶN (Blocked)** | 0| Phụ thuộc lỗi khác hoặc thiếu cấu hình |
 | **Tổng số Lỗi (Bugs) phát hiện & báo cáo** | 39 | Báo cáo chi tiết trên Markdown & GitHub Issues |
-| **Link Video Demo YouTube** | [YouTube Unlisted Link](https://youtu.be/...) | Demo end-to-end cách dùng skill thiết kế test |
+| **Link Video Demo YouTube** | [YouTube Video (Unlisted)](https://youtu.be/sAFwOZvEBnk?si=G7n7zSqp30Livq6A) | Demo end-to-end cách dùng skill thiết kế test |
 
 ---
 
@@ -61,7 +61,7 @@ Sinh viên lựa chọn 4 chức năng từ 4 Pool độc lập theo quy định
 - [x] **Báo cáo lỗi (Bug Report):** Có file [`Bug_Report.md`](Bug_Report.md) và file PDF kết xuất, chứa danh sách chi tiết các bug phát hiện kèm link trực tiếp đến GitHub Issues và ảnh chụp màn hình minh chứng.
 - [x] **Báo cáo kiểm toán AI (AI Audit Report):** Có file [`AI Audit Report.md`](AI%20Audit%20Report.md) và file PDF kết xuất, tuân thủ đúng biểu mẫu `[AI-02]`, log đầy đủ prompt/output và có phần **AI Critique** từ 200–300 từ theo mục 10.
 - [x] **Nhật ký Git Commit (Git Commit Log):** Có file `git_commit_log.txt` chứng minh rõ ràng quy trình làm việc từng bước (1 commit / 1 step cho mỗi chức năng).
-- [ ] **Tài liệu README.md:** Chứa đầy đủ thông tin sinh viên, bảng tự đánh giá 100 điểm, số liệu thống kê kiểm thử và đường link Video Demo YouTube.
+- [x] **Tài liệu README.md:** Chứa đầy đủ thông tin sinh viên, bảng tự đánh giá 100 điểm, số liệu thống kê kiểm thử và đường link Video Demo YouTube.
 - [x] **Thư mục ảnh minh chứng (`screenshots/`):** Chứa toàn bộ ảnh chụp màn hình lỗi trên hệ thống EShop và ảnh chụp màn hình các Issue đã đăng trên GitHub.
 - [x] **Mã nguồn Agent Skills:** Đã lưu trữ và tài liệu hóa cách sử dụng hai skill (`domain-testing-value-analysis` và `hw-ai-audit`).
 

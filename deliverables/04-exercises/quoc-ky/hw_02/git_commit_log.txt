@@ -1,4 +1,11 @@
-4abe41e - 2026-10-19 14:24:38 +0700 : docs(HW02): export git_commit_log.txt and update submission checklist
+ce2d65a - 2026-10-21 09:27:49 +0700 : docs(HW02): add demo video YouTube link to README and update checklist
+00b56ca - 2026-10-21 07:40:39 +0700 : feat(FR-17): step 5 - coverage analysis and traceability verification
+bf8cdd3 - 2026-10-21 07:38:22 +0700 : feat(FR-17): step 4 - design test cases with EP and BVA traceability and exhaustive specification cards
+6ab06b0 - 2026-10-21 07:33:45 +0700 : feat(FR-17): step 3 - boundary value analysis with On/Off/In point classification
+0545fc0 - 2026-10-21 07:31:52 +0700 : feat(FR-17): step 2 - define equivalence partitions and single-fault baselines
+d821073 - 2026-10-21 07:26:01 +0700 : feat(FR-17): step 1 - identify input variables and constraints with 1s datetime precision
+c4b6747 - 2026-10-21 07:16:51 +0700 : submission
+f80101d - 2026-10-19 14:24:47 +0700 : docs(HW02): export git_commit_log.txt and update submission checklist
 da7b746 - 2026-10-19 14:17:51 +0700 : docs(HW02): reconcile 39 bugs in Bug_Report dashboard and fix README table syntax
 1214cab - 2026-10-19 14:16:08 +0700 : docs(HW02): update Section 5 AI Critique with calibrated 264-word Vietnamese evaluation
 6dc1219 - 2026-10-19 12:01:32 +0700 : docs(HW02): update Section 6.2 execution metrics with 100% completed stats
