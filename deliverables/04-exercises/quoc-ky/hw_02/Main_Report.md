@@ -1593,7 +1593,7 @@ Dưới đây là hồ sơ đặc tả chi tiết 7 phân đoạn chuẩn (*Trac
 | `TC_FR17_18` | Validate rejection when min order amount is negative at -1 (Boundary Off-point) | Negative (BVA) | `EP-17-28` | `BVA-17-06-OFF` ($M=-1\text{ ₫}$) | `min_order_amount=-1`, các trường khác chuẩn | Hệ thống từ chối; báo lỗi ngưỡng đơn hàng phải lớn hơn hoặc bằng 0 | **Fail (BUG-FR17-09)** |
 | `TC_FR17_19` | Validate rejection when max uses per user is 0 (Boundary Off-point) | Negative (BVA) | `EP-17-32` | `BVA-17-07-OFF` ($U=0$) | `max_uses_per_user=0`, các trường khác chuẩn | Hệ thống từ chối; số lượt dùng tối đa của mỗi người dùng phải $\ge 1$ | **Fail (BUG-FR17-10)** |
 | `TC_FR17_20` | Validate rejection when max uses per user is negative (Single Fault) | Negative (IEP) | `EP-17-33` | N/A (Negative Range) | `max_uses_per_user=-1`, các trường khác chuẩn | Hệ thống từ chối số âm; HTTP 400 Bad Request | **Fail (BUG-FR17-11)** |
-| `TC_FR17_21` | Validate handling when expired_at is set in the past (Boundary Off-point) | Negative / Probe | `EP-17-37` | `BVA-17-08-OFF` (yesterday) | `expired_at="2020-01-01"`, các trường khác chuẩn | Hệ thống từ chối tạo mã hoặc gắn nhãn hết hạn ngay; cảnh báo Admin | **Pass** |
+| `TC_FR17_21` | Validate handling when expired_at is set in the past (Boundary Off-point) | Negative / Probe | `EP-17-37` | `BVA-17-08-OFF` ($\text{now}-1\text{s}$) | `expired_at="2020-01-01"` (hoặc $\text{now}-1\text{s}$), các trường khác chuẩn | Hệ thống từ chối tạo mã hoặc gắn nhãn hết hạn ngay; cảnh báo Admin | **Pass** |
 | `TC_FR17_22` | Validate rejection when unauthenticated request calls create coupon API (Single Fault) | Negative (Security) | `AUTH-17-02` | N/A (No Auth Header) | Gửi `POST /api/admin/coupons` không kèm Authorization token | API từ chối với HTTP 401 Unauthorized; không ghi dữ liệu | **Pass** |
 | `TC_FR17_23` | Validate rejection when regular user with role 'user' calls admin coupon API (Single Fault) | Negative (Security) | `AUTH-17-03` | N/A (Role Escalation) | Gửi `POST /api/admin/coupons` với token của `test@eshop.com` | API từ chối với HTTP 403 Forbidden theo SEC-03; cấm leo thang đặc quyền | **Fail (BUG-FR17-12)** |
 | `TC_FR17_24` | Validate rejection when deleting non-existent coupon ID 9999 (Single Fault) | Negative (IEP) | `RES-17-02` | N/A (Non-existent ID) | `DELETE /api/admin/coupons/9999` với token Admin | API trả về HTTP 404 Not Found (hoặc lỗi rõ ràng); không sập server | **Fail (BUG-FR17-13)** |
@@ -2034,9 +2034,9 @@ Dưới đây là hồ sơ đặc tả chi tiết độc lập cho toàn bộ 36
 ###### Test Case `TC_FR17_21`: Validate handling when expired_at is set in the past (Boundary Off-point)
 - **1. Tracking Information:**
   - **TC ID:** `TC_FR17_21` | **Priority:** Medium (P2) | **Target Layer:** Form Validation & Backend API
-  - **Traceability:** SRS FR-17 (*"expired_at (ngày hợp lệ)"*), BVA Off-point (quá khứ)
-  - **Coverage IDs:** `EP-17-37`, `BVA-17-08-OFF` (yesterday)
-  - **Single-Fault Isolation:** `expired_at` đặt là ngày trong quá khứ (`2020-01-01`); các trường khác chuẩn baseline.
+  - **Traceability:** SRS FR-17 (*"expired_at (ngày hợp lệ)"*), BVA Off-point (quá khứ kề sát $\text{now}-1\text{s}$)
+  - **Coverage IDs:** `EP-17-37`, `BVA-17-08-OFF` ($\text{now}-1\text{s}$)
+  - **Single-Fault Isolation:** `expired_at` đặt là thời điểm quá khứ kề sát ($\text{now} - 1\text{s}$) hoặc ngày trong quá khứ (`2020-01-01`); các trường khác chuẩn baseline.
 - **2. Test Objective:** Validate handling when expired_at is set in the past (Boundary Off-point).
 - **3. Pre-conditions & Environment:** Admin đã đăng nhập.
 - **4. Test Data:** `code="PASTEXP"`, `type="percent"`, `discount_value=10`, `min_order_amount=100000`, `expired_at="2020-01-01"`, `max_uses_per_user=1`.
