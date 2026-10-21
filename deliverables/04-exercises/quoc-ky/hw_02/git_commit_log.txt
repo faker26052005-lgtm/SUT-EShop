@@ -1,4 +1,5 @@
-ce2d65a - 2026-10-21 09:27:49 +0700 : docs(HW02): add demo video YouTube link to README and update checklist
+9c7d7e1 - 2026-10-21 09:30:29 +0700 : docs(HW02): finalize submission checklist and presentation scripts
+1dcf2fe - 2026-10-21 09:27:55 +0700 : docs(HW02): add demo video YouTube link to README and update checklist
 00b56ca - 2026-10-21 07:40:39 +0700 : feat(FR-17): step 5 - coverage analysis and traceability verification
 bf8cdd3 - 2026-10-21 07:38:22 +0700 : feat(FR-17): step 4 - design test cases with EP and BVA traceability and exhaustive specification cards
 6ab06b0 - 2026-10-21 07:33:45 +0700 : feat(FR-17): step 3 - boundary value analysis with On/Off/In point classification
