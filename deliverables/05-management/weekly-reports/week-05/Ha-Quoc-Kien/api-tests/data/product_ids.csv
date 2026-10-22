@@ -7,3 +7,9 @@ P05 Keychron,5,200,Keychron
 P06 id không tồn tại,99999,404,
 P07 id âm,-1,404,
 P08 id không phải số,abc,404,
+P09 id bằng 0,0,404,
+P10 id ngay sau id cuối (6),6,404,
+P11 id số thập phân,1.5,404,
+P12 id rất lớn,99999999999,404,
+P13 id chứa SQL (1 OR 1=1),1 OR 1=1,404,
+P14 id biên dưới hợp lệ (1),1,200,iPhone
