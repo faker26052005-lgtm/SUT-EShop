@@ -10,7 +10,9 @@
 
 | Tên tập tin | Định dạng | Mô tả & Cách sử dụng |
 |---|---|---|
-| [`presentation.md`](presentation.md) | **Markdown (Marp format)** | Nội dung chi tiết 15 slide chuẩn bị cho buổi seminar 30 phút. Định dạng chuẩn widescreen 16:9, nền trắng chữ đen, font to rõ. |
+| [`presentation.md`](presentation.md) | **Markdown (Marp format)** | Nội dung chi tiết 15 slide chuẩn bị cho buổi seminar chung 30 phút của Nhóm 11. Định dạng chuẩn widescreen 16:9, nền trắng chữ đen, font to rõ. |
+| [`presentation-karate.md`](presentation-karate.md) | **Markdown (Marp format)** | Bộ 12 slide chuyên sâu về **Karate Framework** (Bộ kịch bản K1, K2 & K3) do **Nguyễn Quốc Kỳ** đảm nhận. Đầy đủ các nguyên lý kỹ thuật, ma trận đối soát K2, số liệu thực nghiệm và bằng chứng khiếm khuyết SUT. |
+| [`presentation-pact.md`](presentation-pact.md) | **Markdown (Marp format)** | Bộ 11 slide chuyên sâu về **Pact JS & CDCT** (Kịch bản C3: Breaking Change & Deployment Gate) do **Nguyễn Quốc Kỳ** đảm nhận. Phân tích nguyên lý CDCT, giải phẫu JSON hợp đồng, ma trận kết quả tiêm đột biến và kiến trúc CI/CD Runner. |
 
 ### 🛠️ Cách Xem Trước & Xuất Sang PowerPoint (.pptx) / PDF
 1. **Xem trước (Preview):** Cài extension **Marp for VS Code**, mở file `presentation.md` và nhấn tổ hợp phím `Ctrl + K, V` (hoặc nhấn nút icon preview của Marp ở góc trên bên phải).

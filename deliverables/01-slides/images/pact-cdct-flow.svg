@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 320" width="1100" height="320" style="font-family: 'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#16a34a" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#dc2626" />
+    </marker>
+    <filter id="shadow" x="-5%" y="-10%" width="110%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Lifeline Header Boxes -->
+  <!-- 1. Consumer -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="15" width="240" height="50" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" />
+    <text x="170" y="38" font-size="15" font-weight="bold" fill="#1e3a8a" text-anchor="middle">📱 Consumer (EShopMobile)</text>
+    <text x="170" y="55" font-size="12" fill="#3b82f6" text-anchor="middle">Client đặt ra kỳ vọng</text>
+  </g>
+  <line x1="170" y1="65" x2="170" y2="305" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4" />
+
+  <!-- 2. Pact Contract File -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="15" width="240" height="50" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2" />
+    <text x="550" y="38" font-size="15" font-weight="bold" fill="#854d0e" text-anchor="middle">📄 Contract JSON / Verifier</text>
+    <text x="550" y="55" font-size="12" fill="#a16207" text-anchor="middle">EShopMobile-EShopBackend.json</text>
+  </g>
+  <line x1="550" y1="65" x2="550" y2="305" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4" />
+
+  <!-- 3. Provider Backend -->
+  <g filter="url(#shadow)">
+    <rect x="810" y="15" width="240" height="50" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2" />
+    <text x="930" y="38" font-size="15" font-weight="bold" fill="#14532d" text-anchor="middle">🖥️ Provider (EShopBackend SUT)</text>
+    <text x="930" y="55" font-size="12" fill="#15803d" text-anchor="middle">Node.js Express + SQLite :3000</text>
+  </g>
+  <line x1="930" y1="65" x2="930" y2="305" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4" />
+
+  <!-- ================= GIAI ĐOẠN 1: CONSUMER TEST ================= -->
+  <!-- Note banner C1 -->
+  <rect x="110" y="80" width="370" height="22" rx="4" fill="#dbeafe" stroke="#bfdbfe" stroke-width="1" />
+  <text x="295" y="96" font-size="12" font-weight="bold" fill="#1d4ed8" text-anchor="middle">Kịch bản C1: Consumer Test đóng gói kỳ vọng (Mock Test)</text>
+
+  <!-- Step 1: C -> Contract -->
+  <line x1="170" y1="120" x2="542" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)" />
+  <rect x="220" y="108" width="280" height="24" rx="4" fill="#ffffff" stroke="#93c5fd" stroke-width="1" />
+  <text x="360" y="124" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">1. GET /api/products/1 &amp; price: Integer</text>
+
+  <!-- ================= GIAI ĐOẠN 2: PROVIDER VERIFICATION ================= -->
+  <!-- Note banner C2 & C3 -->
+  <rect x="490" y="145" width="470" height="22" rx="4" fill="#fef3c7" stroke="#fde68a" stroke-width="1" />
+  <text x="725" y="161" font-size="12" font-weight="bold" fill="#b45309" text-anchor="middle">Kịch bản C2 &amp; C3: Provider Verification đối soát độc lập</text>
+
+  <!-- Step 2: Contract -> Provider -->
+  <line x1="550" y1="185" x2="922" y2="185" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+  <rect x="610" y="173" width="260" height="24" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+  <text x="740" y="189" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">2. Replay HTTP Request từ Contract</text>
+
+  <!-- Step 3: Provider -> Contract -->
+  <line x1="930" y1="215" x2="558" y2="215" stroke="#475569" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-slate)" />
+  <rect x="625" y="203" width="230" height="24" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+  <text x="740" y="219" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">3. Response thực tế từ Backend SUT</text>
+
+  <!-- Branch Decision Box -->
+  <!-- Alt PASS -->
+  <line x1="550" y1="250" x2="922" y2="250" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-green)" />
+  <rect x="600" y="238" width="280" height="24" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1" />
+  <text x="740" y="254" font-size="12" font-weight="bold" fill="#15803d" text-anchor="middle">✅ C2 Khớp Hợp Đồng &rarr; PASS (Exit Code 0)</text>
+
+  <!-- Alt FAIL -->
+  <line x1="550" y1="285" x2="922" y2="285" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow-red)" />
+  <rect x="585" y="273" width="310" height="24" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1" />
+  <text x="740" y="289" font-size="12" font-weight="bold" fill="#b91c1c" text-anchor="middle">❌ C3 Lệch Trường / Kiểu &rarr; BLOCKED (Exit Code != 0)</text>
+</svg>
