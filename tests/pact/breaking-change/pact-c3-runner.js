@@ -57,6 +57,19 @@ function createControllableServer() {
           category_id: 1,
         });
 
+      case 'MUTATION_NON_BREAKING':
+        // DẠNG NON-BREAKING CHANGE: Provider thêm trường mới 'brand: "Apple"' mà Consumer không dùng
+        // Pact tự động bỏ qua trường thừa, kết quả đối soát vẫn PASS an toàn!
+        return res.json({
+          id: 1,
+          name: 'iPhone 15 Pro Max',
+          price: 30000000,
+          description: 'Điện thoại cao cấp của Apple',
+          imageUrl: 'https://placehold.co/300x300/png?text=iPhone+15',
+          category_id: 1,
+          brand: 'Apple', // <-- Trường mới bổ sung
+        });
+
       case 'BASELINE':
       default:
         // TRẠNG THÁI CHUẨN: Đáp ứng 100% hợp đồng Pact do EShopMobile quy định
@@ -162,7 +175,7 @@ async function runScenarioC3() {
     // ------------------------------------------------------------------------
     console.log('\n------------------------------------------------------------------------------');
     console.log('📌 PHA 2B: TIÊM BREAKING CHANGE #2 (DATA TYPE MISMATCH)');
-    console.log('   Hành vi: Provider trả về trường "price" dưới dạng String "30000000".');
+    console.log("   Hành vi: Provider trả về trường 'price' dưới dạng String định dạng tiền tệ '30.000.000 ₫'.");
     console.log('   Quan sát: Tái hiện khiếm khuyết của SUT EShop Backend phát hiện ở Karate K2.');
     console.log('------------------------------------------------------------------------------');
     currentMode = 'MUTATION_TYPE';
@@ -175,6 +188,24 @@ async function runScenarioC3() {
     } else {
       console.log('⚠️ CẢNH BÁO: Pact không bắt được lỗi kiểu dữ liệu!');
       results.push({ phase: 'Pha 2B: Type Integer->String', expected: 'BLOCK (FAIL)', actual: 'PASS', verdict: 'KHÔNG ĐẠT' });
+    }
+
+    // ------------------------------------------------------------------------
+    // PHA 2C: TIÊM THAY ĐỔI KHÔNG PHÁ VỠ (NON-BREAKING CHANGE: THÊM TRƯỜNG MỚI)
+    // ------------------------------------------------------------------------
+    console.log('\n------------------------------------------------------------------------------');
+    console.log('📌 PHA 2C: TIÊM NON-BREAKING CHANGE (THÊM TRƯỜNG "brand: Apple")');
+    console.log('   Hành vi: Provider tiến hóa API, bổ sung thông tin hãng sản xuất.');
+    console.log('   Kỳ vọng: Pact tự động bỏ qua các trường Consumer không dùng -> PASS an toàn.');
+    console.log('------------------------------------------------------------------------------');
+    currentMode = 'MUTATION_NON_BREAKING';
+    const phase2c = await verifyCurrentContract('Pha 2C - Non-breaking');
+    if (phase2c.success) {
+      console.log('✅ PHA 2C THÀNH CÔNG: Pact cho phép Provider thêm trường mới mà không làm vỡ hợp đồng!');
+      results.push({ phase: 'Pha 2C: Add brand (Non-breaking)', expected: 'PASS', actual: 'PASS', verdict: 'ĐẠT (Tiến hóa an toàn)' });
+    } else {
+      console.log('❌ PHA 2C THẤT BẠI: Pact đánh fail sai trường hợp non-breaking!');
+      results.push({ phase: 'Pha 2C: Add brand (Non-breaking)', expected: 'PASS', actual: 'FAIL', verdict: 'KHÔNG ĐẠT' });
     }
 
     // ------------------------------------------------------------------------

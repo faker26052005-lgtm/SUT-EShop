@@ -77,9 +77,29 @@ cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact
 npm install
 ```
 
-### Bước 2: Chạy kiểm chứng toàn diện kịch bản C3
+### Bước 2: Các lựa chọn thực thi kịch bản C3
+
+#### Lựa chọn A — Chạy kiểm chứng toàn diện 3 pha (Khuyến nghị cho kiểm thử tự động / CI):
 ```bash
 npm run test:c3
+```
+
+#### Lựa chọn B — Chạy tự động trực tiếp trên SUT Backend thật (Cổng 3000):
+```bash
+npm run test:c3:live
+```
+*Script tự động bật Backend EShop thật, kiểm tra baseline PASS, tự động tiêm breaking change vào `backend/server.js`, xác minh Pact chặn đứng lỗi, và tự động khôi phục mã nguồn sạch sẽ.*
+
+#### Lựa chọn C — Thao tác bán tự động khi quay Video thuyết trình:
+```bash
+# 1. Tiêm lỗi đổi tên trường vào backend/server.js:
+npm run demo:mutate
+
+# 2. Bật Backend cổng 3000 và chạy Provider Verification để thấy Pact bắt lỗi:
+npm run test:provider
+
+# 3. Hoàn nguyên backend/server.js về ban đầu sau khi quay xong:
+npm run demo:restore
 ```
 
 ---
