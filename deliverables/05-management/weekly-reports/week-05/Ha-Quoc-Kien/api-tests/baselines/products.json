@@ -3,5 +3,10 @@
   "[P04 AirPods] [B3] Schema sản phẩm (price là số)",
   "[P06 id không tồn tại] Mã trạng thái 404",
   "[P07 id âm] Mã trạng thái 404",
-  "[P08 id không phải số] Mã trạng thái 404"
+  "[P08 id không phải số] Mã trạng thái 404",
+  "[P09 id bằng 0] Mã trạng thái 404",
+  "[P10 id ngay sau id cuối (6)] Mã trạng thái 404",
+  "[P11 id số thập phân] Mã trạng thái 404",
+  "[P12 id rất lớn] Mã trạng thái 404",
+  "[P13 id chứa SQL (1 OR 1=1)] Mã trạng thái 404"
 ]
