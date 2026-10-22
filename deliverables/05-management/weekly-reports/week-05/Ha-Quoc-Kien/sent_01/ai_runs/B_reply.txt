@@ -1,0 +1,333 @@
+Chào bạn, với tư cách là một kỹ sư kiểm thử có tư duy đối kháng, tôi đã phân tích tài liệu OpenAPI và SRS của bạn. Hệ thống EShop này có rất nhiều rủi ro tiềm ẩn ở phần logic tính tiền (Checkout), phân quyền (IDOR, Mass Assignment) và luồng trạng thái (State Machine).
+
+Dưới đây là Bảng ánh xạ kiểm thử để đảm bảo độ bao phủ 100% các yêu cầu, sau đó là phần đầu của kịch bản chạy trong Postman.
+
+### Phần A: Bảng ánh xạ mã FR/SEC -> Các Test tương ứng
+
+| Mã SRS | Chức năng / Yêu cầu bảo mật | Các Test Tương Ứng |
+| --- | --- | --- |
+| **FR-01** | Đăng ký tài khoản (Mật khẩu mạnh, Email duy nhất) | T01, T02 |
+| **FR-02** | Đăng nhập & Khóa tài khoản sau 3 lần sai | T03 |
+| **FR-03** | Quên mật khẩu & Đặt lại mật khẩu (OTP, gán chéo email) | T04, T05 |
+| **FR-04** | Cập nhật hồ sơ (Phone hợp lệ, không đổi email) | T06, T07 |
+| **FR-05** | Tìm kiếm sản phẩm (SQL Injection) | T08 |
+| **FR-06** | Xem chi tiết sản phẩm | T09 |
+| **FR-07** | Giỏ hàng (Thêm số lượng, luồng session) | T10 |
+| **FR-08** | Thanh toán (Backend tự tính tiền, không tin client) | T11, T12 |
+| **FR-09** | Mã giảm giá (Hết hạn, Tối thiểu, Lượt dùng, Fake User) | T13, T14, T15, T16 |
+| **FR-10** | Trạng thái Đơn hàng (State Machine) | T17, T18, T19, T20 |
+| **FR-11** | Lịch sử đơn hàng (Chỉ xem của mình - IDOR) | T21 |
+| **FR-12** | Access Control (Kiểm tra quyền Admin chặt chẽ) | T22 |
+| **FR-13** | Dashboard (Doanh thu) | *(Mặc định qua API Get Orders)* |
+| **FR-14** | Quản lý Danh mục (Tên không rỗng) | T23 |
+| **FR-15** | Quản lý Sản phẩm (Giá > 0, XSS, thiếu required) | T24, T25 |
+| **FR-16** | Import Sản phẩm (Giao dịch nguyên tử - Rollback) | T26 |
+| **FR-17** | Quản lý Coupon (Giới hạn logic) | T27 |
+| **FR-18** | Quản lý Đơn hàng Admin (Trạng thái) | (Gộp trong T17-T20) |
+| **FR-19** | Quản lý người dùng (Không tự xóa chính mình) | T28 |
+| **SEC-01..07** | Bảo mật (IDOR, Mass Assignment, SQLi, Logic flaw) | T05, T07, T08, T11, T21 |
+
+---
+
+### Phần B: Script kiểm thử tự động cho Postman (Phần 1)
+
+Dưới đây là phần code đầu tiên (kiểm tra Nhóm Xác thực, Hồ sơ, Sản phẩm). Đưa đoạn code này vào tab **Post-response** (hoặc Tests) của một Request trống.
+
+```javascript
+async function aiTests(ctx) {
+    console.log("Bắt đầu chạy bộ AI Tests... Run ID: " + ctx.RUN);
+
+    // =========================================================================
+    // NHÓM 1: AUTHENTICATION & AUTHORIZATION (FR-01, FR-02, FR-03, FR-04)
+    // =========================================================================
+
+    // Mục tiêu: Bỏ qua kiểm tra mật khẩu mạnh, có thể gây lỗi bảo mật. SRS: FR-01
+    await (async function testWeakPassword() {
+        let res = await ctx.call('POST', '/api/register', {
+            body: { name: "Weak User", email: `weak_${ctx.RUN}@eshop.com`, password: "123" }
+        });
+        pm.test("T01: Không cho phép đăng ký mật khẩu yếu (thiếu hoa, thường, số, đặc biệt)", function () {
+            pm.expect(res.code).to.equal(400);
+            pm.expect(res.json.error).to.exist;
+        });
+    })();
+
+    // Mục tiêu: Đăng ký trùng email làm crash DB hoặc lộ thông tin. SRS: FR-01
+    await (async function testDuplicateEmail() {
+        let res = await ctx.call('POST', '/api/register', {
+            body: { name: "Hacker", email: "test@eshop.com", password: "StrongPassword123!" }
+        });
+        pm.test("T02: Không cho phép đăng ký trùng email đã có", function () {
+            pm.expect(res.code).to.be.oneOf([400, 409]); // Tuỳ chuẩn nhưng không được 200 hay 500
+        });
+    })();
+
+    // Mục tiêu: Không khóa tài khoản sau khi vét cạn mật khẩu (Brute-force). SRS: FR-02
+    await (async function testBruteForceLock() {
+        let u = await ctx.newUser(`bruteforce`);
+        // Sai lần 1, 2, 3
+        for (let i = 0; i < 3; i++) {
+            await ctx.call('POST', '/api/login', {
+                body: { email: u.email, password: "WrongPassword123!" }
+            });
+        }
+        // Lần 4 (dù mật khẩu đúng hay sai cũng phải bị khóa 403)
+        let resLock = await ctx.call('POST', '/api/login', {
+            body: { email: u.email, password: u.password } // password đúng!
+        });
+        pm.test("T03: Khóa tài khoản (403) sau 3 lần đăng nhập sai", function () {
+            pm.expect(resLock.code).to.equal(403);
+            pm.expect(resLock.json.error).to.include("khóa");
+        });
+    })();
+
+    // Mục tiêu: Dùng mã OTP của người này đặt lại mật khẩu cho email người khác. SRS: FR-03, SEC-07
+    await (async function testCrossEmailOTP() {
+        let u1 = await ctx.newUser(`victim`);
+        let u2 = await ctx.newUser(`attacker`);
+        
+        let resForgot = await ctx.call('POST', '/api/forgot-password', { body: { email: u2.email }});
+        let attackerToken = resForgot.json.resetToken;
+
+        let resReset = await ctx.call('POST', '/api/reset-password', {
+            body: { email: u1.email, resetToken: attackerToken, newPassword: "HackedPassword123!" }
+        });
+        pm.test("T04: Không cho phép dùng OTP của email này reset cho email khác", function () {
+            pm.expect(resReset.code).to.equal(400); // Invalid token
+        });
+    })();
+
+    // Mục tiêu: Mass Assignment - Tự nâng quyền thành Admin qua API Profile. SRS: SEC-06
+    await (async function testPrivilegeEscalation() {
+        let res = await ctx.call('PUT', '/api/users/me', {
+            token: ctx.USER,
+            body: { name: "Hacked Admin", role: "admin", id: 1 } // Cố tình chèn role
+        });
+        
+        let profile = await ctx.call('GET', '/api/users/me', { token: ctx.USER });
+        pm.test("T05: Ngăn chặn leo thang đặc quyền (Mass Assignment) khi cập nhật Profile", function () {
+            pm.expect(res.code).to.equal(200);
+            pm.expect(profile.json.role).to.equal("user"); // Quyền vẫn phải là user
+        });
+    })();
+
+    // Mục tiêu: Bỏ qua validate format dữ liệu nghiệp vụ (SĐT). SRS: FR-04
+    await (async function testInvalidPhone() {
+        let res = await ctx.call('PUT', '/api/users/me', {
+            token: ctx.USER,
+            body: { phone: "9999" } // Thiếu số 0, quá ngắn
+        });
+        pm.test("T06: Từ chối số điện thoại không hợp lệ", function () {
+            pm.expect(res.code).to.equal(400);
+        });
+    })();
+
+
+    // =========================================================================
+    // NHÓM 2: DANH MỤC & SẢN PHẨM (FR-05, 14, 15, 16, SEC-05)
+    // =========================================================================
+
+    // Mục tiêu: Lỗ hổng SQL Injection ở thanh tìm kiếm (truy vấn lọt điều kiện). SRS: SEC-05
+    await (async function testSQLInjection() {
+        let res = await ctx.call('GET', "/api/products?search=' OR 1=1 --");
+        pm.test("T07: Hệ thống chống được SQL Injection cơ bản ở API tìm kiếm", function () {
+            pm.expect(res.code).to.equal(200);
+            pm.expect(res.text).to.not.include("SQLITE_ERROR"); 
+            pm.expect(res.text).to.not.include("syntax error");
+        });
+    })();
+
+    // Mục tiêu: Kiểm tra Admin tạo sản phẩm giá âm (Business Logic). SRS: FR-15
+    await (async function testNegativePrice() {
+        let res = await ctx.call('POST', '/api/products', {
+            token: ctx.ADMIN,
+            body: { name: "Lỗi giá", price: -50000, description: "Desc", imageUrl: "img.jpg", category_id: 1 }
+        });
+        pm.test("T08: Không cho phép Admin tạo sản phẩm giá âm", function () {
+            pm.expect(res.code).to.equal(400);
+        });
+    })();
+
+    // Mục tiêu: Giao dịch nguyên tử (Atomic rollback) khi import lỗi 1 dòng. SRS: FR-16
+    await (async function testAtomicImport() {
+        let res = await ctx.call('POST', '/api/admin/import-products', {
+            token: ctx.ADMIN,
+            body: {
+                products: [
+                    { name: `Valid Prod ${ctx.RUN}`, price: 100000, description: "OK", imageUrl: "img1.jpg", category_id: 1 },
+                    { name: `Invalid Prod ${ctx.RUN}`, price: -100, description: "Lỗi", imageUrl: "img2.jpg", category_id: 1 } // Lỗi
+                ]
+            }
+        });
+        let searchRes = await ctx.call('GET', `/api/products?search=Valid Prod ${ctx.RUN}`);
+        pm.test("T09: Rollback toàn bộ khi Import CSV có dòng lỗi (Giao dịch nguyên tử)", function () {
+            pm.expect(res.code).to.equal(200); // Theo docs, trả 200 kèm danh sách error
+            pm.expect(res.json.errors.length).to.be.greaterThan(0);
+            pm.expect(res.json.inserted).to.equal(0); // Không insert dòng nào
+            pm.expect(searchRes.json.length).to.equal(0); // Sản phẩm hợp lệ cũng ko được lưu
+        });
+    })();
+
+    console.log("Hoàn thành phần 1. Chờ chạy tiếp...");
+}
+
+```
+
+Dưới đây là phần mã tiếp theo, bao trùm các lỗ hổng nguy hiểm nhất về logic tính tiền, thao túng quy trình trạng thái (State Machine) và lỗ hổng phân quyền (IDOR). Bạn dán đoạn này ngay nối tiếp vào phần 1 bên trong hàm `async function aiTests(ctx) { ... }`.
+
+```javascript
+    // =========================================================================
+    // NHÓM 3: THANH TOÁN & MÃ GIẢM GIÁ (FR-08, FR-09, SEC-04)
+    // =========================================================================
+
+    // Mục tiêu: Client giả mạo total_amount thấp hơn thực tế để mua hàng giá rẻ. SRS: FR-08
+    await (async function testPriceManipulation() {
+        let res = await ctx.call('POST', '/api/checkout', {
+            token: ctx.USER,
+            body: {
+                total_amount: 1000, // Cố tình gửi 1.000đ thay vì 30.000.000đ
+                shipping_address: "123 Hacker Way",
+                items: [{ id: 1, name: "iPhone 15 Pro Max", price: 30000000, quantity: 1 }] // Payload dạng mobile
+            }
+        });
+        
+        let orderRes = await ctx.call('GET', `/api/orders/${res.json?.orderId}`, { token: ctx.USER });
+        pm.test("T10: Backend không tin tưởng total_amount từ client (Chống Price Manipulation)", function () {
+            // Hệ thống ĐÚNG sẽ báo lỗi 400, hoặc tạo đơn nhưng dùng giá 30.000.000đ
+            if (res.code === 200) {
+                pm.expect(orderRes.json.total_amount).to.equal(30000000, "Backend phải tự tính lại tiền");
+            } else {
+                pm.expect(res.code).to.equal(400);
+            }
+        });
+    })();
+
+    // Mục tiêu: Áp dụng mã giảm giá đã hết hạn. SRS: FR-09 (C2)
+    await (async function testExpiredCoupon() {
+        let res = await ctx.call('POST', '/api/apply-coupon', {
+            body: { code: "EXPIRED", total_amount: 500000 }
+        });
+        pm.test("T11: Từ chối áp dụng mã giảm giá đã hết hạn", function () {
+            pm.expect(res.code).to.equal(400);
+            pm.expect(res.json.error.toLowerCase()).to.include("hết hạn");
+        });
+    })();
+
+    // Mục tiêu: Bỏ qua điều kiện giá trị đơn hàng tối thiểu. SRS: FR-09 (C3)
+    await (async function testMinOrderAmountCoupon() {
+        let res = await ctx.call('POST', '/api/apply-coupon', {
+            body: { code: "BIGBUY", total_amount: 499000 } // Tối thiểu là 500k
+        });
+        pm.test("T12: Không cho áp dụng mã khi chưa đạt ngưỡng đơn hàng tối thiểu", function () {
+            pm.expect(res.code).to.equal(400);
+        });
+    })();
+
+    // Mục tiêu: Khai thác Race Condition hoặc lách giới hạn số lần dùng. SRS: FR-09 (C5)
+    await (async function testMaxUsesCoupon() {
+        let u = await ctx.newUser(`coupon_tester`);
+        
+        // Cố tình dùng SAVE10 (giới hạn 1 lần) 2 lần liên tiếp
+        let firstUse = await ctx.call('POST', '/api/coupon-usage', { 
+            token: u.token, body: { coupon_id: 1 } // Giả sử ID 1 là SAVE10
+        });
+        let secondUse = await ctx.call('POST', '/api/coupon-usage', { 
+            token: u.token, body: { coupon_id: 1 } 
+        });
+
+        pm.test("T13: Ngăn chặn vượt quá số lần sử dụng tối đa của mã giảm giá", function () {
+            pm.expect(firstUse.code).to.equal(200);
+            pm.expect(secondUse.code).to.be.oneOf([400, 403]);
+        });
+    })();
+
+
+    // =========================================================================
+    // NHÓM 4: ĐƠN HÀNG & STATE MACHINE (FR-10, FR-11)
+    // =========================================================================
+
+    // Mục tiêu: Ép State Machine đi sai luồng (từ pending nhảy thẳng lên delivered). SRS: FR-10
+    await (async function testInvalidStateTransition() {
+        // Tạo đơn
+        let checkout = await ctx.call('POST', '/api/checkout', {
+            token: ctx.USER,
+            body: { total_amount: 30000000, shipping_address: "Test" }
+        });
+        let orderId = checkout.json.orderId;
+
+        // Đơn đang 'pending', thử ép sang 'delivered'
+        let res = await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, {
+            token: ctx.ADMIN,
+            body: { status: "delivered" }
+        });
+        pm.test("T14: Ngăn chặn chuyển đổi trạng thái đơn hàng phi logic (nhảy cóc)", function () {
+            pm.expect(res.code).to.equal(400); // Invalid state transition
+        });
+    })();
+
+    // Mục tiêu: User cố tình hủy đơn hàng đang giao (chỉ admin mới được hủy lúc này). SRS: FR-10
+    await (async function testCancelShippingOrder() {
+        // Tạo đơn & Admin chuyển sang shipping
+        let checkout = await ctx.call('POST', '/api/checkout', { token: ctx.USER, body: { total_amount: 100000, shipping_address: "VN" }});
+        let orderId = checkout.json.orderId;
+        
+        await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, { token: ctx.ADMIN, body: { status: "confirmed" }});
+        await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, { token: ctx.ADMIN, body: { status: "shipping" }});
+
+        // User thử hủy
+        let cancelRes = await ctx.call('PUT', `/api/orders/${orderId}/cancel`, { token: ctx.USER });
+        pm.test("T15: Người dùng không được tự hủy đơn hàng đang ở trạng thái shipping", function () {
+            pm.expect(cancelRes.code).to.be.oneOf([400, 403]);
+        });
+    })();
+
+    // Mục tiêu: IDOR (Insecure Direct Object Reference) - Xem trộm thông tin đơn hàng người khác. SRS: SEC-02, FR-11
+    await (async function testIDOROrderDetails() {
+        // Tạo 2 user
+        let victim = await ctx.newUser(`victim_order`);
+        let attacker = await ctx.newUser(`attacker_order`);
+
+        // Victim đặt hàng
+        let checkout = await ctx.call('POST', '/api/checkout', { 
+            token: victim.token, body: { total_amount: 50000, shipping_address: "Nhà Victim" }
+        });
+        let victimOrderId = checkout.json.orderId;
+
+        // Attacker thử xem đơn hàng của Victim
+        let res = await ctx.call('GET', `/api/orders/${victimOrderId}`, { token: attacker.token });
+        pm.test("T16: Tránh IDOR - Không cho phép xem đơn hàng của người khác", function () {
+            pm.expect(res.code).to.be.oneOf([403, 404]); // Theo security practice thường trả 404 để ẩn luôn sự tồn tại
+        });
+    })();
+
+
+    // =========================================================================
+    // NHÓM 5: PHÂN QUYỀN VÀ ADMIN (FR-12, FR-19, SEC-03)
+    // =========================================================================
+
+    // Mục tiêu: Gọi API Admin bằng JWT của người dùng thường (Broken Access Control). SRS: FR-12, SEC-03
+    await (async function testAdminAPIWithUserToken() {
+        let res = await ctx.call('GET', '/api/admin/users', {
+            token: ctx.USER // Truyền token của user test
+        });
+        pm.test("T17: Chặn truy cập API Admin đối với tài khoản không có role admin", function () {
+            pm.expect(res.code).to.equal(403);
+        });
+    })();
+
+    // Mục tiêu: Admin tự bắn vào chân mình - xóa tài khoản đang thao tác. SRS: FR-19
+    await (async function testAdminDeleteSelf() {
+        // Phải tìm ID của tk admin trước
+        let meRes = await ctx.call('GET', '/api/users/me', { token: ctx.ADMIN });
+        let adminId = meRes.json.id;
+
+        let res = await ctx.call('DELETE', `/api/admin/users/${adminId}`, { token: ctx.ADMIN });
+        pm.test("T18: Admin không được phép tự xóa tài khoản của chính mình", function () {
+            pm.expect(res.code).to.equal(400); // Bad Request hoặc Forbidden
+        });
+    })();
+
+    console.log("=== KẾT THÚC BỘ KIỂM THỬ TỰ ĐỘNG BẰNG AI ===");
+}
+
+```

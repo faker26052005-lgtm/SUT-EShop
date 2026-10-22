@@ -1,0 +1,2831 @@
+PS C:\Users\LOQ\CODING\Testing\SUT-EShop\deliverables\05-management\weekly-reports\week-05\Ha-Quoc-Kien\api-tests> npm run test:login
+
+> eshop-api-tests@1.0.0 test:login
+> node scripts/run-newman.js login
+
+
+==================== Suite: login - EShop - Data-driven: Login (CSV) ====================
+newman
+
+eshop api
+
+Iteration 1/9
+
+□ DataDriven - Login
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 635B, 145ms]
+  √  [L01 user hợp lệ] Mã trạng thái 200
+  √  [L01 user hợp lệ] Có token JWT và user
+  1. [L01 user hợp lệ] [B1] user không lộ mật khẩu
+
+Iteration 2/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 640B, 3ms]
+  √  [L02 admin hợp lệ] Mã trạng thái 200
+  √  [L02 admin hợp lệ] Có token JWT và user
+  2. [L02 admin hợp lệ] [B1] user không lộ mật khẩu
+
+Iteration 3/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L03 sai mật khẩu (một lần)] Mã trạng thái 401
+  √  [L03 sai mật khẩu (một lần)] Thông điệp lỗi đúng
+  √  [L03 sai mật khẩu (một lần)] Không trả token
+
+Iteration 4/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 635B, 3ms]
+  √  [L04 user hợp lệ sau một lần sai] Mã trạng thái 200
+  √  [L04 user hợp lệ sau một lần sai] Có token JWT và user
+  3. [L04 user hợp lệ sau một lần sai] [B1] user không lộ mật khẩu
+
+Iteration 5/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 4ms]
+  √  [L05 email không tồn tại] Mã trạng thái 401
+  √  [L05 email không tồn tại] Thông điệp lỗi đúng
+  √  [L05 email không tồn tại] Không trả token
+
+Iteration 6/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Mã trạng thái 401
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Thông điệp lỗi đúng
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Không trả token
+
+Iteration 7/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L07 email rỗng] Mã trạng thái 401
+  √  [L07 email rỗng] Thông điệp lỗi đúng
+  √  [L07 email rỗng] Không trả token
+
+Iteration 8/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  √  [L08 chuỗi SQL injection ở email] Mã trạng thái 401
+  √  [L08 chuỗi SQL injection ở email] Thông điệp lỗi đúng
+  √  [L08 chuỗi SQL injection ở email] Không trả token
+
+Iteration 9/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L09 email rất dài (250 ký tự)] Mã trạng thái 401
+  √  [L09 email rất dài (250 ký tự)] Thông điệp lỗi đúng
+  √  [L09 email rất dài (250 ký tự)] Không trả token
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 9 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                 9 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                18 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 9 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                27 │                3 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 993ms                                      │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 1.33kB (approx)                           │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 18ms [min: 2ms, max: 145ms, s.d.: 44ms] │
+└────────────────────────────────────────────────────────────────┘
+
+  #  failure                detail
+
+ 1.  AssertionError         [L01 user hợp lệ] [B1] user không lộ mật khẩu
+     iteration: 1           expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+ 2.  AssertionError         [L02 admin hợp lệ] [B1] user không lộ mật khẩu
+     iteration: 2           expected { id: 1, name: 'Admin User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+ 3.  AssertionError         [L04 user hợp lệ sau một lần sai] [B1] user không lộ mật khẩu
+     iteration: 4           expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+==================== TỔNG KẾT ====================
+┌─────────┬─────────┬──────────┬────────────┬────────────┬────────┬────────┐
+│ (index) │ suite   │ requests │ iterations │ assertions │ failed │ status │
+├─────────┼─────────┼──────────┼────────────┼────────────┼────────┼────────┤
+│ 0       │ 'login' │ 9        │ 9          │ 27         │ 3      │ '-'    │
+└─────────┴─────────┴──────────┴────────────┴────────────┴────────┴────────┘
+Báo cáo HTML: thư mục reports/ (mở file .html bằng trình duyệt).
+Lưu ý: test đỏ là các lỗi đã biết của hệ thống EShop; dùng --baseline để so với danh sách lỗi đã biết.
+
+
+PS C:\Users\LOQ\CODING\Testing\SUT-EShop\deliverables\05-management\weekly-reports\week-05\Ha-Quoc-Kien\api-tests> npm run test:products
+
+> eshop-api-tests@1.0.0 test:products
+> node scripts/run-newman.js products
+
+
+==================== Suite: products - EShop - Data-driven: Product detail (CSV) ====================
+newman
+
+eshop api
+
+Iteration 1/8
+
+□ DataDriven - Products
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 18ms]
+  √  [P01 iPhone] Mã trạng thái 200
+  √  [P01 iPhone] [B3] Schema sản phẩm (price là số)
+  √  [P01 iPhone] Tên chứa "iPhone"
+
+Iteration 2/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 4ms]
+  √  [P02 Samsung] Mã trạng thái 200
+  1. [P02 Samsung] [B3] Schema sản phẩm (price là số)
+  √  [P02 Samsung] Tên chứa "Samsung"
+
+Iteration 3/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/3 [200 OK, 448B, 4ms]
+  √  [P03 MacBook] Mã trạng thái 200
+  √  [P03 MacBook] [B3] Schema sản phẩm (price là số)
+  √  [P03 MacBook] Tên chứa "MacBook"
+
+Iteration 4/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/4 [200 OK, 461B, 2ms]
+  √  [P04 AirPods] Mã trạng thái 200
+  2. [P04 AirPods] [B3] Schema sản phẩm (price là số)
+  √  [P04 AirPods] Tên chứa "AirPods"
+
+Iteration 5/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/5 [200 OK, 467B, 4ms]
+  √  [P05 Keychron] Mã trạng thái 200
+  √  [P05 Keychron] [B3] Schema sản phẩm (price là số)
+  √  [P05 Keychron] Tên chứa "Keychron"
+
+Iteration 6/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 4ms]
+  3. [P06 id không tồn tại] Mã trạng thái 404
+
+Iteration 7/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/-1 [200 OK, 267B, 3ms]
+  4. [P07 id âm] Mã trạng thái 404
+
+Iteration 8/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/abc [200 OK, 267B, 4ms]
+  5. [P08 id không phải số] Mã trạng thái 404
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               8 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │               8 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              16 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               8 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              18 │               5 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 800ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 973B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 2ms, max: 18ms, s.d.: 4ms] │
+└─────────────────────────────────────────────────────────────┘
+
+  #  failure                detail
+
+ 1.  AssertionError         [P02 Samsung] [B3] Schema sản phẩm (price là số)
+     iteration: 2           expected data to satisfy schema but found following errors:
+                            data.price should be number
+                            at assertion:1 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 2.  AssertionError         [P04 AirPods] [B3] Schema sản phẩm (price là số)
+     iteration: 4           expected data to satisfy schema but found following errors:
+                            data.price should be number
+                            at assertion:1 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 3.  AssertionError         [P06 id không tồn tại] Mã trạng thái 404
+     iteration: 6           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 4.  AssertionError         [P07 id âm] Mã trạng thái 404
+     iteration: 7           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 5.  AssertionError         [P08 id không phải số] Mã trạng thái 404
+     iteration: 8           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+==================== TỔNG KẾT ====================
+┌─────────┬────────────┬──────────┬────────────┬────────────┬────────┬────────┐
+│ (index) │ suite      │ requests │ iterations │ assertions │ failed │ status │
+├─────────┼────────────┼──────────┼────────────┼────────────┼────────┼────────┤
+│ 0       │ 'products' │ 8        │ 8          │ 18         │ 5      │ '-'    │
+└─────────┴────────────┴──────────┴────────────┴────────────┴────────┴────────┘
+Báo cáo HTML: thư mục reports/ (mở file .html bằng trình duyệt).
+Lưu ý: test đỏ là các lỗi đã biết của hệ thống EShop; dùng --baseline để so với danh sách lỗi đã biết.
+
+
+PS C:\Users\LOQ\CODING\Testing\SUT-EShop\deliverables\05-management\weekly-reports\week-05\Ha-Quoc-Kien\api-tests> npm run test:full
+
+> eshop-api-tests@1.0.0 test:full
+> node scripts/run-newman.js full
+
+
+==================== Suite: full - EShop - Toàn bộ collection (v3) ====================
+newman
+
+eshop api
+
+□ Auth
+└ Login User
+  POST http://localhost:3000/api/login [200 OK, 635B, 22ms]
+  √  Status 200
+  √  Có token
+  1. User không lộ mật khẩu
+  2. Schema [B1] Login: token JWT, user không lộ password/reset_token
+
+└ Login Admin
+  POST http://localhost:3000/api/login [200 OK, 640B, 8ms]
+  √  Status 200
+  √  Có token
+  3. Admin không lộ mật khẩu
+  4. Schema [B1] Login admin: token JWT, user không lộ password/reset_token
+
+└ Register
+  POST http://localhost:3000/api/register [200 OK, 316B, 6ms]
+  √  Status code is 200
+  √  Schema Đăng ký: message và id
+
+└ Forgot Password
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 11ms]
+  √  Status code is 200
+  √  Có resetToken
+  5. Schema [B28] Quên mật khẩu: resetToken gồm 6 chữ số (FR-03)
+
+└ Reset password
+  POST http://localhost:3000/api/reset-password [200 OK, 308B, 8ms]
+  √  Status 200
+  √  Schema Đặt lại mật khẩu: message
+
+□ Products
+└ Get products
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 3ms]
+  √  Status code is 200
+  √  5 sản phẩm
+  √  Schema Danh sách sản phẩm: mỗi sản phẩm đủ field, price là số lớn hơn 0
+
+└ Product detail id 1
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 4ms]
+  √  Status code is 200
+  √  price là số
+  √  Schema Chi tiết sản phẩm: đủ field, price là số
+
+└ Product detail id 2
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 5ms]
+  √  Status code is 200
+  6. price là số
+  7. Schema [B3] Chi tiết sản phẩm: đủ field, price là số
+
+└ Product not found
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 5ms]
+  8. Status code is 404
+
+└ Add product
+  POST http://localhost:3000/api/products [200 OK, 303B, 6ms]
+  √  Status code is 200
+  √  Schema Thêm sản phẩm: message và id
+
+└ Add product (No token)
+  POST http://localhost:3000/api/products [200 OK, 303B, 5ms]
+  9. Bị chặn 401/403
+  √  status code is 200
+
+└ Update product
+  PUT http://localhost:3000/api/products/6 [200 OK, 296B, 8ms]
+  √  Status code is 200
+  √  Schema Cập nhật sản phẩm: message
+
+└ Delete product
+  DELETE http://localhost:3000/api/products/6 [200 OK, 296B, 6ms]
+  √  Status code is 200
+  √  Schema Xóa sản phẩm: message
+
+□ Cart
+└ Add to cart
+  POST http://localhost:3000/api/cart [200 OK, 294B, 3ms]
+  √  Status 200
+  √  Có message
+  √  Schema Thêm vào giỏ: message
+
+└ Get cart
+  GET http://localhost:3000/api/cart [200 OK, 334B, 4ms]
+  √  Giỏ có hàng
+  √  Item đủ field
+  √  Schema Giỏ hàng: mỗi món đủ id, name, price, quantity
+
+□ Orders
+└ Checkout
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+  √  Status 200
+  √  Có orderId kiểu số
+  √  Schema Thanh toán: message và orderId
+
+└ Checkout (Mobile payload)
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  √  Status 200
+  √  Có orderId kiểu số
+  √  Schema Thanh toán (payload mobile): message và orderId
+
+└ My orders
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 521B, 5ms]
+  √  Có đơn vừa tạo
+  √  Schema Lịch sử đơn: mỗi đơn đủ field, status hợp lệ, created_at đúng định dạng
+
+└ Order detail
+  GET http://localhost:3000/api/orders/1 [200 OK, 396B, 4ms]
+  √  Status code is 200
+  √  Đúng đơn
+  √  Trạng thái ban đầu pending
+  √  Schema Chi tiết đơn: đủ field, status hợp lệ
+
+└ Order detail (no token)
+  GET http://localhost:3000/api/orders/1 [200 OK, 396B, 4ms]
+ 10. Bị chặn 401/403
+
+□ Coupons
+└ Apply coupon
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 3ms]
+  √  Status code is 200
+ 11. Giảm 10% của 1.000.000 là 100.000
+ 12. Thành tiền 900.000
+ 13. Schema [B4] Mã giảm giá: discount_amount và final_amount không âm
+
+└ Get coupon
+  GET http://localhost:3000/api/coupons [200 OK, 874B, 2ms]
+  √  Status code is 200
+  √  Schema Danh sách mã giảm giá: đủ field, type hợp lệ
+
+└ Coupon usage
+  POST http://localhost:3000/api/coupon-usage [200 OK, 295B, 9ms]
+  √  Status code is 200
+  √  Schema Ghi nhận dùng mã: message
+
+□ Admin
+└ [NEG] Admin get users (user token)
+  GET http://localhost:3000/api/admin/users [200 OK, 674B, 4ms]
+ 14. User thường phải bị chặn
+
+└ Admin get users
+  GET http://localhost:3000/api/admin/users [200 OK, 674B, 5ms]
+  √  Status code is 200
+  √  Schema Danh sách người dùng: đủ field, không có password
+
+└ Admin get orders
+  GET http://localhost:3000/api/admin/orders [200 OK, 570B, 4ms]
+  √  Status code is 200
+  √  Schema Đơn toàn hệ thống: đủ field và user_name
+
+└ Admin update order status
+  PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 5ms]
+  √  Status code is 200
+  √  Schema Đổi trạng thái đơn: message
+
+└ Admin import product
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 7ms]
+  √  Status code is 200
+  √  Schema Import: message, inserted, errors
+
+└ Admin add coupon
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 5ms]
+  √  Status 200
+  √  Schema Tạo mã giảm giá: message và id
+
+└ Admin delete coupon
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 5ms]
+  √  Status code is 200
+  √  Schema Xóa mã giảm giá: message
+
+└ Admin delete user
+  DELETE http://localhost:3000/api/admin/users/3 [200 OK, 293B, 6ms]
+  √  Status code is 200
+  √  Schema Xóa người dùng: message
+
+□ Users
+└ Get profile
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 2ms]
+  √  Status 200
+ 15. Không lộ password
+ 16. Không lộ reset_token
+ 17. Schema [B2] Hồ sơ: đủ field, không có password và reset_token
+
+└ Update profile
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  Status 200
+  √  Schema Cập nhật hồ sơ: message
+
+□ Categories
+└ Get category
+  GET http://localhost:3000/api/categories [200 OK, 358B, 2ms]
+  √  status code is 200
+  √  3 danh mục
+  √  Schema Danh sách danh mục: mỗi danh mục có id và name
+
+└ Add category
+  POST http://localhost:3000/api/categories [200 OK, 304B, 9ms]
+  √  Status code is 200
+  √  Schema Thêm danh mục: message và id
+
+└ Update category
+  PUT http://localhost:3000/api/categories/4 [200 OK, 297B, 9ms]
+  √  Status code is 200
+  √  Schema Cập nhật danh mục: message
+
+└ Delete category
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 6ms]
+  √  Status code is 200
+  √  Schema Xóa danh mục: message
+
+□ Orders - Cancel
+└ Cancel order
+  PUT http://localhost:3000/api/orders/1/cancel [200 OK, 308B, 7ms]
+  √  Status 200
+  √  Có message
+  √  Schema Hủy đơn: message
+
+□ Errors
+└ S1 Tmp register
+  POST http://localhost:3000/api/register [200 OK, 316B, 6ms]
+
+└ S2 Tmp login
+  POST http://localhost:3000/api/login [200 OK, 640B, 1ms]
+
+└ E1
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  √  E1: phản hồi lỗi là JSON
+  √  E1: có trường error kiểu chuỗi
+
+└ E2
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 5ms]
+  √  E2: phản hồi lỗi là JSON
+  √  E2: có trường error kiểu chuỗi
+
+└ E3
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  E3: phản hồi lỗi là JSON
+  √  E3: có trường error kiểu chuỗi
+
+└ E4
+  POST http://localhost:3000/api/login [403 Forbidden, 342B, 3ms]
+  √  E4: phản hồi lỗi là JSON
+  √  E4: có trường error kiểu chuỗi
+
+└ E5
+  POST http://localhost:3000/api/register [200 OK, 316B, 9ms]
+
+└ E6
+  POST http://localhost:3000/api/register [200 OK, 316B, 9ms]
+
+└ E7
+  POST http://localhost:3000/api/forgot-password [404 Not Found, 300B, 4ms]
+  √  E7: phản hồi lỗi là JSON
+  √  E7: có trường error kiểu chuỗi
+
+└ E8
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 4ms]
+  √  E8: phản hồi lỗi là JSON
+  √  E8: có trường error kiểu chuỗi
+
+└ E9
+  GET http://localhost:3000/api/cart [401 Unauthorized, 301B, 2ms]
+  √  E9: phản hồi lỗi là JSON
+  √  E9: có trường error kiểu chuỗi
+
+└ E10
+  GET http://localhost:3000/api/cart [403 Forbidden, 295B, 3ms]
+  √  E10: phản hồi lỗi là JSON
+  √  E10: có trường error kiểu chuỗi
+
+└ E11
+  GET http://localhost:3000/api/admin/users [401 Unauthorized, 301B, 3ms]
+  √  E11: phản hồi lỗi là JSON
+  √  E11: có trường error kiểu chuỗi
+
+└ E12
+  GET http://localhost:3000/api/orders/99999 [404 Not Found, 301B, 3ms]
+  √  E12: phản hồi lỗi là JSON
+  √  E12: có trường error kiểu chuỗi
+
+└ E13
+  PUT http://localhost:3000/api/products/99999 [200 OK, 296B, 4ms]
+
+└ E14
+  DELETE http://localhost:3000/api/products/99999 [200 OK, 296B, 3ms]
+
+└ E15
+  PUT http://localhost:3000/api/orders/1/cancel [400 Bad Request, 313B, 4ms]
+  √  E15: phản hồi lỗi là JSON
+  √  E15: có trường error kiểu chuỗi
+
+└ E16
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+
+└ E17
+  POST http://localhost:3000/api/apply-coupon [404 Not Found, 353B, 5ms]
+  √  E17: phản hồi lỗi là JSON
+  √  E17: có trường error kiểu chuỗi
+
+└ E18
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 4ms]
+  √  E18: phản hồi lỗi là JSON
+  √  E18: có trường error kiểu chuỗi
+
+└ E19
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 8ms]
+  √  E19: phản hồi lỗi là JSON
+  √  E19: có trường error kiểu chuỗi
+
+└ E20
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 4ms]
+  √  E20: phản hồi lỗi là JSON
+  √  E20: có trường error kiểu chuỗi
+
+└ E21
+  POST http://localhost:3000/api/products [200 OK, 303B, 7ms]
+
+└ E22
+  POST http://localhost:3000/api/products [200 OK, 304B, 9ms]
+
+└ E23
+  POST http://localhost:3000/api/products [200 OK, 304B, 8ms]
+
+└ E24
+  POST http://localhost:3000/api/products [200 OK, 304B, 8ms]
+
+└ E25
+  POST http://localhost:3000/api/products [200 OK, 304B, 6ms]
+
+└ E26
+  PUT http://localhost:3000/api/admin/orders/1/status [400 Bad Request, 333B, 3ms]
+  √  E26: phản hồi lỗi là JSON
+  √  E26: có trường error kiểu chuỗi
+
+□ DataDriven - Login
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 663B, 4ms]
+  √  [L00 mặc định] Mã trạng thái 200
+  √  [L00 mặc định] Có token JWT và user
+ 18. [L00 mặc định] [B1] user không lộ mật khẩu
+
+□ DataDriven - Products
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 4ms]
+  √  [L00 mặc định] Mã trạng thái 200
+  √  [L00 mặc định] [B3] Schema sản phẩm (price là số)
+  √  [L00 mặc định] Tên chứa "iPhone"
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              68 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │             137 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │              71 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             131 │              18 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 6.6s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 7.76kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 1ms, max: 22ms, s.d.: 3ms] │
+└─────────────────────────────────────────────────────────────┘
+
+   #  failure                detail
+
+ 01.  AssertionError         User không lộ mật khẩu
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "Auth / Login User"
+
+ 02.  AssertionError         Schema [B1] Login: token JWT, user không lộ password/reset_token
+                             expected data to satisfy schema but found following errors:
+                             data.user should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Auth / Login User"
+
+ 03.  AssertionError         Admin không lộ mật khẩu
+                             expected { id: 1, name: 'Admin User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "Auth / Login Admin"
+
+ 04.  AssertionError         Schema [B1] Login admin: token JWT, user không lộ password/reset_token
+                             expected data to satisfy schema but found following errors:
+                             data.user should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Auth / Login Admin"
+
+ 05.  AssertionError         Schema [B28] Quên mật khẩu: resetToken gồm 6 chữ số (FR-03)
+                             expected data to satisfy schema but found following errors:
+                             data.resetToken should match pattern "^[0-9]{6}$"
+                             at assertion:2 in test-script
+                             inside "Auth / Forgot Password"
+
+ 06.  AssertionError         price là số
+                             expected '28000000' to be a number
+                             at assertion:1 in test-script
+                             inside "Products / Product detail id 2"
+
+ 07.  AssertionError         Schema [B3] Chi tiết sản phẩm: đủ field, price là số
+                             expected data to satisfy schema but found following errors:
+                             data.price should be number
+                             at assertion:2 in test-script
+                             inside "Products / Product detail id 2"
+
+ 08.  AssertionError         Status code is 404
+                             expected response to have status code 404 but got 200
+                             at assertion:0 in test-script
+                             inside "Products / Product not found"
+
+ 09.  AssertionError         Bị chặn 401/403
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Products / Add product (No token)"
+
+ 10.  AssertionError         Bị chặn 401/403
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Orders / Order detail (no token)"
+
+ 11.  AssertionError         Giảm 10% của 1.000.000 là 100.000
+                             expected -9000000 to deeply equal 100000
+                             at assertion:1 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 12.  AssertionError         Thành tiền 900.000
+                             expected 10000000 to deeply equal 900000
+                             at assertion:2 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 13.  AssertionError         Schema [B4] Mã giảm giá: discount_amount và final_amount không âm
+                             expected data to satisfy schema but found following errors:
+                             data.discount_amount should be >= 0
+                             at assertion:3 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 14.  AssertionError         User thường phải bị chặn
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Admin / [NEG] Admin get users (user token)"
+
+ 15.  AssertionError         Không lộ password
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:1 in test-script
+                             inside "Users / Get profile"
+
+ 16.  AssertionError         Không lộ reset_token
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'reset_token'
+                             at assertion:2 in test-script
+                             inside "Users / Get profile"
+
+ 17.  AssertionError         Schema [B2] Hồ sơ: đủ field, không có password và reset_token
+                             expected data to satisfy schema but found following errors:
+                             data should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Users / Get profile"
+
+ 18.  AssertionError         [L00 mặc định] [B1] user không lộ mật khẩu
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "DataDriven - Login / Login (data-driven)"
+
+==================== TỔNG KẾT ====================
+┌─────────┬────────┬──────────┬────────────┬────────────┬────────┬────────┐
+│ (index) │ suite  │ requests │ iterations │ assertions │ failed │ status │
+├─────────┼────────┼──────────┼────────────┼────────────┼────────┼────────┤
+│ 0       │ 'full' │ 68       │ 1          │ 131        │ 18     │ '-'    │
+└─────────┴────────┴──────────┴────────────┴────────────┴────────┴────────┘
+Báo cáo HTML: thư mục reports/ (mở file .html bằng trình duyệt).
+Lưu ý: test đỏ là các lỗi đã biết của hệ thống EShop; dùng --baseline để so với danh sách lỗi đã biết.
+
+
+PS C:\Users\LOQ\CODING\Testing\SUT-EShop\deliverables\05-management\weekly-reports\week-05\Ha-Quoc-Kien\api-tests> npm run test:allin1
+
+> eshop-api-tests@1.0.0 test:allin1
+> node scripts/run-newman.js allin1
+
+
+==================== Suite: allin1 - EShop - Bộ test tổng hợp (118 assertion) ====================
+newman
+
+EShop API - Bo test chay mot lan
+
+→ 00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)
+  GET http://localhost:3000/api/categories [200 OK, 358B, 19ms]
+  POST http://localhost:3000/api/login [200 OK, 640B, 9ms]
+  POST http://localhost:3000/api/login [200 OK, 635B, 5ms]
+  √  00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)
+  √  A01 Login user: 200, có token và user
+  1. A02 [B1] Login không được trả mật khẩu trong user
+  √  A03 Login admin: role là admin
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  √  A04 Login email không tồn tại: 401 + error
+  POST http://localhost:3000/api/register [200 OK, 316B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 648B, 2ms]
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  √  A05 Login sai mật khẩu lần 1: 401, cùng thông điệp với email sai
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  POST http://localhost:3000/api/login [403 Forbidden, 342B, 2ms]
+  2. A06 [B27] Sau 2 lần sai tài khoản chưa được khóa (FR-02: chỉ khóa từ lần sai thứ 3)
+  POST http://localhost:3000/api/register [200 OK, 316B, 3ms]
+  √  A07 Đăng ký hợp lệ: 200 + id
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  3. A08 [B9] Đăng ký trùng email phải bị từ chối (400/409)
+  POST http://localhost:3000/api/register [200 OK, 316B, 3ms]
+  4. A09 [B10] Đăng ký với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 652B, 2ms]
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 4ms]
+  √  A10 Quên mật khẩu: 200 + resetToken
+  5. A11 [B28] Mã OTP đặt lại mật khẩu phải có tối thiểu 6 chữ số (FR-03, SEC-07)
+  POST http://localhost:3000/api/forgot-password [404 Not Found, 300B, 1ms]
+  √  A12 Quên mật khẩu, email lạ: 404 + error
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 2ms]
+  √  A13 Đặt lại với mã sai: 400
+  POST http://localhost:3000/api/reset-password [200 OK, 308B, 4ms]
+  √  A14 Đặt lại với mã đúng: 200
+  POST http://localhost:3000/api/login [200 OK, 652B, 1ms]
+  √  A15 Đăng nhập bằng mật khẩu mới: 200
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 1ms]
+  √  A16 Mã đặt lại chỉ dùng được một lần: lần 2 trả 400
+  6. A17 [O2] JWT phải có thời hạn (claim exp)
+  POST http://localhost:3000/api/register [200 OK, 316B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 654B, 3ms]
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 3ms]
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 1ms]
+  √  A18 OTP của email này không dùng được cho email khác (FR-03)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  U01 Xem hồ sơ: 200, đúng người dùng
+  7. U02 [B2] Hồ sơ không được chứa password
+  8. U03 [B2] Hồ sơ không được chứa reset_token
+  GET http://localhost:3000/api/users/me [401 Unauthorized, 301B, 1ms]
+  √  U04 Hồ sơ không có token: 401
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 654B, 1ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 5ms]
+  GET http://localhost:3000/api/users/me [200 OK, 487B, 2ms]
+  √  U05 Cập nhật hồ sơ: 200 và dữ liệu được lưu
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+  GET http://localhost:3000/api/users/me [200 OK, 473B, 2ms]
+  9. U06 [B16] Cập nhật chỉ name không được xóa shipping_address và phone
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 5ms]
+  GET http://localhost:3000/api/users/me [200 OK, 467B, 1ms]
+ 10. U07 [B15] Người dùng không được tự đổi role thành admin (SEC-06)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 653B, 1ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+ 11. U08 [B30] Số điện thoại không hợp lệ (9999) phải bị từ chối (400) (FR-04)
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 2ms]
+  √  P01 Danh sách sản phẩm: 200, mảng không rỗng
+  √  P02 Mỗi sản phẩm có đủ field và price là số
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 1ms]
+  √  P03 Chi tiết sản phẩm id 1: price là số
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 2ms]
+ 12. P04 [B3] Chi tiết sản phẩm id 2: price phải là số
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 2ms]
+ 13. P05 [B7] Sản phẩm không tồn tại phải trả 404
+  GET http://localhost:3000/api/products?search=iPhone [200 OK, 453B, 2ms]
+  √  P06 Tìm kiếm 'iPhone' trả đúng sản phẩm
+  GET http://localhost:3000/api/products?search=khong-co-san-pham-mvj9ydw7 [200 OK, 267B, 1ms]
+  √  P07 Tìm kiếm không có kết quả trả mảng rỗng
+  GET http://localhost:3000/api/products?search=' [500 Internal Server Error, 346B, 3ms]
+ 14. P08 [B17] Tìm kiếm có dấu ' không được gây lỗi 500 hoặc trả HTML (SEC-05)
+  GET http://localhost:3000/api/products?search=zzz'%20OR%201%3D1%20-- [200 OK, 1.24kB, 2ms]
+ 15. P09 [B17] Chuỗi tìm kiếm chứa ' OR 1=1 -- chỉ là văn bản, không được trả toàn bộ sản phẩm (SEC-05)
+  POST http://localhost:3000/api/products [200 OK, 303B, 5ms]
+ 16. P10 [B8] Thêm sản phẩm không có token phải bị từ chối (401)
+  POST http://localhost:3000/api/products [200 OK, 303B, 3ms]
+  √  P11 Thêm sản phẩm bằng admin: 200 + id
+  POST http://localhost:3000/api/products [200 OK, 303B, 4ms]
+ 17. P12 [B11] Thêm sản phẩm với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/products [200 OK, 303B, 4ms]
+ 18. P13 [B11] Thêm sản phẩm thiếu price phải bị từ chối (400)
+  PUT http://localhost:3000/api/products/7 [200 OK, 296B, 3ms]
+  GET http://localhost:3000/api/products/7 [200 OK, 393B, 1ms]
+  √  P14 Cập nhật sản phẩm: 200 và dữ liệu được lưu
+  PUT http://localhost:3000/api/products/99999 [200 OK, 296B, 2ms]
+ 19. P15 [B12] Cập nhật sản phẩm không tồn tại phải trả 404
+  PUT http://localhost:3000/api/products/7 [200 OK, 296B, 3ms]
+ 20. P16 [B8] Cập nhật sản phẩm không có token phải bị từ chối (401)
+  DELETE http://localhost:3000/api/products/7 [200 OK, 296B, 5ms]
+ 21. P17 [B8] Xóa sản phẩm không có token phải bị từ chối (401)
+  DELETE http://localhost:3000/api/products/99999 [200 OK, 296B, 1ms]
+ 22. P18 [B12] Xóa sản phẩm không tồn tại phải trả 404
+  POST http://localhost:3000/api/products [200 OK, 304B, 4ms]
+ 23. P19 [B31] Thêm sản phẩm với giá âm phải bị từ chối (400) (FR-15)
+  GET http://localhost:3000/api/categories [200 OK, 358B, 2ms]
+  √  C01 Danh sách danh mục: 200, mảng không rỗng
+  POST http://localhost:3000/api/categories [200 OK, 304B, 4ms]
+  √  C02 Thêm danh mục bằng admin: 200 + id
+  POST http://localhost:3000/api/categories [401 Unauthorized, 301B, 1ms]
+  √  C03 Thêm danh mục không có token: 401
+  POST http://localhost:3000/api/categories [200 OK, 304B, 4ms]
+ 24. C04 [B24] Người dùng thường không được thêm danh mục (403)
+  POST http://localhost:3000/api/categories [200 OK, 304B, 4ms]
+ 25. C05 [B11] Thêm danh mục với body rỗng phải bị từ chối (400)
+  PUT http://localhost:3000/api/categories/4 [200 OK, 297B, 5ms]
+  √  C06 Cập nhật danh mục: 200
+  PUT http://localhost:3000/api/categories/99999 [200 OK, 297B, 2ms]
+ 26. C07 [B12] Cập nhật danh mục không tồn tại phải trả 404
+  DELETE http://localhost:3000/api/categories/99999 [200 OK, 297B, 2ms]
+ 27. C08 [B12] Xóa danh mục không tồn tại phải trả 404
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 4ms]
+ 28. C09 [B24] Người dùng thường không được xóa danh mục (403)
+  GET http://localhost:3000/api/cart [401 Unauthorized, 301B, 1ms]
+  √  K01 Giỏ hàng không có token: 401
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  GET http://localhost:3000/api/cart [200 OK, 334B, 2ms]
+  √  K02 Thêm vào giỏ rồi xem giỏ: có đúng 1 món
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  GET http://localhost:3000/api/cart [200 OK, 401B, 2ms]
+ 29. K02b [B25] Thêm cùng sản phẩm lần 2 phải tăng số lượng, không tạo dòng mới (FR-07)
+  POST http://localhost:3000/api/register [200 OK, 317B, 7ms]
+  POST http://localhost:3000/api/login [200 OK, 657B, 1ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+ 30. K03 [B18] Thêm vào giỏ với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  GET http://localhost:3000/api/cart [200 OK, 327B, 2ms]
+ 31. K04 [B19] Giá trong giỏ phải lấy từ danh mục sản phẩm (30000000), không tin giá client gửi (1)
+  POST http://localhost:3000/api/register [200 OK, 317B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 9ms]
+  GET http://localhost:3000/api/cart [200 OK, 334B, 2ms]
+ 32. K05 [B20] Sau khi thanh toán giỏ hàng phải được làm rỗng (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 653B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+  √  O01 Thanh toán (payload theo đặc tả): 200 + orderId
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 399B, 2ms]
+  √  O02 Lịch sử đơn có đơn vừa tạo, trạng thái pending
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+ 33. O03 [B13] Thanh toán với giỏ trống phải bị từ chối (400) (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 663B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+ 34. O04 [B13] Backend phải tự tính lại tổng tiền, tổng sai lệch giỏ hàng bị từ chối (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 655B, 3ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 5ms]
+  √  O05 Thanh toán (payload của mobile, không có shipping_address): 200 + orderId
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 1ms]
+  √  O06 Xem đơn của chính mình: 200
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 2ms]
+ 35. O07 [B6] Xem đơn không có token phải bị từ chối (401)
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 2ms]
+ 36. O08 [B6] Xem đơn của người khác phải bị từ chối (403/404)
+  GET http://localhost:3000/api/orders/99999 [404 Not Found, 301B, 3ms]
+  √  O09 Xem đơn không tồn tại: 404
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 393B, 2ms]
+  √  O10 Lịch sử đơn của người khác không chứa đơn của mình
+  PUT http://localhost:3000/api/orders/2/cancel [404 Not Found, 301B, 2ms]
+  √  O11 Hủy đơn của người khác: 404
+  PUT http://localhost:3000/api/orders/2/cancel [200 OK, 308B, 5ms]
+  √  O12 Hủy đơn của mình khi đang pending: 200
+  PUT http://localhost:3000/api/orders/2/cancel [400 Bad Request, 313B, 2ms]
+  √  O13 Hủy đơn đã hủy: 400 + error
+  PUT http://localhost:3000/api/admin/orders/2/status [200 OK, 301B, 4ms]
+ 37. O14 [B22] Đơn đã hủy (trạng thái kết thúc) không được chuyển sang delivered (FR-10)
+  POST http://localhost:3000/api/register [200 OK, 317B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 5ms]
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 332B, 2ms]
+  √  O15 Admin đổi sang trạng thái không hợp lệ 'abc': 400
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 338B, 2ms]
+  √  O16 Admin chuyển pending sang delivered (bỏ qua bước): 400
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 5ms]
+  √  O17 Admin chuyển pending sang confirmed: 200
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 338B, 2ms]
+  √  O18 Admin chuyển confirmed quay lại pending: 400
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 5ms]
+  √  O19 Admin chuyển confirmed sang shipping: 200
+  PUT http://localhost:3000/api/orders/6/cancel [200 OK, 308B, 4ms]
+ 38. O20 [B21] User không được tự hủy đơn đang shipping (FR-10)
+  PUT http://localhost:3000/api/admin/orders/99999/status [404 Not Found, 301B, 1ms]
+  √  O21 Admin đổi trạng thái đơn không tồn tại: 404
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 5ms]
+ 39. O22 [B24] Người dùng thường không được đổi trạng thái đơn (403)
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 2ms]
+ 40. Q01 [B4] SAVE10 (10%) với đơn 1.000.000: giảm 100.000
+ 41. Q02 [B4] SAVE10 với đơn 1.000.000: thành tiền 900.000
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 5ms]
+  √  Q03 BIGBUY (giảm 50.000) với đơn 600.000: thành tiền 550.000
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 2ms]
+ 42. Q04 [B14] Đơn đúng bằng mức tối thiểu 300.000 phải được áp dụng mã (FR-09 C3: >=)
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 1ms]
+  √  Q05 Đơn dưới mức tối thiểu: 400 + error
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 2ms]
+  √  Q06 Mã hết hạn: 400 + error
+  POST http://localhost:3000/api/apply-coupon [404 Not Found, 353B, 2ms]
+  √  Q07 Mã không tồn tại: 404
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 1ms]
+  √  Q08 Thiếu mã: 400
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 1ms]
+ 43. Q08b [B26] Áp dụng mã giảm giá phải yêu cầu đăng nhập (401) (FR-09 C4)
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 655B, 1ms]
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 4ms]
+  √  Q09 Admin tạo mã giảm giá: có id
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 2ms]
+  √  Q10 Áp dụng mã mới tạo lần đầu: 200, giảm 10.000
+  POST http://localhost:3000/api/coupon-usage [200 OK, 295B, 4ms]
+  √  Q11 Ghi nhận đã dùng mã: 200
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 354B, 1ms]
+  √  Q12 Dùng lại mã đã hết lượt (có user_id): 400
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 1ms]
+ 44. Q13 [B23] Bỏ user_id khỏi body không được qua mặt giới hạn lượt dùng (FR-09 C5)
+  POST http://localhost:3000/api/coupon-usage [401 Unauthorized, 301B, 2ms]
+  √  Q14 Ghi nhận dùng mã không có token: 401
+  GET http://localhost:3000/api/coupons [200 OK, 1.04kB, 4ms]
+  √  Q15 Admin xem danh sách mã: 200, có 4 mã mẫu trở lên
+  GET http://localhost:3000/api/coupons [200 OK, 1.04kB, 2ms]
+ 45. Q16 [B24] Người dùng thường không được xem danh sách mã (403)
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 5ms]
+ 46. Q17 [B24] Người dùng thường không được tạo mã giảm giá (403)
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 4ms]
+ 47. Q18 [B11] Tạo mã giảm giá với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 2ms]
+ 48. Q19 [B29] Tạo mã trùng code phải trả 400/409, không được trả 500 kèm lỗi cơ sở dữ liệu
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 5ms]
+ 49. Q20 [B24] Người dùng thường không được xóa mã giảm giá (403)
+  GET http://localhost:3000/api/admin/users [200 OK, 3.33kB, 2ms]
+  √  D01 Admin xem danh sách người dùng: 200, không chứa password
+  GET http://localhost:3000/api/admin/users [200 OK, 3.33kB, 2ms]
+ 50. D02 [B5] Người dùng thường không được xem danh sách người dùng (403) (FR-12, SEC-03)
+  GET http://localhost:3000/api/admin/users [401 Unauthorized, 301B, 1ms]
+  √  D03 Xem danh sách người dùng không có token: 401
+  GET http://localhost:3000/api/admin/orders [200 OK, 1.18kB, 2ms]
+  √  D04 Admin xem đơn toàn hệ thống: 200, có user_name
+  GET http://localhost:3000/api/admin/orders [200 OK, 1.18kB, 2ms]
+ 51. D05 [B24] Người dùng thường không được xem đơn toàn hệ thống (403)
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 5ms]
+  √  D06 Import 1 sản phẩm hợp lệ: 200, inserted = 1
+  POST http://localhost:3000/api/admin/import-products [400 Bad Request, 323B, 1ms]
+  √  D07 Import mảng rỗng: 400
+  POST http://localhost:3000/api/admin/import-products [200 OK, 394B, 1ms]
+  √  D08 Import dòng thiếu name: inserted = 0 và có 1 lỗi
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 4ms]
+ 52. D09 [B24] Người dùng thường không được import sản phẩm (403)
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 659B, 1ms]
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 4ms]
+ 53. D10 [B24] Người dùng thường không được xóa người dùng khác (403)
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 2ms]
+  √  D11 Admin xóa người dùng: 200
+  DELETE http://localhost:3000/api/admin/users/99999 [200 OK, 293B, 2ms]
+ 54. D12 [B12] Xóa người dùng không tồn tại phải trả 404
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 6ms]
+  GET http://localhost:3000/api/products?search=ZZ-TEST-mvj9ydw7-impok [200 OK, 376B, 2ms]
+ 55. D13 [B32] Import có dòng lỗi (giá âm) phải bị từ chối toàn bộ, không lưu dòng nào (FR-16)
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 659B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 662B, 2ms]
+  GET http://localhost:3000/api/users/me [200 OK, 476B, 2ms]
+  DELETE http://localhost:3000/api/admin/users/23 [200 OK, 293B, 3ms]
+ 56. D14 [B33] Admin không được tự xóa tài khoản của chính mình (400/403) (FR-19)
+  GET http://localhost:3000/api/products [200 OK, 2.11kB, 1ms]
+  DELETE http://localhost:3000/api/products/6 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/7 [200 OK, 296B, 1ms]
+  DELETE http://localhost:3000/api/products/8 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/9 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/10 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/11 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/12 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/13 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/14 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 1ms]
+  DELETE http://localhost:3000/api/categories/5 [200 OK, 297B, 6ms]
+  DELETE http://localhost:3000/api/categories/6 [200 OK, 297B, 5ms]
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 2ms]
+  DELETE http://localhost:3000/api/admin/coupons/6 [200 OK, 295B, 5ms]
+  DELETE http://localhost:3000/api/admin/coupons/7 [200 OK, 295B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/3 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/4 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/5 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/6 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/7 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/8 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/9 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/10 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/11 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/12 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/13 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/14 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/15 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/16 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/17 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/18 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/19 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/20 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/21 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 2ms]
+  DELETE http://localhost:3000/api/admin/users/23 [200 OK, 293B, 2ms]
+  ┌
+  │ 'Đã dọn: 9 sản phẩm, 3 danh mục, 3 mã giảm giá, 21 người dùng. Đơn hàng tạo ra không xóa được (không có API x
+  │ óa); khởi động lại server để làm sạch hoàn toàn.'
+  └
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │             202 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             118 │              56 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 2.7s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 30.96kB (approx)                       │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 3ms [min: 1ms, max: 19ms, s.d.: 1ms] │
+└─────────────────────────────────────────────────────────────┘
+
+   #  failure                detail
+
+ 01.  AssertionError         A02 [B1] Login không được trả mật khẩu trong user
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 02.  AssertionError         A06 [B27] Sau 2 lần sai tài khoản chưa được khóa (FR-02: chỉ khóa từ lần sai thứ 3)
+                             HTTP status (nhận 403, nội dung: {"error":"Tài khoản đã bị khóa. Vui lòng thử lại
+                             sau."}): expected 403 to equal 200
+                             at assertion:6 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 03.  AssertionError         A08 [B9] Đăng ký trùng email phải bị từ chối (400/409)
+                             expected 200 to be one of [ 400, 409 ]
+                             at assertion:8 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 04.  AssertionError         A09 [B10] Đăng ký với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"User registered successfully","id":6}):
+                             expected 200 to equal 400
+                             at assertion:9 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 05.  AssertionError         A11 [B28] Mã OTP đặt lại mật khẩu phải có tối thiểu 6 chữ số (FR-03, SEC-07)
+                             expected 4 to be at least 6
+                             at assertion:11 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 06.  AssertionError         A17 [O2] JWT phải có thời hạn (claim exp)
+                             expected { Object (id, role, ...) } to have property 'exp'
+                             at assertion:17 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 07.  AssertionError         U02 [B2] Hồ sơ không được chứa password
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:20 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 08.  AssertionError         U03 [B2] Hồ sơ không được chứa reset_token
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'reset_token'
+                             at assertion:21 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 09.  AssertionError         U06 [B16] Cập nhật chỉ name không được xóa shipping_address và phone
+                             shipping_address sau khi chỉ gửi name: expected null to equal '123 Le Loi'
+                             at assertion:24 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 10.  AssertionError         U07 [B15] Người dùng không được tự đổi role thành admin (SEC-06)
+                             expected 'admin' to equal 'user'
+                             at assertion:25 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 11.  AssertionError         U08 [B30] Số điện thoại không hợp lệ (9999) phải bị từ chối (400) (FR-04)
+                             HTTP status (nhận 200, nội dung: {"message":"Profile updated"}): expected 200 to
+                             equal 400
+                             at assertion:26 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 12.  AssertionError         P04 [B3] Chi tiết sản phẩm id 2: price phải là số
+                             expected '28000000' to be a number
+                             at assertion:30 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 13.  AssertionError         P05 [B7] Sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {}): expected 200 to equal 404
+                             at assertion:31 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 14.  AssertionError         P08 [B17] Tìm kiếm có dấu ' không được gây lỗi 500 hoặc trả HTML (SEC-05)
+                             status: expected 500 to not equal 500
+                             at assertion:34 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 15.  AssertionError         P09 [B17] Chuỗi tìm kiếm chứa ' OR 1=1 -- chỉ là văn bản, không được trả toàn bộ sản
+                             phẩm (SEC-05)
+                             số sản phẩm trả về: expected 5 to equal +0
+                             at assertion:35 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 16.  AssertionError         P10 [B8] Thêm sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":6}): expected 200
+                             to equal 401
+                             at assertion:36 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 17.  AssertionError         P12 [B11] Thêm sản phẩm với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":8}): expected 200
+                             to equal 400
+                             at assertion:38 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 18.  AssertionError         P13 [B11] Thêm sản phẩm thiếu price phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":9}): expected 200
+                             to equal 400
+                             at assertion:39 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 19.  AssertionError         P15 [B12] Cập nhật sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Product updated"}): expected 200 to
+                             equal 404
+                             at assertion:41 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 20.  AssertionError         P16 [B8] Cập nhật sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product updated"}): expected 200 to
+                             equal 401
+                             at assertion:42 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 21.  AssertionError         P17 [B8] Xóa sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product deleted"}): expected 200 to
+                             equal 401
+                             at assertion:43 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 22.  AssertionError         P18 [B12] Xóa sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Product deleted"}): expected 200 to
+                             equal 404
+                             at assertion:44 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 23.  AssertionError         P19 [B31] Thêm sản phẩm với giá âm phải bị từ chối (400) (FR-15)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":10}): expected 200
+                             to equal 400
+                             at assertion:45 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 24.  AssertionError         C04 [B24] Người dùng thường không được thêm danh mục (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Category created","id":5}): expected 200
+                             to equal 403
+                             at assertion:49 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 25.  AssertionError         C05 [B11] Thêm danh mục với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Category created","id":6}): expected 200
+                             to equal 400
+                             at assertion:50 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 26.  AssertionError         C07 [B12] Cập nhật danh mục không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Category updated"}): expected 200 to
+                             equal 404
+                             at assertion:52 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 27.  AssertionError         C08 [B12] Xóa danh mục không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Category deleted"}): expected 200 to
+                             equal 404
+                             at assertion:53 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 28.  AssertionError         C09 [B24] Người dùng thường không được xóa danh mục (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Category deleted"}): expected 200 to
+                             equal 403
+                             at assertion:54 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 29.  AssertionError         K02b [B25] Thêm cùng sản phẩm lần 2 phải tăng số lượng, không tạo dòng mới (FR-07)
+                             số dòng trong giỏ: expected 2 to equal 1
+                             at assertion:57 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 30.  AssertionError         K03 [B18] Thêm vào giỏ với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Added to cart"}): expected 200 to equal
+                             400
+                             at assertion:58 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 31.  AssertionError         K04 [B19] Giá trong giỏ phải lấy từ danh mục sản phẩm (30000000), không tin giá
+                             client gửi (1)
+                             expected 1 to equal 30000000
+                             at assertion:59 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 32.  AssertionError         K05 [B20] Sau khi thanh toán giỏ hàng phải được làm rỗng (FR-08)
+                             expected [ { id: 1, …(3) } ] to deeply equal []
+                             at assertion:60 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 33.  AssertionError         O03 [B13] Thanh toán với giỏ trống phải bị từ chối (400) (FR-08)
+                             HTTP status (nhận 200, nội dung: {"message":"Checkout successful","orderId":3}):
+                             expected 200 to equal 400
+                             at assertion:63 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 34.  AssertionError         O04 [B13] Backend phải tự tính lại tổng tiền, tổng sai lệch giỏ hàng bị từ chối
+                             (FR-08)
+                             HTTP status (nhận 200, nội dung: {"message":"Checkout successful","orderId":4}):
+                             expected 200 to equal 400
+                             at assertion:64 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 35.  AssertionError         O07 [B6] Xem đơn không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung:
+                             {"id":2,"user_id":16,"total_amount":30000000,"status":"pending","shipping_address":"…
+                             Test","created_at":"2026-10-22 0): expected 200 to equal 401
+                             at assertion:67 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 36.  AssertionError         O08 [B6] Xem đơn của người khác phải bị từ chối (403/404)
+                             expected 200 to be one of [ 403, 404 ]
+                             at assertion:68 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 37.  AssertionError         O14 [B22] Đơn đã hủy (trạng thái kết thúc) không được chuyển sang delivered (FR-10)
+                             HTTP status (nhận 200, nội dung: {"message":"Order status updated"}): expected 200 to
+                             equal 400
+                             at assertion:74 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 38.  AssertionError         O20 [B21] User không được tự hủy đơn đang shipping (FR-10)
+                             HTTP status (nhận 200, nội dung: {"message":"Order canceled successfully"}): expected
+                             200 to equal 400
+                             at assertion:80 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 39.  AssertionError         O22 [B24] Người dùng thường không được đổi trạng thái đơn (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Order status updated"}): expected 200 to
+                             equal 403
+                             at assertion:82 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 40.  AssertionError         Q01 [B4] SAVE10 (10%) với đơn 1.000.000: giảm 100.000
+                             expected -9000000 to equal 100000
+                             at assertion:83 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 41.  AssertionError         Q02 [B4] SAVE10 với đơn 1.000.000: thành tiền 900.000
+                             expected 10000000 to equal 900000
+                             at assertion:84 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 42.  AssertionError         Q04 [B14] Đơn đúng bằng mức tối thiểu 300.000 phải được áp dụng mã (FR-09 C3: >=)
+                             HTTP status (nhận 400, nội dung: {"error":"Đơn hàng chưa đủ giá trị tối thiểu 300,000
+                             ₫ để áp dụng mã này"}): expected 400 to equal 200
+                             at assertion:86 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 43.  AssertionError         Q08b [B26] Áp dụng mã giảm giá phải yêu cầu đăng nhập (401) (FR-09 C4)
+                             HTTP status (nhận 200, nội dung:
+                             {"success":true,"coupon_id":1,"discount_amount":-9000000,"final_amount":10000000,"me…
+                             dụng thành công! Giảm 10%): expected 200 to equal 401
+                             at assertion:91 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 44.  AssertionError         Q13 [B23] Bỏ user_id khỏi body không được qua mặt giới hạn lượt dùng (FR-09 C5)
+                             expected 200 to not equal 200
+                             at assertion:96 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 45.  AssertionError         Q16 [B24] Người dùng thường không được xem danh sách mã (403)
+                             HTTP status (nhận 200, nội dung:
+                             [{"id":1,"code":"SAVE10","type":"percent","discount_value":10,"min_order_amount":300…
+                             expected 200 to equal 403
+                             at assertion:99 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 46.  AssertionError         Q17 [B24] Người dùng thường không được tạo mã giảm giá (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon created","id":6}): expected 200
+                             to equal 403
+                             at assertion:100 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 47.  AssertionError         Q18 [B11] Tạo mã giảm giá với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon created","id":7}): expected 200
+                             to equal 400
+                             at assertion:101 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 48.  AssertionError         Q19 [B29] Tạo mã trùng code phải trả 400/409, không được trả 500 kèm lỗi cơ sở dữ
+                             liệu
+                             expected 500 to be one of [ 400, 409 ]
+                             at assertion:102 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 49.  AssertionError         Q20 [B24] Người dùng thường không được xóa mã giảm giá (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon deleted"}): expected 200 to equal
+                             403
+                             at assertion:103 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 50.  AssertionError         D02 [B5] Người dùng thường không được xem danh sách người dùng (403) (FR-12, SEC-03)
+                             HTTP status (nhận 200, nội dung: [{"id":1,"name":"Admin
+                             User","email":"admin@eshop.com","role":"admin","login_attempts":0,"locked_until":nul…
+                             expected 200 to equal 403
+                             at assertion:105 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 51.  AssertionError         D05 [B24] Người dùng thường không được xem đơn toàn hệ thống (403)
+                             HTTP status (nhận 200, nội dung:
+                             [{"id":6,"user_id":20,"total_amount":500000,"status":"delivered","shipping_address":…
+                             address","created_at":"2026-10-2): expected 200 to equal 403
+                             at assertion:108 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 52.  AssertionError         D09 [B24] Người dùng thường không được import sản phẩm (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Import hoàn tất: 1/1 sản phẩm được
+                             thêm","inserted":1,"errors":[]}): expected 200 to equal 403
+                             at assertion:112 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 53.  AssertionError         D10 [B24] Người dùng thường không được xóa người dùng khác (403)
+                             HTTP status (nhận 200, nội dung: {"message":"User deleted"}): expected 200 to equal
+                             403
+                             at assertion:113 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 54.  AssertionError         D12 [B12] Xóa người dùng không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"User deleted"}): expected 200 to equal
+                             404
+                             at assertion:115 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 55.  AssertionError         D13 [B32] Import có dòng lỗi (giá âm) phải bị từ chối toàn bộ, không lưu dòng nào
+                             (FR-16)
+                             số sản phẩm đã thêm: expected 2 to equal +0
+                             at assertion:116 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 56.  AssertionError         D14 [B33] Admin không được tự xóa tài khoản của chính mình (400/403) (FR-19)
+                             expected 200 to be one of [ 400, 403 ]
+                             at assertion:117 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+==================== TỔNG KẾT ====================
+┌─────────┬──────────┬──────────┬────────────┬────────────┬────────┬────────┐
+│ (index) │ suite    │ requests │ iterations │ assertions │ failed │ status │
+├─────────┼──────────┼──────────┼────────────┼────────────┼────────┼────────┤
+│ 0       │ 'allin1' │ 202      │ 1          │ 118        │ 56     │ '-'    │
+└─────────┴──────────┴──────────┴────────────┴────────────┴────────┴────────┘
+Báo cáo HTML: thư mục reports/ (mở file .html bằng trình duyệt).
+Lưu ý: test đỏ là các lỗi đã biết của hệ thống EShop; dùng --baseline để so với danh sách lỗi đã biết.
+
+
+PS C:\Users\LOQ\CODING\Testing\SUT-EShop\deliverables\05-management\weekly-reports\week-05\Ha-Quoc-Kien\api-tests> npm run test:baseline
+
+> eshop-api-tests@1.0.0 test:baseline
+> node scripts/run-newman.js --baseline
+
+
+==================== Suite: full - EShop - Toàn bộ collection (v3) ====================
+newman
+
+eshop api
+
+□ Auth
+└ Login User
+  POST http://localhost:3000/api/login [200 OK, 635B, 22ms]
+  √  Status 200
+  √  Có token
+  1. User không lộ mật khẩu
+  2. Schema [B1] Login: token JWT, user không lộ password/reset_token
+
+└ Login Admin
+  POST http://localhost:3000/api/login [200 OK, 640B, 6ms]
+  √  Status 200
+  √  Có token
+  3. Admin không lộ mật khẩu
+  4. Schema [B1] Login admin: token JWT, user không lộ password/reset_token
+
+└ Register
+  POST http://localhost:3000/api/register [200 OK, 316B, 7ms]
+  √  Status code is 200
+  √  Schema Đăng ký: message và id
+
+└ Forgot Password
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 6ms]
+  √  Status code is 200
+  √  Có resetToken
+  5. Schema [B28] Quên mật khẩu: resetToken gồm 6 chữ số (FR-03)
+
+└ Reset password
+  POST http://localhost:3000/api/reset-password [200 OK, 308B, 5ms]
+  √  Status 200
+  √  Schema Đặt lại mật khẩu: message
+
+□ Products
+└ Get products
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 5ms]
+  √  Status code is 200
+  √  5 sản phẩm
+  √  Schema Danh sách sản phẩm: mỗi sản phẩm đủ field, price là số lớn hơn 0
+
+└ Product detail id 1
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 3ms]
+  √  Status code is 200
+  √  price là số
+  √  Schema Chi tiết sản phẩm: đủ field, price là số
+
+└ Product detail id 2
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 2ms]
+  √  Status code is 200
+  6. price là số
+  7. Schema [B3] Chi tiết sản phẩm: đủ field, price là số
+
+└ Product not found
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 4ms]
+  8. Status code is 404
+
+└ Add product
+  POST http://localhost:3000/api/products [200 OK, 303B, 6ms]
+  √  Status code is 200
+  √  Schema Thêm sản phẩm: message và id
+
+└ Add product (No token)
+  POST http://localhost:3000/api/products [200 OK, 303B, 6ms]
+  9. Bị chặn 401/403
+  √  status code is 200
+
+└ Update product
+  PUT http://localhost:3000/api/products/6 [200 OK, 296B, 4ms]
+  √  Status code is 200
+  √  Schema Cập nhật sản phẩm: message
+
+└ Delete product
+  DELETE http://localhost:3000/api/products/6 [200 OK, 296B, 6ms]
+  √  Status code is 200
+  √  Schema Xóa sản phẩm: message
+
+□ Cart
+└ Add to cart
+  POST http://localhost:3000/api/cart [200 OK, 294B, 3ms]
+  √  Status 200
+  √  Có message
+  √  Schema Thêm vào giỏ: message
+
+└ Get cart
+  GET http://localhost:3000/api/cart [200 OK, 334B, 2ms]
+  √  Giỏ có hàng
+  √  Item đủ field
+  √  Schema Giỏ hàng: mỗi món đủ id, name, price, quantity
+
+□ Orders
+└ Checkout
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+  √  Status 200
+  √  Có orderId kiểu số
+  √  Schema Thanh toán: message và orderId
+
+└ Checkout (Mobile payload)
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+  √  Status 200
+  √  Có orderId kiểu số
+  √  Schema Thanh toán (payload mobile): message và orderId
+
+└ My orders
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 521B, 5ms]
+  √  Có đơn vừa tạo
+  √  Schema Lịch sử đơn: mỗi đơn đủ field, status hợp lệ, created_at đúng định dạng
+
+└ Order detail
+  GET http://localhost:3000/api/orders/1 [200 OK, 396B, 2ms]
+  √  Status code is 200
+  √  Đúng đơn
+  √  Trạng thái ban đầu pending
+  √  Schema Chi tiết đơn: đủ field, status hợp lệ
+
+└ Order detail (no token)
+  GET http://localhost:3000/api/orders/1 [200 OK, 396B, 2ms]
+ 10. Bị chặn 401/403
+
+□ Coupons
+└ Apply coupon
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 6ms]
+  √  Status code is 200
+ 11. Giảm 10% của 1.000.000 là 100.000
+ 12. Thành tiền 900.000
+ 13. Schema [B4] Mã giảm giá: discount_amount và final_amount không âm
+
+└ Get coupon
+  GET http://localhost:3000/api/coupons [200 OK, 874B, 4ms]
+  √  Status code is 200
+  √  Schema Danh sách mã giảm giá: đủ field, type hợp lệ
+
+└ Coupon usage
+  POST http://localhost:3000/api/coupon-usage [200 OK, 295B, 9ms]
+  √  Status code is 200
+  √  Schema Ghi nhận dùng mã: message
+
+□ Admin
+└ [NEG] Admin get users (user token)
+  GET http://localhost:3000/api/admin/users [200 OK, 674B, 4ms]
+ 14. User thường phải bị chặn
+
+└ Admin get users
+  GET http://localhost:3000/api/admin/users [200 OK, 674B, 5ms]
+  √  Status code is 200
+  √  Schema Danh sách người dùng: đủ field, không có password
+
+└ Admin get orders
+  GET http://localhost:3000/api/admin/orders [200 OK, 570B, 5ms]
+  √  Status code is 200
+  √  Schema Đơn toàn hệ thống: đủ field và user_name
+
+└ Admin update order status
+  PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 10ms]
+  √  Status code is 200
+  √  Schema Đổi trạng thái đơn: message
+
+└ Admin import product
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 9ms]
+  √  Status code is 200
+  √  Schema Import: message, inserted, errors
+
+└ Admin add coupon
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  Status 200
+  √  Schema Tạo mã giảm giá: message và id
+
+└ Admin delete coupon
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 9ms]
+  √  Status code is 200
+  √  Schema Xóa mã giảm giá: message
+
+└ Admin delete user
+  DELETE http://localhost:3000/api/admin/users/3 [200 OK, 293B, 6ms]
+  √  Status code is 200
+  √  Schema Xóa người dùng: message
+
+□ Users
+└ Get profile
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 4ms]
+  √  Status 200
+ 15. Không lộ password
+ 16. Không lộ reset_token
+ 17. Schema [B2] Hồ sơ: đủ field, không có password và reset_token
+
+└ Update profile
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 9ms]
+  √  Status 200
+  √  Schema Cập nhật hồ sơ: message
+
+□ Categories
+└ Get category
+  GET http://localhost:3000/api/categories [200 OK, 358B, 4ms]
+  √  status code is 200
+  √  3 danh mục
+  √  Schema Danh sách danh mục: mỗi danh mục có id và name
+
+└ Add category
+  POST http://localhost:3000/api/categories [200 OK, 304B, 10ms]
+  √  Status code is 200
+  √  Schema Thêm danh mục: message và id
+
+└ Update category
+  PUT http://localhost:3000/api/categories/4 [200 OK, 297B, 7ms]
+  √  Status code is 200
+  √  Schema Cập nhật danh mục: message
+
+└ Delete category
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 5ms]
+  √  Status code is 200
+  √  Schema Xóa danh mục: message
+
+□ Orders - Cancel
+└ Cancel order
+  PUT http://localhost:3000/api/orders/1/cancel [200 OK, 308B, 8ms]
+  √  Status 200
+  √  Có message
+  √  Schema Hủy đơn: message
+
+□ Errors
+└ S1 Tmp register
+  POST http://localhost:3000/api/register [200 OK, 316B, 7ms]
+
+└ S2 Tmp login
+  POST http://localhost:3000/api/login [200 OK, 640B, 6ms]
+
+└ E1
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 4ms]
+  √  E1: phản hồi lỗi là JSON
+  √  E1: có trường error kiểu chuỗi
+
+└ E2
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  E2: phản hồi lỗi là JSON
+  √  E2: có trường error kiểu chuỗi
+
+└ E3
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 4ms]
+  √  E3: phản hồi lỗi là JSON
+  √  E3: có trường error kiểu chuỗi
+
+└ E4
+  POST http://localhost:3000/api/login [403 Forbidden, 342B, 3ms]
+  √  E4: phản hồi lỗi là JSON
+  √  E4: có trường error kiểu chuỗi
+
+└ E5
+  POST http://localhost:3000/api/register [200 OK, 316B, 8ms]
+
+└ E6
+  POST http://localhost:3000/api/register [200 OK, 316B, 7ms]
+
+└ E7
+  POST http://localhost:3000/api/forgot-password [404 Not Found, 300B, 4ms]
+  √  E7: phản hồi lỗi là JSON
+  √  E7: có trường error kiểu chuỗi
+
+└ E8
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 4ms]
+  √  E8: phản hồi lỗi là JSON
+  √  E8: có trường error kiểu chuỗi
+
+└ E9
+  GET http://localhost:3000/api/cart [401 Unauthorized, 301B, 1ms]
+  √  E9: phản hồi lỗi là JSON
+  √  E9: có trường error kiểu chuỗi
+
+└ E10
+  GET http://localhost:3000/api/cart [403 Forbidden, 295B, 2ms]
+  √  E10: phản hồi lỗi là JSON
+  √  E10: có trường error kiểu chuỗi
+
+└ E11
+  GET http://localhost:3000/api/admin/users [401 Unauthorized, 301B, 3ms]
+  √  E11: phản hồi lỗi là JSON
+  √  E11: có trường error kiểu chuỗi
+
+└ E12
+  GET http://localhost:3000/api/orders/99999 [404 Not Found, 301B, 4ms]
+  √  E12: phản hồi lỗi là JSON
+  √  E12: có trường error kiểu chuỗi
+
+└ E13
+  PUT http://localhost:3000/api/products/99999 [200 OK, 296B, 4ms]
+
+└ E14
+  DELETE http://localhost:3000/api/products/99999 [200 OK, 296B, 4ms]
+
+└ E15
+  PUT http://localhost:3000/api/orders/1/cancel [400 Bad Request, 313B, 4ms]
+  √  E15: phản hồi lỗi là JSON
+  √  E15: có trường error kiểu chuỗi
+
+└ E16
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+
+└ E17
+  POST http://localhost:3000/api/apply-coupon [404 Not Found, 353B, 4ms]
+  √  E17: phản hồi lỗi là JSON
+  √  E17: có trường error kiểu chuỗi
+
+└ E18
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 4ms]
+  √  E18: phản hồi lỗi là JSON
+  √  E18: có trường error kiểu chuỗi
+
+└ E19
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 8ms]
+  √  E19: phản hồi lỗi là JSON
+  √  E19: có trường error kiểu chuỗi
+
+└ E20
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 4ms]
+  √  E20: phản hồi lỗi là JSON
+  √  E20: có trường error kiểu chuỗi
+
+└ E21
+  POST http://localhost:3000/api/products [200 OK, 303B, 8ms]
+
+└ E22
+  POST http://localhost:3000/api/products [200 OK, 304B, 8ms]
+
+└ E23
+  POST http://localhost:3000/api/products [200 OK, 304B, 8ms]
+
+└ E24
+  POST http://localhost:3000/api/products [200 OK, 304B, 9ms]
+
+└ E25
+  POST http://localhost:3000/api/products [200 OK, 304B, 8ms]
+
+└ E26
+  PUT http://localhost:3000/api/admin/orders/1/status [400 Bad Request, 333B, 4ms]
+  √  E26: phản hồi lỗi là JSON
+  √  E26: có trường error kiểu chuỗi
+
+□ DataDriven - Login
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 663B, 5ms]
+  √  [L00 mặc định] Mã trạng thái 200
+  √  [L00 mặc định] Có token JWT và user
+ 18. [L00 mặc định] [B1] user không lộ mật khẩu
+
+□ DataDriven - Products
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 1ms]
+  √  [L00 mặc định] Mã trạng thái 200
+  √  [L00 mặc định] [B3] Schema sản phẩm (price là số)
+  √  [L00 mặc định] Tên chứa "iPhone"
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              68 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │             137 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │              71 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             131 │              18 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 5.8s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 7.76kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 1ms, max: 22ms, s.d.: 3ms] │
+└─────────────────────────────────────────────────────────────┘
+
+   #  failure                detail
+
+ 01.  AssertionError         User không lộ mật khẩu
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "Auth / Login User"
+
+ 02.  AssertionError         Schema [B1] Login: token JWT, user không lộ password/reset_token
+                             expected data to satisfy schema but found following errors:
+                             data.user should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Auth / Login User"
+
+ 03.  AssertionError         Admin không lộ mật khẩu
+                             expected { id: 1, name: 'Admin User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "Auth / Login Admin"
+
+ 04.  AssertionError         Schema [B1] Login admin: token JWT, user không lộ password/reset_token
+                             expected data to satisfy schema but found following errors:
+                             data.user should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Auth / Login Admin"
+
+ 05.  AssertionError         Schema [B28] Quên mật khẩu: resetToken gồm 6 chữ số (FR-03)
+                             expected data to satisfy schema but found following errors:
+                             data.resetToken should match pattern "^[0-9]{6}$"
+                             at assertion:2 in test-script
+                             inside "Auth / Forgot Password"
+
+ 06.  AssertionError         price là số
+                             expected '28000000' to be a number
+                             at assertion:1 in test-script
+                             inside "Products / Product detail id 2"
+
+ 07.  AssertionError         Schema [B3] Chi tiết sản phẩm: đủ field, price là số
+                             expected data to satisfy schema but found following errors:
+                             data.price should be number
+                             at assertion:2 in test-script
+                             inside "Products / Product detail id 2"
+
+ 08.  AssertionError         Status code is 404
+                             expected response to have status code 404 but got 200
+                             at assertion:0 in test-script
+                             inside "Products / Product not found"
+
+ 09.  AssertionError         Bị chặn 401/403
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Products / Add product (No token)"
+
+ 10.  AssertionError         Bị chặn 401/403
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Orders / Order detail (no token)"
+
+ 11.  AssertionError         Giảm 10% của 1.000.000 là 100.000
+                             expected -9000000 to deeply equal 100000
+                             at assertion:1 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 12.  AssertionError         Thành tiền 900.000
+                             expected 10000000 to deeply equal 900000
+                             at assertion:2 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 13.  AssertionError         Schema [B4] Mã giảm giá: discount_amount và final_amount không âm
+                             expected data to satisfy schema but found following errors:
+                             data.discount_amount should be >= 0
+                             at assertion:3 in test-script
+                             inside "Coupons / Apply coupon"
+
+ 14.  AssertionError         User thường phải bị chặn
+                             expected 200 to be one of [ 401, 403 ]
+                             at assertion:0 in test-script
+                             inside "Admin / [NEG] Admin get users (user token)"
+
+ 15.  AssertionError         Không lộ password
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:1 in test-script
+                             inside "Users / Get profile"
+
+ 16.  AssertionError         Không lộ reset_token
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'reset_token'
+                             at assertion:2 in test-script
+                             inside "Users / Get profile"
+
+ 17.  AssertionError         Schema [B2] Hồ sơ: đủ field, không có password và reset_token
+                             expected data to satisfy schema but found following errors:
+                             data should NOT be valid
+                             at assertion:3 in test-script
+                             inside "Users / Get profile"
+
+ 18.  AssertionError         [L00 mặc định] [B1] user không lộ mật khẩu
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "DataDriven - Login / Login (data-driven)"
+
+==================== Suite: login - EShop - Data-driven: Login (CSV) ====================
+newman
+
+eshop api
+
+Iteration 1/9
+
+□ DataDriven - Login
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 635B, 10ms]
+  √  [L01 user hợp lệ] Mã trạng thái 200
+  √  [L01 user hợp lệ] Có token JWT và user
+  1. [L01 user hợp lệ] [B1] user không lộ mật khẩu
+
+Iteration 2/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 640B, 6ms]
+  √  [L02 admin hợp lệ] Mã trạng thái 200
+  √  [L02 admin hợp lệ] Có token JWT và user
+  2. [L02 admin hợp lệ] [B1] user không lộ mật khẩu
+
+Iteration 3/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 5ms]
+  √  [L03 sai mật khẩu (một lần)] Mã trạng thái 401
+  √  [L03 sai mật khẩu (một lần)] Thông điệp lỗi đúng
+  √  [L03 sai mật khẩu (một lần)] Không trả token
+
+Iteration 4/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [200 OK, 635B, 5ms]
+  √  [L04 user hợp lệ sau một lần sai] Mã trạng thái 200
+  √  [L04 user hợp lệ sau một lần sai] Có token JWT và user
+  3. [L04 user hợp lệ sau một lần sai] [B1] user không lộ mật khẩu
+
+Iteration 5/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 5ms]
+  √  [L05 email không tồn tại] Mã trạng thái 401
+  √  [L05 email không tồn tại] Thông điệp lỗi đúng
+  √  [L05 email không tồn tại] Không trả token
+
+Iteration 6/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 5ms]
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Mã trạng thái 401
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Thông điệp lỗi đúng
+  √  [L06 mật khẩu rỗng (email không tồn tại)] Không trả token
+
+Iteration 7/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L07 email rỗng] Mã trạng thái 401
+  √  [L07 email rỗng] Thông điệp lỗi đúng
+  √  [L07 email rỗng] Không trả token
+
+Iteration 8/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 3ms]
+  √  [L08 chuỗi SQL injection ở email] Mã trạng thái 401
+  √  [L08 chuỗi SQL injection ở email] Thông điệp lỗi đúng
+  √  [L08 chuỗi SQL injection ở email] Không trả token
+
+Iteration 9/9
+
+└ Login (data-driven)
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 5ms]
+  √  [L09 email rất dài (250 ký tự)] Mã trạng thái 401
+  √  [L09 email rất dài (250 ký tự)] Thông điệp lỗi đúng
+  √  [L09 email rất dài (250 ký tự)] Không trả token
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               9 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │               9 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              18 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               9 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              27 │               3 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 769ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 1.33kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 3ms, max: 10ms, s.d.: 1ms] │
+└─────────────────────────────────────────────────────────────┘
+
+  #  failure                detail
+
+ 1.  AssertionError         [L01 user hợp lệ] [B1] user không lộ mật khẩu
+     iteration: 1           expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+ 2.  AssertionError         [L02 admin hợp lệ] [B1] user không lộ mật khẩu
+     iteration: 2           expected { id: 1, name: 'Admin User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+ 3.  AssertionError         [L04 user hợp lệ sau một lần sai] [B1] user không lộ mật khẩu
+     iteration: 4           expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                            at assertion:2 in test-script
+                            inside "DataDriven - Login / Login (data-driven)"
+
+==================== Suite: products - EShop - Data-driven: Product detail (CSV) ====================
+newman
+
+eshop api
+
+Iteration 1/8
+
+□ DataDriven - Products
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 5ms]
+  √  [P01 iPhone] Mã trạng thái 200
+  √  [P01 iPhone] [B3] Schema sản phẩm (price là số)
+  √  [P01 iPhone] Tên chứa "iPhone"
+
+Iteration 2/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 4ms]
+  √  [P02 Samsung] Mã trạng thái 200
+  1. [P02 Samsung] [B3] Schema sản phẩm (price là số)
+  √  [P02 Samsung] Tên chứa "Samsung"
+
+Iteration 3/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/3 [200 OK, 448B, 2ms]
+  √  [P03 MacBook] Mã trạng thái 200
+  √  [P03 MacBook] [B3] Schema sản phẩm (price là số)
+  √  [P03 MacBook] Tên chứa "MacBook"
+
+Iteration 4/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/4 [200 OK, 461B, 3ms]
+  √  [P04 AirPods] Mã trạng thái 200
+  2. [P04 AirPods] [B3] Schema sản phẩm (price là số)
+  √  [P04 AirPods] Tên chứa "AirPods"
+
+Iteration 5/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/5 [200 OK, 467B, 3ms]
+  √  [P05 Keychron] Mã trạng thái 200
+  √  [P05 Keychron] [B3] Schema sản phẩm (price là số)
+  √  [P05 Keychron] Tên chứa "Keychron"
+
+Iteration 6/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 3ms]
+  3. [P06 id không tồn tại] Mã trạng thái 404
+
+Iteration 7/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/-1 [200 OK, 267B, 4ms]
+  4. [P07 id âm] Mã trạng thái 404
+
+Iteration 8/8
+
+└ Product detail (data-driven)
+  GET http://localhost:3000/api/products/abc [200 OK, 267B, 2ms]
+  5. [P08 id không phải số] Mã trạng thái 404
+
+┌─────────────────────────┬──────────────────┬─────────────────┐
+│                         │         executed │          failed │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│              iterations │                8 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│                requests │                8 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│            test-scripts │               16 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│      prerequest-scripts │                8 │               0 │
+├─────────────────────────┼──────────────────┼─────────────────┤
+│              assertions │               18 │               5 │
+├─────────────────────────┴──────────────────┴─────────────────┤
+│ total run duration: 681ms                                    │
+├──────────────────────────────────────────────────────────────┤
+│ total data received: 973B (approx)                           │
+├──────────────────────────────────────────────────────────────┤
+│ average response time: 3ms [min: 2ms, max: 5ms, s.d.: 968µs] │
+└──────────────────────────────────────────────────────────────┘
+
+  #  failure                detail
+
+ 1.  AssertionError         [P02 Samsung] [B3] Schema sản phẩm (price là số)
+     iteration: 2           expected data to satisfy schema but found following errors:
+                            data.price should be number
+                            at assertion:1 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 2.  AssertionError         [P04 AirPods] [B3] Schema sản phẩm (price là số)
+     iteration: 4           expected data to satisfy schema but found following errors:
+                            data.price should be number
+                            at assertion:1 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 3.  AssertionError         [P06 id không tồn tại] Mã trạng thái 404
+     iteration: 6           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 4.  AssertionError         [P07 id âm] Mã trạng thái 404
+     iteration: 7           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+ 5.  AssertionError         [P08 id không phải số] Mã trạng thái 404
+     iteration: 8           expected response to have status code 404 but got 200
+                            at assertion:0 in test-script
+                            inside "DataDriven - Products / Product detail (data-driven)"
+
+==================== Suite: allin1 - EShop - Bộ test tổng hợp (118 assertion) ====================
+newman
+
+EShop API - Bo test chay mot lan
+
+→ 00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)
+  GET http://localhost:3000/api/categories [200 OK, 358B, 6ms]
+  POST http://localhost:3000/api/login [200 OK, 640B, 9ms]
+  POST http://localhost:3000/api/login [200 OK, 635B, 3ms]
+  √  00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)
+  √  A01 Login user: 200, có token và user
+  1. A02 [B1] Login không được trả mật khẩu trong user
+  √  A03 Login admin: role là admin
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 2ms]
+  √  A04 Login email không tồn tại: 401 + error
+  POST http://localhost:3000/api/register [200 OK, 316B, 6ms]
+  POST http://localhost:3000/api/login [200 OK, 648B, 2ms]
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 1ms]
+  √  A05 Login sai mật khẩu lần 1: 401, cùng thông điệp với email sai
+  POST http://localhost:3000/api/login [401 Unauthorized, 314B, 4ms]
+  POST http://localhost:3000/api/login [403 Forbidden, 342B, 2ms]
+  2. A06 [B27] Sau 2 lần sai tài khoản chưa được khóa (FR-02: chỉ khóa từ lần sai thứ 3)
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  √  A07 Đăng ký hợp lệ: 200 + id
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  3. A08 [B9] Đăng ký trùng email phải bị từ chối (400/409)
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  4. A09 [B10] Đăng ký với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/register [200 OK, 316B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 652B, 2ms]
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 5ms]
+  √  A10 Quên mật khẩu: 200 + resetToken
+  5. A11 [B28] Mã OTP đặt lại mật khẩu phải có tối thiểu 6 chữ số (FR-03, SEC-07)
+  POST http://localhost:3000/api/forgot-password [404 Not Found, 300B, 1ms]
+  √  A12 Quên mật khẩu, email lạ: 404 + error
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 2ms]
+  √  A13 Đặt lại với mã sai: 400
+  POST http://localhost:3000/api/reset-password [200 OK, 308B, 5ms]
+  √  A14 Đặt lại với mã đúng: 200
+  POST http://localhost:3000/api/login [200 OK, 652B, 2ms]
+  √  A15 Đăng nhập bằng mật khẩu mới: 200
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 2ms]
+  √  A16 Mã đặt lại chỉ dùng được một lần: lần 2 trả 400
+  6. A17 [O2] JWT phải có thời hạn (claim exp)
+  POST http://localhost:3000/api/register [200 OK, 316B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 654B, 2ms]
+  POST http://localhost:3000/api/forgot-password [200 OK, 350B, 6ms]
+  POST http://localhost:3000/api/reset-password [400 Bad Request, 310B, 2ms]
+  √  A18 OTP của email này không dùng được cho email khác (FR-03)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  U01 Xem hồ sơ: 200, đúng người dùng
+  7. U02 [B2] Hồ sơ không được chứa password
+  8. U03 [B2] Hồ sơ không được chứa reset_token
+  GET http://localhost:3000/api/users/me [401 Unauthorized, 301B, 1ms]
+  √  U04 Hồ sơ không có token: 401
+  POST http://localhost:3000/api/register [200 OK, 316B, 6ms]
+  POST http://localhost:3000/api/login [200 OK, 654B, 1ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+  GET http://localhost:3000/api/users/me [200 OK, 487B, 2ms]
+  √  U05 Cập nhật hồ sơ: 200 và dữ liệu được lưu
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+  GET http://localhost:3000/api/users/me [200 OK, 473B, 2ms]
+  9. U06 [B16] Cập nhật chỉ name không được xóa shipping_address và phone
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+  GET http://localhost:3000/api/users/me [200 OK, 467B, 1ms]
+ 10. U07 [B15] Người dùng không được tự đổi role thành admin (SEC-06)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 653B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 5ms]
+ 11. U08 [B30] Số điện thoại không hợp lệ (9999) phải bị từ chối (400) (FR-04)
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 2ms]
+  √  P01 Danh sách sản phẩm: 200, mảng không rỗng
+  √  P02 Mỗi sản phẩm có đủ field và price là số
+  GET http://localhost:3000/api/products/1 [200 OK, 451B, 2ms]
+  √  P03 Chi tiết sản phẩm id 1: price là số
+  GET http://localhost:3000/api/products/2 [200 OK, 480B, 2ms]
+ 12. P04 [B3] Chi tiết sản phẩm id 2: price phải là số
+  GET http://localhost:3000/api/products/99999 [200 OK, 267B, 2ms]
+ 13. P05 [B7] Sản phẩm không tồn tại phải trả 404
+  GET http://localhost:3000/api/products?search=iPhone [200 OK, 453B, 1ms]
+  √  P06 Tìm kiếm 'iPhone' trả đúng sản phẩm
+  GET http://localhost:3000/api/products?search=khong-co-san-pham-mvj9zphq [200 OK, 267B, 1ms]
+  √  P07 Tìm kiếm không có kết quả trả mảng rỗng
+  GET http://localhost:3000/api/products?search=' [500 Internal Server Error, 346B, 2ms]
+ 14. P08 [B17] Tìm kiếm có dấu ' không được gây lỗi 500 hoặc trả HTML (SEC-05)
+  GET http://localhost:3000/api/products?search=zzz'%20OR%201%3D1%20-- [200 OK, 1.24kB, 1ms]
+ 15. P09 [B17] Chuỗi tìm kiếm chứa ' OR 1=1 -- chỉ là văn bản, không được trả toàn bộ sản phẩm (SEC-05)
+  POST http://localhost:3000/api/products [200 OK, 303B, 6ms]
+ 16. P10 [B8] Thêm sản phẩm không có token phải bị từ chối (401)
+  POST http://localhost:3000/api/products [200 OK, 303B, 4ms]
+  √  P11 Thêm sản phẩm bằng admin: 200 + id
+  POST http://localhost:3000/api/products [200 OK, 303B, 4ms]
+ 17. P12 [B11] Thêm sản phẩm với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/products [200 OK, 303B, 4ms]
+ 18. P13 [B11] Thêm sản phẩm thiếu price phải bị từ chối (400)
+  PUT http://localhost:3000/api/products/7 [200 OK, 296B, 4ms]
+  GET http://localhost:3000/api/products/7 [200 OK, 393B, 1ms]
+  √  P14 Cập nhật sản phẩm: 200 và dữ liệu được lưu
+  PUT http://localhost:3000/api/products/99999 [200 OK, 296B, 3ms]
+ 19. P15 [B12] Cập nhật sản phẩm không tồn tại phải trả 404
+  PUT http://localhost:3000/api/products/7 [200 OK, 296B, 5ms]
+ 20. P16 [B8] Cập nhật sản phẩm không có token phải bị từ chối (401)
+  DELETE http://localhost:3000/api/products/7 [200 OK, 296B, 4ms]
+ 21. P17 [B8] Xóa sản phẩm không có token phải bị từ chối (401)
+  DELETE http://localhost:3000/api/products/99999 [200 OK, 296B, 1ms]
+ 22. P18 [B12] Xóa sản phẩm không tồn tại phải trả 404
+  POST http://localhost:3000/api/products [200 OK, 304B, 5ms]
+ 23. P19 [B31] Thêm sản phẩm với giá âm phải bị từ chối (400) (FR-15)
+  GET http://localhost:3000/api/categories [200 OK, 358B, 2ms]
+  √  C01 Danh sách danh mục: 200, mảng không rỗng
+  POST http://localhost:3000/api/categories [200 OK, 304B, 4ms]
+  √  C02 Thêm danh mục bằng admin: 200 + id
+  POST http://localhost:3000/api/categories [401 Unauthorized, 301B, 2ms]
+  √  C03 Thêm danh mục không có token: 401
+  POST http://localhost:3000/api/categories [200 OK, 304B, 5ms]
+ 24. C04 [B24] Người dùng thường không được thêm danh mục (403)
+  POST http://localhost:3000/api/categories [200 OK, 304B, 5ms]
+ 25. C05 [B11] Thêm danh mục với body rỗng phải bị từ chối (400)
+  PUT http://localhost:3000/api/categories/4 [200 OK, 297B, 5ms]
+  √  C06 Cập nhật danh mục: 200
+  PUT http://localhost:3000/api/categories/99999 [200 OK, 297B, 2ms]
+ 26. C07 [B12] Cập nhật danh mục không tồn tại phải trả 404
+  DELETE http://localhost:3000/api/categories/99999 [200 OK, 297B, 2ms]
+ 27. C08 [B12] Xóa danh mục không tồn tại phải trả 404
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 4ms]
+ 28. C09 [B24] Người dùng thường không được xóa danh mục (403)
+  GET http://localhost:3000/api/cart [401 Unauthorized, 301B, 1ms]
+  √  K01 Giỏ hàng không có token: 401
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  GET http://localhost:3000/api/cart [200 OK, 334B, 2ms]
+  √  K02 Thêm vào giỏ rồi xem giỏ: có đúng 1 món
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  GET http://localhost:3000/api/cart [200 OK, 401B, 2ms]
+ 29. K02b [B25] Thêm cùng sản phẩm lần 2 phải tăng số lượng, không tạo dòng mới (FR-07)
+  POST http://localhost:3000/api/register [200 OK, 317B, 7ms]
+  POST http://localhost:3000/api/login [200 OK, 657B, 1ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+ 30. K03 [B18] Thêm vào giỏ với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/register [200 OK, 317B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  GET http://localhost:3000/api/cart [200 OK, 327B, 1ms]
+ 31. K04 [B19] Giá trong giỏ phải lấy từ danh mục sản phẩm (30000000), không tin giá client gửi (1)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+  GET http://localhost:3000/api/cart [200 OK, 334B, 1ms]
+ 32. K05 [B20] Sau khi thanh toán giỏ hàng phải được làm rỗng (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 653B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 2ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+  √  O01 Thanh toán (payload theo đặc tả): 200 + orderId
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 399B, 2ms]
+  √  O02 Lịch sử đơn có đơn vừa tạo, trạng thái pending
+  POST http://localhost:3000/api/register [200 OK, 317B, 7ms]
+  POST http://localhost:3000/api/login [200 OK, 661B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 3ms]
+ 33. O03 [B13] Thanh toán với giỏ trống phải bị từ chối (400) (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 663B, 2ms]
+  POST http://localhost:3000/api/cart [200 OK, 294B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+ 34. O04 [B13] Backend phải tự tính lại tổng tiền, tổng sai lệch giỏ hàng bị từ chối (FR-08)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 655B, 1ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+  √  O05 Thanh toán (payload của mobile, không có shipping_address): 200 + orderId
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 2ms]
+  √  O06 Xem đơn của chính mình: 200
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 2ms]
+ 35. O07 [B6] Xem đơn không có token phải bị từ chối (401)
+  GET http://localhost:3000/api/orders/2 [200 OK, 397B, 2ms]
+ 36. O08 [B6] Xem đơn của người khác phải bị từ chối (403/404)
+  GET http://localhost:3000/api/orders/99999 [404 Not Found, 301B, 2ms]
+  √  O09 Xem đơn không tồn tại: 404
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 393B, 2ms]
+  √  O10 Lịch sử đơn của người khác không chứa đơn của mình
+  PUT http://localhost:3000/api/orders/2/cancel [404 Not Found, 301B, 2ms]
+  √  O11 Hủy đơn của người khác: 404
+  PUT http://localhost:3000/api/orders/2/cancel [200 OK, 308B, 6ms]
+  √  O12 Hủy đơn của mình khi đang pending: 200
+  PUT http://localhost:3000/api/orders/2/cancel [400 Bad Request, 313B, 2ms]
+  √  O13 Hủy đơn đã hủy: 400 + error
+  PUT http://localhost:3000/api/admin/orders/2/status [200 OK, 301B, 4ms]
+ 37. O14 [B22] Đơn đã hủy (trạng thái kết thúc) không được chuyển sang delivered (FR-10)
+  POST http://localhost:3000/api/register [200 OK, 317B, 3ms]
+  POST http://localhost:3000/api/login [200 OK, 651B, 2ms]
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 332B, 2ms]
+  √  O15 Admin đổi sang trạng thái không hợp lệ 'abc': 400
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 338B, 2ms]
+  √  O16 Admin chuyển pending sang delivered (bỏ qua bước): 400
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 5ms]
+  √  O17 Admin chuyển pending sang confirmed: 200
+  PUT http://localhost:3000/api/admin/orders/6/status [400 Bad Request, 338B, 2ms]
+  √  O18 Admin chuyển confirmed quay lại pending: 400
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 4ms]
+  √  O19 Admin chuyển confirmed sang shipping: 200
+  PUT http://localhost:3000/api/orders/6/cancel [200 OK, 308B, 4ms]
+ 38. O20 [B21] User không được tự hủy đơn đang shipping (FR-10)
+  PUT http://localhost:3000/api/admin/orders/99999/status [404 Not Found, 301B, 2ms]
+  √  O21 Admin đổi trạng thái đơn không tồn tại: 404
+  PUT http://localhost:3000/api/admin/orders/6/status [200 OK, 301B, 5ms]
+ 39. O22 [B24] Người dùng thường không được đổi trạng thái đơn (403)
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 3ms]
+ 40. Q01 [B4] SAVE10 (10%) với đơn 1.000.000: giảm 100.000
+ 41. Q02 [B4] SAVE10 với đơn 1.000.000: thành tiền 900.000
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 4ms]
+  √  Q03 BIGBUY (giảm 50.000) với đơn 600.000: thành tiền 550.000
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 2ms]
+ 42. Q04 [B14] Đơn đúng bằng mức tối thiểu 300.000 phải được áp dụng mã (FR-09 C3: >=)
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 374B, 1ms]
+  √  Q05 Đơn dưới mức tối thiểu: 400 + error
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 2ms]
+  √  Q06 Mã hết hạn: 400 + error
+  POST http://localhost:3000/api/apply-coupon [404 Not Found, 353B, 2ms]
+  √  Q07 Mã không tồn tại: 404
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 320B, 1ms]
+  √  Q08 Thiếu mã: 400
+  POST http://localhost:3000/api/apply-coupon [200 OK, 397B, 2ms]
+ 43. Q08b [B26] Áp dụng mã giảm giá phải yêu cầu đăng nhập (401) (FR-09 C4)
+  POST http://localhost:3000/api/register [200 OK, 317B, 6ms]
+  POST http://localhost:3000/api/login [200 OK, 655B, 2ms]
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 6ms]
+  √  Q09 Admin tạo mã giảm giá: có id
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 2ms]
+  √  Q10 Áp dụng mã mới tạo lần đầu: 200, giảm 10.000
+  POST http://localhost:3000/api/coupon-usage [200 OK, 295B, 4ms]
+  √  Q11 Ghi nhận đã dùng mã: 200
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 354B, 2ms]
+  √  Q12 Dùng lại mã đã hết lượt (có user_id): 400
+  POST http://localhost:3000/api/apply-coupon [200 OK, 399B, 2ms]
+ 44. Q13 [B23] Bỏ user_id khỏi body không được qua mặt giới hạn lượt dùng (FR-09 C5)
+  POST http://localhost:3000/api/coupon-usage [401 Unauthorized, 301B, 1ms]
+  √  Q14 Ghi nhận dùng mã không có token: 401
+  GET http://localhost:3000/api/coupons [200 OK, 1.04kB, 1ms]
+  √  Q15 Admin xem danh sách mã: 200, có 4 mã mẫu trở lên
+  GET http://localhost:3000/api/coupons [200 OK, 1.04kB, 2ms]
+ 45. Q16 [B24] Người dùng thường không được xem danh sách mã (403)
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 5ms]
+ 46. Q17 [B24] Người dùng thường không được tạo mã giảm giá (403)
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 6ms]
+ 47. Q18 [B11] Tạo mã giảm giá với body rỗng phải bị từ chối (400)
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 2ms]
+ 48. Q19 [B29] Tạo mã trùng code phải trả 400/409, không được trả 500 kèm lỗi cơ sở dữ liệu
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 5ms]
+ 49. Q20 [B24] Người dùng thường không được xóa mã giảm giá (403)
+  GET http://localhost:3000/api/admin/users [200 OK, 3.33kB, 1ms]
+  √  D01 Admin xem danh sách người dùng: 200, không chứa password
+  GET http://localhost:3000/api/admin/users [200 OK, 3.33kB, 2ms]
+ 50. D02 [B5] Người dùng thường không được xem danh sách người dùng (403) (FR-12, SEC-03)
+  GET http://localhost:3000/api/admin/users [401 Unauthorized, 301B, 1ms]
+  √  D03 Xem danh sách người dùng không có token: 401
+  GET http://localhost:3000/api/admin/orders [200 OK, 1.18kB, 2ms]
+  √  D04 Admin xem đơn toàn hệ thống: 200, có user_name
+  GET http://localhost:3000/api/admin/orders [200 OK, 1.18kB, 2ms]
+ 51. D05 [B24] Người dùng thường không được xem đơn toàn hệ thống (403)
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 6ms]
+  √  D06 Import 1 sản phẩm hợp lệ: 200, inserted = 1
+  POST http://localhost:3000/api/admin/import-products [400 Bad Request, 323B, 2ms]
+  √  D07 Import mảng rỗng: 400
+  POST http://localhost:3000/api/admin/import-products [200 OK, 394B, 1ms]
+  √  D08 Import dòng thiếu name: inserted = 0 và có 1 lỗi
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 4ms]
+ 52. D09 [B24] Người dùng thường không được import sản phẩm (403)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 659B, 1ms]
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 4ms]
+ 53. D10 [B24] Người dùng thường không được xóa người dùng khác (403)
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 2ms]
+  √  D11 Admin xóa người dùng: 200
+  DELETE http://localhost:3000/api/admin/users/99999 [200 OK, 293B, 2ms]
+ 54. D12 [B12] Xóa người dùng không tồn tại phải trả 404
+  POST http://localhost:3000/api/admin/import-products [200 OK, 357B, 6ms]
+  GET http://localhost:3000/api/products?search=ZZ-TEST-mvj9zphq-impok [200 OK, 376B, 2ms]
+ 55. D13 [B32] Import có dòng lỗi (giá âm) phải bị từ chối toàn bộ, không lưu dòng nào (FR-16)
+  POST http://localhost:3000/api/register [200 OK, 317B, 4ms]
+  POST http://localhost:3000/api/login [200 OK, 659B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 5ms]
+  POST http://localhost:3000/api/login [200 OK, 662B, 2ms]
+  GET http://localhost:3000/api/users/me [200 OK, 476B, 1ms]
+  DELETE http://localhost:3000/api/admin/users/23 [200 OK, 293B, 5ms]
+ 56. D14 [B33] Admin không được tự xóa tài khoản của chính mình (400/403) (FR-19)
+  GET http://localhost:3000/api/products [200 OK, 2.11kB, 2ms]
+  DELETE http://localhost:3000/api/products/6 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/7 [200 OK, 296B, 2ms]
+  DELETE http://localhost:3000/api/products/8 [200 OK, 296B, 6ms]
+  DELETE http://localhost:3000/api/products/9 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/10 [200 OK, 296B, 5ms]
+  DELETE http://localhost:3000/api/products/11 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/12 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/products/13 [200 OK, 296B, 3ms]
+  DELETE http://localhost:3000/api/products/14 [200 OK, 296B, 4ms]
+  DELETE http://localhost:3000/api/categories/4 [200 OK, 297B, 2ms]
+  DELETE http://localhost:3000/api/categories/5 [200 OK, 297B, 4ms]
+  DELETE http://localhost:3000/api/categories/6 [200 OK, 297B, 4ms]
+  DELETE http://localhost:3000/api/admin/coupons/5 [200 OK, 295B, 1ms]
+  DELETE http://localhost:3000/api/admin/coupons/6 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/7 [200 OK, 295B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/3 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/4 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/5 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/6 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/7 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/8 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/9 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/10 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/11 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/12 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/13 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/14 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/15 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/16 [200 OK, 293B, 5ms]
+  DELETE http://localhost:3000/api/admin/users/17 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/18 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/19 [200 OK, 293B, 4ms]
+  DELETE http://localhost:3000/api/admin/users/20 [200 OK, 293B, 2ms]
+  DELETE http://localhost:3000/api/admin/users/21 [200 OK, 293B, 3ms]
+  DELETE http://localhost:3000/api/admin/users/22 [200 OK, 293B, 1ms]
+  DELETE http://localhost:3000/api/admin/users/23 [200 OK, 293B, 2ms]
+  ┌
+  │ 'Đã dọn: 9 sản phẩm, 3 danh mục, 3 mã giảm giá, 21 người dùng. Đơn hàng tạo ra không xóa được (không có API x
+  │ óa); khởi động lại server để làm sạch hoàn toàn.'
+  └
+
+┌─────────────────────────┬─────────────────┬────────────────┐
+│                         │        executed │         failed │
+├─────────────────────────┼─────────────────┼────────────────┤
+│              iterations │               1 │              0 │
+├─────────────────────────┼─────────────────┼────────────────┤
+│                requests │             202 │              0 │
+├─────────────────────────┼─────────────────┼────────────────┤
+│            test-scripts │               1 │              0 │
+├─────────────────────────┼─────────────────┼────────────────┤
+│      prerequest-scripts │               0 │              0 │
+├─────────────────────────┼─────────────────┼────────────────┤
+│              assertions │             118 │             56 │
+├─────────────────────────┴─────────────────┴────────────────┤
+│ total run duration: 2.9s                                   │
+├────────────────────────────────────────────────────────────┤
+│ total data received: 30.96kB (approx)                      │
+├────────────────────────────────────────────────────────────┤
+│ average response time: 3ms [min: 1ms, max: 9ms, s.d.: 1ms] │
+└────────────────────────────────────────────────────────────┘
+
+   #  failure                detail
+
+ 01.  AssertionError         A02 [B1] Login không được trả mật khẩu trong user
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:2 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 02.  AssertionError         A06 [B27] Sau 2 lần sai tài khoản chưa được khóa (FR-02: chỉ khóa từ lần sai thứ 3)
+                             HTTP status (nhận 403, nội dung: {"error":"Tài khoản đã bị khóa. Vui lòng thử lại
+                             sau."}): expected 403 to equal 200
+                             at assertion:6 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 03.  AssertionError         A08 [B9] Đăng ký trùng email phải bị từ chối (400/409)
+                             expected 200 to be one of [ 400, 409 ]
+                             at assertion:8 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 04.  AssertionError         A09 [B10] Đăng ký với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"User registered successfully","id":6}):
+                             expected 200 to equal 400
+                             at assertion:9 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 05.  AssertionError         A11 [B28] Mã OTP đặt lại mật khẩu phải có tối thiểu 6 chữ số (FR-03, SEC-07)
+                             expected 4 to be at least 6
+                             at assertion:11 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 06.  AssertionError         A17 [O2] JWT phải có thời hạn (claim exp)
+                             expected { Object (id, role, ...) } to have property 'exp'
+                             at assertion:17 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 07.  AssertionError         U02 [B2] Hồ sơ không được chứa password
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'password'
+                             at assertion:20 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 08.  AssertionError         U03 [B2] Hồ sơ không được chứa reset_token
+                             expected { id: 2, name: 'Test User', …(8) } to not have property 'reset_token'
+                             at assertion:21 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 09.  AssertionError         U06 [B16] Cập nhật chỉ name không được xóa shipping_address và phone
+                             shipping_address sau khi chỉ gửi name: expected null to equal '123 Le Loi'
+                             at assertion:24 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 10.  AssertionError         U07 [B15] Người dùng không được tự đổi role thành admin (SEC-06)
+                             expected 'admin' to equal 'user'
+                             at assertion:25 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 11.  AssertionError         U08 [B30] Số điện thoại không hợp lệ (9999) phải bị từ chối (400) (FR-04)
+                             HTTP status (nhận 200, nội dung: {"message":"Profile updated"}): expected 200 to
+                             equal 400
+                             at assertion:26 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 12.  AssertionError         P04 [B3] Chi tiết sản phẩm id 2: price phải là số
+                             expected '28000000' to be a number
+                             at assertion:30 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 13.  AssertionError         P05 [B7] Sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {}): expected 200 to equal 404
+                             at assertion:31 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 14.  AssertionError         P08 [B17] Tìm kiếm có dấu ' không được gây lỗi 500 hoặc trả HTML (SEC-05)
+                             status: expected 500 to not equal 500
+                             at assertion:34 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 15.  AssertionError         P09 [B17] Chuỗi tìm kiếm chứa ' OR 1=1 -- chỉ là văn bản, không được trả toàn bộ sản
+                             phẩm (SEC-05)
+                             số sản phẩm trả về: expected 5 to equal +0
+                             at assertion:35 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 16.  AssertionError         P10 [B8] Thêm sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":6}): expected 200
+                             to equal 401
+                             at assertion:36 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 17.  AssertionError         P12 [B11] Thêm sản phẩm với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":8}): expected 200
+                             to equal 400
+                             at assertion:38 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 18.  AssertionError         P13 [B11] Thêm sản phẩm thiếu price phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":9}): expected 200
+                             to equal 400
+                             at assertion:39 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 19.  AssertionError         P15 [B12] Cập nhật sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Product updated"}): expected 200 to
+                             equal 404
+                             at assertion:41 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 20.  AssertionError         P16 [B8] Cập nhật sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product updated"}): expected 200 to
+                             equal 401
+                             at assertion:42 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 21.  AssertionError         P17 [B8] Xóa sản phẩm không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung: {"message":"Product deleted"}): expected 200 to
+                             equal 401
+                             at assertion:43 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 22.  AssertionError         P18 [B12] Xóa sản phẩm không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Product deleted"}): expected 200 to
+                             equal 404
+                             at assertion:44 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 23.  AssertionError         P19 [B31] Thêm sản phẩm với giá âm phải bị từ chối (400) (FR-15)
+                             HTTP status (nhận 200, nội dung: {"message":"Product created","id":10}): expected 200
+                             to equal 400
+                             at assertion:45 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 24.  AssertionError         C04 [B24] Người dùng thường không được thêm danh mục (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Category created","id":5}): expected 200
+                             to equal 403
+                             at assertion:49 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 25.  AssertionError         C05 [B11] Thêm danh mục với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Category created","id":6}): expected 200
+                             to equal 400
+                             at assertion:50 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 26.  AssertionError         C07 [B12] Cập nhật danh mục không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Category updated"}): expected 200 to
+                             equal 404
+                             at assertion:52 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 27.  AssertionError         C08 [B12] Xóa danh mục không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"Category deleted"}): expected 200 to
+                             equal 404
+                             at assertion:53 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 28.  AssertionError         C09 [B24] Người dùng thường không được xóa danh mục (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Category deleted"}): expected 200 to
+                             equal 403
+                             at assertion:54 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 29.  AssertionError         K02b [B25] Thêm cùng sản phẩm lần 2 phải tăng số lượng, không tạo dòng mới (FR-07)
+                             số dòng trong giỏ: expected 2 to equal 1
+                             at assertion:57 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 30.  AssertionError         K03 [B18] Thêm vào giỏ với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Added to cart"}): expected 200 to equal
+                             400
+                             at assertion:58 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 31.  AssertionError         K04 [B19] Giá trong giỏ phải lấy từ danh mục sản phẩm (30000000), không tin giá
+                             client gửi (1)
+                             expected 1 to equal 30000000
+                             at assertion:59 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 32.  AssertionError         K05 [B20] Sau khi thanh toán giỏ hàng phải được làm rỗng (FR-08)
+                             expected [ { id: 1, …(3) } ] to deeply equal []
+                             at assertion:60 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 33.  AssertionError         O03 [B13] Thanh toán với giỏ trống phải bị từ chối (400) (FR-08)
+                             HTTP status (nhận 200, nội dung: {"message":"Checkout successful","orderId":3}):
+                             expected 200 to equal 400
+                             at assertion:63 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 34.  AssertionError         O04 [B13] Backend phải tự tính lại tổng tiền, tổng sai lệch giỏ hàng bị từ chối
+                             (FR-08)
+                             HTTP status (nhận 200, nội dung: {"message":"Checkout successful","orderId":4}):
+                             expected 200 to equal 400
+                             at assertion:64 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 35.  AssertionError         O07 [B6] Xem đơn không có token phải bị từ chối (401)
+                             HTTP status (nhận 200, nội dung:
+                             {"id":2,"user_id":16,"total_amount":30000000,"status":"pending","shipping_address":"…
+                             Test","created_at":"2026-10-22 0): expected 200 to equal 401
+                             at assertion:67 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 36.  AssertionError         O08 [B6] Xem đơn của người khác phải bị từ chối (403/404)
+                             expected 200 to be one of [ 403, 404 ]
+                             at assertion:68 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 37.  AssertionError         O14 [B22] Đơn đã hủy (trạng thái kết thúc) không được chuyển sang delivered (FR-10)
+                             HTTP status (nhận 200, nội dung: {"message":"Order status updated"}): expected 200 to
+                             equal 400
+                             at assertion:74 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 38.  AssertionError         O20 [B21] User không được tự hủy đơn đang shipping (FR-10)
+                             HTTP status (nhận 200, nội dung: {"message":"Order canceled successfully"}): expected
+                             200 to equal 400
+                             at assertion:80 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 39.  AssertionError         O22 [B24] Người dùng thường không được đổi trạng thái đơn (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Order status updated"}): expected 200 to
+                             equal 403
+                             at assertion:82 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 40.  AssertionError         Q01 [B4] SAVE10 (10%) với đơn 1.000.000: giảm 100.000
+                             expected -9000000 to equal 100000
+                             at assertion:83 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 41.  AssertionError         Q02 [B4] SAVE10 với đơn 1.000.000: thành tiền 900.000
+                             expected 10000000 to equal 900000
+                             at assertion:84 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 42.  AssertionError         Q04 [B14] Đơn đúng bằng mức tối thiểu 300.000 phải được áp dụng mã (FR-09 C3: >=)
+                             HTTP status (nhận 400, nội dung: {"error":"Đơn hàng chưa đủ giá trị tối thiểu 300,000
+                             ₫ để áp dụng mã này"}): expected 400 to equal 200
+                             at assertion:86 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 43.  AssertionError         Q08b [B26] Áp dụng mã giảm giá phải yêu cầu đăng nhập (401) (FR-09 C4)
+                             HTTP status (nhận 200, nội dung:
+                             {"success":true,"coupon_id":1,"discount_amount":-9000000,"final_amount":10000000,"me…
+                             dụng thành công! Giảm 10%): expected 200 to equal 401
+                             at assertion:91 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 44.  AssertionError         Q13 [B23] Bỏ user_id khỏi body không được qua mặt giới hạn lượt dùng (FR-09 C5)
+                             expected 200 to not equal 200
+                             at assertion:96 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 45.  AssertionError         Q16 [B24] Người dùng thường không được xem danh sách mã (403)
+                             HTTP status (nhận 200, nội dung:
+                             [{"id":1,"code":"SAVE10","type":"percent","discount_value":10,"min_order_amount":300…
+                             expected 200 to equal 403
+                             at assertion:99 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 46.  AssertionError         Q17 [B24] Người dùng thường không được tạo mã giảm giá (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon created","id":6}): expected 200
+                             to equal 403
+                             at assertion:100 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 47.  AssertionError         Q18 [B11] Tạo mã giảm giá với body rỗng phải bị từ chối (400)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon created","id":7}): expected 200
+                             to equal 400
+                             at assertion:101 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 48.  AssertionError         Q19 [B29] Tạo mã trùng code phải trả 400/409, không được trả 500 kèm lỗi cơ sở dữ
+                             liệu
+                             expected 500 to be one of [ 400, 409 ]
+                             at assertion:102 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 49.  AssertionError         Q20 [B24] Người dùng thường không được xóa mã giảm giá (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Coupon deleted"}): expected 200 to equal
+                             403
+                             at assertion:103 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 50.  AssertionError         D02 [B5] Người dùng thường không được xem danh sách người dùng (403) (FR-12, SEC-03)
+                             HTTP status (nhận 200, nội dung: [{"id":1,"name":"Admin
+                             User","email":"admin@eshop.com","role":"admin","login_attempts":0,"locked_until":nul…
+                             expected 200 to equal 403
+                             at assertion:105 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 51.  AssertionError         D05 [B24] Người dùng thường không được xem đơn toàn hệ thống (403)
+                             HTTP status (nhận 200, nội dung:
+                             [{"id":6,"user_id":20,"total_amount":500000,"status":"delivered","shipping_address":…
+                             address","created_at":"2026-10-2): expected 200 to equal 403
+                             at assertion:108 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 52.  AssertionError         D09 [B24] Người dùng thường không được import sản phẩm (403)
+                             HTTP status (nhận 200, nội dung: {"message":"Import hoàn tất: 1/1 sản phẩm được
+                             thêm","inserted":1,"errors":[]}): expected 200 to equal 403
+                             at assertion:112 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 53.  AssertionError         D10 [B24] Người dùng thường không được xóa người dùng khác (403)
+                             HTTP status (nhận 200, nội dung: {"message":"User deleted"}): expected 200 to equal
+                             403
+                             at assertion:113 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 54.  AssertionError         D12 [B12] Xóa người dùng không tồn tại phải trả 404
+                             HTTP status (nhận 200, nội dung: {"message":"User deleted"}): expected 200 to equal
+                             404
+                             at assertion:115 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 55.  AssertionError         D13 [B32] Import có dòng lỗi (giá âm) phải bị từ chối toàn bộ, không lưu dòng nào
+                             (FR-16)
+                             số sản phẩm đã thêm: expected 2 to equal +0
+                             at assertion:116 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+ 56.  AssertionError         D14 [B33] Admin không được tự xóa tài khoản của chính mình (400/403) (FR-19)
+                             expected 200 to be one of [ 400, 403 ]
+                             at assertion:117 in test-script
+                             inside "00 RUN ALL - Chạy toàn bộ bộ test (bấm Send một lần)"
+
+==================== TỔNG KẾT ====================
+┌─────────┬────────────┬──────────┬────────────┬────────────┬────────┬──────────────────────────────┐
+│ (index) │ suite      │ requests │ iterations │ assertions │ failed │ status                       │
+├─────────┼────────────┼──────────┼────────────┼────────────┼────────┼──────────────────────────────┤
+│ 0       │ 'full'     │ 68       │ 1          │ 131        │ 18     │ 'khớp danh sách lỗi đã biết' │
+│ 1       │ 'login'    │ 9        │ 9          │ 27         │ 3      │ 'khớp danh sách lỗi đã biết' │
+│ 2       │ 'products' │ 8        │ 8          │ 18         │ 5      │ 'khớp danh sách lỗi đã biết' │
+│ 3       │ 'allin1'   │ 202      │ 1          │ 118        │ 56     │ 'chưa có baseline'           │
+└─────────┴────────────┴──────────┴────────────┴────────────┴────────┴──────────────────────────────┘
+Báo cáo HTML: thư mục reports/ (mở file .html bằng trình duyệt).
+Lưu ý: test đỏ là các lỗi đã biết của hệ thống EShop; dùng --baseline để so với danh sách lỗi đã biết.
