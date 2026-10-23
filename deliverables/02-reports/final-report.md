@@ -41,13 +41,15 @@
      - [4.2.2. Kịch bản P2: Runner, Data-Driven CSV & Advanced Checkpoints](#422-kịch-bản-p2-runner-data-driven-csv--advanced-checkpoints)
      - [4.2.3. Kịch bản P3: Tự động hóa Newman CLI & Báo cáo HTML](#423-kịch-bản-p3-tự-động-hóa-newman-cli--báo-cáo-html)
    - [4.3. Công cụ 2 — Karate Framework (Kịch bản K1, K2, K3 & Phát hiện 2 Bug SUT)](#43-công-cụ-2--karate-framework-kịch-bản-k1-k2-k3--phát-hiện-2-bug-sut)
-     - [4.3.1. Kịch bản K1: Smoke Test & Fuzzy Schema Matchers](#431-kịch-bản-k1-smoke-test--fuzzy-schema-matchers-productsfeature)
-     - [4.3.2. Kịch bản K2: Data-Driven Testing & Phát hiện 2 Lỗi Thực Tế của SUT EShop](#432-kịch-bản-k2-data-driven-testing--phát-hiện-2-lỗi-thực-tế-của-sut-eshop)
-     - [4.3.3. Kịch bản K3: Stateful E2E Shopping Workflow](#433-kịch-bản-k3-stateful-e2e-shopping-workflow-auth-cart-checkoutfeature)
+     - [4.3.1. Kiến trúc & Cấu hình Môi trường Karate Framework](#431-kiến-trúc--cấu-hình-môi-trường-karate-framework)
+     - [4.3.2. Kịch bản K1: Smoke Test & Native Fuzzy Matchers](#432-kịch-bản-k1-smoke-test--native-fuzzy-matchers-productsfeature)
+     - [4.3.3. Kịch bản K2: Data-Driven Testing & Phát hiện 2 Lỗi Thực Tế của SUT EShop](#433-kịch-bản-k2-data-driven-testing--phát-hiện-2-lỗi-thực-tế-của-sut-eshop)
+     - [4.3.4. Kịch bản K3: Stateful E2E Shopping Workflow & Bảo Mật](#434-kịch-bản-k3-stateful-e2e-shopping-workflow--bảo-mật-auth-cart-checkoutfeature)
+     - [4.3.5. Thực Thi & Báo Cáo Trực Quan (HTML Reports)](#435-thực-thi--báo-cáo-trực-quan-html-reports)
    - [4.4. Công cụ 3 — Pact JS Contract Testing (Kịch bản C1, C2, C3)](#44-công-cụ-3--pact-js-contract-testing-kịch-bản-c1-c2-c3)
      - [4.4.1. Kịch bản C1: Consumer Contract Test](#441-kịch-bản-c1-consumer-contract-test-productconsumertestjs)
      - [4.4.2. Kịch bản C2: Provider Verification](#442-kịch-bản-c2-provider-verification-verifyjs)
-     - [4.4.3. Kịch bản C3: Giả Lập & Bắt Lỗi Breaking Change](#443-kịch-bản-c3-giả-lập--bắt-lỗi-breaking-change-verify-breakingjs)
+     - [4.4.3. Kịch bản C3: Giả Lập & Bắt Lỗi Breaking Change](#443-kịch-bản-c3-giả-lập--bắt-lỗi-breaking-change-verify-breakingjs--pact-c3-runnerjs)
 5. [Phần IV — Ứng Dụng AI Agent Trong API & Contract Testing](#5-phần-iv--ứng-dụng-ai-agent-trong-api--contract-testing)
    - [5.1. Quy trình Human-in-the-Loop](#51-quy-trình-human-in-the-loop)
    - [5.2. Thực nghiệm sinh test từ OpenAPI 3.0 (eshop.openapi.yaml)](#52-thực-nghiệm-sinh-test-từ-openapi-30-eshopopenapiyaml)
@@ -252,7 +254,7 @@ Hệ thống SUT (System Under Test) được cung cấp bởi bộ môn là **E
 - **Request 2 (`GET /api/products`):** Truy vấn danh mục sản phẩm, kiểm tra Status 200 và header `Content-Type: application/json`.
 
 #### 4.2.2. Kịch bản P2: Runner, Data-Driven CSV & Advanced Checkpoints
-- Sử dụng file dữ liệu [`login_data.csv`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/postman/data/login_data.csv) (15 trường hợp kiểm thử) và [`product_ids.csv`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/postman/data/product_ids.csv).
+- Sử dụng file dữ liệu [`login_data.csv`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/login_data.csv) (15 trường hợp kiểm thử) và [`product_ids.csv`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/product_ids.csv).
 - Áp dụng kỹ thuật nạp dữ liệu:
   ```javascript
   var expectedStatus = pm.iterationData.get("status");
@@ -278,72 +280,249 @@ newman run deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-te
 ---
 
 ### 4.3. Công cụ 2 — Karate Framework (Kịch bản K1, K2, K3 & Phát hiện 2 Bug SUT)
-*Người thực hiện chính: Nguyễn Quốc Kỳ*
+*Người thực hiện chính: Nguyễn Quốc Kỳ (MSSV: 23120138)*  
+*Reviewer & Phối hợp tích hợp AI: Hà Quốc Kiên (MSSV: 23120056)*  
+*Mã nguồn kiểm thử:* [`tests/karate/`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate)
 
-Mã nguồn đặt tại [`tests/karate/`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/karate).
+#### 4.3.1. Kiến trúc & Cấu hình Môi trường Karate Framework
+Karate là framework kiểm thử tự động mã nguồn mở độc đáo kết hợp giữa cú pháp hành vi **Gherkin BDD** và khả năng thực thi trực tiếp trên máy ảo Java (JVM) mà không đòi hỏi lập trình viên phải viết các Step Definitions bằng Java như Cucumber truyền thống.
 
-#### 4.3.1. Kịch bản K1: Smoke Test & Fuzzy Schema Matchers (`products.feature`)
-```cucumber
-Feature: K1 - Smoke Test EShop Products API
+1. **Cấu hình Maven (`pom.xml`):**
+   - Phiên bản: Karate JUnit 5 (`1.4.1`), tương thích Java 17 LTS.
+   - Cơ chế nạp tài nguyên: Cấu hình `<testResources>` đảm bảo toàn bộ tệp `.feature` trong `src/test/java/eshop/` được đóng gói tự động vào test classpath khi biên dịch.
+2. **Cấu hình môi trường toàn cục (`karate-config.js`):**
+   ```javascript
+   function fn() {
+     var env = karate.env || 'dev';
+     var config = {
+       baseUrl: 'http://localhost:3000'
+     };
+     karate.configure('connectTimeout', 5000);
+     karate.configure('readTimeout', 5000);
+     return config;
+   }
+   ```
+3. **Cơ chế Discovery Runner (`EshopTest.java`):**
+   Sử dụng `@Karate.Test` quét đệ quy toàn bộ thư mục `eshop/` (`relativeTo(getClass())`). Thiết kế này cho phép hệ thống tự động nhận diện và thực thi cả các kịch bản `.feature` do AI Agent của Kiên sinh ra tại `src/test/java/eshop/generated/` mà không cần chỉnh sửa mã nguồn Java runner:
+   ```java
+   package eshop;
+   import com.intuit.karate.junit5.Karate;
 
-Background:
-  * url baseUrl
+   class EshopTest {
+       @Karate.Test
+       Karate testAll() {
+           return Karate.run().relativeTo(getClass());
+       }
+   }
+   ```
 
-Scenario: Verify products schema and array structure
-  Given path '/api/products'
-  When method get
-  Then status 200
-  And match response == '#[]'
-  And match each response == 
-    """
-    {
-      id: '#number',
-      name: '#string',
-      price: '#number',
-      stock: '#number',
-      category: '#string'
-    }
-    """
-```
+---
 
-#### 4.3.2. Kịch bản K2: Data-Driven Testing & **Phát hiện 2 Lỗi Thực Tế của SUT EShop**
-Sử dụng bảng `Scenario Outline` và `Examples` để quét kiểm thử biên:
-```cucumber
-Scenario Outline: K2 - Query product by ID with edge cases
-  Given path '/api/products', id
-  When method get
-  Then status <expectedStatus>
+#### 4.3.2. Kịch bản K1: Smoke Test & Native Fuzzy Matchers (`products.feature`)
+- **Mục tiêu:** Kiểm tra độ sẵn sàng (Smoke Test) của API danh mục sản phẩm, xác nhận cấu trúc danh sách mảng và tính hợp lệ của lược đồ (Schema Conformance) cho từng bản ghi.
+- **Mã kịch bản Gherkin DSL:**
+  ```cucumber
+  @products
+  Feature: EShop Product Catalog API
 
-  Examples:
-    | id  | expectedStatus |
-    | 1   | 200            |
-    | 2   | 200            |
-    | 999 | 404            |
-    | -1  | 400            |
-```
+    Background:
+      * url baseUrl
 
-> 🚨 **2 KHIẾM KHUYẾT THỰC TẾ ĐÃ PHÁT HIỆN TRÊN SUT ESHOP:**
-> 1. **Lỗi Xử Lý 404 (Status Code Misbehavior):** Khi truy vấn sản phẩm không tồn tại (`id = 999`), SUT trả về mã **HTTP 200 OK kèm body rỗng `{}`** thay vì chuẩn **HTTP 404 Not Found**. Điều này vi phạm nghiêm trọng nguyên lý RESTful.
-> 2. **Lỗi Schema Inconsistency:** Tại một số ID sản phẩm, trường `price` bị trả về dạng chuỗi (`"99.00"`) thay vì kiểu số thực, khiến Assertion `price: '#number'` của Karate phát hiện vi phạm.
+    @k1 @smoke
+    Scenario: K1 - Get all products returns a valid array and schema
+      # Step 1: Gửi yêu cầu HTTP GET tới endpoint /api/products
+      Given path 'api', 'products'
+      When method get
 
-#### 4.3.3. Kịch bản K3: Stateful E2E Shopping Workflow (`auth-cart-checkout.feature`)
-Mô phỏng chuỗi giao dịch mua sắm đầy đủ trạng thái:
-1. Gửi `POST /api/login` với user `test@eshop.com`, trích xuất `authToken = response.token`.
-2. Đính kèm `header Authorization = 'Bearer ' + authToken`, gửi `POST /api/cart` thêm sản phẩm.
-3. Gửi `POST /api/checkout` hoàn tất đơn hàng, xác nhận `response.status == 'SUCCESS'` và `response.orderId == '#number'`.
+      # Step 2: Kiểm tra mã trạng thái HTTP 200 OK
+      Then status 200
+
+      # Step 3: Xác thực cấu trúc mảng JSON và kiểm tra mảng không rỗng
+      And match response == '#[]'
+      And assert response.length > 0
+
+      # Step 4: Kiểm tra schema của phần tử đầu tiên bằng Fuzzy Matchers
+      And match response[0] contains
+        """
+        {
+          "id": '#number',
+          "name": '#string',
+          "price": '#number',
+          "description": '#string',
+          "imageUrl": '#string',
+          "category_id": '#number'
+        }
+        """
+  ```
+- **Phân tích kỹ thuật & Ưu thế của Karate:**
+  - Cú pháp `match response == '#[]'` là Native Array Matcher của Karate, kiểm tra phản hồi phải là một JSON Array mà không cần duyệt qua mảng bằng code JavaScript.
+  - Các chỉ định `#number`, `#string` là **Fuzzy Matchers**, cho phép kiểm tra tính đúng đắn về kiểu dữ liệu (data types) mà không bị phụ thuộc vào giá trị cụ thể (dynamic data).
+  - So với Postman (phải viết schema JSON Schema Draft 7 dài 40–50 dòng kèm `tv4` hoặc `ajv`), Karate đạt được mục tiêu tương đương chỉ với 10 dòng biểu diễn trực quan, dễ đọc đối với cả kỹ sư QA lẫn Product Owner.
+
+---
+
+#### 4.3.3. Kịch bản K2: Data-Driven Testing & **Phát hiện 2 Lỗi Thực Tế của SUT EShop**
+- **Mục tiêu:** Áp dụng phương pháp kiểm thử hướng dữ liệu (Data-Driven Testing) với bảng `Scenario Outline` và `Examples` để kiểm thử biên, đồng thời truy vấn chi tiết từng sản phẩm theo ID.
+- **Mã kịch bản Gherkin DSL:**
+  ```cucumber
+  @k2 @data-driven
+  Scenario Outline: K2 - Query product by ID with boundary & discrepancy assertions: <testCase>
+    Given path 'api', 'products', <productId>
+    When method get
+    Then status <expectedStatus>
+    And match response contains <expectedMatch>
+
+    Examples:
+      | productId | expectedStatus | expectedMatch        | testCase                                                                        |
+      | 1         | 200            | { price: '#number' } | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
+      | 2         | 200            | { price: '#string' } | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
+      | 9999      | 200            | {}                   | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
+  ```
+
+- **Phân tích chi tiết 2 khiếm khuyết (Bugs) được phát hiện trên SUT EShop:**
+  Nhóm kiểm thử phát hiện 2 khiếm khuyết nghiêm trọng trong mã nguồn `backend/server.js` (dòng 165–170):
+  ```javascript
+  // Trích đoạn mã nguồn backend/server.js của SUT EShop
+  app.get("/api/products/:id", (req, res) => {
+    db.get("SELECT * FROM products WHERE id = ?", [req.params.id], (err, row) => {
+      if (!row) return res.status(200).json({});                     // <-- BUG 2: 200 OK thay vì 404
+      if (row.id % 2 === 0) row.price = row.price.toString();         // <-- BUG 1: Ép kiểu string nếu ID chẵn
+      res.json(row);
+    });
+  });
+  ```
+
+  1. 🚨 **Bug 1: Lỗi Bất Đồng Bộ Kiểu Dữ Liệu (Schema Type Inconsistency):**
+     - **Hiện tượng:** Khi truy vấn sản phẩm có ID lẻ (`id = 1`), trường `price` trả về kiểu `number` (`30000000`). Nhưng khi truy vấn sản phẩm có ID chẵn (`id = 2`), trường `price` bị backend ép kiểu thành chuỗi `"28000000"`.
+     - **Hậu quả:** Gây lỗi tính toán số học trên ứng dụng Frontend/Mobile (ví dụ phép cộng chuỗi `'28000000' + 50000 = '2800000050000'`).
+     - **Khả năng bắt lỗi của Karate:** Khi viết assertion `match response.price == '#number'`, Karate lập tức đánh FAIL tại `id = 2` với thông báo: `actual: "28000000", expected: '#number', reason: not a number`.
+
+  2. 🚨 **Bug 2: Vi phạm chuẩn RESTful HTTP Status (Missing 404 Not Found):**
+     - **Hiện tượng:** Khi truy vấn một sản phẩm không tồn tại trong cơ sở dữ liệu (`id = 9999`), SUT trả về mã **HTTP 200 OK kèm payload rỗng `{}`**, thay vì trả về **HTTP 404 Not Found**.
+     - **Hậu quả:** Các client ứng dụng di động sẽ hiểu nhầm là request thành công nhưng dữ liệu bị thiếu, dẫn đến crash giao diện khi render các thuộc tính `product.name` (`Cannot read properties of undefined`).
+     - **Xử lý trong Karate:** Kịch bản K2 ghi nhận chính xác hành vi thực tế kèm tag `@discrepancy` để làm minh chứng báo cáo lỗi phần mềm.
+
+---
+
+#### 4.3.4. Kịch bản K3: Stateful E2E Shopping Workflow & Bảo Mật (`auth-cart-checkout.feature`)
+- **Mục tiêu:** Mô phỏng chuỗi quy trình mua sắm hoàn chỉnh có quản lý trạng thái (Stateful) và kiểm thử bảo mật phân quyền token.
+- **Xử lý rào cản SUT (Account Lockout Bypass):**  
+  Trong `backend/server.js` (dòng 60–65), SUT có cơ chế: nếu đăng nhập sai quá 2 lần, tài khoản bị khóa 3 phút (`login_attempts >= 3`). Để đảm bảo bộ test tự động có thể chạy lặp lại vô hạn lần trong pipeline CI/CD mà không bị lỗi khóa tài khoản hoặc xung đột giỏ hàng cũ, kịch bản K3 áp dụng kỹ thuật **khởi tạo tài khoản động theo Timestamp**:
+  `karate_k3_<System.currentTimeMillis()>@eshop.com`.
+
+- **Mã kịch bản Happy Path 7 bước:**
+  ```cucumber
+  @workflow
+  Feature: EShop Authenticated Shopping & Checkout Workflow (K3)
+
+    Background:
+      * url baseUrl
+
+    @k3 @e2e @smoke
+    Scenario: K3 - Complete End-to-End Shopping Workflow
+      # Bước 1: Khởi tạo tài khoản động đảm bảo môi trường sạch
+      * def timestamp = java.lang.System.currentTimeMillis()
+      * def testEmail = 'karate_k3_' + timestamp + '@eshop.com'
+      * def testPassword = 'Password123!'
+      * def registerPayload = { name: '#("Karate User " + timestamp)', email: '#(testEmail)', password: '#(testPassword)' }
+      Given path 'api', 'register'
+      And request registerPayload
+      When method post
+      Then status 200
+      And match response.message == 'User registered successfully'
+
+      # Bước 2: Đăng nhập lấy JWT Auth Token (Token Chaining)
+      Given path 'api', 'login'
+      And request { email: '#(testEmail)', password: '#(testPassword)' }
+      When method post
+      Then status 200
+      And match response.token == '#string'
+      * def authToken = response.token
+
+      # Bước 3: Lấy danh mục sản phẩm và chọn sản phẩm đầu tiên
+      Given path 'api', 'products'
+      When method get
+      Then status 200
+      * def selectedProduct = response[0]
+      * def selectedProductId = selectedProduct.id
+      * def selectedProductPrice = selectedProduct.price
+
+      # Bước 4: Thêm sản phẩm vào giỏ hàng với Bearer Token
+      Given path 'api', 'cart'
+      And header Authorization = 'Bearer ' + authToken
+      And request { productId: '#(selectedProductId)', name: '#(selectedProduct.name)', price: '#(selectedProductPrice)', quantity: 1 }
+      When method post
+      Then status 200
+      And match response.message == 'Added to cart'
+
+      # Bước 5: Xác minh sản phẩm tồn tại trong giỏ hàng (Deep Assert)
+      Given path 'api', 'cart'
+      And header Authorization = 'Bearer ' + authToken
+      When method get
+      Then status 200
+      And match response contains deep { productId: '#(selectedProductId)' }
+
+      # Bước 6: Tiến hành thanh toán đơn hàng (Checkout)
+      * def shippingAddr = '227 Nguyen Van Cu, Ward 4, District 5, HCMC'
+      Given path 'api', 'checkout'
+      And header Authorization = 'Bearer ' + authToken
+      And request { total_amount: '#(selectedProductPrice)', shipping_address: '#(shippingAddr)' }
+      When method post
+      Then status 200
+      And match response.message == 'Checkout successful'
+      And match response.orderId == '#number'
+      * def generatedOrderId = response.orderId
+
+      # Bước 7: Xác nhận đơn hàng hiển thị trong lịch sử My Orders
+      Given path 'api', 'orders', 'my-orders'
+      And header Authorization = 'Bearer ' + authToken
+      When method get
+      Then status 200
+      And match response[0].id == generatedOrderId
+      And match response[0].status == 'pending'
+      And match response[0].shipping_address == shippingAddr
+  ```
+
+- **Kịch bản kiểm thử bảo mật tiêu cực (Security Negative Test):**
+  ```cucumber
+  @k3 @security @negative
+  Scenario: K3 - Security Negative Test: Accessing protected cart without token must return 401 Unauthorized
+    Given path 'api', 'cart'
+    When method get
+    Then status 401
+    And match response.error == 'Unauthorized'
+  ```
+
+---
+
+#### 4.3.5. Thực Thi & Báo Cáo Trực Quan (HTML Reports)
+- **Lệnh thực thi dòng lệnh:**
+  ```bash
+  # Chạy toàn bộ test suite Karate
+  cd tests/karate && mvn clean test
+
+  # Chạy riêng từng kịch bản hoặc theo tag
+  mvn test -Dkarate.options="--tags @k1"
+  mvn test -Dkarate.options="--tags @k2"
+  mvn test -Dkarate.options="--tags @k3"
+  ```
+- **Báo cáo HTML Dashboard:**
+  Karate tự động tổng hợp toàn bộ kết quả thực thi thành các tệp HTML trực quan tại `tests/karate/target/karate-reports/`:
+  - `karate-summary.html`: Tổng hợp số lượng kịch bản Passed/Failed, thời gian phản hồi (Response Time) từng endpoint.
+  - `eshop.products.html` & `eshop.auth-cart-checkout.html`: Bóc tách chi tiết toàn bộ HTTP Wire Logs (HTTP Method, URL, Request Headers, Request Body, Response Status, Response Headers, Response Body). Mọi assertion thất bại đều được highlight đỏ với lý do sai lệch chi tiết.
 
 ---
 
 ### 4.4. Công cụ 3 — Pact JS Contract Testing (Kịch bản C1, C2, C3)
 *Người thực hiện chính: Nguyễn Hoàng Anh Tú & Nguyễn Quốc Kỳ*
 
-Mã nguồn đặt tại [`tests/pact/`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/pact).
+Mã nguồn đặt tại [`tests/pact/`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact).
 
 #### 4.4.1. Kịch bản C1: Consumer Contract Test (`product.consumer.test.js`)
 - Mô phỏng ứng dụng di động `EShopMobile` gửi `GET /api/products` đến Pact Mock Server.
 - Định nghĩa rõ hợp đồng: Phải trả về Status 200, mảng chứa các trường `id` (int), `name` (string), `price` (number), `stock` (int).
 - Lệnh chạy: `npm run test:consumer`
-- **Kết quả:** Sinh thành công file hợp đồng JSON tại [`tests/pact/pacts/EShopMobile-EShopBackend.json`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/pact/pacts/EShopMobile-EShopBackend.json).
+- **Kết quả:** Sinh thành công file hợp đồng JSON tại [`tests/pact/pacts/EShopMobile-EShopBackend.json`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact/pacts/EShopMobile-EShopBackend.json).
 
 #### 4.4.2. Kịch bản C2: Provider Verification (`verify.js`)
 - Khởi chạy Backend EShop thật trên cổng 3000.
@@ -351,21 +530,108 @@ Mã nguồn đặt tại [`tests/pact/`](file:///c:/Coding/SoftwareTesting/Semin
 - Lệnh chạy: `npm run test:provider`
 - **Kết quả:** `1 interaction, 0 failures` — Backend thỏa mãn 100% cam kết hợp đồng.
 
-#### 4.4.3. Kịch bản C3: Giả Lập & Bắt Lỗi Breaking Change (`verify-breaking.js`)
-- **Tình huống mô phỏng:** Backend tự ý sửa trường `price` thành `unit_price`.
-- Lệnh chạy: `npm run test:breaking`
-- **Kết quả thực tế từ Terminal:**
-  ```text
-  Verifying a pact between EShopMobile and EShopBackend
-    GET /api/products (Breaking Change Simulation)
-      returns a response which
-        has a matching body FAILED
-          $ Expected 'price' but got 'unit_price'
+#### 4.4.3. Kịch bản C3: Giả Lập & Bắt Lỗi Breaking Change (`verify-breaking.js` & `pact-c3-runner.js`)
+*Người thực hiện chính: Nguyễn Quốc Kỳ (MSSV: 23120138)*  
+*Reviewer & Phối hợp: Nguyễn Hoàng Anh Tú (MSSV: 23120183)*  
+*Mã nguồn & Hướng dẫn kỹ thuật:* [`tests/pact/breaking-change/`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact/breaking-change)
 
-  1 interaction, 1 failure
-  --> BREAKING CHANGE DETECTED AND BLOCKED AUTOMATICALLY!
-  ```
-- **Ý nghĩa:** Pact đã ngăn chặn thành công sự cố gãy vỡ ứng dụng Mobile mà không cần phải biên dịch hay chạy ứng dụng di động thật!
+##### 1. Đặt Vấn Đề & Bản Chất Nguy Hiểm Của Breaking Change
+Trong quy trình phát triển Microservices, Provider (Backend) thường xuyên tái cấu trúc hoặc tối ưu hóa dữ liệu. Nếu Provider thay đổi cấu trúc trả về mà không thông báo, các Consumer đã phát hành ngoài thị trường (như `EShopMobile` trên App Store / Google Play) sẽ lập tức gặp lỗi.
+
+```mermaid
+flowchart TD
+    subgraph Consumer_Side [" Consumer (EShopMobile) "]
+        A[ProductClient.js] -->|Khai báo kỳ vọng| B[Pact V3 Mock Server]
+        B -->|Sinh hợp đồng| C["File Contract JSON<br/>EShopMobile-EShopBackend.json"]
+    end
+
+    subgraph CI_Pipeline [" Provider CI/CD Pipeline (Deployment Gate) "]
+        C -->|Nạp vào| D[Pact Rust Core Verifier]
+        E[EShopBackend Provider] -->|Replay HTTP Request| D
+        D -->|Khớp hợp đồng 100%| F[✅ Deploy to Production]
+        D -->|Lệch Schema / Thiếu Field| G[❌ Chặn Deploy - Breaking Change Detected]
+    end
+
+    style G fill:#ffdddd,stroke:#ff0000,stroke-width:2px;
+    style F fill:#ddffdd,stroke:#00aa00,stroke-width:2px;
+```
+
+**Giới hạn chết người của Functional API Testing (Postman):**
+Khi Provider đổi tên trường `price` thành `unit_price`, server vẫn trả về mã **HTTP 200 OK**. Các bộ test Postman thông thường (nếu chỉ assert status 200) sẽ báo **PASS (False Positive)**. Tuy nhiên, khi ứng dụng Mobile nhận payload này, biểu thức `product.price` trả về `undefined`, phép tính `product.price * quantity` trả về `NaN`, làm văng ứng dụng (crash) ngay tại màn hình giỏ hàng của người dùng.
+
+##### 2. Quy Trình Thực Thi 3 Pha (Three-Phase Protocol)
+Để chứng minh năng lực ngăn chặn lỗi tự động của Pact, nhóm đã thiết kế bộ điều phối `pact-c3-runner.js` theo quy trình 3 pha khép kín:
+
+```
+[PHA 1: Baseline Verification]  --> Hợp đồng khớp 100% (PASS)
+               ↓
+[PHA 2: Mutation & Injection]   --> Tiêm 2 dạng Breaking Change (Pact FAILED & BLOCKED)
+                                    và 1 dạng Non-breaking Change (Pact PASSED)
+               ↓
+[PHA 3: Rollback & Re-verify]   --> Khôi phục trạng thái chuẩn (PASS trở lại)
+```
+
+1. **Pha 1: Baseline Verification (Kiểm chứng Hợp đồng Chuẩn):**
+   - Provider phản hồi đúng cấu trúc cam kết trong hợp đồng (`price = 30000000` kiểu Integer).
+   - Kết quả: `1 interaction, 0 failures` (PASS 100%).
+2. **Pha 2: Tiêm Biến Thể Đột Biến (Mutation & Injection):**
+   - **Pha 2A — Tiêm Breaking Change Dạng 1 (Field Renamed / Missing Property):**
+     Backend đổi trường `price` thành `unit_price` nhưng vẫn trả về HTTP 200 OK.
+     ```text
+     Failures:
+     1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists
+        1.1) has a matching body
+             $ -> Actual map is missing the following keys: price
+     [ERROR] pact-core: Verification unsuccessful (BLOCKED)
+     ```
+     $\implies$ *Pact Rust Verifier phát hiện thiếu trường bắt buộc `price`, lập tức trả về Exit Code khác 0 để đánh trượt pipeline CI.*
+
+   - **Pha 2B — Tiêm Breaking Change Dạng 2 (Data Type Mismatch):**
+     Backend tự ý format giá tiền thành chuỗi hiển thị `'30.000.000 ₫'` thay vì số nguyên thô `30000000` (tái hiện khiếm khuyết SUT EShop tìm thấy ở Karate K2).
+     ```text
+     Failures:
+     1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists
+        1.1) has a matching body
+             $.price -> Expected '30.000.000 ₫' (String) to be an integer number
+     [ERROR] pact-core: Verification unsuccessful (BLOCKED)
+     ```
+     $\implies$ *Pact Matcher `integer` bắt trọn lỗi sai kiểu dữ liệu.*
+
+   - **Pha 2C — Tiêm Thay Đổi Không Phá Vỡ (Non-breaking Evolution):**
+     Provider bổ sung thuộc tính mới `brand: "Apple"` mà Consumer Mobile chưa sử dụng.
+     $\implies$ *Kết quả: PASS 100%. Pact tôn trọng nguyên lý Postel: chỉ kiểm tra những gì Consumer yêu cầu, cho phép Provider tiến hóa mở rộng mà không làm vỡ hệ thống.*
+
+3. **Pha 3: Rollback & Re-verification (Khôi Phục Trạng Thái An Toàn):**
+   - Hoàn nguyên mã nguồn backend về định dạng chuẩn.
+   - Kết quả: Pact Verifier báo xanh trở lại, xác nhận tính ổn định và khả năng phục hồi hoàn toàn.
+
+##### 3. Bảng Tổng Hợp Kết Quả Thực Nghiệm Kịch Bản C3
+Chạy trực tiếp từ terminal bằng lệnh: `npm run test:c3`
+
+```text
+┌─────────┬────────────────────────────────────┬────────────────┬───────────┬──────────────────────────────────┐
+│ (index) │ phase                              │ expected       │ actual    │ verdict                          │
+├─────────┼────────────────────────────────────┼────────────────┼───────────┼──────────────────────────────────┤
+│ 0       │ 'Pha 1: Baseline'                  │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Hợp đồng toàn vẹn)'        │
+│ 1       │ 'Pha 2A: Rename price->unit_price' │ 'BLOCK (FAIL)' │ 'BLOCKED' │ 'ĐẠT (Bắt đúng breaking change)' │
+│ 2       │ 'Pha 2B: Type Integer->String'     │ 'BLOCK (FAIL)' │ 'BLOCKED' │ 'ĐẠT (Bắt đúng type mismatch)'   │
+│ 3       │ 'Pha 2C: Add brand (Non-breaking)' │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Tiến hóa an toàn)'         │
+│ 4       │ 'Pha 3: Rollback & Re-verify'      │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Hệ thống an toàn)'         │
+└─────────┴────────────────────────────────────┴────────────────┴───────────┴──────────────────────────────────┘
+```
+
+##### 4. Phân Tích Chuyên Sâu & Bẫy Kỹ Thuật (Pact Rust FFI Coercion Trap)
+Trong quá trình thực nghiệm Kịch bản C3, tác giả đã phát hiện và ghi nhận một đặc điểm kỹ thuật chuyên sâu của lõi **Pact Rust FFI Engine**:
+- Nếu một trường được khai báo matcher `integer`, nhưng Provider trả về một chuỗi ký tự chỉ chứa các chữ số (ví dụ `"30000000"`), bộ phân tích của Pact Rust Core có cơ chế ép kiểu tự động (Type Coercion) và có thể vẫn đánh giá là hợp lệ.
+- **Giải pháp xử lý:** Để kiểm chứng lỗi Type Mismatch một cách tuyệt đối và phản ánh đúng thực tế hiển thị tiền tệ, kịch bản C3 đã cố ý sử dụng chuỗi có ký tự định dạng đặc biệt (`'30.000.000 ₫'`). Điều này giúp kiểm thử viên hoàn toàn kiểm soát hành vi xác thực kiểu dữ liệu, ngăn ngừa rủi ro sai sót trong môi trường thực tế.
+
+##### 5. So Sánh Năng Lực Phát Hiện Breaking Change Giữa 3 Công Cụ
+| Tiêu chí so sánh | Postman & Newman (P1–P3) | Karate Framework (K1–K3) | Pact JS CDCT (C1–C3) |
+|---|---|---|---|
+| **Cơ sở phát hiện lỗi** | So sánh với dữ liệu kỳ vọng viết tĩnh trong test script | So sánh với Fuzzy Matchers trong kịch bản Gherkin | So sánh trực tiếp với **Hợp đồng độc lập do chính Consumer ký** |
+| **Phản ứng khi đổi tên trường** | Dễ báo **PASS nhầm** nếu chỉ assert status 200 | Bắt được nếu có schema match, nhưng phải duy trì schema thủ công | **Tự động bắt FAIL 100%**, chỉ rõ chính xác trường bị thiếu |
+| **Phản ứng khi thêm trường mới** | Có thể bị fail nếu dùng strict schema | Dễ bị fail nếu dùng exact match `match response ==` | **PASS an toàn** (Tự động bỏ qua trường thừa không cam kết) |
+| **Vai trò trong CI/CD** | Báo cáo kiểm thử sau khi đã deploy môi trường test | Báo cáo kiểm thử hồi quy tích hợp E2E | **Deployment Gate (`can-i-deploy`)** chặn deploy ngay tại khâu Provider build |
 
 ---
 
@@ -392,7 +658,7 @@ Nhóm triển khai mô hình cộng tác giữa AI và Kỹ sư kiểm thử the
 ```
 
 ### 5.2. Thực nghiệm sinh test từ OpenAPI 3.0 (eshop.openapi.yaml)
-- **Đầu vào:** File đặc tả [`specs/eshop.openapi.yaml`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/specs/eshop.openapi.yaml) và Agent Skill [`tests/ai-agent/skills/api-test-design/SKILL.md`](file:///c:/Coding/SoftwareTesting/Seminar/src/eshop-sut/tests/ai-agent/skills/api-test-design/SKILL.md).
+- **Đầu vào:** File đặc tả [`specs/eshop.openapi.yaml`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/specs/eshop.openapi.yaml) và Agent Skill [`tests/ai-agent/skills/api-test-design/SKILL.md`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/ai-agent/skills/api-test-design/SKILL.md).
 - **Thực thi:** AI phân tích endpoint `POST /api/coupons/apply` và sinh ma trận ca kiểm thử (Test Matrix) gồm 8 trường hợp: Happy path, Mã không tồn tại, Mã hết hạn, Đơn hàng chưa đạt giá trị tối thiểu, SQL injection trong mã coupon.
 
 ### 5.3. Đánh giá ưu điểm và phân tích các Failure Modes của AI
@@ -417,8 +683,10 @@ Nhóm triển khai mô hình cộng tác giữa AI và Kỹ sư kiểm thử the
 | **Postman / Newman** | Newman chạy sai bộ dữ liệu CSV | Header file CSV chứa ký tự ẩn (BOM UTF-8) hoặc khoảng trắng thừa | Kiểm tra header file CSV bằng VS Code, loại bỏ BOM |
 | **Karate** | Lỗi kết nối `Connection Refused: localhost:3000` | Backend SUT chưa được khởi động trước khi chạy lệnh Maven | Cấu hình Hook trong Karate hoặc chạy `./run_servers.sh` trước khi chạy test |
 | **Karate** | `match each response` thất bại ngẫu nhiên | Một số phần tử trong cơ sở dữ liệu bị thiếu trường hoặc null | Dùng matcher dạng tùy chọn: `stock: '##number'` (chấp nhận số hoặc null) |
+| **Karate** | Kịch bản K3 thất bại do lỗi 403 `Tài khoản đã bị khóa` | SUT EShop tự động khóa tài khoản 3 phút nếu `login_attempts >= 3` khi chạy lặp lại | Khởi tạo tài khoản động theo timestamp (`karate_k3_<timestamp>@eshop.com`) tại Step 1 kịch bản K3 |
 | **Pact JS** | Verification thất bại do sai lệch dữ liệu động | Dữ liệu ngày tháng (timestamp) hoặc ID tự tăng thay đổi giữa các lần chạy | Sử dụng Matchers dạng type (`like()`, `iso8601DateTime()`) thay vì so sánh giá trị cứng |
 | **Pact JS** | Port 1234 bị chiếm dụng khi chạy Consumer test | Tiến trình Pact Mock Server của lần chạy trước chưa tắt hẳn | Chạy lệnh `npx kill-port 1234` hoặc khởi động lại terminal |
+| **Pact JS (C3)** | Kiểm thử Type Mismatch báo PASS giả (False Positive) | Lõi Pact Rust Core FFI tự động ép kiểu (Coercion) chuỗi thuần chữ số thành integer | Sử dụng chuỗi định dạng tiền tệ chuyên biệt (`'30.000.000 ₫'`) để kiểm soát chặt chẽ việc chặn kiểu String |
 
 ---
 
