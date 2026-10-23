@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 header: "CS423 / CSC15003 — Software Testing · Seminar T06: API & Contract Testing"
-footer: "Nhóm 11 — FIT@HCMUS · Nguyễn Quốc Kỳ (MSSV: 23120138) — Pact JS (Kịch bản C3)"
+footer: "Nhóm 11 — FIT@HCMUS — Pact JS (Kịch bản C3)"
 style: |
   section {
     background-color: #ffffff;
@@ -487,38 +487,6 @@ Mục đích cốt lõi là kiểm chứng độ nhạy của Verification Gate 
 ### 3. Hướng Phát Triển
 * Triển khai Pact Broker tập trung để quản trị hợp đồng giữa nhiều nhóm phát triển Agile độc lập.
 * Tích hợp lệnh CLI **`can-i-deploy`** vào GitHub Actions để đối soát ma trận tương thích đa môi trường (*Dev $\rightarrow$ Staging $\rightarrow$ Production*).
-
-</div>
-</div>
-
----
-
-<!-- Slide 11: Summary & Conclusion -->
-
-# Tổng Kết Kịch Bản C3 & Cảm Ơn
-
-<div class="grid-2">
-<div>
-
-### 3 Thông Điệp Cốt Lõi
-1. **Pact JS hoạt động như Deployment Gate:** Tự động chặn đứng các thay đổi phá vỡ hợp đồng ngay trên pipeline CI/CD trước khi chạm tới Production.
-2. **Tiến hóa an toàn & dọn dẹp mã nguồn:** Cho phép Provider tự do thêm tính năng mới và tự tin xóa trường dữ liệu thừa (Safe Dead Code Removal).
-3. **Chiến lược kiểm thử độc lập:** Xác thực tương thích giữa Consumer và Provider với tốc độ mili-giây mà không phụ thuộc môi trường E2E cồng kềnh.
-
-</div>
-<div>
-
-### Thông Tin Đề Tài & Liên Hệ
-* **Seminar:** Kiểm thử Phần mềm (FIT@HCMUS) · Chủ đề T06: API & Contract Testing
-* **Nhóm 11:** 
-  * Nguyễn Quốc Kỳ (MSSV: 23120138)
-  * Nguyễn Hoàng Anh Tú (MSSV: 23120167)
-* **Mã nguồn:** Toàn bộ test suite tại `tests/pact/`
-
-<div class="highlight-box">
-🤝 <b>Cảm ơn Thầy và các bạn đã chú ý theo dõi!</b><br>
-Sẵn sàng giải đáp các câu hỏi thảo luận về CDCT và Pact JS.
-</div>
 
 </div>
 </div>
