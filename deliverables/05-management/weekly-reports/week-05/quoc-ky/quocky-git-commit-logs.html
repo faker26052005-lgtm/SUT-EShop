@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhật Ký Git Commit Cá Nhân — Nguyễn Quốc Kỳ (Tuần 05) | FIT@HCMUS</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --success: #15803d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 32px 40px;
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .inst-title {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge.highlight {
+            background: #22c55e;
+            color: #052e16;
+            border-color: #4ade80;
+        }
+
+        .type-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        .tag-feat { background: #dcfce7; color: #15803d; border-color: #86efac; }
+        .tag-docs { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+        .tag-chore { background: #fef9c3; color: #a16207; border-color: #fde047; }
+        .tag-merge { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+        .tag-test { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+        .tag-other { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+
+        .content {
+            padding: 32px 40px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .meta-item strong {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 28px 0 16px 0;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary-bg);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: var(--text-main);
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-dark);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .commit-hash {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: #f1f5f9;
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .commit-msg {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .footer {
+            padding: 20px 40px;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-bar">
+            <div class="inst-title">FIT @ HCMUS — Khoa Công Nghệ Thông Tin · Bộ Môn Công Nghệ Phần Mềm</div>
+            <h1 class="doc-title">Nhật Ký Git Commit Cá Nhân (Tuần 05)</h1>
+            <p>Học phần: Kiểm thử phần mềm (CS423 / CSC15003) — Seminar T06: API & Contract Testing</p>
+            <div class="badges">
+                <span class="badge highlight">✔ 19 Commits Main</span>
+                <span class="badge">3 Merge Commits</span>
+                <span class="badge">Tác giả: Nguyễn Quốc Kỳ (23120138)</span>
+                <span class="badge">Nhóm 11</span>
+                <span class="badge">Cập nhật: 23/10/2026</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>Họ và Tên</strong>
+                    <span>Nguyễn Quốc Kỳ</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Mã Số Sinh Viên</strong>
+                    <span>23120138</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Git Username</strong>
+                    <span><code>quocky05</code> / <code>Nguyen Quoc Ky</code></span>
+                </div>
+                <div class="meta-item">
+                    <strong>Git Email</strong>
+                    <span>nqky2407@gmail.com</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Identity Mapping</strong>
+                    <span><code>Nguyen Quoc Ky &lt;nqky2407@gmail.com&gt;</code> ↔ <code>23120138 - Nguyễn Quốc Kỳ</code></span>
+                </div>
+                <div class="meta-item">
+                    <strong>Trách nhiệm chính</strong>
+                    <span>Karate Framework (K1-K3) + Pact Breaking Change (C3)</span>
+                </div>
+            </div>
+
+            <h2 class="section-title">📌 1. Danh Sách Commits Không Merge (19 Commits)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px; text-align: center;">#</th>
+                        <th style="width: 110px;">Hash</th>
+                        <th style="width: 170px;">Ngày & Giờ</th>
+                        <th style="width: 90px; text-align: center;">Loại</th>
+                        <th>Nội dung Commit</th>
+                    </tr>
+                </thead>
+                <tbody>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">1</td>
+              <td><span class="commit-hash">81cbe70</span></td>
+              <td style="white-space: nowrap;">2026-10-23 12:43</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">presentation: add demo links for pact c3 and karate framework</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">2</td>
+              <td><span class="commit-hash">9a348a9</span></td>
+              <td style="white-space: nowrap;">2026-10-23 11:48</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">main-report: update pact c3 and karate sections</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">3</td>
+              <td><span class="commit-hash">3b06a8b</span></td>
+              <td style="white-space: nowrap;">2026-10-23 11:34</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">presentation: genearate slides for pact c3 and karate</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">4</td>
+              <td><span class="commit-hash">fef89fe</span></td>
+              <td style="white-space: nowrap;">2026-10-23 02:15</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">presentation: init slides for pact c3 and karate k1 k2 k3</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">5</td>
+              <td><span class="commit-hash">15377ba</span></td>
+              <td style="white-space: nowrap;">2026-10-22 22:19</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">presentation: prepare script and slide contents for video</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">6</td>
+              <td><span class="commit-hash">1cb9c04</span></td>
+              <td style="white-space: nowrap;">2026-10-22 21:15</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">pact(C3): add live demo for breaking changes.</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">7</td>
+              <td><span class="commit-hash">a891905</span></td>
+              <td style="white-space: nowrap;">2026-10-21 22:23</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">pact(C3): complete breaking change task</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">8</td>
+              <td><span class="commit-hash">e021d17</span></td>
+              <td style="white-space: nowrap;">2026-10-16 21:56</td>
+              <td style="text-align: center;"><span class="type-tag tag-chore">chore</span></td>
+              <td class="commit-msg">sumit-phase2</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">9</td>
+              <td><span class="commit-hash">4d55803</span></td>
+              <td style="white-space: nowrap;">2026-10-15 20:16</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">docs(karate): test suite execution guide</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">10</td>
+              <td><span class="commit-hash">0d3fde9</span></td>
+              <td style="white-space: nowrap;">2026-10-15 20:12</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(karate): add auth-cart-checkout.feature for e2e stateful workflow (K3)</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">11</td>
+              <td><span class="commit-hash">58cb232</span></td>
+              <td style="white-space: nowrap;">2026-10-15 09:48</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(karate): add products.feature for data-driven tests (K2)</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">12</td>
+              <td><span class="commit-hash">002a5cd</span></td>
+              <td style="white-space: nowrap;">2026-10-15 09:34</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(karate): add products.feature for smoke tests (K1)</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">13</td>
+              <td><span class="commit-hash">563a22b</span></td>
+              <td style="white-space: nowrap;">2026-10-15 09:11</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(karate): initial and setup karate project</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">14</td>
+              <td><span class="commit-hash">c9583f8</span></td>
+              <td style="white-space: nowrap;">2026-10-15 07:56</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(karate): create a implementation plan for Karate tasks</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">15</td>
+              <td><span class="commit-hash">cbec9d0</span></td>
+              <td style="white-space: nowrap;">2026-10-14 23:54</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">docs(root): update landing page README and repository guide</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">16</td>
+              <td><span class="commit-hash">dfefabc</span></td>
+              <td style="white-space: nowrap;">2026-10-14 23:53</td>
+              <td style="text-align: center;"><span class="type-tag tag-feat">feat</span></td>
+              <td class="commit-msg">feat(tests): scaffold test suites for postman, pact, karate, and ai-agent</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">17</td>
+              <td><span class="commit-hash">c703918</span></td>
+              <td style="white-space: nowrap;">2026-10-14 23:51</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">docs(deliverables): organize seminar requirements, research reports, and meeting logs</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">18</td>
+              <td><span class="commit-hash">afb31f4</span></td>
+              <td style="white-space: nowrap;">2026-10-14 23:50</td>
+              <td style="text-align: center;"><span class="type-tag tag-docs">docs</span></td>
+              <td class="commit-msg">docs(specs): relocate api specification to specs directory</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">19</td>
+              <td><span class="commit-hash">b52c01e</span></td>
+              <td style="white-space: nowrap;">2026-10-14 23:35</td>
+              <td style="text-align: center;"><span class="type-tag tag-chore">chore</span></td>
+              <td class="commit-msg">chore(sut): sanitize gitignore and fix run_servers script paths</td>
+            </tr>
+                </tbody>
+            </table>
+
+            <h2 class="section-title">🔀 2. Danh Sách Merge Commits (3 Commits)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px; text-align: center;">#</th>
+                        <th style="width: 110px;">Hash</th>
+                        <th style="width: 170px;">Ngày & Giờ</th>
+                        <th style="width: 90px; text-align: center;">Loại</th>
+                        <th>Nội dung Commit</th>
+                    </tr>
+                </thead>
+                <tbody>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">1</td>
+              <td><span class="commit-hash">f5451e3</span></td>
+              <td style="white-space: nowrap;">2026-10-22 22:36</td>
+              <td style="text-align: center;"><span class="type-tag tag-merge">merge</span></td>
+              <td class="commit-msg">Merge branch &#x27;feature/seminar-slides&#x27;, remote-tracking branch &#x27;origin&#x27; into QuocKy-Phase3</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">2</td>
+              <td><span class="commit-hash">b16465a</span></td>
+              <td style="white-space: nowrap;">2026-10-16 22:01</td>
+              <td style="text-align: center;"><span class="type-tag tag-merge">merge</span></td>
+              <td class="commit-msg">Merge branch &#x27;main&#x27; into QuocKy-Phase2</td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: var(--text-muted); font-weight: 600;">3</td>
+              <td><span class="commit-hash">f620bd4</span></td>
+              <td style="white-space: nowrap;">2026-10-16 20:34</td>
+              <td style="text-align: center;"><span class="type-tag tag-merge">merge</span></td>
+              <td class="commit-msg">Merge branch &#x27;QuocKy-Phase2&#x27;</td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            Báo cáo được đối soát và trích xuất tự động từ Git Repository • Ngày 23/10/2026 • FIT@HCMUS
+        </div>
+    </div>
+</body>
+</html>
