@@ -1,0 +1,105 @@
+{
+  "info": {
+    "_postman_id": "c0568a79-c04c-423e-a67b-639ca3439860",
+    "name": "EShop - Khung chay test do AI sinh_B",
+    "description": "Khung chạy test do AI sinh ra. Xem AI_Experiment_Guide.md. Thay phần giữa hai dòng BẮT ĐẦU/KẾT THÚC PHẦN DÁN trong tab Scripts (Post-response) bằng code của AI, khởi động lại server rồi bấm Send.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56201103",
+    "_collection_link": "https://go.postman.co/collection/56201103-c0568a79-c04c-423e-a67b-639ca3439860?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "AI TESTS - Dán code AI vào tab Scripts rồi bấm Send",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ============================================================================\n// KHUNG CHẠY TEST DO AI SINH RA (template)\n// Cách dùng:\n//   1. Khởi động lại server (node server.js) để dữ liệu sạch.\n//   2. Mở tab Scripts của request này, mục Post-response.\n//   3. Thay TOÀN BỘ phần giữa hai dòng \"BẮT ĐẦU PHẦN DÁN\" và \"KẾT THÚC PHẦN DÁN\" bằng code AI viết\n//      (hàm aiTests(ctx) và các hàm phụ nếu có). Không sửa phần còn lại của khung.\n//   4. Bấm Send, xem tab Test Results.\n// Khung này cung cấp cho AI các công cụ sau (đưa đúng mô tả này vào prompt):\n//   ctx.call(method, path, { token, body })  -> Promise<{ code, json, text, ct }>\n//   ctx.newUser(label)                       -> Promise<{ email, password, id, token }>\n//   ctx.ADMIN, ctx.USER                      -> JWT của admin@eshop.com và test@eshop.com\n//   ctx.RUN                                  -> chuỗi duy nhất của lần chạy (để đặt tên dữ liệu)\n// ============================================================================\n\n// ===== BẮT ĐẦU PHẦN DÁN CODE CỦA AI =====\nasync function aiTests(ctx) {\n    console.log(\"Bắt đầu chạy bộ AI Tests... Run ID: \" + ctx.RUN);\n\n    // =========================================================================\n    // NHÓM 1: AUTHENTICATION & AUTHORIZATION (FR-01, FR-02, FR-03, FR-04)\n    // =========================================================================\n\n    // Mục tiêu: Bỏ qua kiểm tra mật khẩu mạnh, có thể gây lỗi bảo mật. SRS: FR-01\n    await (async function testWeakPassword() {\n        let res = await ctx.call('POST', '/api/register', {\n            body: { name: \"Weak User\", email: `weak_${ctx.RUN}@eshop.com`, password: \"123\" }\n        });\n        pm.test(\"T01: Không cho phép đăng ký mật khẩu yếu (thiếu hoa, thường, số, đặc biệt)\", function () {\n            pm.expect(res.code).to.equal(400);\n            pm.expect(res.json.error).to.exist;\n        });\n    })();\n\n    // Mục tiêu: Đăng ký trùng email làm crash DB hoặc lộ thông tin. SRS: FR-01\n    await (async function testDuplicateEmail() {\n        let res = await ctx.call('POST', '/api/register', {\n            body: { name: \"Hacker\", email: \"test@eshop.com\", password: \"StrongPassword123!\" }\n        });\n        pm.test(\"T02: Không cho phép đăng ký trùng email đã có\", function () {\n            pm.expect(res.code).to.be.oneOf([400, 409]); // Tuỳ chuẩn nhưng không được 200 hay 500\n        });\n    })();\n\n    // Mục tiêu: Không khóa tài khoản sau khi vét cạn mật khẩu (Brute-force). SRS: FR-02\n    await (async function testBruteForceLock() {\n        let u = await ctx.newUser(`bruteforce`);\n        // Sai lần 1, 2, 3\n        for (let i = 0; i < 3; i++) {\n            await ctx.call('POST', '/api/login', {\n                body: { email: u.email, password: \"WrongPassword123!\" }\n            });\n        }\n        // Lần 4 (dù mật khẩu đúng hay sai cũng phải bị khóa 403)\n        let resLock = await ctx.call('POST', '/api/login', {\n            body: { email: u.email, password: u.password } // password đúng!\n        });\n        pm.test(\"T03: Khóa tài khoản (403) sau 3 lần đăng nhập sai\", function () {\n            pm.expect(resLock.code).to.equal(403);\n            pm.expect(resLock.json.error).to.include(\"khóa\");\n        });\n    })();\n\n    // Mục tiêu: Dùng mã OTP của người này đặt lại mật khẩu cho email người khác. SRS: FR-03, SEC-07\n    await (async function testCrossEmailOTP() {\n        let u1 = await ctx.newUser(`victim`);\n        let u2 = await ctx.newUser(`attacker`);\n        \n        let resForgot = await ctx.call('POST', '/api/forgot-password', { body: { email: u2.email }});\n        let attackerToken = resForgot.json.resetToken;\n\n        let resReset = await ctx.call('POST', '/api/reset-password', {\n            body: { email: u1.email, resetToken: attackerToken, newPassword: \"HackedPassword123!\" }\n        });\n        pm.test(\"T04: Không cho phép dùng OTP của email này reset cho email khác\", function () {\n            pm.expect(resReset.code).to.equal(400); // Invalid token\n        });\n    })();\n\n    // Mục tiêu: Mass Assignment - Tự nâng quyền thành Admin qua API Profile. SRS: SEC-06\n    await (async function testPrivilegeEscalation() {\n        let res = await ctx.call('PUT', '/api/users/me', {\n            token: ctx.USER,\n            body: { name: \"Hacked Admin\", role: \"admin\", id: 1 } // Cố tình chèn role\n        });\n        \n        let profile = await ctx.call('GET', '/api/users/me', { token: ctx.USER });\n        pm.test(\"T05: Ngăn chặn leo thang đặc quyền (Mass Assignment) khi cập nhật Profile\", function () {\n            pm.expect(res.code).to.equal(200);\n            pm.expect(profile.json.role).to.equal(\"user\"); // Quyền vẫn phải là user\n        });\n    })();\n\n    // Mục tiêu: Bỏ qua validate format dữ liệu nghiệp vụ (SĐT). SRS: FR-04\n    await (async function testInvalidPhone() {\n        let res = await ctx.call('PUT', '/api/users/me', {\n            token: ctx.USER,\n            body: { phone: \"9999\" } // Thiếu số 0, quá ngắn\n        });\n        pm.test(\"T06: Từ chối số điện thoại không hợp lệ\", function () {\n            pm.expect(res.code).to.equal(400);\n        });\n    })();\n\n\n    // =========================================================================\n    // NHÓM 2: DANH MỤC & SẢN PHẨM (FR-05, 14, 15, 16, SEC-05)\n    // =========================================================================\n\n    // Mục tiêu: Lỗ hổng SQL Injection ở thanh tìm kiếm (truy vấn lọt điều kiện). SRS: SEC-05\n    await (async function testSQLInjection() {\n        let res = await ctx.call('GET', \"/api/products?search=' OR 1=1 --\");\n        pm.test(\"T07: Hệ thống chống được SQL Injection cơ bản ở API tìm kiếm\", function () {\n            pm.expect(res.code).to.equal(200);\n            pm.expect(res.text).to.not.include(\"SQLITE_ERROR\"); \n            pm.expect(res.text).to.not.include(\"syntax error\");\n        });\n    })();\n\n    // Mục tiêu: Kiểm tra Admin tạo sản phẩm giá âm (Business Logic). SRS: FR-15\n    await (async function testNegativePrice() {\n        let res = await ctx.call('POST', '/api/products', {\n            token: ctx.ADMIN,\n            body: { name: \"Lỗi giá\", price: -50000, description: \"Desc\", imageUrl: \"img.jpg\", category_id: 1 }\n        });\n        pm.test(\"T08: Không cho phép Admin tạo sản phẩm giá âm\", function () {\n            pm.expect(res.code).to.equal(400);\n        });\n    })();\n\n    // Mục tiêu: Giao dịch nguyên tử (Atomic rollback) khi import lỗi 1 dòng. SRS: FR-16\n    await (async function testAtomicImport() {\n        let res = await ctx.call('POST', '/api/admin/import-products', {\n            token: ctx.ADMIN,\n            body: {\n                products: [\n                    { name: `Valid Prod ${ctx.RUN}`, price: 100000, description: \"OK\", imageUrl: \"img1.jpg\", category_id: 1 },\n                    { name: `Invalid Prod ${ctx.RUN}`, price: -100, description: \"Lỗi\", imageUrl: \"img2.jpg\", category_id: 1 } // Lỗi\n                ]\n            }\n        });\n        let searchRes = await ctx.call('GET', `/api/products?search=Valid Prod ${ctx.RUN}`);\n        pm.test(\"T09: Rollback toàn bộ khi Import CSV có dòng lỗi (Giao dịch nguyên tử)\", function () {\n            pm.expect(res.code).to.equal(200); // Theo docs, trả 200 kèm danh sách error\n            pm.expect(res.json.errors.length).to.be.greaterThan(0);\n            pm.expect(res.json.inserted).to.equal(0); // Không insert dòng nào\n            pm.expect(searchRes.json.length).to.equal(0); // Sản phẩm hợp lệ cũng ko được lưu\n        });\n    })();\n\n    console.log(\"Hoàn thành phần 1. Chờ chạy tiếp...\");\n\n// =========================================================================\n    // NHÓM 3: THANH TOÁN & MÃ GIẢM GIÁ (FR-08, FR-09, SEC-04)\n    // =========================================================================\n\n    // Mục tiêu: Client giả mạo total_amount thấp hơn thực tế để mua hàng giá rẻ. SRS: FR-08\n    await (async function testPriceManipulation() {\n        let res = await ctx.call('POST', '/api/checkout', {\n            token: ctx.USER,\n            body: {\n                total_amount: 1000, // Cố tình gửi 1.000đ thay vì 30.000.000đ\n                shipping_address: \"123 Hacker Way\",\n                items: [{ id: 1, name: \"iPhone 15 Pro Max\", price: 30000000, quantity: 1 }] // Payload dạng mobile\n            }\n        });\n        \n        let orderRes = await ctx.call('GET', `/api/orders/${res.json?.orderId}`, { token: ctx.USER });\n        pm.test(\"T10: Backend không tin tưởng total_amount từ client (Chống Price Manipulation)\", function () {\n            // Hệ thống ĐÚNG sẽ báo lỗi 400, hoặc tạo đơn nhưng dùng giá 30.000.000đ\n            if (res.code === 200) {\n                pm.expect(orderRes.json.total_amount).to.equal(30000000, \"Backend phải tự tính lại tiền\");\n            } else {\n                pm.expect(res.code).to.equal(400);\n            }\n        });\n    })();\n\n    // Mục tiêu: Áp dụng mã giảm giá đã hết hạn. SRS: FR-09 (C2)\n    await (async function testExpiredCoupon() {\n        let res = await ctx.call('POST', '/api/apply-coupon', {\n            body: { code: \"EXPIRED\", total_amount: 500000 }\n        });\n        pm.test(\"T11: Từ chối áp dụng mã giảm giá đã hết hạn\", function () {\n            pm.expect(res.code).to.equal(400);\n            pm.expect(res.json.error.toLowerCase()).to.include(\"hết hạn\");\n        });\n    })();\n\n    // Mục tiêu: Bỏ qua điều kiện giá trị đơn hàng tối thiểu. SRS: FR-09 (C3)\n    await (async function testMinOrderAmountCoupon() {\n        let res = await ctx.call('POST', '/api/apply-coupon', {\n            body: { code: \"BIGBUY\", total_amount: 499000 } // Tối thiểu là 500k\n        });\n        pm.test(\"T12: Không cho áp dụng mã khi chưa đạt ngưỡng đơn hàng tối thiểu\", function () {\n            pm.expect(res.code).to.equal(400);\n        });\n    })();\n\n    // Mục tiêu: Khai thác Race Condition hoặc lách giới hạn số lần dùng. SRS: FR-09 (C5)\n    await (async function testMaxUsesCoupon() {\n        let u = await ctx.newUser(`coupon_tester`);\n        \n        // Cố tình dùng SAVE10 (giới hạn 1 lần) 2 lần liên tiếp\n        let firstUse = await ctx.call('POST', '/api/coupon-usage', { \n            token: u.token, body: { coupon_id: 1 } // Giả sử ID 1 là SAVE10\n        });\n        let secondUse = await ctx.call('POST', '/api/coupon-usage', { \n            token: u.token, body: { coupon_id: 1 } \n        });\n\n        pm.test(\"T13: Ngăn chặn vượt quá số lần sử dụng tối đa của mã giảm giá\", function () {\n            pm.expect(firstUse.code).to.equal(200);\n            pm.expect(secondUse.code).to.be.oneOf([400, 403]);\n        });\n    })();\n\n\n    // =========================================================================\n    // NHÓM 4: ĐƠN HÀNG & STATE MACHINE (FR-10, FR-11)\n    // =========================================================================\n\n    // Mục tiêu: Ép State Machine đi sai luồng (từ pending nhảy thẳng lên delivered). SRS: FR-10\n    await (async function testInvalidStateTransition() {\n        // Tạo đơn\n        let checkout = await ctx.call('POST', '/api/checkout', {\n            token: ctx.USER,\n            body: { total_amount: 30000000, shipping_address: \"Test\" }\n        });\n        let orderId = checkout.json.orderId;\n\n        // Đơn đang 'pending', thử ép sang 'delivered'\n        let res = await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, {\n            token: ctx.ADMIN,\n            body: { status: \"delivered\" }\n        });\n        pm.test(\"T14: Ngăn chặn chuyển đổi trạng thái đơn hàng phi logic (nhảy cóc)\", function () {\n            pm.expect(res.code).to.equal(400); // Invalid state transition\n        });\n    })();\n\n    // Mục tiêu: User cố tình hủy đơn hàng đang giao (chỉ admin mới được hủy lúc này). SRS: FR-10\n    await (async function testCancelShippingOrder() {\n        // Tạo đơn & Admin chuyển sang shipping\n        let checkout = await ctx.call('POST', '/api/checkout', { token: ctx.USER, body: { total_amount: 100000, shipping_address: \"VN\" }});\n        let orderId = checkout.json.orderId;\n        \n        await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, { token: ctx.ADMIN, body: { status: \"confirmed\" }});\n        await ctx.call('PUT', `/api/admin/orders/${orderId}/status`, { token: ctx.ADMIN, body: { status: \"shipping\" }});\n\n        // User thử hủy\n        let cancelRes = await ctx.call('PUT', `/api/orders/${orderId}/cancel`, { token: ctx.USER });\n        pm.test(\"T15: Người dùng không được tự hủy đơn hàng đang ở trạng thái shipping\", function () {\n            pm.expect(cancelRes.code).to.be.oneOf([400, 403]);\n        });\n    })();\n\n    // Mục tiêu: IDOR (Insecure Direct Object Reference) - Xem trộm thông tin đơn hàng người khác. SRS: SEC-02, FR-11\n    await (async function testIDOROrderDetails() {\n        // Tạo 2 user\n        let victim = await ctx.newUser(`victim_order`);\n        let attacker = await ctx.newUser(`attacker_order`);\n\n        // Victim đặt hàng\n        let checkout = await ctx.call('POST', '/api/checkout', { \n            token: victim.token, body: { total_amount: 50000, shipping_address: \"Nhà Victim\" }\n        });\n        let victimOrderId = checkout.json.orderId;\n\n        // Attacker thử xem đơn hàng của Victim\n        let res = await ctx.call('GET', `/api/orders/${victimOrderId}`, { token: attacker.token });\n        pm.test(\"T16: Tránh IDOR - Không cho phép xem đơn hàng của người khác\", function () {\n            pm.expect(res.code).to.be.oneOf([403, 404]); // Theo security practice thường trả 404 để ẩn luôn sự tồn tại\n        });\n    })();\n\n\n    // =========================================================================\n    // NHÓM 5: PHÂN QUYỀN VÀ ADMIN (FR-12, FR-19, SEC-03)\n    // =========================================================================\n\n    // Mục tiêu: Gọi API Admin bằng JWT của người dùng thường (Broken Access Control). SRS: FR-12, SEC-03\n    await (async function testAdminAPIWithUserToken() {\n        let res = await ctx.call('GET', '/api/admin/users', {\n            token: ctx.USER // Truyền token của user test\n        });\n        pm.test(\"T17: Chặn truy cập API Admin đối với tài khoản không có role admin\", function () {\n            pm.expect(res.code).to.equal(403);\n        });\n    })();\n\n    // Mục tiêu: Admin tự bắn vào chân mình - xóa tài khoản đang thao tác. SRS: FR-19\n    await (async function testAdminDeleteSelf() {\n        // Phải tìm ID của tk admin trước\n        let meRes = await ctx.call('GET', '/api/users/me', { token: ctx.ADMIN });\n        let adminId = meRes.json.id;\n\n        let res = await ctx.call('DELETE', `/api/admin/users/${adminId}`, { token: ctx.ADMIN });\n        pm.test(\"T18: Admin không được phép tự xóa tài khoản của chính mình\", function () {\n            pm.expect(res.code).to.equal(400); // Bad Request hoặc Forbidden\n        });\n    })();\n\n    console.log(\"=== KẾT THÚC BỘ KIỂM THỬ TỰ ĐỘNG BẰNG AI ===\");\n}\n// ===== KẾT THÚC PHẦN DÁN CODE CỦA AI =====\n\nconst BASE = String(pm.variables.get(\"baseUrl\") || \"http://localhost:3000\").replace(/\\/+$/, \"\");\nconst RUN = Date.now().toString(36);\n\nfunction call(method, path, opt) {\n  opt = opt || {};\n  return new Promise(function (resolve) {\n    const req = { url: BASE + path, method: method, header: { \"Content-Type\": \"application/json\" } };\n    if (opt.token) req.header[\"Authorization\"] = \"Bearer \" + opt.token;\n    if (opt.body !== undefined) req.body = { mode: \"raw\", raw: JSON.stringify(opt.body) };\n    pm.sendRequest(req, function (err, res) {\n      if (err || !res) { resolve({ code: 0, json: null, text: (err && err.message) ? err.message : String(err), ct: \"\" }); return; }\n      const text = res.text();\n      let json = null;\n      try { json = JSON.parse(text); } catch (e) { json = null; }\n      resolve({ code: res.code, json: json, text: text, ct: res.headers.get(\"Content-Type\") || \"\" });\n    });\n  });\n}\n\nasync function newUser(label) {\n  const email = \"ai.\" + RUN + \".\" + String(label || \"u\").replace(/[^a-zA-Z0-9]/g, \"\") + \"@test.com\";\n  const password = \"Pass1234!\";\n  const reg = await call(\"POST\", \"/api/register\", { body: { name: \"AI \" + label, email: email, password: password } });\n  const lg = await call(\"POST\", \"/api/login\", { body: { email: email, password: password } });\n  return { email: email, password: password, id: reg.json && reg.json.id, token: lg.json && lg.json.token };\n}\n\n(async function () {\n  const a = await call(\"POST\", \"/api/login\", { body: { email: \"admin@eshop.com\", password: \"Admin123!\" } });\n  const u = await call(\"POST\", \"/api/login\", { body: { email: \"test@eshop.com\", password: \"Test1234!\" } });\n  pm.test(\"00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)\", function () {\n    pm.expect(a.code, \"login admin: \" + a.text.slice(0, 100)).to.equal(200);\n    pm.expect(u.code, \"login test: \" + u.text.slice(0, 100)).to.equal(200);\n  });\n  if (a.code !== 200 || u.code !== 200) { console.log(\"Dừng: khởi động lại server rồi chạy lại.\"); return; }\n  const ctx = { call: call, newUser: newUser, ADMIN: a.json.token, USER: u.json.token, RUN: RUN, BASE: BASE };\n  try {\n    await aiTests(ctx);\n  } catch (e) {\n    pm.test(\"LỖI SCRIPT CỦA AI (không phải lỗi hệ thống): \" + e.message, function () { throw e; });\n  }\n})();\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "categories"
+          ]
+        },
+        "description": "Request này chỉ gọi GET /api/categories để kiểm tra server đang chạy. Code test của AI nằm trong tab Scripts, mục Post-response."
+      },
+      "response": [
+        {
+          "name": "AI TESTS - Dán code AI vào tab Scripts rồi bấm Send",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "91"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"5b-vgo25Fu4VXEvRW0/sySNLrPEkOw\""
+            },
+            {
+              "key": "date",
+              "value": "Sat, 17 Oct 2026 14:31:18 GMT"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Điện thoại\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Laptop\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Phụ kiện\"\n  }\n]"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

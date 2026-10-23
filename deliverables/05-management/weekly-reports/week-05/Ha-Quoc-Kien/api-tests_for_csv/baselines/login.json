@@ -1,0 +1,6 @@
+[
+  "[L01 user hợp lệ] [B1] user không lộ mật khẩu",
+  "[L02 admin hợp lệ] [B1] user không lộ mật khẩu",
+  "[L04 user hợp lệ sau một lần sai] [B1] user không lộ mật khẩu",
+  "[L15 user hợp lệ sau một lần sai nữa] [B1] user không lộ mật khẩu"
+]

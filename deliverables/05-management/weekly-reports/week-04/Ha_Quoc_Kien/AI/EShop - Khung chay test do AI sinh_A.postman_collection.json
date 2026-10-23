@@ -1,0 +1,105 @@
+{
+  "info": {
+    "_postman_id": "a4cede39-4f1b-4fec-9287-7b680e0a5cec",
+    "name": "EShop - Khung chay test do AI sinh_A",
+    "description": "Khung chạy test do AI sinh ra. Xem AI_Experiment_Guide.md. Thay phần giữa hai dòng BẮT ĐẦU/KẾT THÚC PHẦN DÁN trong tab Scripts (Post-response) bằng code của AI, khởi động lại server rồi bấm Send.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56201103",
+    "_collection_link": "https://go.postman.co/collection/56201103-a4cede39-4f1b-4fec-9287-7b680e0a5cec?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "AI TESTS - Dán code AI vào tab Scripts rồi bấm Send",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// ============================================================================\n// KHUNG CHẠY TEST DO AI SINH RA (template)\n// Cách dùng:\n//   1. Khởi động lại server (node server.js) để dữ liệu sạch.\n//   2. Mở tab Scripts của request này, mục Post-response.\n//   3. Thay TOÀN BỘ phần giữa hai dòng \"BẮT ĐẦU PHẦN DÁN\" và \"KẾT THÚC PHẦN DÁN\" bằng code AI viết\n//      (hàm aiTests(ctx) và các hàm phụ nếu có). Không sửa phần còn lại của khung.\n//   4. Bấm Send, xem tab Test Results.\n// Khung này cung cấp cho AI các công cụ sau (đưa đúng mô tả này vào prompt):\n//   ctx.call(method, path, { token, body })  -> Promise<{ code, json, text, ct }>\n//   ctx.newUser(label)                       -> Promise<{ email, password, id, token }>\n//   ctx.ADMIN, ctx.USER                      -> JWT của admin@eshop.com và test@eshop.com\n//   ctx.RUN                                  -> chuỗi duy nhất của lần chạy (để đặt tên dữ liệu)\n// ============================================================================\n\n// ===== BẮT ĐẦU PHẦN DÁN CODE CỦA AI =====\nasync function aiTests(ctx) {\n    const run = ctx.RUN;\n    const adminToken = ctx.ADMIN;\n    \n    // --- AUTH & USERS ---\n    const newUser = await ctx.newUser(`user_${run}`);\n    \n    const loginRes = await ctx.call('post', '/api/login', {\n        body: { email: newUser.email, password: newUser.password }\n    });\n    pm.test(\"T01 Auth - Login successful\", function () {\n        pm.expect(loginRes.code).to.equal(200);\n        pm.expect(loginRes.json.token).to.be.a('string');\n        pm.expect(loginRes.json.user).to.be.an('object');\n    });\n    \n    const forgotRes = await ctx.call('post', '/api/forgot-password', {\n        body: { email: newUser.email }\n    });\n    pm.test(\"T02 Auth - Forgot password\", function () {\n        pm.expect(forgotRes.code).to.equal(200);\n        pm.expect(forgotRes.json.resetToken).to.exist;\n    });\n    \n    if (forgotRes.code === 200) {\n        const resetRes = await ctx.call('post', '/api/reset-password', {\n            body: { \n                email: newUser.email, \n                resetToken: forgotRes.json.resetToken, \n                newPassword: 'NewPassword123!' \n            }\n        });\n        pm.test(\"T03 Auth - Reset password\", function () {\n            pm.expect(resetRes.code).to.equal(200);\n        });\n    }\n\n    const profileRes = await ctx.call('get', '/api/users/me', { token: newUser.token });\n    pm.test(\"T04 Users - Get profile\", function () {\n        pm.expect(profileRes.code).to.equal(200);\n        pm.expect(profileRes.json.email).to.equal(newUser.email);\n    });\n\n    const updateProfileRes = await ctx.call('put', '/api/users/me', {\n        token: newUser.token,\n        body: { name: `Updated Name ${run}`, phone: \"0123456789\", shipping_address: \"123 Test St\" }\n    });\n    pm.test(\"T05 Users - Update profile\", function () {\n        pm.expect(updateProfileRes.code).to.equal(200);\n    });\n\n    // --- CATEGORIES ---\n    const catPostRes = await ctx.call('post', '/api/categories', {\n        token: adminToken,\n        body: { name: `Category ${run}` }\n    });\n    pm.test(\"T06 Admin - Create category\", function () {\n        pm.expect(catPostRes.code).to.equal(200);\n        pm.expect(catPostRes.json.id).to.be.a('number');\n    });\n    const categoryId = catPostRes.json?.id;\n\n    const catGetRes = await ctx.call('get', '/api/categories');\n    pm.test(\"T07 Categories - Get all\", function () {\n        pm.expect(catGetRes.code).to.equal(200);\n        pm.expect(Array.isArray(catGetRes.json)).to.be.true;\n    });\n\n    const catPutRes = await ctx.call('put', `/api/categories/${categoryId}`, {\n        token: adminToken,\n        body: { name: `Category Updated ${run}` }\n    });\n    pm.test(\"T08 Admin - Update category\", function () {\n        pm.expect(catPutRes.code).to.equal(200);\n    });\n\n    // --- PRODUCTS ---\n    const prodPostRes = await ctx.call('post', '/api/products', {\n        token: adminToken,\n        body: { \n            name: `Product ${run}`, \n            price: 150000, \n            description: \"A great product\", \n            imageUrl: \"http://example.com/img.jpg\", \n            category_id: categoryId \n        }\n    });\n    pm.test(\"T09 Admin - Create product\", function () {\n        pm.expect(prodPostRes.code).to.equal(200);\n        pm.expect(prodPostRes.json.id).to.be.a('number');\n    });\n    const productId = prodPostRes.json?.id;\n\n    const prodGetRes = await ctx.call('get', '/api/products');\n    pm.test(\"T10 Products - Get all\", function () {\n        pm.expect(prodGetRes.code).to.equal(200);\n        pm.expect(Array.isArray(prodGetRes.json)).to.be.true;\n    });\n\n    const prodGetOneRes = await ctx.call('get', `/api/products/${productId}`);\n    pm.test(\"T11 Products - Get one by ID\", function () {\n        pm.expect(prodGetOneRes.code).to.equal(200);\n        pm.expect(prodGetOneRes.json.id).to.equal(productId);\n    });\n\n    const prodPutRes = await ctx.call('put', `/api/products/${productId}`, {\n        token: adminToken,\n        body: { \n            name: `Product Updated ${run}`, \n            price: 160000, \n            description: \"Updated desc\", \n            imageUrl: \"http://example.com/img2.jpg\", \n            category_id: categoryId \n        }\n    });\n    pm.test(\"T12 Admin - Update product\", function () {\n        pm.expect(prodPutRes.code).to.equal(200);\n    });\n\n    // --- CART ---\n    const cartPostRes = await ctx.call('post', '/api/cart', {\n        token: newUser.token,\n        body: { id: productId, name: `Product Updated ${run}`, price: 160000, quantity: 2 }\n    });\n    pm.test(\"T13 Cart - Add item\", function () {\n        pm.expect(cartPostRes.code).to.equal(200);\n    });\n\n    const cartGetRes = await ctx.call('get', '/api/cart', { token: newUser.token });\n    pm.test(\"T14 Cart - Get items\", function () {\n        pm.expect(cartGetRes.code).to.equal(200);\n        pm.expect(Array.isArray(cartGetRes.json)).to.be.true;\n    });\n\n    // --- COUPONS ---\n    const couponCode = `DISC_${run}`;\n    const couponPostRes = await ctx.call('post', '/api/admin/coupons', {\n        token: adminToken,\n        body: { \n            code: couponCode, \n            type: \"percent\", \n            discount_value: 10, \n            min_order_amount: 100000, \n            expired_at: \"2030-12-31\", \n            max_uses_per_user: 1 \n        }\n    });\n    pm.test(\"T15 Admin - Create coupon\", function () {\n        pm.expect(couponPostRes.code).to.equal(200);\n    });\n    const couponId = couponPostRes.json?.id;\n\n    const adminCouponsGetRes = await ctx.call('get', '/api/coupons', { token: adminToken });\n    pm.test(\"T16 Admin - Get coupons list\", function () {\n        pm.expect(adminCouponsGetRes.code).to.equal(200);\n    });\n\n    const couponApplyRes = await ctx.call('post', '/api/apply-coupon', {\n        body: { code: couponCode, total_amount: 320000 }\n    });\n    pm.test(\"T17 Coupons - Apply valid coupon\", function () {\n        pm.expect(couponApplyRes.code).to.equal(200);\n        pm.expect(couponApplyRes.json.success).to.be.true;\n    });\n\n    // --- ORDERS ---\n    const checkoutRes = await ctx.call('post', '/api/checkout', {\n        token: newUser.token,\n        body: { total_amount: 320000, shipping_address: \"123 Test St\", coupon_id: couponId }\n    });\n    pm.test(\"T18 Orders - Checkout\", function () {\n        pm.expect(checkoutRes.code).to.equal(200);\n        pm.expect(checkoutRes.json.orderId).to.be.a('number');\n    });\n    const orderId = checkoutRes.json?.orderId;\n\n    const couponUsageRes = await ctx.call('post', '/api/coupon-usage', {\n        token: newUser.token,\n        body: { coupon_id: couponId }\n    });\n    pm.test(\"T19 Coupons - Record usage\", function () {\n        pm.expect(couponUsageRes.code).to.equal(200);\n    });\n\n    const myOrdersRes = await ctx.call('get', '/api/orders/my-orders', { token: newUser.token });\n    pm.test(\"T20 Orders - Get my orders\", function () {\n        pm.expect(myOrdersRes.code).to.equal(200);\n        pm.expect(Array.isArray(myOrdersRes.json)).to.be.true;\n    });\n\n    const getOrderRes = await ctx.call('get', `/api/orders/${orderId}`, { token: newUser.token });\n    pm.test(\"T21 Orders - Get order detail\", function () {\n        pm.expect(getOrderRes.code).to.equal(200);\n        pm.expect(getOrderRes.json.id).to.equal(orderId);\n    });\n\n    const updateStatusRes = await ctx.call('put', `/api/admin/orders/${orderId}/status`, {\n        token: adminToken,\n        body: { status: \"confirmed\" }\n    });\n    pm.test(\"T22 Admin - Update order status\", function () {\n        pm.expect(updateStatusRes.code).to.equal(200);\n    });\n\n    const adminOrdersRes = await ctx.call('get', '/api/admin/orders', { token: adminToken });\n    pm.test(\"T23 Admin - Get all orders\", function () {\n        pm.expect(adminOrdersRes.code).to.equal(200);\n        pm.expect(Array.isArray(adminOrdersRes.json)).to.be.true;\n    });\n\n    const newOrderForCancel = await ctx.call('post', '/api/checkout', {\n        token: newUser.token,\n        body: { total_amount: 100000, shipping_address: \"Will Cancel St\" }\n    });\n    const cancelOrderId = newOrderForCancel.json?.orderId;\n    \n    if (cancelOrderId) {\n        const cancelRes = await ctx.call('put', `/api/orders/${cancelOrderId}/cancel`, { token: newUser.token });\n        pm.test(\"T24 Orders - Cancel pending order\", function () {\n            pm.expect(cancelRes.code).to.equal(200);\n        });\n    }\n\n    // --- CLEANUP & DELETIONS ---\n    const delProductRes = await ctx.call('delete', `/api/products/${productId}`, { token: adminToken });\n    pm.test(\"T25 Admin - Delete product\", function () {\n        pm.expect(delProductRes.code).to.equal(200);\n    });\n\n    const delCategoryRes = await ctx.call('delete', `/api/categories/${categoryId}`, { token: adminToken });\n    pm.test(\"T26 Admin - Delete category\", function () {\n        pm.expect(delCategoryRes.code).to.equal(200);\n    });\n\n    const delCouponRes = await ctx.call('delete', `/api/admin/coupons/${couponId}`, { token: adminToken });\n    pm.test(\"T27 Admin - Delete coupon\", function () {\n        pm.expect(delCouponRes.code).to.equal(200);\n    });\n\n    const adminUsersRes = await ctx.call('get', '/api/admin/users', { token: adminToken });\n    pm.test(\"T28 Admin - Get all users\", function () {\n        pm.expect(adminUsersRes.code).to.equal(200);\n        pm.expect(Array.isArray(adminUsersRes.json)).to.be.true;\n    });\n\n    const delUserRes = await ctx.call('delete', `/api/admin/users/${newUser.id}`, { token: adminToken });\n    pm.test(\"T29 Admin - Delete user\", function () {\n        pm.expect(delUserRes.code).to.equal(200);\n    });\n}\n// ===== KẾT THÚC PHẦN DÁN CODE CỦA AI =====\n\nconst BASE = String(pm.variables.get(\"baseUrl\") || \"http://localhost:3000\").replace(/\\/+$/, \"\");\nconst RUN = Date.now().toString(36);\n\nfunction call(method, path, opt) {\n  opt = opt || {};\n  return new Promise(function (resolve) {\n    const req = { url: BASE + path, method: method, header: { \"Content-Type\": \"application/json\" } };\n    if (opt.token) req.header[\"Authorization\"] = \"Bearer \" + opt.token;\n    if (opt.body !== undefined) req.body = { mode: \"raw\", raw: JSON.stringify(opt.body) };\n    pm.sendRequest(req, function (err, res) {\n      if (err || !res) { resolve({ code: 0, json: null, text: (err && err.message) ? err.message : String(err), ct: \"\" }); return; }\n      const text = res.text();\n      let json = null;\n      try { json = JSON.parse(text); } catch (e) { json = null; }\n      resolve({ code: res.code, json: json, text: text, ct: res.headers.get(\"Content-Type\") || \"\" });\n    });\n  });\n}\n\nasync function newUser(label) {\n  const email = \"ai.\" + RUN + \".\" + String(label || \"u\").replace(/[^a-zA-Z0-9]/g, \"\") + \"@test.com\";\n  const password = \"Pass1234!\";\n  const reg = await call(\"POST\", \"/api/register\", { body: { name: \"AI \" + label, email: email, password: password } });\n  const lg = await call(\"POST\", \"/api/login\", { body: { email: email, password: password } });\n  return { email: email, password: password, id: reg.json && reg.json.id, token: lg.json && lg.json.token };\n}\n\n(async function () {\n  const a = await call(\"POST\", \"/api/login\", { body: { email: \"admin@eshop.com\", password: \"Admin123!\" } });\n  const u = await call(\"POST\", \"/api/login\", { body: { email: \"test@eshop.com\", password: \"Test1234!\" } });\n  pm.test(\"00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)\", function () {\n    pm.expect(a.code, \"login admin: \" + a.text.slice(0, 100)).to.equal(200);\n    pm.expect(u.code, \"login test: \" + u.text.slice(0, 100)).to.equal(200);\n  });\n  if (a.code !== 200 || u.code !== 200) { console.log(\"Dừng: khởi động lại server rồi chạy lại.\"); return; }\n  const ctx = { call: call, newUser: newUser, ADMIN: a.json.token, USER: u.json.token, RUN: RUN, BASE: BASE };\n  try {\n    await aiTests(ctx);\n  } catch (e) {\n    pm.test(\"LỖI SCRIPT CỦA AI (không phải lỗi hệ thống): \" + e.message, function () { throw e; });\n  }\n})();\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "categories"
+          ]
+        },
+        "description": "Request này chỉ gọi GET /api/categories để kiểm tra server đang chạy. Code test của AI nằm trong tab Scripts, mục Post-response."
+      },
+      "response": [
+        {
+          "name": "AI TESTS - Dán code AI vào tab Scripts rồi bấm Send",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "x-powered-by",
+              "value": "Express"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "content-length",
+              "value": "91"
+            },
+            {
+              "key": "etag",
+              "value": "W/\"5b-vgo25Fu4VXEvRW0/sySNLrPEkOw\""
+            },
+            {
+              "key": "date",
+              "value": "Fri, 16 Oct 2026 16:18:01 GMT"
+            },
+            {
+              "key": "connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "keep-alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Điện thoại\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Laptop\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Phụ kiện\"\n  }\n]"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

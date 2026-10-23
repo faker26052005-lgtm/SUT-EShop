@@ -1,0 +1,19 @@
+[
+  "Admin không lộ mật khẩu",
+  "Bị chặn 401/403",
+  "Giảm 10% của 1.000.000 là 100.000",
+  "Không lộ password",
+  "Không lộ reset_token",
+  "Schema [B1] Login admin: token JWT, user không lộ password/reset_token",
+  "Schema [B1] Login: token JWT, user không lộ password/reset_token",
+  "Schema [B28] Quên mật khẩu: resetToken gồm 6 chữ số (FR-03)",
+  "Schema [B2] Hồ sơ: đủ field, không có password và reset_token",
+  "Schema [B3] Chi tiết sản phẩm: đủ field, price là số",
+  "Schema [B4] Mã giảm giá: discount_amount và final_amount không âm",
+  "Status code is 404",
+  "Thành tiền 900.000",
+  "User không lộ mật khẩu",
+  "User thường phải bị chặn",
+  "[L00 mặc định] [B1] user không lộ mật khẩu",
+  "price là số"
+]

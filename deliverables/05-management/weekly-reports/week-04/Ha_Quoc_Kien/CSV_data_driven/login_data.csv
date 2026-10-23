@@ -1,0 +1,16 @@
+dd_case,dd_email,dd_password,dd_expected_status,dd_expected_error
+L01 user hợp lệ,test@eshop.com,Test1234!,200,
+L02 admin hợp lệ,admin@eshop.com,Admin123!,200,
+L03 sai mật khẩu (một lần),test@eshop.com,Wrong1!,401,Invalid email or password
+L04 user hợp lệ sau một lần sai,test@eshop.com,Test1234!,200,
+L05 email không tồn tại,nobody@eshop.com,Test1234!,401,Invalid email or password
+L06 mật khẩu rỗng (email không tồn tại),empty.pass@eshop.com,,401,Invalid email or password
+L07 email rỗng,,Test1234!,401,Invalid email or password
+L08 chuỗi SQL injection ở email,' OR '1'='1,x,401,Invalid email or password
+L09 email rất dài (250 ký tự),aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@eshop.com,x,401,Invalid email or password
+L10 email thiếu @,testeshop.com,Test1234!,401,Invalid email or password
+L11 email thiếu tên miền,test@,Test1234!,401,Invalid email or password
+L12 email có khoảng trắng đầu," test@eshop.com",Test1234!,401,Invalid email or password
+L13 chuỗi XSS ở email,<script>alert(1)</script>,Test1234!,401,Invalid email or password
+L14 mật khẩu sai chữ hoa chữ thường,test@eshop.com,test1234!,401,Invalid email or password
+L15 user hợp lệ sau một lần sai nữa,test@eshop.com,Test1234!,200,

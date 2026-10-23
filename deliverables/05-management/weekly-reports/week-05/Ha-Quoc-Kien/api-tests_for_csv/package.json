@@ -1,0 +1,22 @@
+{
+  "name": "eshop-api-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chạy bộ test API EShop bằng Newman: toàn bộ collection, data-driven (CSV) và bộ test tổng hợp",
+  "scripts": {
+    "test": "node scripts/run-newman.js",
+    "test:full": "node scripts/run-newman.js full",
+    "test:login": "node scripts/run-newman.js login",
+    "test:products": "node scripts/run-newman.js products",
+    "test:allin1": "node scripts/run-newman.js allin1",
+    "test:baseline": "node scripts/run-newman.js --baseline",
+    "baseline:update": "node scripts/run-newman.js --update-baseline"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "newman": "^6.2.3",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+}
