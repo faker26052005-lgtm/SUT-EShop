@@ -1,6 +1,6 @@
 # Hướng dẫn viết Karate feature cho dự án này
 
-Mọi mẫu dưới đây đã được chạy thật trên EShop với Karate 1.5.2. Xem thêm `examples/coupon.feature` và `examples/auth.feature`.
+Mọi mẫu dưới đây đã được chạy thật trên EShop với Karate 1.5.2 (các ca đỏ trong mẫu là lỗi thật của EShop). Xem thêm `examples/coupon.feature` và `examples/auth.feature`.
 
 ## Khung một feature
 
@@ -50,31 +50,73 @@ Dùng `admin@eshop.com` / `Admin123!` cho quyền admin. Chỉ **đọc** hoặc
 
 ## Ca cần tài khoản hoặc dữ liệu riêng (không đụng tài khoản mẫu)
 
+Dùng hàm dùng chung `helpers/create-user.feature`: tạo tài khoản tạm (email duy nhất), đăng nhập, trả về `email`, `password`, `token`, `id`.
+
 ```gherkin
+  @PF01
   Scenario: PF01 User không tự nâng quyền qua cập nhật hồ sơ (đọc lại sau khi ghi)
-    * def uid = java.lang.System.currentTimeMillis()
-    * def email = 'tmp' + uid + '@test.com'
-    Given path 'api', 'register'
-    And request { name: 'Tmp', email: '#(email)', password: 'Abcdef1!' }
-    When method post
-    Then status 200
-    Given path 'api', 'login'
-    And request { email: '#(email)', password: 'Abcdef1!' }
-    When method post
-    Then status 200
-    * def token = response.token
+    * def u = call read('classpath:helpers/create-user.feature')
     Given path 'api', 'users', 'me'
-    And header Authorization = 'Bearer ' + token
+    And header Authorization = 'Bearer ' + u.token
     And request { name: 'Moi', role: 'admin' }
     When method put
     Then status 200
     Given path 'api', 'users', 'me'
-    And header Authorization = 'Bearer ' + token
+    And header Authorization = 'Bearer ' + u.token
     When method get
     Then status 200
     And match response.name == 'Moi'
     And match response.role == 'user'
 ```
+
+## Đọc dữ liệu bên trong qua API admin
+
+Khi cần xem trạng thái mà API người dùng không trả (ví dụ bộ đếm đăng nhập sai), gọi API admin rồi lọc bằng `karate.jsonPath`:
+
+```gherkin
+  Background:
+    * url baseUrl
+    * def admin = callonce read('classpath:helpers/login.feature') { email: 'admin@eshop.com', password: 'Admin123!' }
+
+  @LG05
+  Scenario: LG05 Một lần sai mật khẩu làm bộ đếm tăng đúng 1 (SRS FR-02)
+    * def u = call read('classpath:helpers/create-user.feature')
+    Given path 'api', 'login'
+    And request { email: '#(u.email)', password: 'Sai1234!' }
+    When method post
+    Then status 401
+    Given path 'api', 'admin', 'users'
+    And header Authorization = 'Bearer ' + admin.token
+    When method get
+    Then status 200
+    * def row = karate.jsonPath(response, "$[?(@.email=='" + u.email + "')]")[0]
+    And match row.login_attempts == 1
+```
+
+## Ca phải chờ (chạy chậm)
+
+Dùng `* eval java.lang.Thread.sleep(<mili giây>)`. Gắn thẻ `@slow` và ghi vào mục "Ca chạy chậm" của matrix.
+
+```gherkin
+  @LG06 @slow
+  Scenario: LG06 Hết thời gian khóa thì đăng nhập lại được (SRS FR-02: khóa 30 giây)
+    * def u = call read('classpath:helpers/create-user.feature')
+    Given path 'api', 'login'
+    And request { email: '#(u.email)', password: 'Sai1!' }
+    When method post
+    Then status 401
+    Given path 'api', 'login'
+    And request { email: '#(u.email)', password: 'Sai2!' }
+    When method post
+    Then status 401
+    * eval java.lang.Thread.sleep(31000)
+    Given path 'api', 'login'
+    And request { email: '#(u.email)', password: '#(u.password)' }
+    When method post
+    Then status 200
+```
+
+Bỏ qua ca chậm khi chạy nhanh: thêm `-t "~@slow"` vào lệnh chạy. Chỉ chạy ca chậm: `-t "@slow"`.
 
 ## Nhiều bộ dữ liệu cho cùng một ca (Examples)
 
@@ -97,19 +139,19 @@ Dùng cho các ca biên hoặc dữ liệu sai. Mỗi dòng bảng là một l�
 ## Việc không làm
 
 - Không dùng `* def x = karate.exec(...)` hay gọi lệnh hệ thống.
-- Không đọc dữ liệu từ ca khác. Không dùng `callonce` cho thứ gì ngoài đăng nhập.
+- Không đọc dữ liệu từ ca khác. Không dùng `callonce` cho thứ gì ngoài đăng nhập; tài khoản tạm dùng `call` (mỗi ca một tài khoản).
 - Không `delete`/đổi quyền/đổi mật khẩu trên `admin@eshop.com`, `test@eshop.com`.
 
-## Cách chạy (người dùng, không phải agent)
+## Lệnh chạy (dùng khi người nói "chạy")
 
-Chạy từ thư mục `karate/` để `classpath:helpers/...` và `karate-config.js` được tìm thấy.
+Máy chủ EShop do **người** khởi động mới trước khi chạy; Agent không tự bật máy chủ. Chạy từ thư mục `karate/` để `classpath:helpers/...` và `karate-config.js` được tìm thấy.
 
 ```
 # Linux, macOS
-java -cp "karate-1.5.2.jar:." com.intuit.karate.Main -o ../executions/<run-id>/report ../executions/<run-id>/features
+java -cp "karate-1.5.2.jar:." com.intuit.karate.Main -t "~@slow" -o ../executions/<run-id>/report ../executions/<run-id>/features
 
 # Windows (PowerShell): dùng dấu chấm phẩy trong classpath
-java -cp "karate-1.5.2.jar;." com.intuit.karate.Main -o ../executions/<run-id>/report ../executions/<run-id>/features
+java -cp "karate-1.5.2.jar;." com.intuit.karate.Main -t "~@slow" -o ../executions/<run-id>/report ../executions/<run-id>/features
 ```
 
-Báo cáo HTML: `report/karate-reports/karate-summary.html`.
+Bỏ `-t "~@slow"` để chạy cả ca chậm. Báo cáo HTML: `report/karate-reports/karate-summary.html`.

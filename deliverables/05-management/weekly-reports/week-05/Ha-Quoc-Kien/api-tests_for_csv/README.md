@@ -10,8 +10,8 @@ Lý do dùng Newman: Collection Runner của Postman bị khóa ở gói miễn 
 |---|---|
 | `collections/eshop_api_postman_collection_v3.json` | Collection chính (68 request, JSON Schema), gồm cả hai thư mục Data-driven `DataDriven - Login` và `DataDriven - Products` |
 | `collections/eshop_api_all_tests.postman_collection.json` | Bộ test tổng hợp (một request `00 RUN ALL`, 118 assertion). Chưa có thì suite `allin1` tự bị bỏ qua |
-| `data/login_data.csv` | 9 dòng đăng nhập (mỗi dòng là một lần lặp) |
-| `data/product_ids.csv` | 8 dòng xem chi tiết sản phẩm |
+| `data/login_data.csv` | 15 dòng đăng nhập (mỗi dòng là một lần lặp) |
+| `data/product_ids.csv` | 14 dòng xem chi tiết sản phẩm |
 | `baselines/*.json` | Danh sách test đỏ đã biết của từng suite (các lỗi của EShop) |
 | `scripts/run-newman.js` | Script chạy |
 | `reports/` | Báo cáo (tự tạo khi chạy, không đưa lên git) |
@@ -60,10 +60,10 @@ Nếu PowerShell làm rối dấu `--`, gọi thẳng: `node scripts/run-newman.
 
 | Suite | Số request | Số lần lặp | Số assertion | Số đỏ | Đỏ là gì |
 |---|---|---|---|---|---|
-| `login` | 9 | 9 | 27 | 3 | B1 ở ba dòng đăng nhập thành công (L01, L02, L04): response lộ `password` |
-| `products` | 8 | 8 | 18 | 5 | B3 ở P02, P04 (`price` là chuỗi); B7 ở P06, P07, P08 (id không tồn tại vẫn trả 200) |
+| `login` | 15 | 15 | 45 | 4 | B1 ở bốn dòng đăng nhập thành công (L01, L02, L04, L15): response lộ `password` |
+| `products` | 14 | 14 | 26 | 10 | B3 ở P02, P04 (`price` là chuỗi); B7 ở P06 đến P13 (id không tồn tại hoặc không hợp lệ vẫn trả 200) |
 | `full` | 68 | 1 | 131 | 18 | Các lỗi đã biết trong collection v3 |
-| `allin1` | 202 | 1 | 118 | 56 | B1 đến B33 và O2 (cần có file bộ test tổng hợp; chưa kiểm chứng ở thư mục này) |
+| `allin1` | 202 | 1 | 118 | 56 | B1 đến B33 và O2 (cần có file bộ test tổng hợp; đã chạy trên Windows ngày 23/10/2026, khớp bảng) |
 
 Báo cáo nằm trong `reports/`: `<suite>.html` (mở bằng trình duyệt, dùng làm ảnh minh chứng) và `<suite>.json` (dữ liệu thô).
 

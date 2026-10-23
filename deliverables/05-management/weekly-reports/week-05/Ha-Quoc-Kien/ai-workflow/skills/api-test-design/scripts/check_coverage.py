@@ -8,13 +8,43 @@ Kiểm tra:
   LỖI   - Scenario mang thẻ @ID không có trong matrix, hoặc ca đó bị loại (N) / chưa duyệt
   CẢNH BÁO - Scenario không có thẻ @ID
   CẢNH BÁO - Scenario không có dòng 'match' nào (chỉ kiểm mã trạng thái: dấu hiệu test xanh giả)
+  CẢNH BÁO - Scenario có 'match' nhưng chỉ kiểm kiểu dữ liệu (#string, #number, ...), không kiểm giá trị
 Thoát với mã 1 nếu có LỖI, mã 0 nếu không.
 """
 import re
 import sys
 from pathlib import Path
 
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 ID_RE = re.compile(r'^[A-Z]{2,4}\d{2,3}$')
+
+
+WEAK_MARKERS = {'#string', '#number', '#boolean', '#array', '#object', '#present', '#notnull', '#ignore'}
+OPS = (' == ', ' != ', ' contains ', ' !contains ')
+
+
+def is_weak_match(line):
+    """True nếu dòng match chỉ so với kiểu dữ liệu (toàn dấu hiệu mờ), không có giá trị cụ thể."""
+    for op in OPS:
+        if op in line:
+            rhs = line.split(op, 1)[1].strip()
+            break
+    else:
+        return False
+    if rhs in ('[]', '{}'):
+        return False
+    quoted = re.findall(r"'([^']*)'|\"([^\"]*)\"", rhs)
+    values = [a or b for a, b in quoted]
+    other = re.sub(r"'[^']*'|\"[^\"]*\"", '', rhs)
+    has_literal = bool(re.search(r'-?\d|true|false|null', other))
+    if has_literal:
+        return False
+    return bool(values) and all(v in WEAK_MARKERS for v in values)
 
 
 def read_matrix(path):
@@ -47,7 +77,7 @@ def read_features(folder):
                 if current:
                     found.append(current)
                 ids = [t[1:] for t in tags if ID_RE.match(t[1:])]
-                current = {'file': f.name, 'name': line, 'ids': ids, 'match': False}
+                current = {'file': f.name, 'name': line, 'ids': ids, 'match': False, 'strong': 0}
                 tags = []
             elif line.startswith(('Feature:', 'Background:')):
                 if current:
@@ -55,6 +85,8 @@ def read_features(folder):
                 current, tags = None, []
             elif current and re.match(r'^(\*|And|Then|Given|When)\s+match\b', line):
                 current['match'] = True
+                if not is_weak_match(line):
+                    current['strong'] += 1
         if current:
             found.append(current)
     return found
@@ -88,6 +120,8 @@ def main():
                 errors.append(f"{s['file']}: @{i} chưa được duyệt hoặc đã bị loại (N)")
         if not s['match']:
             warnings.append(f"{s['file']}: không có dòng match (chỉ kiểm mã trạng thái?): {s['name']}")
+        elif s['strong'] == 0:
+            warnings.append(f"{s['file']}: chỉ kiểm kiểu dữ liệu, không kiểm giá trị: {s['name']}")
 
     print(f'Matrix: {len(matrix)} ca, đã duyệt {len(approved)}. Feature: {len(scenarios)} scenario.')
     for e in errors:

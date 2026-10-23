@@ -1,7 +1,3 @@
-# Đặc tả nghiệp vụ (SRS) của EShop
-
-> Bản trích nhóm đã dùng trong các thí nghiệm A, B, C. SRS là nguồn chuẩn; khi mâu thuẫn với OpenAPI thì SRS thắng.
-
 # Đặc tả nghiệp vụ EShop (trích từ SRS)
 
 Nguồn: README của repo ttbhanh/eshop-sut. Đây là bản trích gồm tổng quan (mục 1), yêu cầu chức năng FR-01 đến FR-20 và yêu cầu bảo mật. Đã lược ghi chú phạm vi tài liệu và các yêu cầu về giao diện (FR-21 đến FR-24).
@@ -78,7 +74,6 @@ Hệ thống EShop là nền tảng thương mại điện tử bao gồm 4 thà
 - Thanh tìm kiếm tìm theo tên sản phẩm. Từ khóa tìm kiếm phải được **hiển thị an toàn** (không render HTML).
 - Khi đang tải dữ liệu phải hiển thị trạng thái **loading**.
 - Khi không có kết quả tìm kiếm phải hiển thị thông báo **empty state** phù hợp.
-- Trang chủ chỉ có **đúng một thẻ `<h1>`**.
 - Mỗi trang chỉ có 1 `<h1>` duy nhất.
 
 ### FR-06: Xem chi tiết sản phẩm

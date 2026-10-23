@@ -9,9 +9,15 @@ Mục tiêu: tìm **càng nhiều lỗi thật** của API càng tốt, bằng t
 
 ## Đầu vào bắt buộc
 
-Đọc **cả ba** tệp trong `inputs/`: `srs.md`, `openapi.yaml`, `sample-data.md`.
-- **SRS là nguồn chuẩn.** Khi SRS và OpenAPI mâu thuẫn, kỳ vọng theo SRS và ghi chỗ mâu thuẫn vào mục "Mâu thuẫn và điểm chưa rõ" của matrix.
-- Thiếu một trong ba tệp thì dừng lại và báo người dùng, đừng đoán.
+Đọc **cả ba** tệp trong `inputs/`: `srs.md`, `openapi.yaml`, `sample-data.md`. Thiếu một trong ba tệp thì dừng lại và báo người dùng, đừng đoán.
+
+**Thứ tự ưu tiên khi các tài liệu khác nhau:**
+1. **SRS quyết định hành vi đúng** (quy tắc nghiệp vụ, bảo mật, ngưỡng, thông báo lỗi).
+2. **OpenAPI quyết định hình dạng giao diện**: đường dẫn, tên trường, kiểu dữ liệu, và mã trạng thái kỹ thuật mà SRS không nói tới.
+3. **Hai tài liệu nói khác nhau về hành vi: theo SRS** và ghi chỗ khác nhau vào mục "Mâu thuẫn và điểm chưa rõ" của matrix. Mỗi chỗ khác nhau có thể là lỗi của hệ thống hoặc lỗi của tài liệu; để người quyết.
+4. **Cả hai im lặng:** ghi "SRS không nêu" và để người quyết, không tự đoán.
+
+OpenAPI có thể mô tả đúng điều hệ thống đang làm (kể cả điều sai). Vì vậy không bao giờ dùng OpenAPI hay kết quả quan sát từ hệ thống làm nguồn của kỳ vọng nghiệp vụ.
 
 ## Quy trình năm pha (không nhảy pha)
 
@@ -21,7 +27,7 @@ Mục tiêu: tìm **càng nhiều lỗi thật** của API càng tốt, bằng t
 
 **Pha 3. DỪNG, chờ người duyệt.** Báo: "Matrix đã xong, chờ duyệt." Không viết Karate khi chưa có ca nào được duyệt. Cột "Duyệt": `Y` giữ nguyên, `S` sửa theo ghi chú rồi coi như duyệt, `N` bỏ.
 
-**Pha 4. Sinh Karate cho ca đã duyệt.** Ghi vào `executions/<run-id>/features/<nhóm>.feature`. Mỗi `Scenario` gắn đúng một thẻ `@ID` trùng với matrix. Viết theo `references/karate-guide.md` và theo phong cách của các ví dụ trong `examples/`. Sau đó chạy:
+**Pha 4. Sinh Karate cho ca đã duyệt.** Ghi vào `executions/<run-id>/features/<nhóm>.feature`. Mỗi `Scenario` gắn đúng một thẻ `@ID` trùng với matrix; ca chạy chậm (phải chờ) gắn thêm thẻ `@slow` và ghi vào mục "Quy ước dữ liệu" của matrix. Viết theo `references/karate-guide.md` và theo phong cách của các ví dụ trong `examples/`. Sau đó chạy:
 `python <thư mục chứa SKILL.md này>/scripts/check_coverage.py executions/<run-id>`
 (chạy từ thư mục gốc của dự án) và sửa cho đến khi không còn LỖI; với CẢNH BÁO thì xem xét từng cái.
 
@@ -30,10 +36,10 @@ Mục tiêu: tìm **càng nhiều lỗi thật** của API càng tốt, bằng t
 ## Quy tắc cốt lõi
 
 1. **Kỳ vọng chỉ lấy từ SRS và OpenAPI.** Không gọi thử hệ thống rồi viết kỳ vọng theo điều quan sát được. Chỗ tài liệu không nêu: ghi "SRS không nêu" vào matrix để người quyết, không tự đoán.
-2. **Không bịa dữ liệu.** Chỉ dùng tài khoản, id, mã giảm giá có trong `sample-data.md`.
+2. **Không bịa dữ liệu có sẵn.** Dữ liệu có sẵn (tài khoản, id, mã giảm giá) chỉ lấy từ `sample-data.md`. Được **tự tạo dữ liệu tạm** (tài khoản, sản phẩm, danh mục, mã giảm giá, đơn hàng) bằng chính API của hệ thống khi cách tạo đó **có trong tài liệu và không trái tài liệu**; ghi cách tạo vào mục "Quy ước dữ liệu" của matrix và đặt tên có tiền tố `tmp`.
 3. **Assertion chặt.** Không chấp nhận ca chỉ kiểm mã 200. Kiểm cả nội dung phản hồi, trường không được xuất hiện, và đọc lại dữ liệu sau khi ghi.
 4. **Đủ nhóm ca.** Mỗi endpoint có ít nhất một ca đường đi đúng và một ca âm tính hoặc bảo mật.
-5. **Không phá dữ liệu mẫu.** Không xóa, đổi quyền hay đổi mật khẩu hai tài khoản mẫu. Ca cần thao tác đó thì tạo tài khoản tạm bằng `POST /api/register`.
+5. **Không phá dữ liệu mẫu.** Không xóa, đổi quyền hay đổi mật khẩu hai tài khoản mẫu và không sửa hay xóa sản phẩm, danh mục, mã giảm giá có sẵn. Ca cần thao tác đó thì làm trên dữ liệu tạm (xem quy tắc 2). Hàm dùng chung `helpers/create-user.feature` tạo tài khoản tạm.
 6. **Mỗi ca độc lập.** Không dùng dữ liệu do ca khác tạo ra.
 7. **Không sửa test cho xanh.** Ca đỏ do hệ thống sai thì giữ nguyên và báo, không nới assertion.
 

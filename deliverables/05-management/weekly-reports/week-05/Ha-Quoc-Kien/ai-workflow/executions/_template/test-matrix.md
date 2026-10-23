@@ -28,3 +28,19 @@ Cột **Duyệt** do người điền: `Y` giữ nguyên, `S` sửa theo ghi ch�
 | # | Nội dung | Agent đề xuất | Người quyết định |
 |---|---|---|---|
 | 1 | `<ví dụ: OpenAPI ghi không cần đăng nhập, SRS yêu cầu đăng nhập>` | theo SRS | |
+
+## 5. Quy ước dữ liệu
+
+Dữ liệu có sẵn chỉ lấy từ `inputs/sample-data.md`. Dữ liệu tạm được tạo bằng API; ghi từng loại ở đây.
+
+| Loại dữ liệu | Cách tạo (endpoint hoặc hàm dùng chung) | Quy ước đặt tên | Ca dùng |
+|---|---|---|---|
+| Tài khoản tạm | `helpers/create-user.feature` | email `tmp<số>@test.com` | `<các ID>` |
+
+### Ca chạy chậm
+
+Ca phải chờ (ví dụ chờ hết thời gian khóa tài khoản). Gắn thẻ `@slow` trong feature.
+
+| ID | Lý do chậm | Thời gian ước tính |
+|---|---|---|
+| `<ID>` | `<ví dụ: chờ hết thời gian khóa>` | `<ví dụ: 31 giây>` |

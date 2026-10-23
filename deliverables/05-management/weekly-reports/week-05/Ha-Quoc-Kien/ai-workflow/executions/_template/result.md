@@ -1,5 +1,16 @@
 # Kết quả: <run-id>
 
+## 0. Thông tin lần chạy (bắt buộc)
+
+| Mục | Ghi nhận |
+|---|---|
+| Agent / công cụ | `<ví dụ: Antigravity>` |
+| **Tên và phiên bản mô hình** | `<ví dụ: Gemini 3.1 Pro>` |
+| Ngày giờ | `<...>` |
+| Chế độ | `<ví dụ: tạm thời, có hay không nạp skill>` |
+| Phiên bản Karate, hệ điều hành | `<...>` |
+| Tệp hội thoại | `conversation.md` (bắt buộc) |
+
 ## 1. Vai trò của người duyệt (human-in-the-loop)
 
 | Chỉ số | Số lượng |

@@ -27,9 +27,15 @@ Hai tài khoản này là **dữ liệu mẫu dùng chung**: không xóa, không
 
 ## Mã giảm giá
 
-| Mã | Loại | Giá trị | Đơn tối thiểu | Hạn dùng | Số lần mỗi người |
-|---|---|---|---|---|---|
-| SAVE10 | percent | 10 | 300.000 | 2099-12-31 | 1 |
-| BIGBUY | fixed | 50.000 | 500.000 | 2099-12-31 | 1 |
-| VIP100 | fixed | 100.000 | 300.000 | 2099-12-31 | 2 |
-| EXPIRED | percent | 20 | 100.000 | 2020-01-01 | 1 |
+| id | Mã | Loại | Giá trị | Đơn tối thiểu | Hạn dùng | Số lần mỗi người | is_active |
+|---|---|---|---|---|---|---|---|
+| 1 | SAVE10 | percent | 10 | 300.000 | 2099-12-31 | 1 | 1 |
+| 2 | BIGBUY | fixed | 50.000 | 500.000 | 2099-12-31 | 1 | 1 |
+| 3 | VIP100 | fixed | 100.000 | 300.000 | 2099-12-31 | 2 | 1 |
+| 4 | EXPIRED | percent | 20 | 100.000 | 2020-01-01 | 1 | 1 |
+
+## Giới hạn của dữ liệu mẫu
+
+- **Không có mã giảm giá `is_active = 0`**, và không tạo được qua API: `POST /api/admin/coupons` không nhận trường `is_active`, còn `DELETE /api/admin/coupons/:id` xóa hẳn dòng. Vì vậy ca "mã bị vô hiệu hóa" (OpenAPI ghi 404) **không phủ được qua API**; ghi vào mục "Mâu thuẫn và điểm chưa rõ" của matrix. Ca "mã không tồn tại" vẫn phủ được (dùng mã không có trong bảng, hoặc tạo rồi xóa một mã tạm).
+- Id đơn hàng, id người dùng tạm do hệ thống cấp khi tạo; không có sẵn trước khi chạy.
+- Khi cần dữ liệu ngoài bảng này, tự tạo dữ liệu tạm bằng API theo quy tắc 2 của skill.

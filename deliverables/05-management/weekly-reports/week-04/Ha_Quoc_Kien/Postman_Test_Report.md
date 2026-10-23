@@ -1,10 +1,11 @@
-# Báo Cáo Kiểm Thử API Bằng Postman — EShop
+# Báo Cáo Tổng Hợp Kiểm Thử API — EShop (Postman)
 
 > **Chủ đề:** API Testing & Contract Testing (T06)
 > **Công cụ:** Postman (Desktop)
 > **Hệ thống được kiểm thử (SUT):** EShop, backend Node.js/Express + SQLite, repo `ttbhanh/eshop-sut`
-> **Ngày chạy:** 13/10/2026 (collection chính), 15/10/2026 (bộ test tổng hợp)
-> **Tệp minh chứng:** `eshop_api_postman_collection_v3.json` (collection chính, 66 request kèm response mẫu của từng request) và `eshop_api_all_tests.postman_collection.json` (bộ test tổng hợp, 1 request, 118 assertion)
+> **Ngày chạy:** 13/10/2026 (collection chính), 15/10/2026 (bộ test tổng hợp), 16/10/2026 (thí nghiệm AI sinh test), 23/10/2026 (đánh giá skill Karate)
+> **Cấu trúc:** mục 1 đến 11 là phần Postman; mục 12 Data-driven bằng Newman; mục 13 thí nghiệm AI sinh test; mục 14 đánh giá skill `api-test-design`; mục 15 tổng hợp và việc còn lại
+> **Tệp minh chứng:** `eshop_api_postman_collection_v3.json` (collection chính: 66 request kèm response mẫu của từng request, cộng 2 request Data-driven, tổng 68 request) và `eshop_api_all_tests.postman_collection.json` (bộ test tổng hợp, 1 request, 118 assertion)
 
 ---
 
@@ -20,10 +21,10 @@
 - 30 endpoint trong `api_specification.md`.
 - 1 endpoint không có trong spec nhưng ứng dụng mobile đang gọi: `POST /api/coupon-usage`.
 - 1 biến thể payload của checkout theo đúng cách ứng dụng mobile gửi (`Checkout (Mobile payload)`).
-- Tổng cộng **38 request chính**, chia vào 8 thư mục: Auth, Products, Cart, Orders, Coupons, Admin, Users, Categories.
-- Thư mục thứ chín `Errors` gồm **28 request**: 2 request chuẩn bị (S1, S2: tạo và đăng nhập tài khoản tạm) và 26 ca kiểm tra phản hồi lỗi (E1 đến E26). Tổng cộng collection có 66 request.
+- Tổng cộng **38 request chính**, chia vào 9 thư mục: Auth, Products, Cart, Orders, Coupons, Admin, Users, Categories và `Orders - Cancel` (một request: Cancel order).
+- Thư mục `Errors` gồm **28 request** (script kiểm tra nằm ở cấp thư mục: mỗi phản hồi 4xx có hai assertion, phản hồi là JSON và có trường `error` kiểu chuỗi, tổng 16 ca × 2 = 32 assertion; 10 ca trả 200 trái kỳ vọng (E5, E6, E13, E14, E16, E21 đến E25, tức B9 đến B13) không có assertion, chỉ có response mẫu): 2 request chuẩn bị (S1, S2: tạo và đăng nhập tài khoản tạm) và 26 ca kiểm tra phản hồi lỗi (E1 đến E26). Tổng cộng 66 request. Bản v3 thêm hai thư mục Data-driven (`DataDriven - Login`, `DataDriven - Products`, mỗi thư mục một request, xem mục 12), nên file collection có 68 request.
 - Kết quả đợt kiểm tra thư mục `Errors` nằm ở mục 6.
-- Collection thứ hai, **bộ test tổng hợp** (`eshop_api_all_tests.postman_collection.json`), chỉ có một request `00 RUN ALL`. Toàn bộ test nằm trong script của request này (khoảng 190 lời gọi API, 118 assertion) nên chạy được chỉ bằng một lần bấm Send, không cần Collection Runner. Bộ test được viết sau khi đọc `server.js` và đối chiếu SRS trong README, nhằm kiểm chứng lại các lỗi đã biết và phát hiện thêm lỗi (B15 đến B33).
+- Collection thứ hai, **bộ test tổng hợp** (`eshop_api_all_tests.postman_collection.json`), chỉ có một request `00 RUN ALL`. Toàn bộ test nằm trong script của request này (201 lời gọi `pm.sendRequest`, Newman đếm 202 request gồm cả request kích hoạt, 118 assertion) nên chạy được chỉ bằng một lần bấm Send, không cần Collection Runner. Bộ test được viết sau khi đọc `server.js` và đối chiếu SRS trong README, nhằm kiểm chứng lại các lỗi đã biết và phát hiện thêm lỗi (B15 đến B33).
 
 ### 1.3. Phương pháp
 1. Đọc `api_specification.md` và lập bảng endpoint.
@@ -45,7 +46,8 @@
 | Giỏ hàng | Lưu trong bộ nhớ của server (`userCarts`), mất khi khởi động lại |
 | Tài khoản mẫu | `test@eshop.com` / `Test1234!` (role user), `admin@eshop.com` / `Admin123!` (role admin) |
 | Postman | Bản Desktop (ghi thêm phiên bản: [điền]) |
-| Node.js | [điền phiên bản] |
+| Node.js | [điền phiên bản trên máy nhóm]; Node 22 khi chạy thử Newman trên Linux |
+| Newman | 6 (chạy thử trên Linux); máy nhóm chạy trên Windows (PowerShell), phiên bản: [điền] |
 
 ---
 
@@ -63,6 +65,8 @@
 | `newUserId` | Script của Register lưu `id` | Admin delete user |
 | `resetToken` | Script của Forgot password lưu `resetToken` | Reset password |
 | `newProductId`, `newCategoryId`, `newCouponId` | Script của các request tạo mới lưu `id` | Update/Delete tương ứng |
+| `tmpEmail`, `tmpToken` | Script của S1, S2 (thư mục `Errors`) | Tài khoản tạm cho các ca lỗi |
+| `dd_case`, `dd_email`, `dd_password`, `dd_expected_status`, `dd_expected_error`, `dd_id`, `dd_name_contains` | Giá trị mặc định khi chạy tay; Newman ghi đè bằng từng dòng CSV | Hai request Data-driven (mục 12) |
 
 ### 3.2. Xác thực
 - Cấp collection: Bearer Token `{{userToken}}`, các request không khai báo riêng sẽ kế thừa.
@@ -91,7 +95,7 @@ Cột "Kết quả" là kết quả assertion sau khi chạy: "Xanh" là mọi a
 | 1 | Auth | Login User | POST `/api/login` | Không | 200 | Đỏ (lộ mật khẩu) |
 | 2 | Auth | Login Admin | POST `/api/login` | Không | 200 | Đỏ (lộ mật khẩu) |
 | 3 | Auth | Register | POST `/api/register` | Không | 200 | Xanh |
-| 4 | Auth | Forgot Password | POST `/api/forgot-password` | Không | 200 | Xanh |
+| 4 | Auth | Forgot Password | POST `/api/forgot-password` | Không | 200 | Đỏ (OTP 4 chữ số, B28) |
 | 5 | Auth | Reset password | POST `/api/reset-password` | Không | 200 | Xanh |
 | 6 | Products | Get products | GET `/api/products` | Không | 200 | Xanh |
 | 7 | Products | Product detail id 1 | GET `/api/products/1` | Không | 200 | Xanh |
@@ -108,7 +112,7 @@ Cột "Kết quả" là kết quả assertion sau khi chạy: "Xanh" là mọi a
 | 18 | Orders | My orders | GET `/api/orders/my-orders` | User | 200 | Xanh |
 | 19 | Orders | Order detail | GET `/api/orders/{{orderId}}` | User | 200 | Xanh |
 | 20 | Orders | Order detail (no token) | GET `/api/orders/{{orderId}}` | Không | 200 | Đỏ (kỳ vọng bị chặn) |
-| 21 | Orders | Cancel order | PUT `/api/orders/{{orderId}}/cancel` | User | 200 | Xanh |
+| 21 | Orders - Cancel | Cancel order | PUT `/api/orders/{{orderId}}/cancel` | User | 200 | Xanh |
 | 22 | Coupons | Apply coupon | POST `/api/apply-coupon` | User | 200 | Đỏ (tính giảm giá sai) |
 | 23 | Coupons | Get coupon | GET `/api/coupons` | Admin | 200 | Xanh |
 | 24 | Coupons | Coupon usage | POST `/api/coupon-usage` | User | 200 | Xanh |
@@ -128,9 +132,9 @@ Cột "Kết quả" là kết quả assertion sau khi chạy: "Xanh" là mọi a
 | 38 | Categories | Delete category | DELETE `/api/categories/{{newCategoryId}}` | Admin | 200 | Xanh |
 
 ### Tổng hợp
-- 38 request, **29 request xanh hoàn toàn**.
-- **9 request có assertion đỏ** (tổng 11 assertion), tương ứng **8 lỗi** ở mục 6.
-- Cả 38 request chính đều trả HTTP 200, kể cả các trường hợp lẽ ra phải là 401, 403 hoặc 404. Điều này chính là điểm cần chú ý: kiểm thử chỉ dựa vào mã trạng thái sẽ không phát hiện được lỗi nào trong 8 lỗi B1 đến B8.
+- 38 request, **28 request xanh hoàn toàn**.
+- **10 request có assertion đỏ** (tổng 17 assertion, tính cả các checkpoint JSON Schema của bản v3), tương ứng **9 lỗi** (B1 đến B8 và B28) ở mục 6. Kết quả chạy `npm run test:full` trên máy nhóm ngày 23/10/2026 (Windows): 68 request, 131 assertion, 18 đỏ (17 ở request chính, 1 ở Data-driven).
+- Cả 38 request chính đều trả HTTP 200, kể cả các trường hợp lẽ ra phải là 401, 403 hoặc 404. Điều này chính là điểm cần chú ý: kiểm thử chỉ dựa vào mã trạng thái sẽ không phát hiện được lỗi nào trong 9 lỗi B1 đến B8 và B28.
 - Bảng này chỉ tính 38 request chính. Các ca trong thư mục `Errors` được tổng hợp riêng ở mục 6.
 
 ---
@@ -209,7 +213,7 @@ Ghi chú định dạng: `created_at` có dạng `2026-10-13 12:25:29` (không p
 | B32 | Import không rollback và không kiểm tra giá | Trung bình | D13 | Có dòng lỗi thì không lưu dòng nào (FR-16) | Import một dòng hợp lệ và một dòng `price: -100` trả "2/2 sản phẩm được thêm", `errors: []` |
 | B33 | Admin xóa được chính tài khoản đang đăng nhập | Trung bình | D14 | 400 hoặc 403 (FR-19) | `DELETE /admin/users/{id của mình}` trả 200; tài khoản bị xóa không đăng nhập lại được |
 
-B30 đến B33 do thí nghiệm AI phát hiện (test T06, T08, T09, T18 của điều kiện B sinh từ SRS, xem `AI_Run_Log_reviewed.md`), sau đó được kiểm chứng trực tiếp và đưa vào bộ test tổng hợp. Test D14 dùng một tài khoản admin tạm (tạo nhờ lỗi B15) để không xóa mất tài khoản admin mẫu; nếu B15 được sửa, test này tự bỏ qua.
+B30 đến B33 do thí nghiệm AI phát hiện (test T06, T08, T09, T18 của điều kiện B sinh từ SRS, xem `AI_Run_Log.md` (mục 13)), sau đó được kiểm chứng trực tiếp và đưa vào bộ test tổng hợp. Test D14 dùng một tài khoản admin tạm (tạo nhờ lỗi B15) để không xóa mất tài khoản admin mẫu; nếu B15 được sửa, test này tự bỏ qua.
 
 Mở rộng của các lỗi trước (bộ test tổng hợp): B6 còn gồm xem đơn của người khác (O08); B8 còn gồm sửa và xóa sản phẩm không cần token (P16, P17); B11 còn gồm thêm danh mục và mã giảm giá với body rỗng (C05, Q18); B12 còn gồm sửa, xóa danh mục và xóa người dùng không tồn tại (C07, C08, D12); B13 còn gồm tổng tiền sai lệch với giỏ hàng (O04); B10 còn gồm việc đăng ký chấp nhận email sai định dạng và mật khẩu yếu (ví dụ E5 đã chấp nhận mật khẩu `x`, FR-01).
 
@@ -266,13 +270,13 @@ Lưu ý về dữ liệu sau đợt này: các ca E5, E6, E16 và E21 đến E25
 | Số assertion | 118 |
 | Đạt | 62 |
 | Không đạt | 56 |
-| Số lời gọi API | khoảng 185 |
+| Số request (Newman) | 202 (gồm request kích hoạt `GET /api/categories`) |
 | Chạy lặp lại | Hai lần liên tiếp không khởi động lại server cho kết quả giống hệt nhau |
 
 - 56 assertion không đạt tương ứng 33 lỗi (B1 đến B33) và 1 ghi nhận (O2: JWT không có `exp`, test A17). Mỗi test đỏ đều có mã lỗi trong tên, không có test đỏ do sai script.
 - Phân bố test đỏ theo lỗi: B1 (A02), B2 (U02, U03), B3 (P04), B4 (Q01, Q02), B5 (D02), B6 (O07, O08), B7 (P05), B8 (P10, P16, P17), B9 (A08), B10 (A09), B11 (P12, P13, C05, Q18), B12 (P15, P18, C07, C08, D12), B13 (O03, O04), B14 (Q04), B15 (U07), B16 (U06), B17 (P08, P09), B18 (K03), B19 (K04), B20 (K05), B21 (O20), B22 (O14), B23 (Q13), B24 (9 test), B25 (K02b), B26 (Q08b), B27 (A06), B28 (A11), B29 (Q19), B30 (U08), B31 (P19), B32 (D13), B33 (D14), O2 (A17).
 - Các test đạt xác nhận những hành vi đúng: đăng nhập sai và email lạ cùng thông điệp, mã OTP chỉ dùng một lần và chỉ đúng cho email đã yêu cầu, đơn hàng chỉ hủy được bởi chủ đơn, lịch sử đơn chỉ chứa đơn của mình, state machine chặn các chuyển trạng thái bỏ bước, mã giảm giá hết hạn và dưới mức tối thiểu bị từ chối, import báo lỗi đúng với danh sách rỗng và dòng thiếu tên.
-- Bản 114 assertion (52 đỏ, 62 xanh) đã được kiểm tra trên máy của nhóm và khớp với kỳ vọng. Bản 118 assertion (thêm B30 đến B33) đã được chạy lại hai lần liên tiếp trong môi trường của trợ lý với kết quả giống nhau (56 đỏ, 62 xanh); nhóm cần chạy lại trên máy mình để xác nhận.
+- Bản 114 assertion (52 đỏ, 62 xanh) đã được kiểm tra trên máy của nhóm và khớp với kỳ vọng. Bản 118 assertion (thêm B30 đến B33) đã chạy hai lần liên tiếp trong môi trường của trợ lý (56 đỏ, 62 xanh) và chạy bằng `npm run test:allin1` trên máy nhóm (Windows) ngày 23/10/2026: 202 request, 118 assertion, 56 đỏ, 62 xanh, 3,2 giây; 56 test đỏ đúng với phân bố theo lỗi ở trên (B1 đến B33 và O2).
 
 ---
 
@@ -335,14 +339,19 @@ Các mục dưới đây đến từ đọc code `server.js` và đối chiếu 
 - Kết quả đúng với bản mã nguồn repo tại thời điểm chạy; nếu repo thay đổi, cần chạy lại.
 
 ### Việc tiếp theo
-1. Thêm kiểm tra JSON Schema (checkpoint) cho Get products, Product detail, Login trong collection chính.
-2. Thêm kiểm thử theo dữ liệu (data-driven) cho đăng nhập bằng tệp CSV.
-3. Kiểm thử các mục ở mục 9.
-4. Chạy tự động bằng Newman và xuất báo cáo HTML (phần việc của thành viên phụ trách Newman; bộ test tổng hợp cũng chạy được bằng `newman run`).
-5. Đối chiếu `openapi.yaml` với collection (đã cập nhật B1 đến B33).
-6. Xây hợp đồng Pact cho ứng dụng mobile dựa trên các field mà mobile thật sự đọc.
-7. Hỏi giảng viên về mâu thuẫn giữa `api_specification.md` và SRS ở `apply-coupon`.
-8. Hoàn thiện báo cáo thí nghiệm AI (`AI_Run_Log_reviewed.md`) và đưa kết quả vào báo cáo chung.
+
+| # | Việc | Trạng thái |
+|---|---|---|
+| 1 | Kiểm tra JSON Schema (checkpoint) cho Get products, Product detail, Login trong collection chính | Đã làm trong collection v3 (mục 12) |
+| 2 | Kiểm thử Data-driven cho đăng nhập bằng CSV | Đã làm, mở rộng thêm cả chi tiết sản phẩm (mục 12) |
+| 3 | Kiểm thử các mục ở mục 9 | Còn lại: số lượng giỏ hàng âm hoặc 0, `discount_value` âm, giả mạo JWT bằng khóa cứng, đặt lại mật khẩu yếu, sản phẩm giá 0 hoặc tên quá dài |
+| 4 | Chạy tự động bằng Newman và xuất báo cáo HTML | Đã làm (mục 12) |
+| 5 | Đối chiếu `openapi.yaml` với collection | Đã cập nhật B1 đến B33; cần đối chiếu lại nếu có thay đổi |
+| 6 | Xây hợp đồng Pact cho ứng dụng mobile | [điền trạng thái, chưa có tài liệu trong đợt tổng hợp này] |
+| 7 | Hỏi giảng viên về mâu thuẫn `api_specification.md` và SRS ở `apply-coupon` | [điền kết quả]. Skill ở mục 14 đã chọn theo SRS (401) |
+| 8 | Hoàn thiện báo cáo thí nghiệm AI và đưa vào báo cáo chung | Đã làm (mục 13) |
+| 9 | Chạy lại bộ test tổng hợp 118 assertion trên máy nhóm | Đã làm (23/10/2026): 56 đỏ, 62 xanh |
+| 10 | Chạy lại AC10 sau khi sửa script Karate, thêm ca "bỏ `user_id`" cho B23 | Còn lại (mục 14); Postman đã xác nhận AC10 là lỗi script |
 
 ---
 
@@ -351,7 +360,7 @@ Các mục dưới đây đến từ đọc code `server.js` và đối chiếu 
 ### Collection chính
 1. Clone repo `ttbhanh/eshop-sut`, vào thư mục `backend`, chạy `npm install`.
 2. Chạy `node server.js` (thấy dòng `Server is running on http://localhost:3000`).
-3. Mở Postman, chọn Import, chọn `eshop_api_postman_collection_v2.json`.
+3. Mở Postman, chọn Import, chọn `eshop_api_postman_collection_v3.json`.
 4. Vào tab Variables của collection, kiểm tra `baseUrl` là `http://localhost:3000`.
 5. Chạy theo thứ tự: Login User, Login Admin, rồi lần lượt các request theo mục 4. Các request phụ thuộc biến (`orderId`, `newProductId`...) cần chạy sau request tạo ra biến đó.
 6. Muốn chạy lại từ đầu: dừng và khởi động lại server để reset dữ liệu.

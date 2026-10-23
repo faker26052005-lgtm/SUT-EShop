@@ -4,3 +4,4 @@
 - `skills/`: Chứa các Skill tái sử dụng (`api-test-design`).
 - `prompts/`: Lời nhắc hệ thống và chỉ dẫn nhiệm vụ.
 - `executions/`: Lưu vết chạy, log hội thoại, bảng review test matrix.
+- `data/`: Chứa các dữ liệu đầu vào cần thiết
