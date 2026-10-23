@@ -1,0 +1,8 @@
+Cảm ơn. Tiếp tục với PHẦN 2 của kế hoạch: các test thuộc giỏ hàng, đơn hàng, mã giảm giá, quản trị (người dùng, đơn hàng, import, mã giảm giá). Viết đầy đủ MỌI test của các nhóm này có trong kế hoạch, không bỏ test nào. Dùng cùng công cụ ctx, cùng quy tắc và cùng phong cách như lượt trước.
+
+Đặt toàn bộ code của phần này trong một hàm: async function aiTestsPart2(ctx) { ... }
+Cuối cùng viết thêm hàm tổng: async function aiTests(ctx) { await aiTestsPart1(ctx); await aiTestsPart2(ctx); }
+
+<output_format>
+Trả về MỘT khối code JavaScript duy nhất cho các hàm được yêu cầu, không giải thích dài dòng. Trước mỗi test có dòng chú thích "// Mục tiêu: <lỗi có thể tìm ra>. Tham chiếu: <mã R, FR, SEC, OWASP>". Tên test bắt đầu bằng mã test trong kế hoạch (ví dụ "T07 ..."). Không dùng require, import, fetch, axios; chỉ dùng ctx, pm.test và pm.expect.
+</output_format>

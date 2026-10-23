@@ -1,0 +1,59 @@
+00 Môi trường sẵn sàng (server chạy, đăng nhập được admin và test@eshop.com)
+failed
+T01 Đăng ký hợp lệ và đăng nhập thành công | AssertionError: Không lộ password trong response: expected 'StrongPass123!@#' to be undefined
+failed
+T02 Đăng ký thất bại do mật khẩu yếu | AssertionError: Mã lỗi do pass yếu: expected 200 to be one of [ 400, 422 ]
+passed
+T03 Không thể tự cấp quyền admin khi đăng ký
+passed
+T04 Khóa tài khoản sau 3 lần đăng nhập sai
+failed
+T05 Quên mật khẩu và đổi mật khẩu an toàn, OTP không dùng lại được | AssertionError: OTP token sinh ra: expected '5012' to have a length at least 6 but got 4
+failed
+T06 API cập nhật hồ sơ từ chối Mass Assignment (đổi email, role) | AssertionError: Role KHÔNG được đổi: expected 'admin' to equal 'user'
+failed
+T07 BFLA: User thường tạo sản phẩm bị từ chối 403 | AssertionError: Trạng thái cấm truy cập: expected 200 to equal 403
+failed
+T08 Admin không thể tạo sản phẩm với giá âm | AssertionError: Mã lỗi validation: expected 200 to be one of [ 400, 422 ]
+failed
+T15 Import sản phẩm rollback toàn bộ nếu có 1 dòng lỗi (Atomic) | AssertionError: Sản phẩm đúng trong batch bị lỗi không được lưu: expected true to equal false
+passed
+T18 API Tìm kiếm không bị crash với payload SQLi
+failed
+T19 Phân quyền và CRUD Category | AssertionError: User thường bị chặn: expected 200 to equal 403
+failed
+T09 Giỏ hàng từ chối số lượng âm hoặc không hợp lệ | AssertionError: Mã lỗi khi gửi quantity âm: expected 200 to be one of [ 400, 422 ]
+passed
+T10 Thanh toán tạo đơn hàng thành công
+passed
+T11 Thanh toán từ chối sai lệch total_amount hoặc tự tính lại
+failed
+T12 BOLA: User không thể xem chi tiết đơn hàng của người khác | AssertionError: Bị chặn truy cập chéo (403 hoặc 404): expected 200 to be one of [ 403, 404 ]
+failed
+T13 User không thể tự hủy đơn hàng đang giao (shipping) | AssertionError: Từ chối hủy do sai luật trạng thái: expected 200 to be one of [ 400, 403 ]
+passed
+T14 Từ chối áp dụng mã giảm giá khi không đủ ngưỡng
+passed
+T16 Admin bị chặn chuyển trạng thái nhảy cóc (pending -> delivered)
+failed
+T17 Admin không thể tự xóa tài khoản của chính mình | AssertionError: Server từ chối yêu cầu (400 hoặc 403): expected 200 to be one of [ 400, 403 ]
+failed
+T20 Admin tạo Coupon: Từ chối giá trị giảm âm | AssertionError: Validation thất bại: expected 200 to be one of [ 400, 422 ]
+passed
+T21 Quên mật khẩu báo lỗi 404 nếu email không tồn tại
+passed
+T22 Truy cập API bảo mật không có token bị từ chối 401
+passed
+T23 Admin CRUD Sản phẩm (Đường đi đúng)
+failed
+T24 User thường bị 403 khi sửa/xóa danh mục | AssertionError: expected 200 to equal 403
+passed
+T25 Xem giỏ hàng trả về mảng
+passed
+T26 API Lấy danh sách đơn hàng hợp lệ
+passed
+T27 Admin cập nhật trạng thái và User hủy đơn hợp lệ
+passed
+T28 Luồng Mã giảm giá hoàn chỉnh (Đường đi đúng)
+passed
+T29 Admin xem và xóa User

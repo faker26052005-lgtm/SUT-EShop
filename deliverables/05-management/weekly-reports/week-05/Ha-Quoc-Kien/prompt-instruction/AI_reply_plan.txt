@@ -1,0 +1,102 @@
+Chào đồng nghiệp, rất vui được cùng bạn "đập phá" và tìm lỗi cho hệ thống EShop này. Với tư duy đối kháng, chúng ta không chỉ kiểm tra xem hệ thống có làm đúng khi người dùng ngoan ngoãn hay không, mà phải xem nó phản ứng thế nào khi bị nhồi dữ liệu rác, cố tình vượt quyền, hoặc bóp méo luồng nghiệp vụ.
+
+Dưới đây là kế hoạch kiểm thử chi tiết theo từng bước bạn yêu cầu.
+
+### Bước 1. Danh sách các quy tắc nghiệp vụ (Business & Security Rules)
+
+Dựa trên OpenAPI và tài liệu SRS, tôi rút ra các quy tắc cốt lõi mà API cần tuân thủ. Các quy tắc này là xương sống để xây dựng ca kiểm thử (test case).
+
+| Mã | Nội dung quy tắc | Tham chiếu |
+| --- | --- | --- |
+| **R01** | Đăng ký: Email phải có định dạng chuẩn và duy nhất. Mật khẩu phải mạnh (>=8 ký tự, hoa, thường, số, đặc biệt). | FR-01 |
+| **R02** | Đăng nhập: Sai 3 lần liên tiếp phải khóa tài khoản 30s (trả về 403). Mật khẩu không bao giờ lộ bản rõ. | FR-02, SEC-01 |
+| **R03** | Đặt lại mật khẩu: OTP 6 số, gửi về đúng email. OTP chỉ dùng 1 lần, đúng OTP mới cho đổi mật khẩu mới. | FR-03, SEC-07 |
+| **R04** | Hồ sơ: Chỉ cập nhật name, shipping_address, phone (đúng chuẩn VN 10-11 số đầu 0). Không được tự đổi email/role. | FR-04, SEC-06 |
+| **R05** | Sản phẩm: Giá phải là số dương (>0). Tên không rỗng. (Admin mới được tạo/sửa/xóa). | FR-15 |
+| **R06** | Import Sản phẩm: File CSV đúng chuẩn. Atomic transaction: 1 dòng lỗi thì toàn bộ file phải bị rollback, không lưu dòng nào. | FR-16 |
+| **R07** | Checkout: Hệ thống phải tự tính lại tiền dựa trên giá gốc sản phẩm, tuyệt đối không tin `total_amount` từ client. | FR-08, API6 |
+| **R08** | Giỏ hàng: Giữ trong memory per-user. Số lượng >= 1. | FR-07 |
+| **R09** | Mã giảm giá: Phải thoả 5 điều kiện: tồn tại/active, chưa hết hạn, đạt min_amount, có token, chưa quá số lần dùng. | FR-09 |
+| **R10** | Trạng thái đơn hàng: Chỉ chuyển tuần tự (pending->confirmed->shipping->delivered). pending/confirmed mới được user hủy. | FR-10 |
+| **R11** | BOLA (Broken Object Level Authorization): User chỉ xem/hủy được đơn hàng của chính mình. | FR-11, API1 |
+| **R12** | Phân quyền Admin (BFLA): Mọi API `/admin/*` và API ghi (sản phẩm/danh mục/coupon) bắt buộc token hợp lệ VÀ role=admin. | FR-12, SEC-03, API5 |
+| **R13** | Xóa User: Admin không được phép tự xóa tài khoản của chính mình. | FR-19 |
+
+---
+
+### Bước 2. Kế hoạch kiểm thử (Test Plan)
+
+*(Chú ý: Dùng `ctx.newUser` để tạo tài khoản riêng cho mỗi test, tránh làm hỏng dữ liệu gốc. Hậu tố danh từ có chữ `ctx.RUN` để dễ dọn dẹp).*
+
+| Mã Test | Endpoint | Nhóm ca | Mục tiêu (Lỗi cần tìm) | Tham chiếu | Assertion chính |
+| --- | --- | --- | --- | --- | --- |
+| **T01** | `POST /api/register` | (1) Đường đi đúng | Đăng ký user hợp lệ thành công. | R01, FR-01 | Trạng thái 200. Body có `id`. Lấy token đăng nhập thử thành công. |
+| **T02** | `POST /api/register` | (3) Sai, thiếu | Bypass độ phức tạp mật khẩu (vd: `123456`). | R01, FR-01 | Trạng thái 400. Body chứa `error`. Không đăng nhập được bằng acc này. |
+| **T03** | `POST /api/register` | (5) Phân quyền | **Mass Assignment:** Thử gửi thêm `"role": "admin"` vào body. | API3, SEC-06 | 200, nhưng đăng nhập vào check `/api/users/me` thấy role vẫn là `user`. |
+| **T04** | `POST /api/login` | (6) Trạng thái luồng | **Bruteforce:** Cố tình gửi sai pass 3 lần. Lần 4 gửi pass đúng. | R02, FR-02, API2 | Lần 1,2: 401. Lần 3,4: 403 (Tài khoản bị khóa). |
+| **T05** | `POST /api/forgot-password` & `reset-password` | (6) Trạng thái luồng | Hoàn thành luồng đổi pass hợp lệ. Đảm bảo OTP không dùng lại được. | R03, FR-03 | Quên pass -> Lấy OTP -> Đổi pass (200). Đổi tiếp bằng OTP cũ -> 400. |
+| **T06** | `PUT /api/users/me` | (5) Phân quyền | **Mass Assignment:** User cố tự nâng quyền hoặc đổi email khác. | R04, SEC-06, API3 | Gửi body `{role: 'admin', email: 'hack@a.com'}`. Lấy GET lại thấy không bị đổi. |
+| **T07** | `POST /api/products` | (5) Phân quyền | **BFLA:** User thường cố tình gọi API tạo sản phẩm. | R12, SEC-03, API5 | Trạng thái 403 (Forbidden). Kể cả khi sửa response ở client cũng bị server chặn. |
+| **T08** | `POST /api/products` | (2) Giá trị biên | Tạo sản phẩm với giá `<= 0` hoặc sai kiểu (chữ). | R05, FR-15 | Trạng thái 400. Dữ liệu không được ghi vào DB. |
+| **T09** | `POST /api/cart` | (2) Giá trị biên | **Lạm dụng logic:** Thêm sản phẩm với `quantity: -5` hoặc số thực `1.5`. | R08, API6 | Trạng thái 400. Không làm âm tổng tiền giỏ hàng. |
+| **T10** | `POST /api/checkout` | (1) Đường đi đúng | Luồng mua hàng cơ bản (tạo giỏ, thanh toán, kiểm tra đơn tạo ra). | FR-08, R07 | Trạng thái 200. Có `orderId`. Gọi GET order thấy chi tiết khớp với giỏ hàng. |
+| **T11** | `POST /api/checkout` | (5) Phân quyền | **Data Tampering:** Client cố tình gửi `total_amount: 1000` cho cái iPhone 30 củ. | R07, API6 | Hệ thống KHÔNG tạo đơn giá 1000. Phải trả 400 hoặc tạo đơn đúng giá 30tr. |
+| **T12** | `GET /api/orders/{id}` | (5) Phân quyền | **BOLA/IDOR:** User B cố truy cập đơn hàng của User A. | R11, FR-11, API1 | User B gọi GET vào ID của A -> Trạng thái 403 hoặc 404 (Không leak dữ liệu). |
+| **T13** | `PUT /api/orders/{id}/cancel` | (6) Trạng thái luồng | Hủy đơn sai luật: Cố hủy đơn hàng đang ở trạng thái `shipping` hoặc `delivered`. | R10, FR-10 | Trạng thái 400 (hoặc 403). Đơn hàng không đổi trạng thái. |
+| **T14** | `POST /api/apply-coupon` | (4) Vi phạm luật | **Lạm dụng Coupon:** Đơn giá 200k cố áp mã `SAVE10` (min 300k) hoặc mã `EXPIRED`. | R09, FR-09 | Trạng thái 400. Body ghi rõ lý do. Tiền không giảm. |
+| **T15** | `POST /api/admin/import-products` | (6) Trạng thái luồng | **Atomic CSV Import:** File có 2 dòng đúng, 1 dòng sai (giá -100). Kiểm tra rollback. | R06, FR-16 | Trạng thái 200 (có error array) hoặc 400. Kiểm tra lại GET products -> 2 dòng đúng KIA KHÔNG CÓ trong DB. |
+| **T16** | `PUT /api/admin/orders/{id}/status` | (4) Vi phạm luật | **Bypass state machine:** Admin ép đơn `pending` chuyển vèo sang `delivered`. | R10, FR-10 | Trạng thái 400 (Chuyển trạng thái không hợp lệ). |
+| **T17** | `DELETE /api/admin/users/{id}` | (4) Vi phạm luật | **Logic flaw:** Admin (id=1) tự gọi xóa chính mình (id=1). | R13, FR-19 | Trạng thái 400 hoặc 403. Không tự sát được. |
+| **T18** | `GET /api/products?search=` | (5) Phân quyền | **XSS/SQLi Payload:** Tìm kiếm gửi ký tự `' OR 1=1 --` hoặc `<script>`. | SEC-04, SEC-05 | 200. Trả về mảng rỗng. Không sập server, không lỗi stack trace nội bộ (API8). |
+
+---
+
+### Bước 3. Bảng Phủ (Coverage Matrix)
+
+Mục đích là để "nhìn lại" xem chúng ta đã quét sạch mọi ngóc ngách chưa.
+
+#### a. Mức độ phủ Endpoint (OpenAPI)
+
+| Nhóm Endpoint | Đã test ở | Nhận xét |
+| --- | --- | --- |
+| `/api/register`, `/api/login` | T01, T02, T03, T04 | Đã quét cả positive, negative, bruteforce, mass assignment. |
+| `/api/forgot-password`, `/reset...` | T05 | Luồng 2 bước OTP đã kiểm soát chống dùng lại. |
+| `/api/users/me` | T06 | Đã test cập nhật và cố tình đè quyền (Mass assignment). |
+| `/api/products` (GET, POST, PUT, DEL) | T07, T08, T18 | Đã test ACL, injection, giá trị biên. |
+| `/api/categories` (GET, POST...) | *(Thiếu)* | **Bổ sung T19:** Test Admin CRUD Categories, User bị chặn (403). |
+| `/api/cart` | T09 | Đã test logic âm, số lượng ảo. |
+| `/api/checkout` | T10, T11 | Luồng chính và luồng tấn công giá (Total Amount tampering). |
+| `/api/orders/*` | T12, T13 | Đã quét rò rỉ chéo dữ liệu (IDOR) và bypass state machine. |
+| `/api/apply-coupon`, `/coupon-usage` | T14 | Quét các luật điều kiện, hạn dùng. |
+| `/api/admin/import-products` | T15 | Quét nghiệp vụ All-or-nothing (Rollback). |
+| `/api/admin/orders/{id}/status` | T16 | Quét chặn nhảy cóc trạng thái. |
+| `/api/admin/users/{id}` | T17 | Quét lỗi nghiệp vụ admin tự xóa. |
+| `/api/admin/coupons` | *(Thiếu)* | **Bổ sung T20:** Tạo mã giảm giá có discount_value âm hoặc string. |
+
+#### b. Mức độ phủ SRS (FR & SEC)
+
+* **FR-01, 02, 03, 04 (Auth/User):** Phủ bởi T01..T06.
+* **FR-07, 08 (Cart/Checkout):** Phủ bởi T09, T10, T11.
+* **FR-09 (Coupon):** Phủ bởi T14, T20 (mới).
+* **FR-10, 11 (Orders/State):** Phủ bởi T12, T13, T16.
+* **FR-12..19 (Admin):** Phủ bởi T07, T15, T16, T17, T19 (mới).
+* **SEC-01..07:** Đều đã được lồng ghép (Token, BFLA, SQLi, Mass Assignment, OTP expiration).
+
+#### c. Mức độ phủ OWASP API Security Top 10 (2023)
+
+| OWASP 2023 | Ca test bảo vệ | Trạng thái |
+| --- | --- | --- |
+| **API1: BOLA (Broken Object Level Auth)** | T12 (Get order người khác) | Phủ tốt. Đảm bảo user không trộm được data. |
+| **API2: Broken Authentication** | T04 (Khóa 30s), T05 (OTP replay) | Phủ tốt. Chống scan/bruteforce. |
+| **API3: BOPA (Broken Object Property Auth)** | T03 (Register role), T06 (Update email) | Phủ tốt. Chống nhồi thuộc tính ẩn (Mass assignment). |
+| **API4: Unrestricted Resource Consumption** | T09 (Quantity rất lớn) | Một phần. *Ghi chú:* Server cần rate limit nhưng SRS không ghi rõ. |
+| **API5: Broken Function Level Auth** | T07 (User gọi API tạo SP), T19 | Phủ tốt. Phân quyền Admin chuẩn chỉ. |
+| **API6: Unrestricted Access to Business Flows** | T11 (Sửa giá), T14 (Bypass Coupon) | Phủ rất tốt. Đánh thẳng vào logic tiền bạc. |
+| **API8: Security Misconfiguration** | T18 (SQLi payload) | Phủ. Đảm bảo lỗi không quăng stack trace. |
+
+**Hành động bổ sung vào Test Plan dựa trên Bảng phủ:**
+
+* **T19** (Categories): `POST /api/categories` - User thường gửi token -> Kỳ vọng 403 Forbidden. Đảm bảo không hở sườn API Danh mục. (API5)
+* **T20** (Admin Coupons): `POST /api/admin/coupons` - Gửi payload với `discount_value: -100` hoặc `expired_at: "2020-01-01"` (trong quá khứ). Kỳ vọng hệ thống reject (400) để đảm bảo không có mã giảm giá bị lỗi logic được sinh ra. (FR-17)
+
+Bạn có muốn đi sâu vào thảo luận cách viết framework/code tự động cho đống kịch bản này ở lượt tiếp theo không?

@@ -1,0 +1,12 @@
+Bây giờ hãy tự kiểm tra công việc của mình, theo đúng thứ tự:
+
+Bước 1. Đối chiếu KẾ HOẠCH ở lượt đầu với CODE đã viết ở hai lượt trước. Lập bảng: mỗi mã test trong kế hoạch, có trong code chưa (Có hoặc Không).
+Bước 2. Đối chiếu bảng phủ: liệt kê mọi endpoint, mọi mã FR và SEC, mọi mục OWASP áp dụng được mà chưa có test trong code, và mọi endpoint chưa đủ một test đường đi đúng cùng một test âm tính hoặc bảo mật.
+Bước 3. Viết code cho TẤT CẢ test còn thiếu (các test có trong kế hoạch nhưng chưa có trong code, và các test bổ sung cho mục còn thiếu ở Bước 2), đặt trong hàm: async function aiTestsPart3(ctx) { ... } Không lặp lại code đã có.
+Bước 4. Viết lại hàm tổng: async function aiTests(ctx) { await aiTestsPart1(ctx); await aiTestsPart2(ctx); await aiTestsPart3(ctx); }
+
+Dùng cùng công cụ ctx, cùng quy tắc và cùng phong cách như các lượt trước.
+
+<output_format>
+Trả về MỘT khối code JavaScript duy nhất cho các hàm được yêu cầu, không giải thích dài dòng. Trước mỗi test có dòng chú thích "// Mục tiêu: <lỗi có thể tìm ra>. Tham chiếu: <mã R, FR, SEC, OWASP>". Tên test bắt đầu bằng mã test trong kế hoạch (ví dụ "T07 ..."). Không dùng require, import, fetch, axios; chỉ dùng ctx, pm.test và pm.expect.
+</output_format>
