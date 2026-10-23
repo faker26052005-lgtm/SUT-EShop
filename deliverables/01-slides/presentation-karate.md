@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 header: "CS423 / CSC15003 — Software Testing · Seminar T06: API & Contract Testing"
-footer: "Nhóm 11 — FIT@HCMUS · Nguyễn Quốc Kỳ (MSSV: 23120138) — Karate Framework"
+footer: "Nhóm 11 — FIT@HCMUS — Karate Framework"
 style: |
   section {
     background-color: #ffffff;
@@ -188,21 +188,21 @@ Code-based Testing là mắt xích quyết định trong pipeline CI/CD:
 <div class="grid-3">
 <div class="card">
 
-### 💻 Code BDD DSL trực quan
+### Code BDD DSL trực quan
 *  Viết kịch bản bằng ngôn ngữ Gherkin tự nhiên, tích hợp sẵn giao thức HTTP mà không cần viết mã trung gian Java.
 * Vừa là Living Docs vừa là mã chạy trực tiếp.
 
 </div>
 <div class="card">
 
-### 🛡️ Native Schema Validation
+### Native Schema Validation
 * Kiểm tra cấu trúc JSON sâu trực tiếp không cần thư viện phụ.
 * Fuzzy Matchers linh hoạt với dữ liệu động.
 
 </div>
 <div class="card">
 
-### ⚙️ Tự động hóa CI/CD tự nhiên qua Maven
+### Tự động hóa CI/CD qua Maven
 * Quản lý kịch bản dạng mã nguồn thuần.
 * Thực thi nhanh chóng bằng một dòng lệnh CLI.
 * Tự động sinh báo cáo HTML trực quan kèm wire log.
@@ -237,16 +237,17 @@ Tập trung vào logic nghiệp vụ và chất lượng kiểm thử thay vì b
 <div class="grid-2">
 <div>
 
-### Framework truyền thống
-* Cần viết thêm lớp trung gian Step Definitions để nối câu chữ Gherkin với HTTP Client.
-* Dễ phát sinh lỗi mismatch regex khi sửa câu chữ kịch bản.
-
+### Karate Framework
+* Cú pháp Gherkin (Given path, When method, Then status, And match) kết nối trực tiếp với HTTP Engine nội tại.
+* Không boilerplate, trực quan cho cả QA, Dev và BA. 
 </div>
 <div>
 
-### Karate Framework
-* Cú pháp Gherkin (Given path, When method, Then status, And match) kết nối trực tiếp với HTTP Engine nội tại.
-* Không boilerplate, trực quan cho cả QA, Dev và BA.
+### 
+### Framework truyền thống
+* Cần viết thêm lớp trung gian Step Definitions để nối câu chữ Gherkin với HTTP Client.
+* Gây tốn kém thời gian bảo trì, tạo ra lượng mã thừa khổng lồ và dễ phát sinh lỗi mismatch regex khi sửa câu chữ kịch bản.
+
 
 </div>
 </div>
@@ -378,7 +379,7 @@ Tách bạch giữa **Logic kiểm thử** và **Tập dữ liệu đầu vào**
 <div class="card">
 
 ### 2. Chiến lược 3 tầng kiểm chứng tránh bẫy False Positive
-Bẫy **False Positive** xảy ra khi server trả về mã 200 nhưng body rỗng hoặc lỗi dữ liệu ngầm. Nhóm thiết lập 3 tầng khiên:
+Bẫy **False Positive** xảy ra khi kịch bản chỉ kiểm tra sơ sài mã trạng thái HTTP 200 mà bỏ qua nội dung payload. . Nhóm thiết lập 3 tầng kiểm chứng::
 
 * **Tầng 1 (Status):** Khẳng định mã phản hồi HTTP (status 200 / 401).
 * **Tầng 2 (Structure):** Kiểm tra cấu trúc mảng & kích thước (`match response == '#[]'`, `assert response.length > 0`).
@@ -409,37 +410,6 @@ Không có công cụ nào tự động chống False Positive; chính kiến tr
 
 ---
 
-<!-- Slide 10: Experimental Results & SUT Defects -->
-
-# Kết Quả Thực Nghiệm: Báo Cáo HTML & Khiếm Khuyết SUT
-
-<div class="grid-2">
-<div class="card" style="padding: 14px 18px;">
-
-### 📊 1. Chỉ số thực thi trên `karate-summary.html`
-* **Tổng số Feature Files:** **2 Features** (`products` & `auth-cart-checkout`).
-* **Tổng số Scenarios:** **6 Scenarios**.
-* **Tỷ lệ thành công:** **100% Passed (0 Failures)** trên baseline hiện hành.
-* **Tổng thời gian thực thi:** **~350 mili-giây** (hiệu năng vượt trội nhờ tối ưu hóa HTTP Client).
-* **Wire Logs:** Lưu trữ chi tiết toàn bộ HTTP Headers, Body và Request timeline phục vụ kiểm toán chất lượng.
-
-</div>
-<div class="card-red">
-
-### 🐛 2. Bằng chứng 2 khiếm khuyết của SUT EShop
-* **Khiếm khuyết 1 (Sai kiểu dữ liệu ở ID chẵn):**  
-  `GET /api/products/2` trả về `price` dạng String (`"28000000"`), tiềm ẩn rủi ro gãy logic tính tiền giỏ hàng.
-* **Khiếm khuyết 2 (Thiếu mã lỗi 404 chuẩn RESTful):**  
-  `GET /api/products/9999` trả về `200 OK` kèm `{}` thay vì trả về `404 Not Found`.
-
-</div>
-</div>
-
-<div class="highlight-box">
-<b>Giá trị thực tiễn:</b> Báo cáo HTML tự sinh là <b>Bằng chứng kiểm thử (Test Evidence)</b> độc lập, minh bạch, sẵn sàng đính kèm vào hệ thống quản lý lỗi (Jira / GitHub Issues).
-</div>
-
----
 
 <!-- Slide 11: Multi-Tool Synergy & Limitations -->
 
@@ -468,35 +438,3 @@ Không có công cụ nào tự động chống False Positive; chính kiến tr
 <b>Đánh giá khách quan:</b> Không có một công cụ vạn năng duy nhất. Sự kết hợp hiệp đồng giữa Postman, Pact và Karate tạo nên chiến lược bảo đảm chất lượng toàn diện cho hệ thống.
 </div>
 
----
-
-<!-- Slide 12: Conclusions & Q&A -->
-<!-- _paginate: false -->
-
-# Tổng Kết & Phiên Hỏi - Đáp (Q&A)
-
-<div class="grid-2">
-<div>
-
-### 3 Thông điệp đúc kết:
-1. **Tinh gọn & Mạnh mẽ:** BDD DSL loại bỏ mã trung gian, tích hợp xác thực schema tự nhiên giúp viết test nhanh và bảo trì dễ dàng.
-2. **Đối soát trung thực:** Kỹ thuật Data-Driven và Stateful Workflow giúp kiểm chứng trọn vẹn luồng mua sắm, phát hiện chính xác các khiếm khuyết thực tế của SUT.
-3. **Sẵn sàng cho CI/CD:** Bộ test suite độc lập, ổn định, sẵn sàng đóng vai trò Quality Gate tự động cho phần mềm.
-
-</div>
-<div>
-
-### Thông tin chuyên đề & Mã nguồn:
-* **Người thực hiện:** **Nguyễn Quốc Kỳ** (MSSV: 23120138)  
-  *Thành viên Nhóm 11 — Seminar Kiểm thử phần mềm*
-* **Mã nguồn kiểm thử:**  
-  Thư mục `tests/karate/src/test/java/eshop/`
-
-<br>
-
-<div class="highlight-box">
-<b>Chân thành cảm ơn Thầy Cô và các bạn đã chú ý lắng nghe!</b>
-</div>
-
-</div>
-</div>

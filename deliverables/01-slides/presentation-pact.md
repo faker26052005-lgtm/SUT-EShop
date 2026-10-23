@@ -198,7 +198,7 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 <div>
 
 ### 1. Bối cảnh Software Evolution
-* Khi Backend tái cấu trúc mã nguồn (refactoring) hoặc tối ưu hóa cơ sở dữ liệu:
+* Khi Backend tái cấu trúc mã nguồn hoặc tối ưu hóa cơ sở dữ liệu:
   * Vô tình đổi tên trường dữ liệu: `price` $\rightarrow$ `unit_price`.
   * Format lại kiểu chuỗi: `price: "30.000.000 ₫"`.
 * **Breaking Change** là bất kỳ thay đổi nào từ phía Provider làm phá vỡ kỳ vọng đã thỏa thuận của Consumer đang chạy ổn định.
@@ -295,7 +295,7 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 <div class="grid-2">
 <div class="card-red">
 
-### Nhóm Breaking Change (Bị Pact Chặn Đứng)
+### Nhóm Breaking Change 
 * **Đổi tên hoặc xóa trường** Consumer đang sử dụng (`price` $\rightarrow$ `unit_price`).
 * **Thay đổi kiểu dữ liệu** của trường bắt buộc (Số nguyên $\rightarrow$ Chuỗi format tiền tệ).
 * **Thay đổi mã HTTP status** (200 $\rightarrow$ 204 hoặc 400), xóa endpoint, hoặc bổ sung tham số bắt buộc (*required query/header*).
@@ -303,12 +303,12 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 </div>
 <div class="card-blue">
 
-### Nhóm Non-breaking & Lợi Ích Tiến Hóa An Toàn
+### Nhóm Non-breaking & Lợi ích Tiến hóa an toàn
 * **Bổ sung trường mới (Nguyên lý Postel):**  
   Backend thêm `brand: "Apple"` mà Consumer chưa đăng ký $\rightarrow$ Pact tự động bỏ qua, bài test vẫn PASS.
-* **LỢI ÍCH MẠNH NHẤT CỦA CDCT — Xóa trường an toàn (Safe Dead Code Removal):**
-  * Backend muốn xóa một trường cũ trong database nhưng sợ làm gãy ứng dụng ngoài client: **Chỉ cần kiểm tra hợp đồng!**
-  * Nếu không có Consumer nào đăng ký trường đó trong Pact, Backend có thể **tự tin xóa bỏ 100% an toàn mà không cần họp hành phán đoán!**
+* **Lợi ích lớn mạnh nhất của CDCT — Xóa trường an toàn (Safe Dead Code Removal):**
+  * Backend muốn xóa một trường cũ trong database nhưng sợ làm gãy ứng dụng ngoài client: Chỉ cần kiểm tra hợp đồng.
+  * Nếu không có Consumer nào đăng ký trường đó trong Pact, Backend có thể dọn dẹp an toàn, loại bỏ hoàn toàn sự phỏng đoán mơ hồ. 
 
 </div>
 </div>
@@ -349,7 +349,7 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 <div class="grid-2">
 <div class="card">
 
-### 🔬 Phương Pháp 1: Bằng Chứng SUT Thật (Cổng 3000)
+### Phương Pháp 1: Bằng Chứng SUT Thật (Cổng 3000)
 * **Môi trường:** Chạy trực tiếp trên mã nguồn `backend/server.js` và database SQLite thật.
 * **Thao tác:** Sử dụng bộ lệnh CLI để tiêm đột biến:
   * `npm run demo:mutate:rename` (`price` $\rightarrow$ `unit_price`).
@@ -359,7 +359,7 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 </div>
 <div class="card">
 
-### ⚙️ Phương Pháp 2: Tự Động Hóa CI/CD (Cổng 3005)
+### Phương Pháp 2: Tự Động Hóa CI/CD (Cổng 3005)
 * **Môi trường:** Bộ điều phối tự động `pact-c3-runner.js`.
 * **Thao tác:** Chu trình 3 pha tự động khép kín chỉ với 1 dòng lệnh duy nhất:
   ```bash
@@ -385,14 +385,14 @@ Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injec
 <div class="grid-2" style="gap: 16px; margin-top: 4px;">
 <div class="card" style="padding: 10px 16px; font-size: 18px;">
 
-### 💡 Stub Provider Có Trạng Thái (Cổng 3005)
-Không phải backend thật mà là **Stub Provider kiểm soát mode động qua biến `currentMode`**, phục vụ kỹ thuật Fault Injection khép kín độc lập với database SQLite thật.
+### Stub Provider Có Trạng Thái (Cổng 3005)
+Không phải backend thật mà là Stub Provider kiểm soát mode động qua biến `currentMode`, phục vụ kỹ thuật Fault Injection khép kín độc lập với database SQLite thật.
 
 </div>
 <div class="card" style="padding: 10px 16px; font-size: 18px;">
 
-### 🛡️ Kiểm Tra Cổng Kiểm Soát (Testing the Gate)
-Mục đích cốt lõi là **kiểm chứng độ nhạy của Verification Gate** trong CI/CD: bắt đúng lỗi phá vỡ, cho qua trường hợp an toàn, chạy tự động toàn chu trình với `npm run test:c3`.
+### Kiểm Tra Cổng Kiểm Soát (Testing the Gate)
+Mục đích cốt lõi là kiểm chứng độ nhạy của Verification Gate trong CI/CD: bắt đúng lỗi phá vỡ, cho qua trường hợp an toàn, chạy tự động toàn chu trình với `npm run test:c3`.
 
 </div>
 </div>
@@ -470,22 +470,22 @@ Mục đích cốt lõi là **kiểm chứng độ nhạy của Verification Gat
 <div class="grid-3">
 <div class="card">
 
-### 💎 1. Giá Trị Cốt Lõi
+### 1. Giá Trị Cốt Lõi
 * Khẳng định tính khả thi của việc dùng Pact JS làm **Deployment Gate** tự động chặn đứng lỗi hợp đồng trong CI/CD.
-* Giúp Provider tự tin refactor và **xóa an toàn mã nguồn thừa (Safe Dead Code Removal)** mà không sợ gãy ứng dụng client.
+* Giúp Provider tự tin refactor và xóa an toàn mã nguồn thừa (Safe Dead Code Removal) mà không sợ gãy ứng dụng client.
 
 </div>
 <div class="card-red">
 
-### ⚠️ 2. Hạn Chế Thực Tế
-* Hợp đồng phụ thuộc vào **phạm vi đăng ký của Consumer** (hợp đồng C1 hiện tại chỉ mới bảo vệ ID 1, chưa bao phủ ID 2).
+### 2. Hạn Chế Thực Tế
+* Hợp đồng phụ thuộc vào phạm vi đăng ký của Consumer (hợp đồng C1 hiện tại chỉ mới bảo vệ ID 1, chưa bao phủ ID 2).
 * Tốn công sức duy trì các hàm `stateHandlers` đồng bộ với database thật khi cấu trúc dữ liệu thay đổi.
 
 </div>
 <div class="card-blue">
 
-### 🚀 3. Hướng Phát Triển
-* Triển khai **Pact Broker tập trung** để quản trị hợp đồng giữa nhiều nhóm phát triển Agile độc lập.
+### 3. Hướng Phát Triển
+* Triển khai Pact Broker tập trung để quản trị hợp đồng giữa nhiều nhóm phát triển Agile độc lập.
 * Tích hợp lệnh CLI **`can-i-deploy`** vào GitHub Actions để đối soát ma trận tương thích đa môi trường (*Dev $\rightarrow$ Staging $\rightarrow$ Production*).
 
 </div>
@@ -493,44 +493,31 @@ Mục đích cốt lõi là **kiểm chứng độ nhạy của Verification Gat
 
 ---
 
-<!-- Slide 11: Closing & QA -->
-<!-- _paginate: false -->
-<!-- _header: "" -->
-<!-- _footer: "" -->
+<!-- Slide 11: Summary & Conclusion -->
 
-# Tổng Kết Kịch Bản C3 & Phiên Hỏi - Đáp (Q&A)
+# Tổng Kết Kịch Bản C3 & Cảm Ơn
 
 <div class="grid-2">
 <div>
 
-### 🎯 Thông Điệp Kết Thúc:
-*"Consumer-Driven Contract Testing với Pact JS đã chứng minh vai trò là một giải pháp kiểm soát tiến hóa phần mềm tin cậy, bảo vệ ứng dụng khỏi các rủi ro Breaking Change ngầm trước khi chạm tới Production."*
-
-### 💬 Mời Thảo Luận & Hỏi - Đáp:
-Sẵn sàng trao đổi về:
-* Nguyên lý CDCT & Matching Rules
-* Cơ chế Provider State & Mock Engine
-* Kỹ thuật Fault Injection & CI/CD Runner
-* Tích hợp Deployment Gate vào DevOps
+### 3 Thông Điệp Cốt Lõi
+1. **Pact JS hoạt động như Deployment Gate:** Tự động chặn đứng các thay đổi phá vỡ hợp đồng ngay trên pipeline CI/CD trước khi chạm tới Production.
+2. **Tiến hóa an toàn & dọn dẹp mã nguồn:** Cho phép Provider tự do thêm tính năng mới và tự tin xóa trường dữ liệu thừa (Safe Dead Code Removal).
+3. **Chiến lược kiểm thử độc lập:** Xác thực tương thích giữa Consumer và Provider với tốc độ mili-giây mà không phụ thuộc môi trường E2E cồng kềnh.
 
 </div>
 <div>
 
-<div class="card" style="padding: 16px 20px; font-size: 20px;">
+### Thông Tin Đề Tài & Liên Hệ
+* **Seminar:** Kiểm thử Phần mềm (FIT@HCMUS) · Chủ đề T06: API & Contract Testing
+* **Nhóm 11:** 
+  * Nguyễn Quốc Kỳ (MSSV: 23120138)
+  * Nguyễn Hoàng Anh Tú (MSSV: 23120167)
+* **Mã nguồn:** Toàn bộ test suite tại `tests/pact/`
 
-### 👨‍💻 Thông Tin Chuyên Đề & Nhóm:
-* **Người thực hiện:** **Nguyễn Quốc Kỳ** (MSSV: 23120138)  
-  *Thành viên Nhóm 11 — Seminar Kiểm thử phần mềm*
-* **Thành viên phối hợp:** **Nguyễn Hoàng Anh Tú** (MSSV: 23120183)
-* **Môn học:** CS423 / CSC15003 — FIT@HCMUS
-* **Mã nguồn kịch bản:** Thư mục `tests/pact/`
-
-<br>
-
-<div class="highlight-box" style="margin: 0; padding: 10px 14px; font-size: 19px;">
-<b>Chân thành cảm ơn Thầy Cô và các bạn đã chú ý lắng nghe!</b>
-</div>
-
+<div class="highlight-box">
+🤝 <b>Cảm ơn Thầy và các bạn đã chú ý theo dõi!</b><br>
+Sẵn sàng giải đáp các câu hỏi thảo luận về CDCT và Pact JS.
 </div>
 
 </div>

@@ -255,7 +255,7 @@
     bash
     
     cd tests/karate
-    mvntest-Dkarate.options="classpath:eshop/products.feature"
+    mvn test -Dkarate.options="classpath:eshop/products.feature"
     ```
     
 - Chờ Maven biên dịch và chạy qua JUnit 5 (khoảng 2–3 giây).
@@ -289,7 +289,7 @@
     ```
     bash
     
-    mvntest-Dkarate.options="classpath:eshop/auth-cart-checkout.feature"
+    mvn test -D karate.options="classpath:eshop/auth-cart-checkout.feature"
     ```
     
 - Khi log chạy qua, cuộn chậm terminal để chỉ rõ các bước chuyển giao dữ liệu (State Sharing):
