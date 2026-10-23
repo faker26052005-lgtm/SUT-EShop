@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Commit Log Total — Week 05 | Nhóm 11</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2128;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #f0c060;
+      --accent4: #bc8cff;
+      --text: #e6edf3;
+      --muted: #7d8590;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 60%, #0d1f2d 100%);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #79c0ff, #58a6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+    }
+    .header p { color: var(--muted); font-size: 0.875rem; }
+    .repo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(88,166,255,0.1);
+      border: 1px solid rgba(88,166,255,0.3);
+      color: var(--accent);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.75rem;
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+    }
+    .card.purple::before { background: var(--accent4); }
+    .card.green::before { background: var(--accent2); }
+    .card.blue::before { background: var(--accent); }
+    .card.yellow::before { background: var(--accent3); }
+
+    .card .val {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.2rem;
+    }
+    .card.purple .val { color: var(--accent4); }
+    .card.green .val { color: var(--accent2); }
+    .card.blue .val { color: var(--accent); }
+    .card.yellow .val { color: var(--accent3); }
+    .card .lbl { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-header h2 { font-size: 1rem; font-weight: 600; }
+    .section-body { padding: 1.2rem 1.5rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .hash {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      background: rgba(88,166,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    .member-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .chip-tu { background: rgba(63,185,80,0.15); color: #56d364; border: 1px solid rgba(63,185,80,0.3); }
+    .chip-ky { background: rgba(88,166,255,0.15); color: #79c0ff; border: 1px solid rgba(88,166,255,0.3); }
+    .chip-kien { background: rgba(240,192,96,0.15); color: #f0c060; border: 1px solid rgba(240,192,96,0.3); }
+
+    .date-cell { color: var(--muted); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; }
+    .commit-msg { font-size: 0.85rem; }
+
+    .chart-area { display: flex; align-items: center; gap: 2rem; }
+    .donut {
+      width: 130px; height: 130px; border-radius: 50%;
+      background: conic-gradient(
+        var(--accent2) 0% 21.1%,
+        var(--accent) 21.1% 84.2%,
+        var(--accent3) 84.2% 100%
+      );
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .donut-inner {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--surface);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .donut-inner .num { font-size: 1.3rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .donut-inner .lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
+
+    .legend { flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+    .legend-bar-fill { height: 100%; border-radius: 3px; }
+    .legend-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; min-width: 45px; text-align: right; }
+    .legend-n { color: var(--muted); font-size: 0.78rem; min-width: 70px; }
+
+    .footer { text-align: center; color: var(--muted); font-size: 0.75rem; padding: 1.5rem 0; font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>Git Commit Log Total — Week 05 Dashboard</h1>
+      <p>Nhóm 11 · Topic T06: API Testing & Contract Testing | FIT@HCMUS</p>
+      <div class="repo-badge">
+        <span>📦 faker26052005-lgtm/SUT-EShop · Branch: main</span>
+      </div>
+    </div>
+
+    <div class="stat-cards">
+      <div class="card purple">
+        <div class="val">19</div>
+        <div class="lbl">Total Main Commits</div>
+      </div>
+      <div class="card green">
+        <div class="val">4</div>
+        <div class="lbl">Anh Tú (21.1%)</div>
+      </div>
+      <div class="card blue">
+        <div class="val">12</div>
+        <div class="lbl">Quốc Kỳ (63.2%)</div>
+      </div>
+      <div class="card yellow">
+        <div class="val">3</div>
+        <div class="lbl">Quốc Kiên (15.8%)</div>
+      </div>
+    </div>
+
+    <!-- Student Identity Mapping -->
+    <div class="section">
+      <div class="section-header">
+        <h2>👤 Bảng Ánh Xạ Danh Tính (Student Identity & Git Mapping)</h2>
+      </div>
+      <div class="section-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Họ và Tên</th>
+              <th>Git Username</th>
+              <th>MSSV</th>
+              <th>Git Email</th>
+              <th>Nhiệm Vụ Chính</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Nguyễn Hoàng Anh Tú</strong></td>
+              <td><span class="member-chip chip-tu">faker26052005-lgmt</span></td>
+              <td><strong>23120183</strong></td>
+              <td>faker26052005@gmail.com</td>
+              <td>Newman P3 + Pact C1/C2/C3, Slide W06, Báo cáo tổng hợp W06</td>
+            </tr>
+            <tr>
+              <td><strong>Nguyễn Quốc Kỳ</strong></td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td><strong>23120138</strong></td>
+              <td>nqky2407@gmail.com</td>
+              <td>Karate K1/K2/K3 + Pact Breaking Change C3 + Video Demo</td>
+            </tr>
+            <tr>
+              <td><strong>Hà Quốc Kiên</strong></td>
+              <td><span class="member-chip chip-kien">kienha5</span></td>
+              <td><strong>23120056</strong></td>
+              <td>kienquocha5@gmail.com</td>
+              <td>Postman P1/P2 + OpenAPI + CSV Data-Driven + AI Agent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Total Commits Table -->
+    <div class="section">
+      <div class="section-header">
+        <h2>📜 Total Commits Log (Students Only — Excluding Merges & Lecturer Commits)</h2>
+      </div>
+      <div class="section-body">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Hash</th>
+              <th>Date & Time</th>
+              <th>Người thực hiện</th>
+              <th>Git Username</th>
+              <th>MSSV</th>
+              <th>Commit Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--muted)">1</td><td><span class="hash">4a0dfdc</span></td>
+              <td class="date-cell">2026-10-16 23:39</td>
+              <td>Nguyễn Hoàng Anh Tú</td>
+              <td><span class="member-chip chip-tu">faker26052005-lgmt</span></td>
+              <td>23120183</td>
+              <td class="commit-msg">Submit weekly report W04</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">2</td><td><span class="hash">e021d17</span></td>
+              <td class="date-cell">2026-10-16 21:56</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">sumit-phase2</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">3</td><td><span class="hash">7977a76</span></td>
+              <td class="date-cell">2026-10-16 21:53</td>
+              <td>Hà Quốc Kiên</td>
+              <td><span class="member-chip chip-kien">kienha5</span></td>
+              <td>23120056</td>
+              <td class="commit-msg">refactor files</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">4</td><td><span class="hash">50df3fd</span></td>
+              <td class="date-cell">2026-10-16 15:17</td>
+              <td>Hà Quốc Kiên</td>
+              <td><span class="member-chip chip-kien">kienha5</span></td>
+              <td>23120056</td>
+              <td class="commit-msg">Finalize postman test, add SRS and prepare test yml for open api AI</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">5</td><td><span class="hash">d725998</span></td>
+              <td class="date-cell">2026-10-15 23:04</td>
+              <td>Nguyễn Hoàng Anh Tú</td>
+              <td><span class="member-chip chip-tu">faker26052005-lgmt</span></td>
+              <td>23120183</td>
+              <td class="commit-msg">feat(backend): add request logging middleware for live request observation</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">6</td><td><span class="hash">726c9a8</span></td>
+              <td class="date-cell">2026-10-15 22:15</td>
+              <td>Nguyễn Hoàng Anh Tú</td>
+              <td><span class="member-chip chip-tu">faker26052005-lgmt</span></td>
+              <td>23120183</td>
+              <td class="commit-msg">feat(pact): implement C1 consumer test, C2 provider verification, and C3 breaking change demo</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">7</td><td><span class="hash">56775e5</span></td>
+              <td class="date-cell">2026-10-15 21:42</td>
+              <td>Nguyễn Hoàng Anh Tú</td>
+              <td><span class="member-chip chip-tu">faker26052005-lgmt</span></td>
+              <td>23120183</td>
+              <td class="commit-msg">chore: setup dependencies and gitignore for pact and karate test suites</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">8</td><td><span class="hash">4d55803</span></td>
+              <td class="date-cell">2026-10-15 20:16</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">docs(karate): test suite execution guide</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">9</td><td><span class="hash">0d3fde9</span></td>
+              <td class="date-cell">2026-10-15 20:12</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(karate): add auth-cart-checkout.feature for e2e stateful workflow (K3)</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">10</td><td><span class="hash">58cb232</span></td>
+              <td class="date-cell">2026-10-15 09:48</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(karate): add products.feature for data-driven tests (K2)</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">11</td><td><span class="hash">002a5cd</span></td>
+              <td class="date-cell">2026-10-15 09:34</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(karate): add products.feature for smoke tests (K1)</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">12</td><td><span class="hash">563a22b</span></td>
+              <td class="date-cell">2026-10-15 09:11</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(karate): initial and setup karate project</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">13</td><td><span class="hash">c9583f8</span></td>
+              <td class="date-cell">2026-10-15 07:56</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(karate): create a implementation plan for Karate tasks</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">14</td><td><span class="hash">cbec9d0</span></td>
+              <td class="date-cell">2026-10-14 23:54</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">docs(root): update landing page README and repository guide</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">15</td><td><span class="hash">dfefabc</span></td>
+              <td class="date-cell">2026-10-14 23:53</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">feat(tests): scaffold test suites for postman, pact, karate, and ai-agent</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">16</td><td><span class="hash">c703918</span></td>
+              <td class="date-cell">2026-10-14 23:51</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">docs(deliverables): organize seminar requirements, research reports, and meeting logs</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">17</td><td><span class="hash">afb31f4</span></td>
+              <td class="date-cell">2026-10-14 23:50</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">docs(specs): relocate api specification to specs directory</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">18</td><td><span class="hash">b52c01e</span></td>
+              <td class="date-cell">2026-10-14 23:35</td>
+              <td>Nguyễn Quốc Kỳ</td>
+              <td><span class="member-chip chip-ky">quocky05</span></td>
+              <td>23120138</td>
+              <td class="commit-msg">chore(sut): sanitize gitignore and fix run_servers script paths</td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted)">19</td><td><span class="hash">c7c805a</span></td>
+              <td class="date-cell">2026-10-14 22:34</td>
+              <td>Hà Quốc Kiên</td>
+              <td><span class="member-chip chip-kien">kienha5</span></td>
+              <td>23120056</td>
+              <td class="commit-msg">initial postman test and basic openAPI file</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Contribution Chart -->
+    <div class="section">
+      <div class="section-header"><h2>📈 Thống Kê Tỷ Lệ Đóng Góp (19 Commits trên Main)</h2></div>
+      <div class="section-body">
+        <div class="chart-area">
+          <div class="donut">
+            <div class="donut-inner">
+              <span class="num">19</span>
+              <span class="lbl">commits</span>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--accent2)"></div>
+              <span style="min-width:260px; font-size:0.85rem;">🟢 Nguyễn Hoàng Anh Tú (<code>faker26052005-lgmt</code>)</span>
+              <div class="legend-bar-track"><div class="legend-bar-fill" style="width:21.1%; background:var(--accent2)"></div></div>
+              <span class="legend-pct">21.1%</span>
+              <span class="legend-n">(4 commits)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--accent)"></div>
+              <span style="min-width:260px; font-size:0.85rem;">🔵 Nguyễn Quốc Kỳ (<code>quocky05</code>)</span>
+              <div class="legend-bar-track"><div class="legend-bar-fill" style="width:63.2%; background:var(--accent)"></div></div>
+              <span class="legend-pct">63.2%</span>
+              <span class="legend-n">(12 commits)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--accent3)"></div>
+              <span style="min-width:260px; font-size:0.85rem;">🟡 Hà Quốc Kiên (<code>kienha5</code>)</span>
+              <div class="legend-bar-track"><div class="legend-bar-fill" style="width:15.8%; background:var(--accent3)"></div></div>
+              <span class="legend-pct">15.8%</span>
+              <span class="legend-n">(3 commits)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>git log --format="%h|%an|%ae|%ad|%s" --date=format:"%Y-%m-%d %H:%M" --no-merges main</p>
+      <p style="margin-top:4px;">Nhóm 11 | FIT@HCMUS | T06 API & Contract Testing | Week 05 Submission | Lecturer commits excluded</p>
+    </div>
+
+  </div>
+</body>
+</html>

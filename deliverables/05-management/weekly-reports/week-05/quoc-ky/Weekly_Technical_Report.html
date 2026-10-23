@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Kỹ Thuật Kịch Bản Pact C3 — Tuần 05 | Nguyễn Quốc Kỳ (MSSV: 23120138)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --accent: #d97706;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --success: #15803d;
+            --success-bg: #f0fdf4;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 32px 40px;
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .inst-title {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .main-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-student { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); }
+        .badge-topic { background: #dbeafe; color: #1e40af; }
+        .badge-status { background: #dcfce7; color: #166534; }
+
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-left: 4px solid var(--primary-light);
+            padding-left: 12px;
+            margin: 36px 0 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 20px 0 10px 0;
+        }
+
+        p, ul, ol {
+            margin-bottom: 14px;
+            color: #334155;
+        }
+
+        ul, ol {
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .terminal-box {
+            background: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 18px 0;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .callout {
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .callout-success {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: #14532d;
+        }
+
+        .callout-danger {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            color: #7f1d1d;
+        }
+
+        .callout-info {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+            color: #1e3a8a;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 40px;
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-bar">
+        <div class="inst-title">TRƯỜNG ĐẠI HỌC KHOA HỌC TỰ NHIÊN — ĐHQG-HCM · KHOA CÔNG NGHỆ THÔNG TIN</div>
+        <div class="main-title">BÁO CÁO KỸ THUẬT: HOÀN THIỆN KỊCH BẢN PACT C3 (BREAKING CHANGE VERIFICATION)</div>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">Đảm bảo tính tương thích hợp đồng Consumer-Driven Contract Testing cho hệ thống SUT EShop</p>
+        <div class="meta-badges">
+            <span class="badge badge-student">👤 Sinh viên: Nguyễn Quốc Kỳ (MSSV: 23120138)</span>
+            <span class="badge badge-student">🤝 Reviewer: Nguyễn Hoàng Anh Tú (MSSV: 23120183)</span>
+            <span class="badge badge-topic">🏷️ Chủ đề: T06 · API & Contract Testing</span>
+            <span class="badge badge-status">✅ Trạng thái: 100% Hoàn Thành</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>1. Tổng Quan Công Việc Hoàn Thiện Trong Tuần 05</h2>
+        <p>Báo cáo này được thực hiện nhằm đáp ứng đầy đủ yêu cầu phân công công việc trong <strong>Phase 2 (Giai đoạn 2)</strong> của Seminar Kiểm thử phần mềm. Nguyễn Quốc Kỳ phụ trách chính kịch bản <strong>Pact C3</strong> (Phát hiện Breaking Change và Viết tài liệu hướng dẫn).</p>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Pha Thực Thi Khép Kín (Baseline ➔ Mutation ➔ Rollback)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Dạng Breaking Change Kiểm Chứng (Key Rename & Type Inconsistency)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Tỷ Lệ Bắt Lỗi & Chặn Đứng Bản Build (CI/CD Deployment Gate)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Lỗi Lọt Ra Production (Zero Regression)</div>
+            </div>
+        </div>
+
+        <h2>2. Danh Mục Các Tập Tin Deliverables Đã Triển Khai</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tập tin</th>
+                    <th>Tác giả</th>
+                    <th>Vai trò kỹ thuật</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>tests/pact/breaking-change/pact-c3-runner.js</code></td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td>Trình điều phối tự động quy trình 3 pha: Baseline PASS, Tiêm 2 dạng lỗi để Pact Verifier chặn đứng, và Tự động Rollback phục hồi xanh 100%.</td>
+                    <td><span class="badge badge-status">Hoàn thành</span></td>
+                </tr>
+                <tr>
+                    <td><code>tests/pact/breaking-change/Pact_C3_Execution_Guide.md</code></td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td>Tài liệu hướng dẫn học thuật & thực hành chuyên sâu: Phân loại Breaking Change, giải thích thông điệp lỗi Pact FFI Rust, phân tích failure modes.</td>
+                    <td><span class="badge badge-status">Hoàn thành</span></td>
+                </tr>
+                <tr>
+                    <td><code>tests/pact/package.json</code></td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td>Bổ sung npm command trực quan <code>npm run test:c3</code> phục vụ thực thi và demo seminar.</td>
+                    <td><span class="badge badge-status">Hoàn thành</span></td>
+                </tr>
+                <tr>
+                    <td><code>tests/pact/README.md</code></td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td>Cập nhật cấu trúc thư mục và hướng dẫn chi tiết kịch bản C3 cho toàn bộ test suite.</td>
+                    <td><span class="badge badge-status">Hoàn thành</span></td>
+                </tr>
+                <tr>
+                    <td><code>deliverables/05-management/task-assignment.md</code></td>
+                    <td><strong>Nguyễn Quốc Kỳ</strong></td>
+                    <td>Cập nhật trạng thái tiến độ Phase 2: Đánh dấu hoàn thành chính thức cho task C3.</td>
+                    <td><span class="badge badge-status">Hoàn thành</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Phân Tích Chuyên Sâu: Functional API Testing vs Contract Testing</h2>
+        <div class="callout callout-info">
+            <strong>Vấn đề cốt lõi:</strong> Tại sao kiểm thử chức năng truyền thống (Postman/Newman) vẫn báo <strong>HTTP 200 OK</strong> nhưng ứng dụng di động khách hàng lại bị sập?
+        </div>
+
+        <p>Khi lập trình viên Backend đổi tên trường <code>price</code> thành <code>unit_price</code> hoặc format thành chuỗi <code>'30.000.000 ₫'</code>:</p>
+        <ul>
+            <li><strong>Postman / Newman:</strong> Gửi request và nhận về status 200 OK. Nếu test script chỉ kiểm tra mã HTTP status, Newman sẽ báo <strong>PASS</strong> và bản build được phép deploy!</li>
+            <li><strong>Mobile App (EShopMobile):</strong> Mã nguồn gọi <code>product.price</code> sẽ nhận về <code>undefined</code>. Khi thực hiện phép nhân tính tiền giỏ hàng (<code>price * quantity</code>), ứng dụng gặp lỗi <code>NaN</code> hoặc ném ngoại lệ Runtime Error làm văng ứng dụng.</li>
+            <li><strong>Pact JS (CDCT):</strong> Đóng vai trò như một <strong>Deployment Gate</strong>. Trong CI/CD của Backend, Pact Verifier lập tức so sánh response với bản hợp đồng do Mobile quy định, phát hiện thiếu key <code>price</code> và đánh <strong>FAIL bản build ngay tại chỗ</strong>!</li>
+        </ul>
+
+        <h2>4. Bảng Kết Quả Thực Thi Kịch Bản Pact C3</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Giai đoạn</th>
+                    <th>Hành vi Provider</th>
+                    <th>Kỳ vọng</th>
+                    <th>Kết quả thực tế</th>
+                    <th>Đánh giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Pha 1: Baseline</strong></td>
+                    <td>Provider trả về đầy đủ các trường (<code>price: 30000000</code> kiểu Integer)</td>
+                    <td>PASS 100%</td>
+                    <td><strong style="color:var(--success)">PASS</strong></td>
+                    <td>ĐẠT (Hợp đồng toàn vẹn)</td>
+                </tr>
+                <tr>
+                    <td><strong>Pha 2A: Rename Key</strong></td>
+                    <td>Đổi trường <code>price</code> ➔ <code>unit_price</code> (HTTP 200 OK)</td>
+                    <td>BLOCK (FAIL)</td>
+                    <td><strong style="color:var(--danger)">BLOCKED</strong></td>
+                    <td>ĐẠT (Bắt đúng lỗi thiếu key <code>price</code>)</td>
+                </tr>
+                <tr>
+                    <td><strong>Pha 2B: Type Mismatch</strong></td>
+                    <td>Trả về chuỗi format tiền tệ <code>'30.000.000 ₫'</code> thay vì số nguyên</td>
+                    <td>BLOCK (FAIL)</td>
+                    <td><strong style="color:var(--danger)">BLOCKED</strong></td>
+                    <td>ĐẠT (Bắt đúng lỗi sai kiểu dữ liệu)</td>
+                </tr>
+                <tr>
+                    <td><strong>Pha 3: Rollback</strong></td>
+                    <td>Hoàn nguyên mã nguồn Provider về trạng thái chuẩn mực ban đầu</td>
+                    <td>PASS 100%</td>
+                    <td><strong style="color:var(--success)">PASS</strong></td>
+                    <td>ĐẠT (Hệ thống an toàn trở lại)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5. Minh Chứng Thực Thi Trực Tiếp Từ Terminal</h2>
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+                <span>bash — npm run test:c3 (node breaking-change/pact-c3-runner.js)</span>
+            </div>
+            <pre>
+==============================================================================
+🚀 PACT CONTRACT TESTING - KỊCH BẢN C3: BREAKING CHANGE VERIFICATION
+   Tác giả: Nguyễn Quốc Kỳ (MSSV: 23120138) | Nhóm 11 - Seminar T06
+   Hệ thống: Consumer (EShopMobile) &lt;---&gt; Provider (EShopBackend)
+==============================================================================
+
+[Pact C3] Server Provider đối soát đang chạy trên cổng 3005...
+
+------------------------------------------------------------------------------
+📌 PHA 1: KIỂM CHỨNG BASELINE (BASELINE VERIFICATION)
+   Điều kiện: Provider trả về dữ liệu chuẩn mực (price: 30000000 [Integer]).
+------------------------------------------------------------------------------
+
+Verifying a pact between EShopMobile and EShopBackend
+  a request for product with ID 1 (0s loading, 33ms verification)
+     Given product with ID 1 exists
+    returns a response which
+      has status code 200 (OK)
+      includes headers
+        "Content-Type" with value "application/json; charset=utf-8" (OK)
+      has a matching body (OK)
+
+✅ PHA 1 THÀNH CÔNG: Provider đáp ứng chính xác 100% hợp đồng của Consumer!
+
+------------------------------------------------------------------------------
+📌 PHA 2A: TIÊM BREAKING CHANGE #1 (FIELD RENAMED / MISSING PROPERTY)
+   Hành vi: Developer Backend đổi tên trường "price" -> "unit_price".
+   Quan sát: HTTP Status Code vẫn là 200 OK (Postman thông thường sẽ PASS).
+------------------------------------------------------------------------------
+
+Failures:
+1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists - a request for product with ID 1
+    1.1) has a matching body
+           $ -> Actual map is missing the following keys: price
+
+[ERROR] pact-core: Verification unsuccessful
+🎯 PHA 2A THÀNH CÔNG (CHẶN LỖI): Pact Verifier phát hiện vi phạm hợp đồng!
+   Chi tiết lỗi bắt được: Actual map is missing required key "price"
+   Tác động ứng dụng: Tránh được sự cố Mobile crash do product.price === undefined.
+
+------------------------------------------------------------------------------
+📌 PHA 2B: TIÊM BREAKING CHANGE #2 (DATA TYPE MISMATCH)
+   Hành vi: Provider trả về trường "price" dưới dạng String "30.000.000 ₫".
+   Quan sát: Tái hiện khiếm khuyết của SUT EShop Backend phát hiện ở Karate K2.
+------------------------------------------------------------------------------
+
+Failures:
+1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists - a request for product with ID 1
+    1.1) has a matching body
+           $.price -> Expected '30.000.000 ₫' (String) to be an integer number
+
+[ERROR] pact-core: Verification unsuccessful
+🎯 PHA 2B THÀNH CÔNG (CHẶN LỖI): Pact Verifier phát hiện vi phạm kiểu dữ liệu!
+   Chi tiết lỗi bắt được: Expected integer but received string
+   Tác động ứng dụng: Ngăn chặn lỗi tính toán sai lệch tổng tiền ở giỏ hàng Mobile.
+
+------------------------------------------------------------------------------
+📌 PHA 3: HOÀN NGUYÊN MÃ NGUỒN VÀ KIỂM CHỨNG LẠI (ROLLBACK & RE-VERIFICATION)
+   Hành vi: Revert các commit lỗi, khôi phục lại trường "price" kiểu Integer.
+------------------------------------------------------------------------------
+
+Verifying a pact between EShopMobile and EShopBackend
+  a request for product with ID 1 (0s loading, 22ms verification)
+     Given product with ID 1 exists
+    returns a response which
+      has status code 200 (OK)
+      includes headers
+        "Content-Type" with value "application/json; charset=utf-8" (OK)
+      has a matching body (OK)
+
+✅ PHA 3 THÀNH CÔNG: Trạng thái hệ thống đã phục hồi hoàn toàn xanh!
+            </pre>
+        </div>
+
+        <h2>6. Hướng Dẫn Tái Lập Kết Quả 100%</h2>
+        <div class="terminal-box">
+            <pre>
+# 1. Di chuyển vào thư mục pact
+cd /home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact
+
+# 2. Cài đặt thư viện
+npm install
+
+# 3. Chạy toàn bộ quy trình 3 pha kịch bản C3
+npm run test:c3
+            </pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>Báo cáo hoàn thành ngày 21/10/2026 · Nhóm 11 — FIT@HCMUS</div>
+        <div>Sinh viên thực hiện: <strong>Nguyễn Quốc Kỳ (MSSV: 23120138)</strong></div>
+    </div>
+</div>
+
+</body>
+</html>

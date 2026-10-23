@@ -31,9 +31,9 @@
 |---|---|---|---|
 | **[Postman/Newman]** Viết test scripts (Kịch bản P1, P2) | **Kiên** | Tú |  Dự kiến |
 | **[Postman/Newman]** Cấu hình Newman CLI & Viết hướng dẫn (P3) | **Tú** | Kiên |  Dự kiến |
-| **[Pact]** Viết Consumer Test & Provider Verification (C1, C2) | **Tú** | Kỳ |  Dự kiến |
-| **[Pact]** Tạo Breaking Change, verify & Viết hướng dẫn (C3) | **Kỳ** | Tú |  Dự kiến |
-| **[Karate]** Setup project & Viết Feature tests EShop (K1, K2, K3)| **Kỳ** | Kiên |  Dự kiến |
+| **[Pact]** Viết Consumer Test & Provider Verification (C1, C2) | **Tú** | Kỳ |  Hoàn thành |
+| **[Pact]** Tạo Breaking Change, verify & Viết hướng dẫn (C3) | **Kỳ** | Tú |  Hoàn thành |
+| **[Karate]** Setup project & Viết Feature tests EShop (K1, K2, K3)| **Kỳ** | Kiên |  Hoàn thành |
 | **[Hướng AI]** Cấu hình Agent sinh test & Viết hướng dẫn (AI1) | **Kiên** | Kỳ |  Dự kiến |
 | **Quay Video:** Quay các phần mình đảm nhiệm chính | **Cả 3 TV** | |  Dự kiến |
 

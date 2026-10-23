@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Usage Declaration — Tuần 02 | Nhóm 11 · FIT@HCMUS</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-dark: #cbd5e1;
+            --success: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        /* Institutional Header */
+        .header-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 32px 40px;
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .inst-title {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge.highlight {
+            background: #22c55e;
+            color: #052e16;
+            border-color: #4ade80;
+        }
+
+        /* Action Toolbar */
+        .toolbar {
+            background: #f1f5f9;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+
+        .toolbar-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-dark);
+            background: white;
+            color: var(--text-main);
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 40px;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        h1 {
+            display: none; /* Already rendered in header */
+        }
+
+        h2 {
+            font-size: 1.45rem;
+            margin-top: 36px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #334155;
+        }
+
+        p, ul, ol {
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+
+        ul, ol {
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0 32px 0;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-dark);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        thead th {
+            background: #1e3a8a;
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            border: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            background: white;
+            transition: background 0.15s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            color: #1e293b;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Code & Preformatted */
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.85em;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 18px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 14px 0 20px 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            border: 1px solid #1e293b;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: inherit;
+        }
+
+        /* Collapsible <details> blocks */
+        details {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        details:hover {
+            border-color: var(--border-dark);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        details[open] {
+            border-color: #93c5fd;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+        }
+
+        summary {
+            padding: 14px 20px;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--primary);
+            border-bottom: 1px solid transparent;
+            transition: background 0.15s ease;
+        }
+
+        summary:hover {
+            background: #f1f5f9;
+        }
+
+        details[open] summary {
+            background: #eff6ff;
+            border-bottom: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        details > *:not(summary) {
+            padding: 16px 20px;
+        }
+
+        details pre {
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            padding: 24px 40px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Print Optimization */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+            }
+
+            .toolbar {
+                display: none !important;
+            }
+
+            .header-bar {
+                background: #1e3a8a !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 20px;
+            }
+
+            details {
+                break-inside: avoid;
+                border: 1px solid #cbd5e1 !important;
+                margin-bottom: 12px;
+            }
+
+            details[open] {
+                box-shadow: none;
+            }
+
+            /* Force all details open when printing */
+            details > * {
+                display: block !important;
+            }
+
+            summary {
+                background: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            table {
+                break-inside: auto;
+            }
+
+            tr {
+                break-inside: avoid;
+                break-after: auto;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            thead th {
+                background: #1e3a8a !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-bar">
+        <div class="inst-title">ĐẠI HỌC KHOA HỌC TỰ NHIÊN - ĐHQG TP.HCM · KHOA CÔNG NGHỆ THÔNG TIN</div>
+        <div class="doc-title">Báo Cáo Tuyên Bố Sử Dụng AI (AI Usage Declaration)</div>
+        <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 0;">Báo cáo định kỳ minh chứng quá trình sử dụng và kiểm soát AI trong thực hành Seminar</p>
+        <div class="badges">
+            <span class="badge highlight">✓ Đạt chuẩn FIT@HCMUS</span>
+            <span class="badge">Tuần thực hành: 02</span>
+            <span class="badge">Chủ đề: T06 · API &amp; Contract Testing</span>
+            <span class="badge">Nhóm thực hiện: Nhóm 11</span>
+            <span class="badge">Mô hình: Google Antigravity (Gemini 3.8 Flash)</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-info">
+            Tài liệu trực quan dùng cho Giảng viên (Human) đọc và đánh giá
+        </div>
+        <div class="toolbar-buttons">
+            <button class="btn" onclick="toggleAllDetails(true)">📂 Mở rộng tất cả</button>
+            <button class="btn" onclick="toggleAllDetails(false)">📁 Thu gọn tất cả</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Xuất PDF / In</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>AI Usage Declaration — Tuần 05</h1>
+<p><strong>Môn học:</strong> Kiểm thử phần mềm (Software Testing) — FIT@HCMUS<br />
+<strong>Chủ đề:</strong> T06 · API &amp; Contract Testing<br />
+<strong>Nhóm thực hiện:</strong> Nhóm 11 (FIT@HCMUS)<br />
+<strong>Thành viên:</strong> Nguyễn Quốc Kỳ (Phụ trách Karate, K1–K3), Hà Quốc Kiên, Nguyễn Hoàng Anh Tú<br />
+<strong>Công cụ AI sử dụng:</strong> Google Antigravity (Gemini 3.8 Flash)<br />
+<strong>Môi trường:</strong> Linux (Ubuntu) · Antigravity Agent Runtime</p>
+<hr />
+<h2>1. Tuyên Bố &amp; Mục Đích Sử Dụng AI trong Tuần</h2>
+<p>Theo quy định của môn học Seminar Kiểm thử phần mềm (FIT@HCMUS):</p>
+<ul>
+<li><strong>Phạm vi hỗ trợ của AI:</strong> Hỗ trợ phân tích yêu cầu từ <code>weekly-report-requirements.md</code>, đối chiếu tài liệu đặc tả API, phác thảo kế hoạch và cú pháp kịch bản kiểm thử Karate (DSL/Gherkin), hỗ trợ tra cứu giải pháp kỹ thuật.</li>
+<li><strong>Cam kết chính chủ &amp; Human-in-the-loop:</strong> Toàn bộ mã nguồn kiểm thử Karate, cấu hình dự án Maven, và kết quả chạy test trên SUT (EShop) đều do thành viên nhóm trực tiếp kiểm chứng, thực thi thực tế trên môi trường local, đối chiếu lỗi và chịu trách nhiệm 100% về tính chính xác. AI đóng vai trò trợ lý đề xuất, không thay thế việc kiểm thử thực tế.</li>
+</ul>
+<hr />
+<h2>2. Nhật Ký Phiên Làm Việc (Sessions Log)</h2>
+<h3>Phiên làm việc: 2026-10-21 15:00:06 (Session ID: <code>73ecf000</code>)</h3>
+<ul>
+<li><strong>Mô hình / Công cụ:</strong> Google Antigravity (Gemini 3.8 Flash)</li>
+<li><strong>Tổng số lượt tương tác (Turns):</strong> 2</li>
+<li><strong>Thời gian bắt đầu:</strong> 2026-10-21 15:00:06</li>
+</ul>
+<h4>Bảng Tổng Hợp Tương Tác &amp; Kết Quả (Executive Summary Table)</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Lượt</th>
+<th style="text-align:left">Thời gian</th>
+<th style="text-align:left">Yêu cầu người dùng (Prompt đầy đủ)</th>
+<th style="text-align:left">Kết quả thực tế từ AI (Actual Deliverables &amp; Outcomes)</th>
+<th style="text-align:left">Quyết định / Review của SV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">#1</td>
+<td style="text-align:left">2026-10-21 15:00:06</td>
+<td style="text-align:left">đọc task_assignment.md, ở phase 2, tôi còn bỏ sót Pact C3. Anh Tú đã thực hiện C1 và C2 rồi. Hãy phân tích Pact hiện tại và đưa ra kế hoạch thực hiện chi tiết cho C3.</td>
+<td style="text-align:left"><strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: <code>implementation_plan.md</code><br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• Tôi đã đọc kĩ <code>task_assignment.md</code>, đối chiếu với <code>demo-script.md</code>, lịch sử commit Git và toàn bộ mã nguồn Pact hiện tại trong dự án.<br/>• 1. Phân tích hiện trạng Pact và lý do bạn bị &quot;bỏ sót&quot; C3<br/>• 1. <strong>Phân công trách nhiệm:</strong></td>
+<td style="text-align:left">Thành viên nhóm review &amp; phê duyệt kết quả</td>
+</tr>
+<tr>
+<td style="text-align:left">#2</td>
+<td style="text-align:left">2026-10-21 15:11:09</td>
+<td style="text-align:left">triển khai kế hoạch hoạch đồng thời tạo một tài liệu về những gì thực hiện cho C3 task tại weekly-reports/week-05/quoc-ky/</td>
+<td style="text-align:left"><strong>Sản phẩm/Tác vụ:</strong><br/>Tạo file: <code>Pact_C3_Execution_Guide.md</code>, <code>Weekly_Technical_Report.html</code>, <code>Weekly_Technical_Report.md</code>, <code>pact-c3-runner.js</code><br/>Cập nhật file: <code>README.md</code>, <code>package.json</code>, <code>pact-c3-runner.js</code>, <code>task-assignment.md</code><br/><br/><strong>Nội dung phản hồi / Giải pháp:</strong><br/>• Đang tiến hành cài đặt thư viện cho Pact JS (<code>npm install</code> trong <code>tests/pact</code>). Hệ thống sẽ tự động cập nhật khi quá trình hoàn tất.</td>
+<td style="text-align:left">Thành viên nhóm review &amp; phê duyệt kết quả</td>
+</tr>
+</tbody>
+</table>
+<h4>Nhật Ký Chi Tiết Hội Thoại (Traceable Chat Log)</h4>
+<details>
+<summary><strong>Turn #1: đọc task_assignment.md, ở phase 2, tôi còn bỏ sót Pact C3. Anh Tú đã thực hiện C1 và C2 rồi. Hãy phân tích Pact hiện tại và đưa ra kế hoạch thực hiện chi tiết cho C3.</strong> (2026-10-21 15:00:06)</summary>
+<p><strong>Yêu cầu của Người dùng (Prompt đầy đủ):</strong></p>
+<pre><code class="language-text">đọc task_assignment.md, ở phase 2, tôi còn bỏ sót Pact C3. Anh Tú đã thực hiện C1 và C2 rồi. Hãy phân tích Pact hiện tại và đưa ra kế hoạch thực hiện chi tiết cho C3.
+</code></pre>
+<p><strong>Các hành động &amp; Công cụ đã thực thi:</strong></p>
+<ul>
+<li><code>find_by_name</code>: Find task assignment file</li>
+<li><code>list_dir</code>: List root directory</li>
+<li><code>find_by_name</code>: Find markdown files</li>
+<li><code>find_by_name</code>: Find project files</li>
+<li><code>view_file</code>: Read <a href="http://task-assignment.md">task-assignment.md</a></li>
+<li><code>view_file</code>: Read <a href="http://demo-script.md">demo-script.md</a></li>
+<li><code>find_by_name</code>: Find pact files</li>
+<li><code>list_dir</code>: List tests/pact contents</li>
+<li><code>view_file</code>: Read pact package.json</li>
+<li><code>view_file</code>: Read tests/pact/README.md</li>
+<li><code>view_file</code>: Read product-client.js</li>
+<li><code>view_file</code>: Read product.consumer.test.js</li>
+<li><code>view_file</code>: Read provider verify.js</li>
+<li><code>view_file</code>: Read verify-breaking.js</li>
+<li><code>run_command</code>: Check recent git commits</li>
+<li><code>run_command</code>: Check recent git commits</li>
+<li><code>run_command</code>: Check recent git commits</li>
+<li><code>run_command</code>: Check SUT-EShop git status</li>
+<li><code>run_command</code>: Check SUT-EShop git history</li>
+<li><code>run_command</code>: Show commit 726c9a8 details</li>
+<li><code>find_by_name</code>: Find weekly report files</li>
+<li><code>view_file</code>: Read Anh Tu technical report</li>
+<li><code>view_file</code>: Read Quoc Ky evidence summary</li>
+<li><code>view_file</code>: Read <a href="http://lab-guide.md">lab-guide.md</a></li>
+<li><code>grep_search</code>: Grep C3 in deliverables</li>
+<li><code>view_file</code>: Read server.js product endpoint</li>
+<li><code>run_command</code>: Check git branches</li>
+<li><code>run_command</code>: Check QuocKy-Phase2 branch commits</li>
+<li><code>run_command</code>: Show commit e021d17</li>
+<li><code>run_command</code>: List tests/pact files</li>
+<li><code>run_command</code>: Check node and npm version</li>
+<li><code>view_file</code>: Read EShopMobile-EShopBackend.json</li>
+<li><code>write_to_file</code>: Write implementation_plan.md</li>
+</ul>
+<p><strong>Kết quả phản hồi của AI:</strong></p>
+<p>Tôi đã đọc kĩ [<code>task_assignment.md</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/05-management/task-assignment.md), đối chiếu với [<code>demo-script.md</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/03-demo-videos/demo-script.md), lịch sử commit Git và toàn bộ mã nguồn Pact hiện tại trong dự án.</p>
+<h3>1. Phân tích hiện trạng Pact và lý do bạn bị &quot;bỏ sót&quot; C3</h3>
+<ol>
+<li>
+<p><strong>Phân công trách nhiệm:</strong></p>
+<ul>
+<li>Theo <code>task_assignment.md</code> (Phase 2): Anh Tú phụ trách <strong>C1, C2</strong>; Bạn (<strong>Kỳ</strong>) phụ trách chính kịch bản <strong>C3</strong> (<em>&quot;Tạo Breaking Change, verify &amp; Viết hướng dẫn (C3)&quot;</em>).</li>
+<li>Tuy nhiên, ở giai đoạn trước, bạn đã tập trung hoàn thiện bộ test <strong>Karate (K1, K2, K3)</strong> và tài liệu liên quan, nên chưa thực hiện trọn vẹn phần việc C3 của mình.</li>
+<li>Anh Tú trong commit <code>726c9a8</code> đã làm C1 (<code>product.consumer.test.js</code>), C2 (<code>verify.js</code>), đồng thời dựng tạm một script mô phỏng <code>breaking-change/verify-breaking.js</code> và ghi nhận cả C3 vào báo cáo cá nhân của anh Tú.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hạn chế kỹ thuật của kịch bản C3 hiện tại:</strong></p>
+<ul>
+<li><strong>Tách rời SUT thật:</strong> Script <code>verify-breaking.js</code> hiện tại dựng một Express server độc lập (cổng 3001) với JSON hardcoded, chưa kiểm chứng tương tác thực tế với Backend SUT EShop (<code>backend/server.js</code>).</li>
+<li><strong>Thiếu quy trình 3 bước chuẩn:</strong> Theo đặc tả seminar (<code>demo-script.md</code> §5.5), kịch bản C3 cần thể hiện trọn vẹn: <em>Baseline PASS</em> $\to$ <em>Tiêm Breaking Change</em> $\to$ <em>Pact Verifier FAIL có giải thích</em> $\to$ <em>Hoàn nguyên (Rollback) &amp; PASS lại</em>.</li>
+<li><strong>Thiếu deliverables của Kỳ:</strong> Chưa có Git commit cá nhân mang tên Kỳ, chưa có tài liệu hướng dẫn kỹ thuật chi tiết (<code>Pact_C3_Execution_Guide.md</code>), và chưa có bộ ảnh chụp/log minh chứng chạy thực tế của Kỳ để nộp theo chuẩn Trụ cột 3 (Pillar 3).</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h3>2. Kế hoạch thực hiện chi tiết cho C3</h3>
+<p>Tôi đã xây dựng tài liệu kế hoạch chi tiết trong artifact [implementation_plan.md](file:///home/quocky05/.gemini/antigravity/brain/73ecf000-a0d7-49e6-8b6d-1b5f1834dfa1/implementation_plan.md) bao gồm:</p>
+<ul>
+<li><strong>Bộ script C3 hoàn chỉnh (2 chế độ):</strong>
+<ol>
+<li><em>Chế độ đối soát trực tiếp SUT thật:</em> Script điều phối tiêm lỗi trên SUT Backend cổng 3000, đối soát hợp đồng Pact, bắt lỗi và tự động rollback.</li>
+<li><em>Chế độ chạy mô phỏng độc lập:</em> Dành cho demo nhanh hoặc bài tập lab của sinh viên.</li>
+</ol>
+</li>
+<li><strong>2 ca phá vỡ hợp đồng tiêu biểu:</strong>
+<ol>
+<li>Đổi tên trường (<code>price</code> $\to$ <code>unit_price</code>) — đối chiếu việc Postman vẫn báo 200 OK nhưng Pact chặn đứng bản build lỗi làm sập Mobile app.</li>
+<li>Lệch kiểu dữ liệu (<code>price</code> từ Integer $\to$ String) — liên kết trực tiếp với defect của SUT phát hiện ở kịch bản Karate K2.</li>
+</ol>
+</li>
+<li><strong>Tài liệu hướng dẫn kỹ thuật C3:</strong> <code>tests/pact/breaking-change/Pact_C3_Execution_Guide.md</code> do Kỳ biên soạn.</li>
+<li><strong>Gói minh chứng &amp; Báo cáo:</strong> Chạy thực tế, trích xuất log terminal, cập nhật báo cáo cá nhân và commit Git cho bạn.</li>
+</ul>
+<p>Xin mời bạn xem xét kế hoạch tại [implementation_plan.md](file:///home/quocky05/.gemini/antigravity/brain/73ecf000-a0d7-49e6-8b6d-1b5f1834dfa1/implementation_plan.md). Nếu bạn đồng ý với kế hoạch trên hoặc có điểm cần điều chỉnh, hãy phản hồi để tôi tiến hành triển khai!</p>
+</details>
+<details>
+<summary><strong>Turn #2: triển khai kế hoạch hoạch đồng thời tạo một tài liệu về những gì thực hiện cho C3 task tại weekly-reports/week-05/quoc-ky/</strong> (2026-10-21 15:11:09)</summary>
+<p><strong>Yêu cầu của Người dùng (Prompt đầy đủ):</strong></p>
+<pre><code class="language-text">triển khai kế hoạch hoạch đồng thời tạo một tài liệu về những gì thực hiện cho C3 task tại weekly-reports/week-05/quoc-ky/
+</code></pre>
+<p><strong>Các hành động &amp; Công cụ đã thực thi:</strong></p>
+<ul>
+<li><code>list_dir</code>: List weekly-reports</li>
+<li><code>view_file</code>: Read <a href="http://weekly-report-requirements.md">weekly-report-requirements.md</a></li>
+<li><code>list_dir</code>: List week-04 quoc-ky files</li>
+<li><code>list_dir</code>: List week-04 anh-tu files</li>
+<li><code>run_command</code>: Run npm install in tests/pact</li>
+<li><code>manage_task</code>: Check task status</li>
+<li><code>run_command</code>: Run consumer test</li>
+<li><code>run_command</code>: Run test:breaking</li>
+<li><code>run_command</code>: Run provider verification</li>
+<li><code>view_file</code>: Read ai-usage-logger skill</li>
+<li><code>write_to_file</code>: Create pact-c3-runner.js</li>
+<li><code>write_to_file</code>: Write pact-c3-runner.js</li>
+<li><code>run_command</code>: Test pact-c3-runner.js</li>
+<li><code>run_command</code>: Test Pact type matcher with non-numeric string</li>
+<li><code>run_command</code>: Check type coercion in Pact Rust verifier</li>
+<li><code>replace_file_content</code>: Update Pha 2B in pact-c3-runner.js</li>
+<li><code>run_command</code>: Run updated pact-c3-runner.js</li>
+<li><code>view_file</code>: Read package.json</li>
+<li><code>replace_file_content</code>: Add test:c3 to package.json</li>
+<li><code>view_file</code>: Read <a href="http://README.md">README.md</a> C3 section</li>
+<li><code>replace_file_content</code>: Update <a href="http://README.md">README.md</a> with C3 documentation</li>
+<li><code>write_to_file</code>: Write Pact_C3_Execution_Guide.md</li>
+<li><code>view_file</code>: Read <a href="http://task-assignment.md">task-assignment.md</a> lines 28-43</li>
+<li><code>replace_file_content</code>: Update <a href="http://task-assignment.md">task-assignment.md</a> status</li>
+<li><code>write_to_file</code>: Write week-05 Weekly_Technical_Report.md</li>
+<li><code>view_file</code>: Read HTML template styling</li>
+<li><code>write_to_file</code>: Write week-05 Weekly_Technical_Report.html</li>
+<li><code>run_command</code>: Check extract_ai_usage.py help</li>
+<li><code>run_command</code>: Run extract_ai_usage.py for week 05</li>
+</ul>
+<p><strong>Kết quả phản hồi của AI:</strong></p>
+<p>Đang tiến hành cài đặt thư viện cho Pact JS (<code>npm install</code> trong <code>tests/pact</code>). Hệ thống sẽ tự động cập nhật khi quá trình hoàn tất.</p>
+</details>
+<hr />
+<h2>3. Tổng Hợp Đánh Giá &amp; Quyết Định của Thành Viên Nhóm (Human Review)</h2>
+<ul>
+<li>Mọi mã nguồn và cấu hình do AI đề xuất đều được thành viên nhóm đối chiếu trực tiếp với đặc tả <code>api_specification.md</code> và mã nguồn backend <code>server.js</code> trước khi thực thi.</li>
+</ul>
+<hr />
+<p><em>Báo cáo được tổng hợp tự động và trích xuất minh chứng từ Antigravity Session Transcript.</em></p>
+
+    </div>
+
+    <div class="footer">
+        Báo cáo được khởi tạo và trích xuất tự động từ hệ thống nhật ký Antigravity Agent Runtime.<br/>
+        Nhóm 11 (FIT@HCMUS): Nguyễn Quốc Kỳ, Hà Quốc Kiên, Nguyễn Hoàng Anh Tú.
+    </div>
+</div>
+
+<script>
+    function toggleAllDetails(open) {
+        const allDetails = document.querySelectorAll('details');
+        allDetails.forEach(d => d.open = open);
+    }
+</script>
+
+</body>
+</html>

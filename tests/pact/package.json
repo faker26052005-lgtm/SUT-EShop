@@ -6,7 +6,13 @@
   "scripts": {
     "test:consumer": "mocha consumer/**/*.test.js --timeout 30000",
     "test:provider": "node provider/verify.js",
-    "test:breaking": "node breaking-change/verify-breaking.js"
+    "test:breaking": "node breaking-change/verify-breaking.js",
+    "test:c3": "node breaking-change/pact-c3-runner.js",
+    "test:c3:live": "node breaking-change/live-demo-c3.js --auto",
+    "demo:mutate": "node breaking-change/live-demo-c3.js --mutate:rename",
+    "demo:mutate:rename": "node breaking-change/live-demo-c3.js --mutate:rename",
+    "demo:mutate:type": "node breaking-change/live-demo-c3.js --mutate:type",
+    "demo:restore": "node breaking-change/live-demo-c3.js --restore"
   },
   "dependencies": {
     "@pact-foundation/pact": "^13.2.0",
