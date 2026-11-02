@@ -1,11 +1,18 @@
 ---
 name: gui-checklist-coach
-description: Guides a student through designing, reviewing, and executing a GUI testing checklist (40+ items covering general UI standards, forms, navigation, and feedback/state) for chosen screens of a system under test, such as the EShop web app, admin panel, or mobile app. Produces an Excel checklist, a Markdown copy, bug-report drafts, a test summary, and Git commit suggestions. Use this skill whenever the user mentions a GUI checklist, UI checklist, interface testing checklist, HW03, the weekly GUI or usability assignment, "next screen", checklist for the Cart, Checkout, Admin, or Mobile screens, or pastes a screen description or screenshot and wants test items, even if they do not say "skill" or "checklist" explicitly. Do NOT use it for running the usability sessions (SUS, UEQ-S, participants), which is a separate activity.
+description: Guides a student through designing, reviewing, and executing a GUI testing checklist (40+ items covering general UI standards, forms, navigation, and feedback/state) for chosen screens of a system under test, such as the EShop web app, admin panel, or mobile app. Produces an Excel checklist, a Markdown copy, bug-report drafts, a test summary with cross-platform comparison, and Git commit suggestions. Use this skill whenever the user mentions a GUI checklist, UI checklist, interface testing checklist, HW03, the weekly GUI or usability assignment, "next screen", checklist for the Cart, Checkout, Admin, or Mobile screens, or pastes a screen description or screenshot and wants test items, even if they do not say "skill" or "checklist" explicitly. Do NOT use it for running the usability sessions (SUS, UEQ-S, participants), which is a separate activity.
 ---
 
 # GUI Checklist Coach
 
 A workflow for producing a GUI checklist that the student designs, reviews, and executes themselves, with the AI acting as a disciplined assistant. The course (Software Testing, CSC13003) grades the student on the quality of their own review and judgement, and on an honest record of how AI was used. So this skill speeds up the mechanical work and leaves the thinking, the Pass/Fail calls, and the evidence to the human.
+
+## Process alignment with course theory
+
+This workflow maps directly to the standard 3-stage GUI testing process (from lecture slide *S13_GUI Testing & Usability Testing.pdf* §1.3):
+1. **Specify Tests / Test Design (Phases 1–3):** Map screens to functional requirements and derive test items across low-level standards and application-level logic (EP/BVA, state transitions).
+2. **Prepare Tests (Phases 4–6):** Review, deduplicate, conduct human gap analysis, and compile the execution sheet with summary validation.
+3. **Execute Tests (Phases 6–7):** Execute on running SUT across platforms, capture empirical failure evidence, and report issues.
 
 ## Why the workflow is staged
 
@@ -17,15 +24,16 @@ Before starting, check whether the current assignment differs from these default
 
 | Setting | Default |
 |---|---|
-| SUT | EShop (https://github.com/faker26052005-lgtm/SUT-EShop) |
+| Upstream SUT Repo | `https://github.com/ttbhanh/eshop-sut` (upstream course reference) |
+| Bug & Evidence Repo | `https://github.com/faker26052005-lgtm/SUT-EShop` (student working fork for issues and evidence) |
 | Screen map folder | `screen-maps/`, one Markdown file per SUT (for EShop: `screen-maps/eshop.md`). See "Screen map lookup" in Phase 1 |
 | Screen context folder | `./screen-context/` in the working directory: one description file per screen plus an `images/` subfolder. See "Screen context lookup" in Phase 1 |
 | Interface aspects | IA-01 General UI standards, IA-02 Forms, IA-03 Navigation, IA-04 Feedback / state |
-| Minimum items | more than 40 (aim for 48 to 60 so rejects during review do not drop the total below the minimum) |
+| Minimum items | more than 40 (aim for 48 to 60 for the initial AI draft so rejects during review do not drop the total below the minimum) |
 | Suggested floor per IA | about 8 items (a working guideline of this skill, not an assignment rule) |
 | Results allowed | Passed or Failed only |
-| Screenshots | Failed items only |
-| Platforms | at least 3: Chrome, Firefox, and Safari or Android Chrome or Expo Go |
+| Screenshots | Failed items only (with student identity overlay) |
+| Platforms | at least 3: Chrome, Firefox, and Safari (or Android Chrome / Expo Go) |
 | Output language | English (reply to the student in the language they write in) |
 
 ## Division of labour
@@ -42,19 +50,23 @@ Never mark an item Passed or Failed, never invent screenshots or observations, a
 
 ## Workspace and files
 
-Write files to the current working directory, or to `/mnt/user-data/outputs/` when that exists. Use one folder per assignment week and screen group:
+Write files relative to the current working directory:
 
 ```
 <week>-gui-checklist/
 ├── PROGRESS.md            # current phase, decisions, open items (read this first when resuming)
-├── checklist.xlsx         # the main deliverable
+├── checklist.xlsx         # the main deliverable (multi-platform execution sheet)
 ├── checklist.md           # Markdown copy for the report
-├── test-summary.md        # counts for the README
-├── commit-suggestions.md  # one message per phase
+├── test-summary.md        # counts and cross-platform matrix for the README/report
+├── commit-suggestions.md  # one message per step
 └── bug-drafts/            # one .md per bug (failures grouped across platforms)
 ```
 
-When the student returns in a later session, read `PROGRESS.md` and resume at the recorded phase rather than starting over. When creating the `.xlsx`, read the xlsx skill first if one is available.
+Evidence files live at the repository root:
+- `evidence/screenshots/FAILED_<ID>_<platform>.png` (Failed-item screenshots)
+- `evidence/cross-platform/` (cross-platform screenshots with identity overlay)
+
+When the student returns in a later session, read `PROGRESS.md` and resume at the recorded phase rather than starting over. When creating `checklist.xlsx`, use the bundled Python script (`scripts/generate_checklist_excel.py`) or inline Python with `openpyxl` to ensure correct formatting, data validation dropdowns, and formula calculations.
 
 ---
 
@@ -113,6 +125,8 @@ Then act on what you find:
 
 **Checkpoint 1 passes when** every screen has an FR mapping (from the map or from the student), every chosen screen has a usable description (from the screen context or from the student), the student has confirmed the screen is not duplicated within their group, and the chosen scope can plausibly reach the item target. If a single thin screen cannot, say so and suggest adding a screen.
 
+---
+
 ## Phase 2: Seed the taxonomy
 
 **Goal:** ground the generation in the course material rather than the model's generic habits.
@@ -120,6 +134,8 @@ Then act on what you find:
 Load the taxonomy in the "Reference: taxonomy" section below and select the categories relevant to the chosen screens. Show the student the selected categories grouped by IA, and ask whether any are irrelevant to their screens.
 
 **Checkpoint 2 passes when** every IA has at least one relevant category.
+
+---
 
 ## Phase 3: Generate the initial checklist
 
@@ -144,7 +160,9 @@ Write each item so it can be judged Passed or Failed without interpretation. "Er
 
 Save the items to `checklist.md` as a draft.
 
-**Checkpoint 3 passes when** all fields are filled for every item and each IA is represented at or above the floor.
+**Checkpoint 3 passes when** all fields are filled for every item and each IA is represented at or above the floor (~8 items each, total 48 to 60 items).
+
+---
 
 ## Phase 4: Review and deduplicate (student-led)
 
@@ -154,12 +172,14 @@ Present items in small groups per IA and ask the student to give a verdict on ea
 
 - Near-duplicates (same element, same expected result, different wording)
 - Vague or untestable expected results
-- Items that test business logic rather than the interface
+- Items testing pure backend database logic with no visible UI manifestation. *(Note: Per lecture §1.1 & §1.5, UI-driven functional validation—such as Equivalence Partitioning (EP) and Boundary Value Analysis (BVA) on form inputs, quantity steppers, and client-side validation rules—IS valid and encouraged under IA-02).*
 - Generic items that do not name a real element
 
 Update the checklist with their decisions. Record rejects and their reasons in `PROGRESS.md`; they help the student explain their choices in an oral defense.
 
 **Checkpoint 4 passes when** every AI item has a verdict, no duplicates remain unresolved, and every kept item has a testable expected result.
+
+---
 
 ## Phase 5: Gap analysis (the human adds what the AI missed)
 
@@ -173,20 +193,24 @@ If the student cannot explain why, say so plainly and suggest they test the AI a
 
 **Checkpoint 5 passes when** the total is **more than 40**, every human-added item has the student's own written reason, and each IA still meets the floor.
 
+---
+
 ## Phase 6: Execution sheet (student executes)
 
-**Goal:** a sheet ready for the student to run against the SUT.
+**Goal:** a sheet ready for the student to run against the SUT across platforms.
 
-Build `checklist.xlsx` (and refresh `checklist.md`) with these columns:
+Build `checklist.xlsx` (and refresh `checklist.md`) with columns dynamically reflecting the configured platforms:
 
-`ID | Screen | IA | Category | Check | Expected result | Priority | Source | Why AI missed it (human items) | Result: Platform 1 | Result: Platform 2 | Result: Platform 3 | Notes | Screenshot ref | Bug ID`
+`ID | Screen | IA | Category | Check | Expected result | Priority | Source | Why AI missed it (human items) | Result: Chrome | Result: Firefox | Result: Safari | Notes | Screenshot ref | Bug ID`
 
-- Result cells accept only `Passed` or `Failed` (add data validation) and start empty.
-- The assignment requires Task 1 to be repeated on at least three platforms in Task 3, so the sheet carries one result column per platform. An item can pass in one browser and fail in another.
-- Notes records the reason for each Failure. Prefix each note with the platform, for example `Safari: error text overflows the card`.
-- Add a second sheet, **Summary**, with formulas for items designed, executed, passed, and failed per platform.
+- **Result cells:** Data validation restricted to `Passed` or `Failed` only (starts empty).
+- **Multi-platform results:** Task 1 is executed across at least 3 platforms (Task 3). An item can pass in one browser and fail in another.
+- **Notes:** Records the reason for each Failure. When failing on multiple platforms, prefix each note with the platform name (e.g., `Firefox: text truncated; Safari: button misaligned`).
+- **Screenshot ref:** Reference to the screenshot file in `evidence/screenshots/` (e.g., `FAILED_CART-IA02-03_Firefox.png`). For multiple platforms, list separated by semicolons.
+- **Bug ID:** GitHub Issue reference (`#<number>` or issue URL), populated in Phase 7.
+- **Summary tab:** Add a second sheet, **Summary**, with formulas calculating Items Designed, Executed, Passed, and Failed per platform.
 
-Tell the student how to name evidence files, for example `FAILED_CART-IA02-03_Firefox.png`, and remind them that screenshots are for **Failed** items only.
+Tell the student how to name evidence files: `FAILED_<ID>_<platform>.png`, and remind them that screenshots are for **Failed** items only.
 
 **Result rules to share with the student:**
 
@@ -198,17 +222,17 @@ Tell the student how to name evidence files, for example `FAILED_CART-IA02-03_Fi
 | The item does not apply to this screen | Replace it. There is no N/A state, and N/A would break the count reconciliation |
 | A matter of taste with no deviation from the expected result | Passed, with an observation in Notes. Taste belongs in the usability study |
 
-Severity (Blocker, Major, Minor, Cosmetic) is separate from the result and belongs in the bug report.
+**Checkpoint 6 passes when** every item has a result from the student on every platform they ran, every Failed item has a note and a screenshot reference, and no Result cell was filled by the AI.
 
-**Checkpoint 6 passes when** every item has a result from the student on every platform they ran, every Failed item has a note and a screenshot reference, and no Result cell was filled by the AI. If the student has not yet run all three platforms, record which are pending and do not block progress on the platforms completed.
+---
 
 ## Phase 7: Bug issues, summary, and commits
 
-**Goal:** turn failed items into reviewed GitHub Issues with embedded screenshots, then close the loop.
+**Goal:** turn failed items into reviewed GitHub Issues with embedded screenshots, generate the cross-platform summary matrix, and provide exact Git commits.
 
-Run this phase after Phase 6 is finished on every platform the student ran, so duplicates across platforms are visible before anything is filed. Issues are hard to undo (they can be closed but not cleanly deleted), so the flow below drafts everything first, files one pilot, and only then files the rest.
+Run this phase after Phase 6 is finished on all platforms, so duplicates across platforms are visible before anything is filed. Issues are hard to undo (they can be closed but not cleanly deleted), so the flow below drafts everything first, files one pilot, and only then files the rest.
 
-**Step 1: Group and draft.** Group the Failed items. The same checklist item failing with the same symptom on several platforms is one bug that lists every affected platform. A different symptom, or a failure specific to one platform, is a separate bug. Show the grouping to the student, then create `bug-drafts/<ID>.md` for each bug from the student's notes. Do not add details they did not observe.
+**Step 1: Group and draft.** Group the Failed items. The same checklist item failing with the same symptom on several platforms is one bug that lists every affected platform. A different symptom, or a failure specific to one platform, is a separate bug. Show the grouping to the student, then create `bug-drafts/<ID>.md` for each bug from the student's notes.
 
 ```markdown
 # [<Screen>] <short, specific title>
@@ -231,63 +255,75 @@ Run this phase after Phase 6 is finished on every platform the student ran, so d
 ![<ID> on <platform>](<commit-pinned screenshot URL, added in step 3>)
 ```
 
-**Step 2: Student reviews every draft.** The student confirms the title, severity, steps, platforms, and screenshot for each bug. Severity is their call, not the AI's.
+**Step 2: Student reviews every draft & confirms Severity.**
+Guide the student using the course's criticality formula (from lecture §2.9):
+$$\text{Criticality} = \text{Severity} \times \text{Probability}$$
 
-**Step 3: Push the screenshots and embed them.** Embedded images need a URL that works inside the issue, so the screenshots must be committed and pushed to the repository where the issues will be filed.
+- **Blocker:** High criticality. Crash, complete block on user flow (e.g., checkout cannot be submitted).
+- **Major:** Significant functional failure, coupon calculation wrong, data loss on input blur.
+- **Minor:** Low functional impact, clear workaround available (e.g., focus order skip, minor layout glitch).
+- **Cosmetic:** Pure visual defect with no functional impairment (e.g., slight color contrast issue, font size variation).
 
-- Ask once for the target `owner/repo`, and confirm it is the student's own repository, not the course's.
+**Step 3: Push screenshots and embed commit-pinned URLs.**
+Embedded images need a URL that works inside the issue, so the screenshots must be committed and pushed to the repository **before** creating issues:
+
+- Confirm target `owner/repo` is the student's own repository (`faker26052005-lgtm/SUT-EShop`).
 - Suggest `evidence/screenshots/FAILED_<ID>_<platform>.png` as the path.
-- Ask the student to commit and push the screenshots, or to approve the agent doing it, before any issue is created.
-- Embed each image with a URL pinned to that commit: `![<alt text>](https://github.com/<owner>/<repo>/blob/<commit-sha>/evidence/screenshots/<file>?raw=true)`. A commit-pinned URL keeps working if the branch moves or the file is renamed later, and a relative path does not render reliably inside an issue.
-- If the repository is public, remind the student to check each screenshot for personal information before pushing.
-- Tell the student once that these are embedded images, not uploaded attachments, and suggest confirming with the TA that this satisfies "attach a screenshot to each issue".
+- Ask the student to commit and push the screenshots (`docs(evidence): add failed-item screenshots`), or approve the agent doing it.
+- Embed each image with a URL pinned to that commit: `![<alt text>](https://github.com/<owner>/<repo>/blob/<commit-sha>/evidence/screenshots/<file>?raw=true)` (or `https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/evidence/screenshots/<file>`).
+- If public, check screenshots for sensitive personal data before pushing.
 
-**Step 4: Pilot.** Create one issue only. If the tools allow, fetch it back and check the title, labels, body formatting, and that every image renders, then ask the student to open it and confirm. If anything is wrong, fix the draft template before creating any more.
+**Step 4: Pilot.** Create one issue only. Fetch it back and check the title, labels, body formatting, and that every image renders. Ask the student to open it and confirm. If anything is wrong, fix the draft template before continuing.
 
-**Step 5: Dry run.** List the remaining issues (title, checklist ID, severity, platforms, labels) and wait for the student's approval of the list.
+**Step 5: Dry run.** List the remaining issues (title, checklist ID, severity, platforms, labels) and wait for student approval.
 
-**Step 6: Create the rest.** File the approved issues one after another, pausing about a second between creations, because GitHub throttles rapid content creation. Stop at the first error and report it. Before retrying a failed creation, search the repository's issues for that title, so a retry cannot create a duplicate.
+**Step 6: Create the rest.** File the approved issues one after another with ~1s pause between creations. Stop on the first error and report it.
+- Title: `[<Screen>] <short, specific title>`
+- Labels: `bug`, severity label, IA tag, platform label.
+- Use the `gh` CLI or manual filing as appropriate.
 
-- Use the title `[<Screen>] <short, specific title>`.
-- Use the labels `bug`, a severity label, the IA tag, and a platform label. Use labels that already exist and ask before creating missing ones.
-- Use whatever GitHub access the environment provides (the `gh` CLI or a GitHub connector). If there is none, give the student ready-to-paste issue bodies and have them file them in the same order, pilot first.
+**Step 7: Write back.** Record each issue number and URL in the checklist's Bug ID column, in `checklist.md`, and in the draft file.
 
-**Step 7: Write back.** Record each issue number and URL in the checklist's Bug ID column, in `checklist.md`, and in the draft file. Remind the student that bugs must appear both in the Markdown report and on their GitHub Issues page, and that creating issues through an agent is AI use, so it belongs in this phase's audit log reminder.
-
-**Test summary.** Write `test-summary.md` for the README:
+**Test Summary & Cross-Platform Matrix.** Write `test-summary.md` containing both the reconciliation table and the Task 3 Cross-Platform Matrix:
 
 ```markdown
-| Metric | Value |
-|---|---|
-| Screens tested | |
-| Checklist items designed | |
-| Items executed (per platform) | |
-| Passed (per platform) | |
-| Failed (per platform) | |
-| Bugs reported | |
-| Participants | (filled in by the usability activity) |
-| Demo videos | (student adds links) |
+# Test Summary & Execution Reconciliation
+
+| Metric | Chrome | Firefox | Safari | Total Unique |
+|---|---|---|---|---|
+| Items Designed | | | | |
+| Items Executed | | | | |
+| Passed | | | | |
+| Failed | | | | |
+| Unique Bugs Filed | - | - | - | |
+
+Check: Designed equals Executed, and Executed equals Passed plus Failed per platform.
+
+# Task 3: Cross-Platform Compatibility Findings
+
+| Screen & Item ID | Chrome | Firefox | Safari | Observed Discrepancy / Root Cause |
+|---|---|---|---|---|
+| `<ID>` | Pass | Fail | Fail | `<e.g. CSS Flex wrap broken in Gecko/WebKit>` |
 ```
 
-Check that the figures reconcile: designed equals executed, and executed equals passed plus failed, for each platform. If they do not, list the mismatches and let the student resolve them.
-
-**Commit suggestions.** Write `commit-suggestions.md` with one message per phase, since the assignment asks for a commit for each testing step:
+**Commit suggestions.** Write `commit-suggestions.md` with one message per step, following the exact working timeline:
 
 ```
 docs(checklist): scope screens and map FR/IA
 docs(checklist): generate initial AI checklist for <screen>
 docs(checklist): review and dedupe AI items
 docs(checklist): add human items and rationale
-test(checklist): execute checklist on <platform>
-docs(bugs): draft bug reports for failed items
+docs(checklist): compile multi-platform execution sheet
+test(checklist): execute checklist on chrome
+test(checklist): execute checklist on firefox
+test(checklist): execute checklist on safari
 docs(evidence): add failed-item screenshots
-docs(bugs): file GitHub issues and record issue numbers
-docs(summary): compile test summary
+docs(bugs): draft bug reports for failed items
+docs(bugs): file github issues and record issue numbers
+docs(summary): compile test summary and cross-platform matrix
 ```
 
-The student makes the commits. Remind them to export the Git log as a text file for submission.
-
-**Checkpoint 7 passes when** the counts reconcile, every bug has a student-approved GitHub Issue with its embedded screenshot (or a filing the student confirms they made by hand), and the issue numbers are recorded in the checklist.
+**Checkpoint 7 passes when** counts reconcile, the Cross-Platform Matrix is compiled, every bug has a student-approved GitHub Issue with its embedded screenshot, and issue numbers are recorded in the checklist.
 
 ---
 
@@ -296,62 +332,51 @@ The student makes the commits. Remind them to export the Git log as a text file 
 At the end of each phase, state which criteria were met and which were not, then ask the student to approve before moving on.
 
 - If any criterion fails, name it exactly, stay in the current phase, and offer to help fix it.
-- The student may override a failed gate. Record the override and their reason in `PROGRESS.md`, because they are accountable for the final result.
-- Some criteria can only be verified for existence (a reason is written, a screenshot is referenced), not for quality. Say so when relevant, since quality is the student's responsibility.
-- **Audit log reminder.** At the end of every checkpoint, once the student has approved or overridden it, add one line reminding them to run their audit log skill for the AI interactions of that phase, for example: "Before moving on, run your audit log skill for this phase so the prompts and full outputs are saved word for word." Do it after each phase rather than once at the end, because earlier prompts and outputs can become hard to retrieve verbatim in a long conversation. This skill never writes or runs the log itself. Skip the reminder for a phase in which no AI was used, and do not repeat it if the student says the phase is already logged.
-
-## Evidence and integrity rules
-
-- Cross-platform screenshots, participant data, and execution results must come from the student's real runs. Never generate, edit, or suggest fabricating them.
-- Screenshots in Task 3 must show the browser, OS, or device alongside the localhost URL, plus the student's identity overlay. The assignment text names this overlay two ways (student email in one section, student ID and full name in another), so tell the student to confirm the exact form with the TA, or include both.
-- Build prompts and items from the student's own screens and words. Copying between students, including prompts, scores zero for both, so do not reuse another student's checklist or paste prior-student material into this one.
+- The student may override a failed gate. Record the override and their reason in `PROGRESS.md`.
+- **Audit log reminder.** At the end of every checkpoint, once the student has approved or overridden it, add one line reminding them to run their audit log skill (`hw-ai-audit`) for the AI interactions of that phase.
 
 ---
 
 ## Reference: taxonomy (from the course guide)
-
-Use these categories as the seed. They come from the lecture's low-level checklist testing, navigation testing, and common GUI bug list.
 
 ### Mapping to interface aspects
 
 | IA | Taxonomy categories |
 |---|---|
 | IA-01 General UI standards | Application and GUI standards, color scheme, typography, layout and alignment, labels, consistency across screens, visual integrity (text overflow, distorted images), responsive layout |
-| IA-02 Forms | Data validation, mandatory fields, incorrect field defaults, field order and Tab sequence, focus on the right object, control state vs. data state, wrong fields retrieved, input constraints |
+| IA-02 Forms | Data validation (EP/BVA boundaries), mandatory fields, incorrect field defaults, field order and Tab sequence, focus on the right object, control state vs. data state, wrong fields retrieved, input constraints |
 | IA-03 Navigation | Main menu, breadcrumbs, links and buttons, form navigation, focus order, window or modal behaviour, window system commands (close, back), correct destinations |
 | IA-04 Feedback / state | Error messages, success confirmation, loading and empty states, mishandling of server failures, synchronization of window content, currency of data on screen, control state aligned with data state, state transitions |
 
 ### The 15 common GUI bugs (use as prompts for items)
 
-1. Data validation missing or wrong
-2. Incorrect field default
-3. Mishandling of server process failures
-4. Mandatory fields that are not mandatory (or the reverse)
-5. Wrong fields retrieved by queries
-6. Incorrect search criteria
-7. Illogical field or Tab order
-8. Multiple records returned where one is expected
-9. Stale data on screen (currency of data)
-10. Window fields not matching the underlying data
-11. Wrong window modality (modal vs. modeless)
-12. Window system commands unavailable or broken
-13. Control state out of line with the data state
-14. Focus not placed on the object that needs it
-15. Window content out of sync after a change
+1. Data validation missing or wrong (IA-02)
+2. Incorrect field default (IA-02)
+3. Mishandling of server process failures (IA-04)
+4. Mandatory fields that are not mandatory (or the reverse) (IA-02)
+5. Wrong fields retrieved by queries (IA-02 / IA-04)
+6. Incorrect search criteria (IA-02 / IA-03)
+7. Illogical field or Tab order (IA-02 / IA-03)
+8. Multiple records returned where one is expected (IA-04)
+9. Stale data on screen (currency of data) (IA-04)
+10. Window fields not matching the underlying data (IA-04)
+11. Wrong window modality (modal vs. modeless) (IA-03)
+12. Window system commands unavailable or broken (IA-03)
+13. Control state out of line with the data state (IA-04 / IA-02)
+14. Focus not placed on the object that needs it (IA-02 / IA-03)
+15. Window content out of sync after a change (IA-04)
 
 ### Generation angles per IA
 
 **IA-01 General UI standards:** brand colors and contrast of text on background; font family, size, and weight hierarchy; alignment and spacing of the real elements; consistent button styles and iconography with other screens; label wording and capitalization; truncated or overflowing text; image sizing and distortion; behaviour at narrow and wide viewports.
 
-**IA-02 Forms:** for each real field, check label, required marker, input type and keyboard, placeholder vs. label, default value, length and format limits, validation timing (on blur or on submit), error text and position, preserved input after an error, Tab order, autofocus, paste and autofill, disabled and enabled submit states, double-submit protection.
+**IA-02 Forms:** for each real field, check label, required marker, input type and keyboard, placeholder vs. label, default value, length and format limits; **apply Equivalence Partitioning (EP) and Boundary Value Analysis (BVA)** (e.g. min/max quantity limits, empty inputs, negative numbers, extreme lengths, special characters, whitespace trimming); validation timing (on blur or on submit); error text and inline position; preserved input after an error; Tab order and autofocus; paste and autofill; double-submit protection.
 
-**IA-03 Navigation:** menu items and their destinations, active-item highlighting, breadcrumb accuracy, link vs. button semantics, back and forward browser behaviour, deep links, logo returns home, behaviour of the cart or account icons, navigation after completing or cancelling an action.
+**IA-03 Navigation:** menu items and their destinations; active-item highlighting; breadcrumb accuracy; link vs. button semantics; back and forward browser behaviour; deep links; logo returns home; behaviour of the cart or account icons; navigation after completing or cancelling an action; modal dismissibility.
 
-**IA-04 Feedback / state:** success and failure messages for each action, wording and placement, loading indicators, empty states (empty cart, no results), disabled controls when an action is unavailable, state after server errors or timeouts, badge or counter updates (cart count), data refreshed after an edit, order status shown consistently.
+**IA-04 Feedback / state:** success and failure messages for each action; loading indicators and progress spinners; empty states (empty cart, no results); **control state alignment with data state** (buttons disabled when action unavailable); **state transitions** (cart item count badge updates, price recalculates immediately); handling server errors or timeouts; order status shown consistently.
 
 ### Reference: commonly missed areas (blind spots)
-
-Offer these to the student in Phase 5 as areas to consider. Tell them which are plausible for the chosen screens and which are probably irrelevant.
 
 - **Accessibility:** keyboard-only operation, visible focus indicator, color contrast ratios, alt text, form labels tied to inputs, screen-reader names, touch target size
 - **Dark mode and theme:** contrast and unreadable text, images or icons with fixed backgrounds
@@ -366,13 +391,12 @@ Offer these to the student in Phase 5 as areas to consider. Tell them which are 
 
 ### Reference: screen map format
 
-Use this format for every file in `screen-maps/`, so lookups work the same way for any SUT.
-
 ```markdown
 ---
 sut: <SUT name>
 aliases: [<other names the student might use for the SUT>]
-repo: <repository URL>
+upstream_repo: <upstream course repository URL>
+issue_repo: <student bug issue repository URL>
 source: <where the mapping came from>
 verified: <yes or no, with date>
 ---
@@ -382,14 +406,7 @@ verified: <yes or no, with date>
 | Cart | shopping cart, basket | B | Web (user) | FR-07 | |
 ```
 
-- One row per screen. `Aliases` lets the lookup match the names students actually use.
-- `FRs` lists the requirement codes the screen covers, or `none assigned`. Mark guesses as "assumed".
-- `Elements` is optional. Real element names belong in the screen context folder, so use this column only as a short fallback, and leave it empty rather than guessing.
-- Do not list IA-01 to IA-04 per row, since they apply to every screen.
-
 ### Reference: screen context format
-
-One file per screen in `./screen-context/`, named `<slug>.md`. A copy-ready `_template.md` is provided next to this skill.
 
 ```markdown
 ---
@@ -412,9 +429,3 @@ source: <observed in running app | drafted from code | drafted from screenshot>
 
 ## Notes (optional)
 ```
-
-- `screen` should match the Screen column in the screen map, so the two lookups agree.
-- `captured_at` drives the staleness question. Use the commit hash of the version you ran when you can.
-- `source` marks how much to trust the description. Observed in the running app is the strongest.
-- Name images `<slug>__<state>.png`, so an image identifies its screen even if the description file is missing.
-- List only states you captured. Leave the image cell empty for a state you have not captured yet.
