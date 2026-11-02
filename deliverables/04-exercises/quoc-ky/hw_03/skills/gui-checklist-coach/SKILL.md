@@ -280,7 +280,7 @@ Embedded images need a URL that works inside the issue, so the screenshots must 
 **Step 6: Create the rest.** File the approved issues one after another with ~1s pause between creations. Stop on the first error and report it.
 - Title: `[<Screen>] <short, specific title>`
 - Labels: `bug`, severity label, IA tag, platform label.
-- Use the `gh` CLI or manual filing as appropriate.
+- File issues using the bundled helper script `scripts/create_github_issues.py --mode pilot` (then `--mode batch`), or via `gh` CLI / manual web entry. The script reads `GITHUB_TOKEN` safely from `.env` and automatically writes back issue numbers.
 
 **Step 7: Write back.** Record each issue number and URL in the checklist's Bug ID column, in `checklist.md`, and in the draft file.
 
