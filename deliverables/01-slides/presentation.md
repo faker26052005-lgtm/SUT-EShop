@@ -75,6 +75,92 @@ style: |
     grid-template-columns: 1fr 1fr;
     gap: 20px;
   }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 20px;
+  }
+  .card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 23px;
+    color: #1e3a8a;
+  }
+  .card ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .card li {
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .center-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ref-table {
+    font-size: 21px;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .ref-table th {
+    padding: 8px 12px;
+    font-size: 21px;
+    background-color: #f1f5f9;
+  }
+  .ref-table td {
+    padding: 8px 12px;
+    font-size: 21px;
+  }
+  .ref-table code {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .card-blue {
+    background-color: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-top: 5px solid #2563eb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 20px;
+  }
+  .card-blue h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 22px;
+    color: #1d4ed8;
+  }
+  .card-blue ul, .card-red ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .card-blue li, .card-red li {
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .card-red {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-top: 5px solid #dc2626;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 20px;
+  }
+  .card-red h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 22px;
+    color: #b91c1c;
+  }
 ---
 
 <!-- Slide 1: Title Slide -->
@@ -286,72 +372,280 @@ newman run eshop_api_all_tests.json \
 
 ---
 
-<!-- Slide 8: Karate K1 & K2 -->
+<!-- Slide 1: Section Title Slide -->
+<!-- _paginate: false -->
+<!-- _header: "" -->
+<!-- _footer: "" -->
 
-# Công Cụ 2: Karate Framework — K1 Smoke & K2 Data-Driven
+<br><br><br>
 
-<div class="grid-2">
-<div>
-
-### K1: Smoke Test (`products.feature`)
-* Kiểm thử nhanh tính sẵn sàng của `GET /api/products`.
-* Fuzzy Schema Validation:
-  ```cucumber
-  Given path '/api/products'
-  When method get
-  Then status 200
-  And match response == '#[]'
-  And match each response == 
-    { id: '#number', name: '#string', 
-      price: '#number', stock: '#number' }
-  ```
-</div>
-
-<div>
-
-### K2: Data-Driven & Bắt Bug SUT
-* Sử dụng bảng `Examples` kiểm thử nhiều ID.
-* **Phát hiện 2 lỗi thực tế của SUT EShop:**
-  1. **Lỗi 404:** Truy vấn ID không tồn tại (`id = 999`), hệ thống trả về **HTTP 200 `{}`** thay vì **404 Not Found**.
-  2. **Lỗi Schema:** Một số sản phẩm trả về `price` dạng String (`"99.00"`) thay vì kiểu Number.
-</div>
-</div>
+# KARATE FRAMEWORK
+## Kiểm Thử API Tự Động Bằng Mã Nguồn (Bộ Kịch Bản K1, K2 & K3)
 
 <div class="highlight-box">
-Lệnh chạy Maven: <code>mvn test -Dtest=EshopTest#testProducts</code> &rarr; Tự động sinh báo cáo HTML trực quan.
+BDD DSL Không Tầng Trung Gian · Schema & Fuzzy Matchers · Data-Driven Testing · Stateful E2E Workflow
 </div>
 
 ---
 
-<!-- Slide 9: Karate K3 Stateful Workflow -->
+<!-- Slide 2: Motivation & Core Advantages -->
 
-# Karate Framework — K3 Stateful Shopping Workflow
+# Động Lực: 3 Ưu Thế Cốt Lõi Của Karate Framework
 
-### Kiểm thử luồng mua hàng E2E phức tạp có trạng thái (Stateful Token Chaining)
+Code-based Testing là mắt xích quyết định trong pipeline CI/CD:
 
-```cucumber
-Scenario: Stateful Purchase Workflow (Login -> Cart -> Checkout)
-  # 1. Đăng nhập và trích xuất Authentication Token
-  Given path '/api/login'
-  And request { email: 'test@eshop.com', password: 'Test1234!' }
-  When method post
-  Then status 200
-  * def authToken = response.token
+<div class="grid-3">
+<div class="card">
 
-  # 2. Truyền token vào header để thêm hàng vào giỏ
-  Given path '/api/cart'
-  And header Authorization = 'Bearer ' + authToken
-  And request { productId: 1, quantity: 2 }
-  When method post
-  Then status 200
+### Code BDD DSL trực quan
+*  Viết kịch bản bằng ngôn ngữ Gherkin tự nhiên, tích hợp sẵn giao thức HTTP mà không cần viết mã trung gian Java.
+* Vừa là Living Docs vừa là mã chạy trực tiếp.
 
-  # 3. Tiến hành thanh toán và xác minh đơn hàng
-  Given path '/api/checkout'
-  And header Authorization = 'Bearer ' + authToken
-  When method post
-  Then status 200
-  And match response.status == 'SUCCESS'
-```
+</div>
+<div class="card">
+
+### Native Schema Validation
+* Kiểm tra cấu trúc JSON sâu trực tiếp không cần thư viện phụ.
+* Fuzzy Matchers linh hoạt với dữ liệu động.
+
+</div>
+<div class="card">
+
+### Tự động hóa CI/CD qua Maven
+* Quản lý kịch bản dạng mã nguồn thuần.
+* Thực thi nhanh chóng bằng một dòng lệnh CLI.
+* Tự động sinh báo cáo HTML trực quan kèm wire log.
+
+</div>
+</div>
+
+<div class="highlight-box">
+Tập trung vào logic nghiệp vụ và chất lượng kiểm thử thay vì bảo trì mã boilerplate trung gian.
+</div>
+
+---
+
+<!-- Slide 3: SUT Context & 3 Levels Coverage -->
+
+# Hệ Thống SUT EShop & Chiến Lược Bao Phủ 3 Cấp Độ
+
+<div style="text-align: center; margin-top: 10px;">
+  <img src="images/sut-architecture.svg" height="420" class="center-img" style="display: block; margin: 10px auto;" alt="SUT Architecture Flowchart" />
+</div>
+
+---
+
+<!-- Slide 4: Principle 1 - No Step Definitions -->
+
+# Nguyên Lý 1: Triết Lý BDD DSL Không Tầng Trung Gian
+
+<div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+  <img src="images/karate-architecture-2tier-vs-3tier.svg" height="135" class="center-img" style="display: block; margin: 10px auto; max-width: 95%;" alt="Architecture Comparison 2-Tier vs 3-Tier" />
+</div>
+
+<div class="grid-2">
+<div>
+
+### Karate Framework
+* Cú pháp Gherkin (Given path, When method, Then status, And match) kết nối trực tiếp với HTTP Engine nội tại.
+* Không boilerplate, trực quan cho cả QA, Dev và BA. 
+</div>
+<div>
+
+### 
+### Framework truyền thống
+* Cần viết thêm lớp trung gian Step Definitions để nối câu chữ Gherkin với HTTP Client.
+* Gây tốn kém thời gian bảo trì, tạo ra lượng mã thừa khổng lồ và dễ phát sinh lỗi mismatch regex khi sửa câu chữ kịch bản.
+
+
+</div>
+</div>
+
+---
+
+<!-- Slide 5: Principle 2 - Schema & Fuzzy Matchers -->
+
+# Nguyên Lý 2: Schema Validation & Fuzzy Matchers
+
+<div class="highlight-box" style="margin-top: 0; margin-bottom: 14px; padding: 8px 16px; font-size: 19px;">
+<b>Thách thức từ Dynamic Data:</b> Dữ liệu API thực tế biến đổi liên tục (IDs tự tăng, Tokens JWT, Timestamp, UUIDs). Việc so khớp giá trị cứng khiến test dễ bị lỗi khi dữ liệu đầu vào hoặc trạng thái hệ thống thay đổi.
+</div>
+
+<div class="card" style="padding: 12px 18px;">
+
+### 📋 Khung Tra Cứu & Ví Dụ Minh Họa Fuzzy Matchers
+
+<table class="ref-table" style="font-size: 21px;">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Cú pháp Matcher</th>
+      <th style="width: 38%;">Ý nghĩa & Quy tắc khớp</th>
+      <th style="width: 40%;">Ví dụ minh chứng trong K1 (EShop)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>#number</code></td>
+      <td>Số nguyên hoặc số thực</td>
+      <td><code>{ price: '#number', id: '#number' }</code></td>
+    </tr>
+    <tr>
+      <td><code>#string</code></td>
+      <td>Chuỗi ký tự bất kỳ</td>
+      <td><code>{ name: '#string', imageUrl: '#string' }</code></td>
+    </tr>
+    <tr>
+      <td><code>#boolean</code></td>
+      <td>Giá trị logic (true / false)</td>
+      <td><code>{ in_stock: '#boolean' }</code></td>
+    </tr>
+    <tr>
+      <td><code>#[]</code></td>
+      <td>Cấu trúc mảng JSON Array</td>
+      <td><code>match response == '#[]'</code></td>
+    </tr>
+    <tr>
+      <td><code>contains deep</code></td>
+      <td>Khớp thuộc tính lồng nhau</td>
+      <td><code>match response[0] contains { id: '#number' }</code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+---
+
+<!-- Slide 6: Principle 3 - Data-Driven Testing -->
+
+# Nguyên Lý 3: Data-Driven — Characterization vs Spec Test
+
+Tách bạch giữa **Logic kiểm thử** và **Tập dữ liệu đầu vào** qua `Scenario Outline` + `Examples`:
+
+<div class="grid-2">
+<div class="card-blue">
+
+### 🔍 1. Characterization Test
+**Kiểm thử ghi nhận hành vi hiện tại**
+* **Bản chất:** Ghi lại trung thực hành vi hiện hành của hệ thống SUT để làm mốc đối soát (**Regression Baseline**).
+* **Mục tiêu:** Đảm bảo hệ thống không bị biến đổi ngoài tầm kiểm soát khi nâng cấp hoặc refactor.
+* **Minh chứng K2:** Ghi nhận SUT trả về `price: "28000000"` (`#string`) ở ID 2 để duy trì baseline theo dõi.
+
+</div>
+<div class="card-red">
+
+### 🎯 2. Specification Test
+**Kiểm thử kiểm chứng theo đặc tả chuẩn**
+* **Bản chất:** Áp đặt các ràng buộc chuẩn mực theo tài liệu thiết kế (chuẩn RESTful API quy định).
+* **Mục tiêu:** Phát hiện sai lệch & khiếm khuyết khi hành vi thực tế không khớp với thiết kế.
+* **Bằng chứng lỗi:** Khi lệch đặc tả $\rightarrow$ **Test FAIL**, cung cấp **Defect Evidence** xác thực cho dev sửa.
+
+</div>
+</div>
+
+
+---
+
+<!-- Slide 7: Principle 4 - Stateful Workflow & Isolation -->
+
+# Nguyên Lý 4: Stateful Workflow & Cô Lập Dữ Liệu Động (K3)
+
+<div style="text-align: center; margin-top: 4px; margin-bottom: 10px;">
+  <img src="images/k3-stateful-workflow.png" height="230" class="center-img" style="display: block; margin: 4px auto; max-width: 98%;" alt="K3 Stateful Workflow Diagram" />
+</div>
+
+<div class="grid-2">
+<div>
+
+### 1. Duy trì trạng thái (State Chaining)
+* Trích xuất JWT Token từ API Đăng nhập.
+* Tự động truyền biến vào Header cho các bước nghiệp vụ sau: `'Bearer ' + authToken`
+
+</div>
+<div>
+
+### 2. Cô lập dữ liệu kiểm thử
+* SUT có ràng buộc `UNIQUE(email)` trong SQLite.
+* Karate gọi Java runtime sinh email độc nhất:  `'karate_k3_' + timestamp + '@eshop.com'`
+* Giúp test suite lặp lại vô hạn lần trên CI/CD mà không xung đột!
+
+</div>
+</div>
+
+---
+
+<!-- Slide 8: Principle 5 - Playback & Multi-Layer Assertions -->
+
+# Nguyên Lý 5: Luận Điểm Playback & Kiểm Chứng Đa Tầng
+
+<div class="grid-2">
+<div class="card">
+
+### 1. Luận điểm "Playback" trong Code-based Testing
+* Khả năng **tái hiện tự động (Automated Replay)** toàn bộ kịch bản nghiệp vụ thông qua lệnh Maven CLI và CI/CD pipeline.
+* Đảm bảo tính nhất quán, loại bỏ hoàn toàn các sai số và độ trễ do thao tác thủ công.
+
+</div>
+<div class="card">
+
+### 2. Chiến lược 3 tầng kiểm chứng tránh bẫy False Positive
+Bẫy **False Positive** xảy ra khi kịch bản chỉ kiểm tra sơ sài mã trạng thái HTTP 200 mà bỏ qua nội dung payload. . Nhóm thiết lập 3 tầng kiểm chứng::
+
+* **Tầng 1 (Status):** Khẳng định mã phản hồi HTTP (status 200 / 401).
+* **Tầng 2 (Structure):** Kiểm tra cấu trúc mảng & kích thước (`match response == '#[]'`, `assert response.length > 0`).
+* **Tầng 3 (Schema & Deep Match):** Kiểm tra ràng buộc kiểu dữ liệu từng trường và so khớp thuộc tính nghiệp vụ sâu (`contains deep`).
+
+</div>
+</div>
+
+<div class="highlight-box">
+Không có công cụ nào tự động chống False Positive; chính kiến trúc kiểm chứng đa tầng chặt chẽ mới bảo vệ được chất lượng kịch bản.
+</div>
+
+---
+
+<!-- Slide 9: Matrix K2 & Discrepancies -->
+
+# Ma Trận K2: Đối Soát Hành Vi Thực Tế vs Kiểm Chứng Đặc Tả
+
+| Case kiểm thử | ID Sản phẩm | Mục đích kiểm thử | Hành vi Backend SUT | Assertion áp dụng trong kịch bản |
+|:---:|:---:|---|---|---|
+| **Case 1** | `1` | **Happy Path** (ID lẻ chuẩn) | Trả về `price: 30000000` (Number) | `match response contains { price: '#number' }` |
+| **Case 2** | `2` | **Characterization** (ID chẵn lệch kiểu) | Trả về `price: "28000000"` (String) | `match response contains { price: '#string' }` |
+| **Case 3** | `9999` | **Characterization** (ID không tồn tại) | Trả về `200 OK` + `{}` (thay vì 404) | `status 200` & `match response == {}` |
+
+### ⚠️ Lưu ý kỹ thuật về cơ chế so khớp Object rỗng trong Karate:
+* Trong Karate, cú pháp `match response contains {}` **luôn luôn trả về TRUE với mọi JSON Object** (kể cả object có chứa thuộc tính), do đó hoàn toàn vô giá trị trong việc chứng minh response rỗng!
+* Để khẳng định chính xác response trả về một JSON Object rỗng, bắt buộc phải sử dụng phép so khớp bằng tuyệt đối: match response == {}
+
+---
+
+
+<!-- Slide 11: Multi-Tool Synergy & Limitations -->
+
+# Mô Hình Bổ Trợ Đa Tầng & Các Hạn Chế Thực Tế Của Karate
+
+<div class="grid-2">
+<div>
+
+### 1. Phối hợp bổ trợ 3 công cụ
+* **Postman:** Khám phá API ban đầu, kiểm thử thủ công và debug nhanh cho lập trình viên.
+* **Pact JS:** Kiểm thử hợp đồng (Contract Testing), bảo đảm tính tương thích giữa các microservices độc lập.
+* **Karate Framework:** Kiểm thử hồi quy tự động (Automated Regression), kiểm tra chuỗi nghiệp vụ có trạng thái (Stateful E2E) tích hợp sâu vào CI/CD.
+</div>
+<div>
+
+### 2. Các hạn chế thực tế của Karate
+* Phụ thuộc môi trường thực thi Java và công cụ quản lý dự án Maven.
+* Ngôn ngữ DSL riêng đòi hỏi thời gian học tập ban đầu; khó debug luồng code sâu hơn mã JS/Java thuần.
+* Hệ sinh thái công cụ hỗ trợ trên IDE còn hạn chế (phụ thuộc vào extension ngoài).
+* Không có cơ chế tự động "Record" lưu vết traffic từ trình duyệt như các tool UI.
+
+</div>
+</div>
+
+<div class="highlight-box">
+<b>Đánh giá khách quan:</b> Không có một công cụ vạn năng duy nhất. Sự kết hợp hiệp đồng giữa Postman, Pact và Karate tạo nên chiến lược bảo đảm chất lượng toàn diện cho hệ thống.
+</div>
 
 ---
 
@@ -410,26 +704,322 @@ Contract Testing cho phép kiểm thử Consumer và Provider <b>hoàn toàn đ�
 
 ---
 
-<!-- Slide 12: Pact C3 Breaking Change -->
+<!-- Slide 1: Section Title Slide -->
+<!-- _paginate: false -->
+<!-- _header: "" -->
+<!-- _footer: "" -->
 
-# Demo Pact JS — Kịch Bản C3: Bắt Lỗi Breaking Change
+<br><br><br>
 
-### Tình huống sự cố thực tế: Backend tự ý đổi tên trường `price` $\rightarrow$ `unit_price`
-* Lệnh chạy: `npm run test:breaking` (tại `tests/pact/breaking-change/verify-breaking.js`)
+# PACT JS & CONTRACT TESTING
+## Kịch Bản C3: Kiểm Soát Tiến Hóa Phần Mềm & Deployment Gate
 
-```text
-Verifying a pact between EShopMobile and EShopBackend
-  GET /api/products (Breaking Change Simulation)
-    returns a response which
-      has a matching body FAILED
-        $ Expected 'price' but got 'unit_price'
+<div class="highlight-box">
+Consumer-Driven Contract Testing · Loose-Coupling Matching Rules · Fault Injection Runner · Chốt Chặn CI/CD Tự Động
+</div>
 
-1 interaction, 1 failure
---> BREAKING CHANGE DETECTED AND BLOCKED AUTOMATICALLY!
+---
+
+<!-- Slide 2: Problem - Software Evolution & Breaking Changes -->
+
+# Bài Toán: Tiến Hóa Phần Mềm & Nguy Cơ Breaking Change
+
+<div class="grid-2">
+<div>
+
+### 1. Bối cảnh Software Evolution
+* Khi Backend tái cấu trúc mã nguồn hoặc tối ưu hóa cơ sở dữ liệu:
+  * Vô tình đổi tên trường dữ liệu: `price` $\rightarrow$ `unit_price`.
+  * Format lại kiểu chuỗi: `price: "30.000.000 ₫"`.
+* **Breaking Change** là bất kỳ thay đổi nào từ phía Provider làm phá vỡ kỳ vọng đã thỏa thuận của Consumer đang chạy ổn định.
+
+</div>
+<div>
+
+### 2. Vì sao kiểm tra HTTP 200 OK là chưa đủ?
+* Server xử lý logic nội bộ thành công và vẫn phản hồi mã **HTTP 200 OK**.
+* Nếu bộ test chức năng chỉ kiểm tra status code mà thiếu assertion schema payload $\rightarrow$ Test báo **PASS** dù dữ liệu đã bị biến dạng!
+* **Hậu quả trên Mobile App:** `product.price` nhận về `undefined` $\rightarrow$ Phép tính giỏ hàng bị `NaN ₫` hoặc gây **App Crash** trên tay người dùng.
+
+</div>
+</div>
+
+<div class="highlight-box">
+⚖️ <b>Góc nhìn công bằng về công cụ:</b> Postman hay bất kỳ HTTP Client nào vẫn có thể viết script assertion kiểm tra kiểu dữ liệu. Sự khác biệt cốt lõi nằm ở: <b>Ai là người định nghĩa kỳ vọng?</b> Tester tự phán đoán đơn phương hay chính Consumer đưa ra yêu cầu?
+</div>
+
+---
+
+<!-- Slide 3: CDCT Sequence & E2E Comparison -->
+
+# Consumer-Driven Contract Testing (CDCT) vs Kiểm Thử E2E
+
+
+<div class="grid-2">
+<div>
+
+### 1. Bản chất của CDCT
+* Consumer đóng vai trò **dẫn dắt**, chủ động định nghĩa cấu trúc dữ liệu cần dùng và đóng gói thành tệp hợp đồng JSON (`pact file`).
+* Quá trình Provider Verification sẽ phát lại (*replay*) các request từ hợp đồng vào Backend thật để đối soát độc lập.
+
+</div>
+<div>
+
+### 2. So sánh với Kiểm thử E2E truyền thống
+* **E2E Test:** Đòi hỏi dựng toàn bộ môi trường (Mobile, Web, DB, Gateway), chạy rất chậm (vài phút), tốn tài nguyên và dễ chập chờn (*flaky*).
+* **CDCT (Pact):** Cho phép kiểm thử tính tương thích **hoàn toàn độc lập** với tốc độ mili-giây, cô lập và định vị chính xác nguyên nhân lỗi.
+
+</div>
+</div>
+
+---
+
+<!-- Slide 4: Contract JSON, Matching Rules & Provider State -->
+
+# Tệp Hợp Đồng & Quy Tắc So Khớp 
+
+<div class="grid-2">
+<div>
+
+###  `EShopMobile-EShopBackend.json`
+```json
+{
+  "consumer": { "name": "EShopMobile" },
+  "provider": { "name": "EShopBackend" },
+  "interactions": [{
+    "description": "a request for product with ID 1",
+    "providerStates": [{ "name": "product with ID 1 exists" }],
+    "request": { "method": "GET", "path": "/api/products/1" },
+    "response": {
+      "status": 200,
+      "body": { "id": 1, "name": "iPhone 15 Pro Max", "price": 30000000 },
+      "matchingRules": {
+        "body": { "$.price": { "matchers": [{ "match": "integer" }] } }
+      }
+    }
+  }]
+}
 ```
 
-> **Giá trị đột phá của Contract Testing:**  
-> Bắt đứng lỗi vi phạm giao tiếp ngay tại CI/CD của Backend trong **vòng 1 giây**, mà **không cần deploy staging hay chạy app di động thật**!
+</div>
+<div>
+
+### 3 Điểm kỹ thuật cốt lõi:
+
+1. **Loose-Coupling Matcher :**
+   Không so khớp cứng giá trị cụ thể, mà ràng buộc bắt buộc tồn tại trường `price` và kiểu dữ liệu phải là số nguyên để tính toán giỏ hàng.
+2. **Khái niệm Provider State:**
+   Thiết lập tiền điều kiện môi trường — Provider phải đảm bảo sản phẩm ID 1 tồn tại trong database trước khi chạy xác thực.
+3. **Giới hạn phạm vi bảo vệ của hợp đồng:**
+   Hợp đồng chỉ mới đăng ký tương tác cho sản phẩm ID 1. Các endpoint hoặc ID khác nằm ngoài phạm vi bảo vệ của bản hợp đồng này.
+
+</div>
+</div>
+
+---
+
+<!-- Slide 5: Breaking vs Non-breaking & Safe Field Removal -->
+
+# Phân Loại Thay Đổi API: Khi Nào Hợp Đồng Bị Phá Vỡ?
+
+<div class="grid-2">
+<div class="card-red">
+
+### Nhóm Breaking Change 
+* **Đổi tên hoặc xóa trường** Consumer đang sử dụng (`price` $\rightarrow$ `unit_price`).
+* **Thay đổi kiểu dữ liệu** của trường bắt buộc (Số nguyên $\rightarrow$ Chuỗi format tiền tệ).
+* **Thay đổi mã HTTP status** (200 $\rightarrow$ 204 hoặc 400), xóa endpoint, hoặc bổ sung tham số bắt buộc (*required query/header*).
+
+</div>
+<div class="card-blue">
+
+### Nhóm Non-breaking & Lợi ích Tiến hóa an toàn
+* **Bổ sung trường mới (Nguyên lý Postel):**  
+  Backend thêm `brand: "Apple"` mà Consumer chưa đăng ký $\rightarrow$ Pact tự động bỏ qua, bài test vẫn PASS.
+* **Lợi ích lớn mạnh nhất của CDCT — Xóa trường an toàn (Safe Dead Code Removal):**
+  * Backend muốn xóa một trường cũ trong database nhưng sợ làm gãy ứng dụng ngoài client: Chỉ cần kiểm tra hợp đồng.
+  * Nếu không có Consumer nào đăng ký trường đó trong Pact, Backend có thể dọn dẹp an toàn, loại bỏ hoàn toàn sự phỏng đoán mơ hồ. 
+
+</div>
+</div>
+
+---
+
+<!-- Slide 6: Deployment Gate & Pact Broker Roadmap -->
+
+# Pact - Deployment Gate: Hiện Tại & Chuẩn Công Nghiệp
+
+<div style="text-align: center; margin-top: 0; margin-bottom: 14px;">
+  <img src="images/pact-deployment-gate.svg" height="215" class="center-img" style="display: block; margin: 0 auto; max-width: 98%;" alt="Deployment Gate Pipeline" />
+</div>
+
+<div class="grid-2">
+<div>
+
+### 1. Cơ chế Deployment Gate trong CI/CD
+* Là chốt chặn kiểm soát tự động: Nếu Provider Verification trả về `Exit Code != 0` $\rightarrow$ Lập tức dừng bản build, từ chối phát hành lên Production.
+* **Phạm vi hiện tại của nhóm:** Thực thi **Local Provider Verification** dựa trên tệp JSON tĩnh, chặn build thông qua mã thoát của tiến trình.
+
+</div>
+<div>
+
+### 2. Chuẩn công nghiệp mở rộng
+* Tích hợp **Pact Broker / PactFlow** để lưu trữ và quản lý hợp đồng tập trung giữa nhiều nhóm Agile phát triển độc lập.
+* Sử dụng công cụ CLI **`can-i-deploy`** đối soát ma trận phiên bản giữa Consumer và Provider theo từng môi trường triển khai (*Dev $\rightarrow$ Staging $\rightarrow$ Production*).
+
+</div>
+</div>
+
+---
+
+<!-- Slide 7: Roadmap - 2 Experimental Methods -->
+
+# Lộ Trình Thực Nghiệm: 2 Góc Nhìn Bổ Trợ
+
+<div class="grid-2">
+<div class="card">
+
+### Phương Pháp 1: Bằng Chứng SUT Thật (Cổng 3000)
+* **Môi trường:** Chạy trực tiếp trên mã nguồn `backend/server.js` và database SQLite thật.
+* **Thao tác:** Sử dụng bộ lệnh CLI để tiêm đột biến:
+  * `npm run demo:mutate:rename` (`price` $\rightarrow$ `unit_price`).
+  * `npm run demo:mutate:type` (`price: '30.000.000 ₫'`).
+* **Mục tiêu:** Chứng minh tính chân thực của việc Pact bắt lỗi trên hệ thống thật.
+
+</div>
+<div class="card">
+
+### Phương Pháp 2: Tự Động Hóa CI/CD (Cổng 3005)
+* **Môi trường:** Bộ điều phối tự động `pact-c3-runner.js`.
+* **Thao tác:** Chu trình 3 pha tự động khép kín chỉ với 1 dòng lệnh duy nhất:
+  ```bash
+  npm run test:c3
+  ```
+* **Kịch bản:** Baseline $\rightarrow$ Tiêm lỗi (Rename, Type, Non-breaking) $\rightarrow$ Rollback hoàn nguyên.
+* **Mục tiêu:** Mô phỏng kịch bản kiểm tra tự động trước khi triển khai trong DevOps.
+
+</div>
+</div>
+
+
+---
+
+<!-- Slide 8: Method 2 CI/CD Runner & Stub Architecture -->
+
+# Phương Pháp 2: Bộ Điều Phối CI/CD Runner
+
+<div style="text-align: center; margin-top: 0; margin-bottom: 8px;">
+  <img src="images/pact-c3-runner-architecture.svg" height="365" class="center-img" style="display: block; margin: 0 auto; max-width: 95%; object-fit: contain;" alt="Sơ đồ điều phối Runner và Stub Provider" />
+</div>
+
+<div class="grid-2" style="gap: 16px; margin-top: 4px;">
+<div class="card" style="padding: 10px 16px; font-size: 18px;">
+
+### Stub Provider Có Trạng Thái (Cổng 3005)
+Không phải backend thật mà là Stub Provider kiểm soát mode động qua biến `currentMode`, phục vụ kỹ thuật Fault Injection khép kín độc lập với database SQLite thật.
+
+</div>
+<div class="card" style="padding: 10px 16px; font-size: 18px;">
+
+### Kiểm Tra Cổng Kiểm Soát (Testing the Gate)
+Mục đích cốt lõi là kiểm chứng độ nhạy của Verification Gate trong CI/CD: bắt đúng lỗi phá vỡ, cho qua trường hợp an toàn, chạy tự động toàn chu trình với `npm run test:c3`.
+
+</div>
+</div>
+
+
+---
+
+<!-- Slide 9: Experimental Results Matrix & Assertion Caveat -->
+
+# Ma Trận Đánh Giá Kết Quả Kiểm Thử Toàn Diện
+
+<table style="font-size: 18px; margin-top: 6px; margin-bottom: 12px;">
+  <thead>
+    <tr>
+      <th style="width: 10%; text-align: center;">Pha</th>
+      <th style="width: 32%;">Kịch bản kiểm tra</th>
+      <th style="width: 18%; text-align: center;">Kỳ vọng</th>
+      <th style="width: 16%; text-align: center;">Thực tế</th>
+      <th style="width: 24%;">Kết luận</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center;"><b>1</b></td>
+      <td>Pha 1: Baseline Verification</td>
+      <td style="text-align: center;"><code>PASS</code></td>
+      <td style="text-align: center; color: #16a34a; font-weight: bold;">PASS</td>
+      <td><b>ĐẠT (Hợp đồng toàn vẹn)</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"><b>2A</b></td>
+      <td>Pha 2A: Rename <code>price</code> &rarr; <code>unit_price</code></td>
+      <td style="text-align: center;"><code>BLOCK (FAIL)</code></td>
+      <td style="text-align: center; color: #dc2626; font-weight: bold;">BLOCKED</td>
+      <td><b>ĐẠT (Bắt đúng thiếu trường <code>price</code>)</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"><b>2B</b></td>
+      <td>Pha 2B: Type Integer &rarr; String</td>
+      <td style="text-align: center;"><code>BLOCK (FAIL)</code></td>
+      <td style="text-align: center; color: #dc2626; font-weight: bold;">BLOCKED</td>
+      <td><b>ĐẠT (Bắt đúng lệch kiểu dữ liệu)</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"><b>2C</b></td>
+      <td>Pha 2C: Add <code>brand</code> (Non-breaking)</td>
+      <td style="text-align: center;"><code>PASS</code></td>
+      <td style="text-align: center; color: #16a34a; font-weight: bold;">PASS</td>
+      <td><b>ĐẠT (Tiến hóa an toàn theo Postel)</b></td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"><b>3</b></td>
+      <td>Pha 3: Rollback &amp; Re-verify</td>
+      <td style="text-align: center;"><code>PASS</code></td>
+      <td style="text-align: center; color: #16a34a; font-weight: bold;">PASS</td>
+      <td><b>ĐẠT (Hệ thống hoàn nguyên an toàn)</b></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="card-red" style="padding: 10px 16px; font-size: 19px;">
+
+### ⚠️ Lưu ý kỹ thuật chuyên sâu: Tránh bẫy "Đúng kết quả nhưng sai lý do"
+* Nếu runner chỉ kiểm tra `exitCode != 0` mà không kiểm tra thông điệp lỗi, hệ thống có thể dính bẫy phán quyết sai (ví dụ server sập hoặc lỗi kết nối mạng cũng khiến exit code != 0).
+* **Giải pháp của nhóm:** Bộ runner đối soát chính xác nội dung lỗi: Phải chứa `missing keys: price` (Pha 2A) và `expected integer` (Pha 2B) mới xác nhận phán quyết `BLOCKED ĐẠT`.
+
+</div>
+
+---
+
+<!-- Slide 10: Retrospective, Limitations & Future Roadmap -->
+
+# Đúc Kết Giá Trị, Hạn Chế Thực Tế & Hướng Phát Triển
+
+<div class="grid-3">
+<div class="card">
+
+### 1. Giá Trị Cốt Lõi
+* Khẳng định tính khả thi của việc dùng Pact JS làm **Deployment Gate** tự động chặn đứng lỗi hợp đồng trong CI/CD.
+* Giúp Provider tự tin refactor và xóa an toàn mã nguồn thừa (Safe Dead Code Removal) mà không sợ gãy ứng dụng client.
+
+</div>
+<div class="card-red">
+
+### 2. Hạn Chế Thực Tế
+* Hợp đồng phụ thuộc vào phạm vi đăng ký của Consumer (hợp đồng C1 hiện tại chỉ mới bảo vệ ID 1, chưa bao phủ ID 2).
+* Tốn công sức duy trì các hàm `stateHandlers` đồng bộ với database thật khi cấu trúc dữ liệu thay đổi.
+
+</div>
+<div class="card-blue">
+
+### 3. Hướng Phát Triển
+* Triển khai Pact Broker tập trung để quản trị hợp đồng giữa nhiều nhóm phát triển Agile độc lập.
+* Tích hợp lệnh CLI **`can-i-deploy`** vào GitHub Actions để đối soát ma trận tương thích đa môi trường (*Dev $\rightarrow$ Staging $\rightarrow$ Production*).
+
+</div>
+</div>
 
 ---
 

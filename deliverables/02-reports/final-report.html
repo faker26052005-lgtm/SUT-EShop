@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Tổng Hợp Seminar T06 - API & Contract Testing | Nhóm 11</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
+            @bottom-right {
+                content: counter(page);
+            }
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --primary-bg: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --border-light: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-color: #f8fafc;
+            --table-header: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 13.5px;
+            line-height: 1.65;
+            color: var(--text-main);
+            background: #ffffff;
+            padding: 20px 30px;
+        }
+
+        .report-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary);
+            font-weight: 700;
+            page-break-after: avoid;
+            margin-top: 1.4em;
+            margin-bottom: 0.5em;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #0f172a;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+            margin-top: 0.8em;
+        }
+
+        h2 {
+            font-size: 17px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 5px;
+            margin-top: 1.5em;
+        }
+
+        h3 {
+            font-size: 15px;
+            color: #1e40af;
+            margin-top: 1.2em;
+        }
+
+        h4 {
+            font-size: 14px;
+            color: #2563eb;
+        }
+
+        h5, h6 {
+            font-size: 13.5px;
+            color: #334155;
+        }
+
+        p {
+            margin-bottom: 0.85em;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 0.85em;
+        }
+
+        li {
+            margin-bottom: 0.35em;
+        }
+
+        blockquote {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary-light);
+            padding: 10px 16px;
+            margin: 12px 0;
+            color: #334155;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+            page-break-inside: avoid;
+        }
+
+        blockquote p {
+            margin-bottom: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 12.5px;
+            page-break-inside: avoid;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 7px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--table-header);
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fcfdfe;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+            font-size: 12px;
+            background: #f1f5f9;
+            color: #b91c1c;
+            padding: 2px 5px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-color);
+            padding: 12px 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 12px;
+            line-height: 1.5;
+            page-break-inside: avoid;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 12px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 20px 0;
+        }
+
+        a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Print Specific Adjustments */
+        @media print {
+            body {
+                padding: 0;
+                font-size: 12.5px;
+            }
+            .report-wrapper {
+                max-width: 100%;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+            }
+            pre, table, blockquote {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-wrapper">
+        <h1>Báo Cáo Tổng Hợp Nghiên Cứu &amp; Thực Hành Seminar</h1>
+<h1>Chủ Đề T06: API Testing &amp; Contract Testing</h1>
+<blockquote>
+<p><strong>FIT @ HCMUS — Khoa Công Nghệ Thông Tin · Bộ Môn Công Nghệ Phần Mềm</strong><br />
+<strong>Môn học:</strong> CS423 / CSC15003 — Kiểm Thử Phần Mềm (Software Testing)<br />
+<strong>Đợt nộp:</strong> Báo Cáo Hoàn Thiện Giai Đoạn W06 (Đạt ≥ 90% Nội Dung Seminar)<br />
+<strong>Giảng viên hướng dẫn:</strong> <a href="http://M.Sc">M.Sc</a> Hồ Tuấn Thanh
+<strong>Hệ thống thử nghiệm (SUT):</strong> EShop (Node.js/Express + SQLite, React Web, Admin, Mobile)<br />
+<strong>Repository:</strong> <a href="https://github.com/faker26052005-lgtm/SUT-EShop">https://github.com/faker26052005-lgtm/SUT-EShop</a></p>
+</blockquote>
+<hr />
+<h2>👥 Thông Tin Nhóm Sinh Viên Thực Hiện — Nhóm 11</h2>
+<table>
+<thead>
+<tr>
+<th>Họ và Tên</th>
+<th style="text-align:center">Mã Số Sinh Viên</th>
+<th>Vai Trò Chính</th>
+<th>Đóng Góp Nổi Bật</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nguyễn Hoàng Anh Tú</strong></td>
+<td style="text-align:center"><strong>23120183</strong></td>
+<td>Trưởng nhóm / QA Lead</td>
+<td>• Pact JS: Consumer Test (C1), Provider Verification (C2)<br>• Newman CLI Tự động hóa CI/CD (P3)<br>• Thiết kế Slide thuyết trình, Báo cáo kỹ thuật tuần</td>
+</tr>
+<tr>
+<td><strong>Nguyễn Quốc Kỳ</strong></td>
+<td style="text-align:center"><strong>23120138</strong></td>
+<td>Automation Engineer</td>
+<td>• Karate Framework: K1 (Smoke), K2 (Data-driven), K3 (E2E Shopping Workflow)<br>• Pact JS: Breaking Change Simulation (C3)<br>• Thiết kế Bài tập Hands-on Lab cho lớp</td>
+</tr>
+<tr>
+<td><strong>Hà Quốc Kiên</strong></td>
+<td style="text-align:center"><strong>23120056</strong></td>
+<td>Research &amp; AI Engineer</td>
+<td>• Postman &amp; Newman: Kịch bản P1, P2 (Data-driven CSV)<br>• AI Agent Testing: Sinh test từ OpenAPI 3.0 &amp; Prompt engineering<br>• Tổng hợp tài liệu nghiên cứu lý thuyết</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📑 Mục Lục Báo Cáo</h2>
+<ol>
+<li><a href="#1-t%C3%B3m-t%E1%BA%AFt-%C4%91i%E1%BB%81u-h%C3%A0nh-executive-summary">Tóm Tắt Điều Hành (Executive Summary)</a></li>
+<li><a href="#2-ph%E1%BA%A7n-i--c%C6%A1-s%E1%BB%9F-l%C3%BD-thuy%E1%BA%BFt-n%E1%BB%81n-t%E1%BA%A3ng">Phần I — Cơ Sở Lý Thuyết Nền Tảng</a>
+<ul>
+<li><a href="#21-b%E1%BA%A3n-ch%E1%BA%A5t-c%E1%BB%A7a-api-testing--test-pyramid">2.1. Bản chất của API Testing &amp; Test Pyramid</a></li>
+<li><a href="#22-4-tr%E1%BB%8Dng-t%C3%A2m-ki%E1%BB%83m-th%E1%BB%AD-api--gi%E1%BA%A3i-ph%E1%BA%ABu-http">2.2. 4 Trọng tâm kiểm thử API &amp; Giải phẫu HTTP</a></li>
+<li><a href="#23-v%E1%BA%A5n-n%E1%BA%A1n-api-drift--v%C3%AC-sao-c%E1%BA%A7n-contract-testing">2.3. Vấn nạn &quot;API Drift&quot; &amp; Vì sao cần Contract Testing?</a></li>
+<li><a href="#24-consumer-driven-contract-testing-cdct-v%E1%BB%9Bi-pact">2.4. Consumer-Driven Contract Testing (CDCT) với Pact</a></li>
+<li><a href="#25-ph%C3%A2n-bi%E1%BB%87t-schema-testing-vs-contract-testing">2.5. Phân biệt Schema Testing vs Contract Testing</a></li>
+<li><a href="#26-5-d%E1%BA%A1ng-ph%C3%A1-v%E1%BB%A1-h%E1%BB%A3p-%C4%91%E1%BB%93ng-breaking-changes-ph%E1%BB%95-bi%E1%BA%BFn">2.6. 5 Dạng phá vỡ hợp đồng (Breaking Changes) phổ biến</a></li>
+</ul>
+</li>
+<li><a href="#3-ph%E1%BA%A7n-ii--kh%E1%BA%A3o-s%C3%A1t--so-s%C3%A1nh-c%C3%A1c-c%C3%B4ng-c%E1%BB%A5-ch%E1%BB%A7-%C4%91%E1%BA%A1o">Phần II — Khảo Sát &amp; So Sánh Các Công Cụ Chủ Đạo</a>
+<ul>
+<li><a href="#31-t%E1%BB%95ng-quan-c%C3%A1c-c%C3%B4ng-c%E1%BB%A5-kh%E1%BA%A3o-s%C3%A1t">3.1. Tổng quan các công cụ khảo sát</a></li>
+<li><a href="#32-ma-tr%E1%BA%ADn-so-s%C3%A1nh-to%C3%A0n-di%E1%BB%87n-8-ti%C3%AAu-ch%C3%AD-k%E1%BB%B9-thu%E1%BA%ADt">3.2. Ma trận so sánh toàn diện 8 tiêu chí kỹ thuật</a></li>
+<li><a href="#33-c%C3%A2y-quy%E1%BA%BFt-%C4%91%E1%BB%8Bnh-l%E1%BB%B1a-ch%E1%BB%8Dn-c%C3%B4ng-c%E1%BB%A5-decision-tree">3.3. Cây quyết định lựa chọn công cụ (Decision Tree)</a></li>
+</ul>
+</li>
+<li><a href="#4-ph%E1%BA%A7n-iii--tri%E1%BB%83n-khai-th%E1%BB%B1c-h%C3%A0nh-tr%C3%AAn-h%E1%BB%87-th%E1%BB%91ng-sut-eshop">Phần III — Triển Khai Thực Hành Trên Hệ Thống SUT EShop</a>
+<ul>
+<li><a href="#41-gi%E1%BB%9Bi-thi%E1%BB%87u-h%E1%BB%87-th%E1%BB%91ng-ki%E1%BB%83m-th%E1%BB%AD-sut-eshop">4.1. Giới thiệu hệ thống kiểm thử SUT EShop</a></li>
+<li><a href="#42-c%C3%B4ng-c%E1%BB%A5-1--postman--newman-k%E1%BB%8Bch-b%E1%BA%A3n-p1-p2-p3">4.2. Công cụ 1 — Postman &amp; Newman (Kịch bản P1, P2, P3)</a>
+<ul>
+<li><a href="#421-k%E1%BB%8Bch-b%E1%BA%A3n-p1-c%C3%A0i-%C4%91%E1%BA%B7t-c%E1%BA%A5u-h%C3%ACnh-environment--request-c%C6%A1-b%E1%BA%A3n">4.2.1. Kịch bản P1: Cài đặt, Cấu hình Environment &amp; Request Cơ bản</a></li>
+<li><a href="#422-k%E1%BB%8Bch-b%E1%BA%A3n-p2-runner-data-driven-csv--advanced-checkpoints">4.2.2. Kịch bản P2: Runner, Data-Driven CSV &amp; Advanced Checkpoints</a></li>
+<li><a href="#423-k%E1%BB%8Bch-b%E1%BA%A3n-p3-t%E1%BB%B1-%C4%91%E1%BB%99ng-h%C3%B3a-newman-cli--b%C3%A1o-c%C3%A1o-html">4.2.3. Kịch bản P3: Tự động hóa Newman CLI &amp; Báo cáo HTML</a></li>
+</ul>
+</li>
+<li><a href="#43-c%C3%B4ng-c%E1%BB%A5-2--karate-framework-k%E1%BB%8Bch-b%E1%BA%A3n-k1-k2-k3--ph%C3%A1t-hi%E1%BB%87n-2-bug-sut">4.3. Công cụ 2 — Karate Framework (Kịch bản K1, K2, K3 &amp; Phát hiện 2 Bug SUT)</a>
+<ul>
+<li><a href="#431-ki%E1%BA%BFn-tr%C3%BAc--c%E1%BA%A5u-h%C3%ACnh-m%C3%B4i-tr%C6%B0%E1%BB%9Dng-karate-framework">4.3.1. Kiến trúc &amp; Cấu hình Môi trường Karate Framework</a></li>
+<li><a href="#432-k%E1%BB%8Bch-b%E1%BA%A3n-k1-smoke-test--native-fuzzy-matchers-productsfeature">4.3.2. Kịch bản K1: Smoke Test &amp; Native Fuzzy Matchers</a></li>
+<li><a href="#433-k%E1%BB%8Bch-b%E1%BA%A3n-k2-data-driven-testing--ph%C3%A1t-hi%E1%BB%87n-2-l%E1%BB%97i-th%E1%BB%B1c-t%E1%BA%BF-c%E1%BB%A7a-sut-eshop">4.3.3. Kịch bản K2: Data-Driven Testing &amp; Phát hiện 2 Lỗi Thực Tế của SUT EShop</a></li>
+<li><a href="#434-k%E1%BB%8Bch-b%E1%BA%A3n-k3-stateful-e2e-shopping-workflow--b%E1%BA%A3o-m%E1%BA%ADt-auth-cart-checkoutfeature">4.3.4. Kịch bản K3: Stateful E2E Shopping Workflow &amp; Bảo Mật</a></li>
+<li><a href="#435-th%E1%BB%B1c-thi--b%C3%A1o-c%C3%A1o-tr%E1%BB%B1c-quan-html-reports">4.3.5. Thực Thi &amp; Báo Cáo Trực Quan (HTML Reports)</a></li>
+</ul>
+</li>
+<li><a href="#44-c%C3%B4ng-c%E1%BB%A5-3--pact-js-contract-testing-k%E1%BB%8Bch-b%E1%BA%A3n-c1-c2-c3">4.4. Công cụ 3 — Pact JS Contract Testing (Kịch bản C1, C2, C3)</a>
+<ul>
+<li><a href="#441-k%E1%BB%8Bch-b%E1%BA%A3n-c1-consumer-contract-test-productconsumertestjs">4.4.1. Kịch bản C1: Consumer Contract Test</a></li>
+<li><a href="#442-k%E1%BB%8Bch-b%E1%BA%A3n-c2-provider-verification-verifyjs">4.4.2. Kịch bản C2: Provider Verification</a></li>
+<li><a href="#443-k%E1%BB%8Bch-b%E1%BA%A3n-c3-gi%E1%BA%A3-l%E1%BA%ADp--b%E1%BA%AFt-l%E1%BB%97i-breaking-change-verify-breakingjs--pact-c3-runnerjs">4.4.3. Kịch bản C3: Giả Lập &amp; Bắt Lỗi Breaking Change</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#5-ph%E1%BA%A7n-iv--%E1%BB%A9ng-d%E1%BB%A5ng-ai-agent-trong-api--contract-testing">Phần IV — Ứng Dụng AI Agent Trong API &amp; Contract Testing</a>
+<ul>
+<li><a href="#51-quy-tr%C3%ACnh-human-in-the-loop">5.1. Quy trình Human-in-the-Loop</a></li>
+<li><a href="#52-th%E1%BB%B1c-nghi%E1%BB%87m-sinh-test-t%E1%BB%AB-openapi-30-eshopopenapiyaml">5.2. Thực nghiệm sinh test từ OpenAPI 3.0 (eshop.openapi.yaml)</a></li>
+<li><a href="#53-%C4%91%C3%A1nh-gi%C3%A1-%C6%B0u-%C4%91i%E1%BB%83m-v%C3%A0-ph%C3%A2n-t%C3%ADch-c%C3%A1c-failure-modes-c%E1%BB%A7a-ai">5.3. Đánh giá ưu điểm và phân tích các Failure Modes của AI</a></li>
+</ul>
+</li>
+<li><a href="#6-ph%E1%BA%A7n-v--ph%C3%A2n-t%C3%ADch-s%E1%BB%B1-c%E1%BB%91-th%C6%B0%E1%BB%9Dng-g%E1%BA%B7p--c%C3%A1ch-kh%E1%BA%AFc-ph%E1%BB%A5c-troubleshooting">Phần V — Phân Tích Sự Cố Thường Gặp &amp; Cách Khắc Phục (Troubleshooting)</a>
+<ul>
+<li><a href="#61-b%E1%BA%A3ng-ph%C3%A2n-t%C3%ADch-s%E1%BB%B1-c%E1%BB%91-v%C3%A0-gi%E1%BA%A3i-ph%C3%A1p-kh%E1%BA%AFc-ph%E1%BB%A5c-chu%E1%BA%A9n">6.1. Bảng phân tích sự cố và giải pháp khắc phục chuẩn</a></li>
+</ul>
+</li>
+<li><a href="#7-ph%E1%BA%A7n-vi--qu%E1%BA%A3n-l%C3%BD-d%E1%BB%B1-%C3%A1n-minh-ch%E1%BB%A9ng-%C4%91%C3%B3ng-g%C3%B3p--ai-policy">Phần VI — Quản Lý Dự Án, Minh Chứng Đóng Góp &amp; AI Policy</a>
+<ul>
+<li><a href="#71-b%E1%BA%A3ng-ph%C3%A2n-c%C3%B4ng-4-giai-%C4%91o%E1%BA%A1n--ti%E1%BA%BFn-%C4%91%E1%BB%99">7.1. Bảng phân công 4 giai đoạn &amp; Tiến độ</a></li>
+<li><a href="#72-minh-ch%E1%BB%A9ng-git-commits-c%C3%A1-nh%C3%A2n">7.2. Minh chứng Git Commits cá nhân</a></li>
+<li><a href="#73-cam-k%E1%BA%BFt-ai-policy--tuy%C3%AAn-b%E1%BB%91-li%C3%AAm-ch%C3%ADnh-h%E1%BB%8Dc-thu%E1%BA%ADt">7.3. Cam kết AI Policy &amp; Tuyên bố liêm chính học thuật</a></li>
+</ul>
+</li>
+<li><a href="#8-ph%E1%BA%A7n-vii--k%E1%BA%BFt-lu%E1%BA%ADn--t%C3%A0i-li%E1%BB%87u-tham-kh%E1%BA%A3o">Phần VII — Kết Luận &amp; Tài Liệu Tham Khảo</a>
+<ul>
+<li><a href="#81-k%E1%BA%BFt-lu%E1%BA%ADn">8.1. Kết luận</a></li>
+<li><a href="#82-t%C3%A0i-li%E1%BB%87u-tham-kh%E1%BA%A3o">8.2. Tài liệu tham khảo</a></li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>1. Tóm Tắt Điều Hành (Executive Summary)</h2>
+<p>Đề tài <strong>T06: API &amp; Contract Testing</strong> thuộc chương trình Seminar môn Kiểm Thử Phần Mềm (FIT@HCMUS) nhằm giải quyết bài toán cốt lõi trong kiến trúc phần mềm hiện đại: <strong>Làm thế nào để đảm bảo tính tương thích và độ tin cậy giữa các thành phần phân tán (Frontend, Mobile, Microservices) mà không phải chịu chi phí khổng lồ và sự bất ổn định của kiểm thử tích hợp End-to-End (E2E)?</strong></p>
+<p>Thông qua quá trình nghiên cứu và thực hành trên hệ sinh thái ứng dụng thương mại điện tử <strong>EShop</strong>, Nhóm 11 đã đạt được các kết quả nổi bật sau:</p>
+<ol>
+<li><strong>Nắm vững lý thuyết chuyên sâu:</strong> Phân định rõ ranh giới giữa kiểm thử chức năng (Functional), kiểm thử cấu trúc (Schema Conformance) và kiểm thử hợp đồng giao tiếp (Contract Testing); làm rõ nguyên lý <em>&quot;Test the contract — not just the response&quot;</em>.</li>
+<li><strong>Làm chủ 3 công cụ đại diện:</strong>
+<ul>
+<li><strong>Postman &amp; Newman CLI:</strong> Xây dựng bộ test suite kiểm thử chức năng, kỹ thuật Token Chaining tự động và kiểm thử hướng dữ liệu (Data-driven) với file CSV, tự động hóa báo cáo trên dòng lệnh (P1, P2, P3).</li>
+<li><strong>Karate Framework:</strong> Ứng dụng cú pháp Gherkin DSL xây dựng các kịch bản kiểm thử luồng nghiệp vụ phức tạp (K1, K2, K3), qua đó <strong>phát hiện thành công 2 khiếm khuyết thực tế của hệ thống SUT EShop</strong> (lỗi xử lý 404 trả về HTTP 200 và lỗi dữ liệu kiểu String ở trường <code>price</code>).</li>
+<li><strong>Pact JS:</strong> Triển khai hoàn chỉnh mô hình Consumer-Driven Contract Testing (CDCT) giữa client <code>EShopMobile</code> và <code>EShopBackend</code> (C1, C2), đặc biệt đã giả lập và chứng minh năng lực phát hiện, ngăn chặn tự động lỗi Breaking Change tại pipeline CI/CD chỉ trong 1 giây (C3).</li>
+</ul>
+</li>
+<li><strong>Tích hợp trí tuệ nhân tạo (AI-Augmented Testing):</strong> Xây dựng quy trình <em>Human-in-the-Loop</em> sử dụng AI Agent tự động phân tích OpenAPI 3.0 để sinh khung kiểm thử, đồng thời nhận diện và kiểm soát các giới hạn nghiệp vụ (Failure Modes) của mô hình AI.</li>
+<li><strong>Đóng gói sản phẩm hoàn chỉnh:</strong> Biên soạn đầy đủ hồ sơ bàn giao gồm báo cáo kỹ thuật chi tiết, bộ slide thuyết trình chuẩn 30 phút và kịch bản 10 video demo. <em>(Lưu ý: Để tối ưu hóa thời lượng trình bày 30 phút theo yêu cầu mới của môn học, nhóm tập trung thời gian cho lý thuyết chuyên sâu và demo thực tế 3 công cụ, lược bỏ hoạt động thực hành bài tập tại lớp).</em></li>
+</ol>
+<hr />
+<h2>2. Phần I — Cơ Sở Lý Thuyết Nền Tảng</h2>
+<h3>2.1. Bản chất của API Testing &amp; Test Pyramid</h3>
+<p>Trong kiến trúc phần mềm hiện đại, API (Application Programming Interface) là giao diện trung gian cho phép các thành phần giao tiếp theo quy ước xác định trước (HTTP Method, Endpoint, Payload, Status Code).</p>
+<p>Mô hình <strong>Kim tự tháp kiểm thử (Test Pyramid)</strong> của Mike Cohn chỉ ra rằng:</p>
+<pre><code class="language-text">          /\
+         /  \
+        /E2E \          &lt;-- Rất ít, chạy chậm, tốn kém tài nguyên, dễ flaky
+       /------\          
+      /  API   \        &lt;-- CỐT LÕI: Tốc độ cao, độ phủ lớn, kiểm thử nghiệp vụ
+     /----------\        
+    / Integration\      &lt;-- Kiểm thử tích hợp trực tiếp với DB/MQ
+   /--------------\     
+  /   Unit Test    \    &lt;-- Nhiều nhất, chạy nhanh, chi phí thấp
+ /------------------\    
+</code></pre>
+<ul>
+<li><strong>Hạn chế của E2E Testing:</strong> Việc kiểm thử tích hợp toàn bộ hệ thống (dựng đồng thời Backend, Web, Mobile, Database) đòi hỏi hạ tầng phức tạp, thời gian chạy tính bằng hàng chục phút, và thường xuyên gặp lỗi giả (<em>Flaky tests</em>) do sự cố mạng hoặc dữ liệu không đồng bộ.</li>
+<li><strong>Ưu thế của API Testing (Shift-Left Testing):</strong> Kiểm thử trực tiếp tại tầng logic nghiệp vụ ngay khi backend vừa hoàn thành endpoint, không cần chờ giao diện UI. Tốc độ thực thi nhanh gấp 10 – 50 lần so với UI Test, ổn định và chi phí bảo trì thấp.</li>
+</ul>
+<h3>2.2. 4 Trọng tâm kiểm thử API &amp; Giải phẫu HTTP</h3>
+<p>Một ca kiểm thử API chuẩn mực cần giải phẫu đầy đủ 2 chiều Request và Response:</p>
+<pre><code class="language-text">HTTP REQUEST                                           HTTP RESPONSE
++------------------------------------------------+     +------------------------------------------------+
+| POST /api/cart HTTP/1.1                        |     | HTTP/1.1 200 OK                                |
+| Host: localhost:3000                           |     | Content-Type: application/json; charset=utf-8  |
+| Authorization: Bearer eyJhbGciOi...            |     | X-Response-Time: 18ms                          |
+| Content-Type: application/json                 |     +------------------------------------------------+
++------------------------------------------------+     | {                                              |
+| { &quot;productId&quot;: 1, &quot;quantity&quot;: 2 }              |     |   &quot;success&quot;: true, &quot;cartId&quot;: 101,              |
++------------------------------------------------+     |   &quot;items&quot;: [ { &quot;id&quot;: 1, &quot;qty&quot;: 2 } ]          |
+                                                       | }                                              |
+                                                       +------------------------------------------------+
+</code></pre>
+<p>Bốn trọng tâm kiểm thử cốt lõi gồm:</p>
+<ol>
+<li><strong>Functional Testing (Chức năng):</strong> Kiểm tra mã trạng thái HTTP (200 OK, 201 Created), tính đúng đắn của logic tính tiền, trừ kho, tạo đơn hàng.</li>
+<li><strong>Schema Conformance (Cấu trúc):</strong> Xác thực kiểu dữ liệu (<code>id</code> là integer, <code>price</code> là number, <code>name</code> là string) và các trường bắt buộc (<code>required</code>).</li>
+<li><strong>Negative &amp; Boundary Testing (Biên &amp; Tiêu cực):</strong> Cố ý gửi payload sai định dạng, chuỗi rỗng, số âm, hoặc tấn công SQLi/XSS để kiểm tra API xử lý lỗi chuẩn mực (400 Bad Request, 404 Not Found, 422 Unprocessable).</li>
+<li><strong>Security &amp; Authentication (Bảo mật &amp; Phân quyền):</strong> Đảm bảo token hết hạn hoặc giả mạo bị từ chối (401 Unauthorized), người dùng thường không thể truy cập tài nguyên quản trị (403 Forbidden).</li>
+</ol>
+<h3>2.3. Vấn nạn &quot;API Drift&quot; &amp; Vì sao cần Contract Testing?</h3>
+<p><strong>Hiện tượng: &quot;API trả về HTTP 200 OK nhưng ứng dụng di động vẫn bị Crash!&quot;</strong></p>
+<p>Trong các hệ thống phân tán, các nhóm phát triển Backend và Frontend làm việc độc lập theo các Agile Sprint khác nhau:</p>
+<ul>
+<li>Đội ngũ Backend quyết định tối ưu mã nguồn hoặc đổi tên trường <code>price</code> thành <code>unit_price</code> trong phản hồi của API sản phẩm.</li>
+<li>Functional test của Backend vẫn chạy qua 100% (vì server xử lý trơn tru và trả về HTTP 200).</li>
+<li>Tuy nhiên, ứng dụng Mobile Client đã phát hành trên App Store vẫn đọc trường <code>price</code>. Khi người dùng mở app, giá trị nhận về là <code>undefined</code>, dẫn đến ứng dụng bị crash ngay tại màn hình thanh toán.</li>
+</ul>
+<p><strong>Nguyên nhân gốc rễ:</strong> Kiểm thử chức năng truyền thống chỉ nhìn API theo góc nhìn của <em>chính Provider</em> hoặc theo một file tài liệu Swagger/Postman tĩnh (vốn thường xuyên bị lỗi thời so với code thực tế). Nó hoàn toàn không phản ánh <strong>nhu cầu thực tế của từng Consumer cụ thể</strong> đang chạy ngoài thị trường.</p>
+<h3>2.4. Consumer-Driven Contract Testing (CDCT) với Pact</h3>
+<p>Contract Testing là phương pháp kiểm thử xác minh thỏa thuận giao tiếp giữa hai service độc lập mà không cần khởi chạy toàn bộ hệ thống cùng lúc. Trong đó, <strong>Consumer-Driven Contract Testing (CDCT)</strong> lấy Consumer làm trung tâm:</p>
+<pre><code class="language-text">[ PHA 1: CONSUMER TEST ]
++---------------------+         Gửi Request kỳ vọng             +--------------------+
+| EShop Mobile Client | -------------------------------------&gt; |  Pact Mock Server  |
+|   (Unit Test Repo)  | &lt;------------------------------------- |  (Ghi nhận hợp đồng)|
++---------------------+         Nhận Mock Response chuẩn        +--------------------+
+                                                                          |
+                                                    Xuất file Contract    v
+                                                    [ EShopMobile-EShopBackend.json ]
+                                                                          |
+[ PHA 2: PROVIDER VERIFICATION ]                                          |
++---------------------+         Phát lại (Replay) Request                 v
+|   EShop Backend     | &lt;------------------------------------- +--------------------+
+|  (Cổng 3000 thật)   | -------------------------------------&gt; |   Pact Verifier    |
++---------------------+         Đối soát phản hồi thực tế      | (Bắt lệch schema)  |
+                                                               +--------------------+
+</code></pre>
+<ul>
+<li><strong>Pha 1 (Consumer):</strong> Client viết test mô tả chính xác những trường mình cần → Pact tự động sinh ra file hợp đồng chuẩn JSON (<code>Pact file</code>).</li>
+<li><strong>Pha 2 (Provider):</strong> Backend đọc file hợp đồng, phát lại request vào server thật và so sánh response. Nếu thiếu trường hoặc sai kiểu → Bài test thất bại ngay tại CI/CD của Backend.</li>
+</ul>
+<h3>2.5. Phân biệt Schema Testing vs Contract Testing</h3>
+<table>
+<thead>
+<tr>
+<th>Tiêu chí so sánh</th>
+<th>Schema Testing (Postman + JSON Schema)</th>
+<th>Consumer-Driven Contract Testing (Pact)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chủ thể định nghĩa</strong></td>
+<td>Người viết test định nghĩa một schema tĩnh dựa trên phỏng đoán</td>
+<td>Chính Consumer định nghĩa dựa trên nhu cầu thực tế sử dụng</td>
+</tr>
+<tr>
+<td><strong>Phạm vi kiểm tra</strong></td>
+<td>Toàn bộ cấu trúc response khai báo</td>
+<td>Chỉ những trường mà Consumer thực sự tiêu thụ</td>
+</tr>
+<tr>
+<td><strong>Phát hiện đối tượng ảnh hưởng</strong></td>
+<td>Không (chỉ biết schema sai, không rõ client nào gãy)</td>
+<td><strong>Có</strong> (Chỉ rõ chính xác Consumer và Version bị ảnh hưởng)</td>
+</tr>
+<tr>
+<td><strong>Khả năng tự tiến hóa</strong></td>
+<td>Phải cập nhật thủ công mỗi khi API đổi</td>
+<td>Hợp đồng tự động cập nhật khi Consumer chạy lại test</td>
+</tr>
+<tr>
+<td><strong>Cổng kiểm soát phát hành</strong></td>
+<td>Exit code thông thường</td>
+<td>Công cụ cổng kiểm soát <code>can-i-deploy</code> của Pact Broker</td>
+</tr>
+</tbody>
+</table>
+<h3>2.6. 5 Dạng phá vỡ hợp đồng (Breaking Changes) phổ biến</h3>
+<ol>
+<li><strong>Đổi tên trường dữ liệu (Field Renaming):</strong> Ví dụ đổi <code>price</code> → <code>unit_price</code>, <code>productId</code> → <code>product_id</code>.</li>
+<li><strong>Xóa bỏ trường đang được sử dụng (Field Deletion):</strong> Xóa trường <code>stock</code> hoặc <code>discount</code>.</li>
+<li><strong>Thay đổi kiểu dữ liệu (Type Inconsistency):</strong> Đổi trường <code>price</code> từ kiểu <code>number</code> (99.00) sang kiểu <code>string</code> (&quot;99.00&quot;).</li>
+<li><strong>Thay đổi cấu trúc bao bọc (Wrapper Structure):</strong> Đổi từ mảng trực tiếp <code>[ { ... } ]</code> sang đối tượng có phân trang <code>{ &quot;data&quot;: [ ... ], &quot;total&quot;: 10 }</code>.</li>
+<li><strong>Thay đổi ngữ nghĩa HTTP Status:</strong> Ví dụ khi không tìm thấy tài nguyên, đổi từ trả về <code>404 Not Found</code> sang <code>200 OK</code> kèm body rỗng <code>{}</code>.</li>
+</ol>
+<hr />
+<h2>3. Phần II — Khảo Sát &amp; So Sánh Các Công Cụ Chủ Đạo</h2>
+<h3>3.1. Tổng quan các công cụ khảo sát</h3>
+<ol>
+<li><strong>Postman &amp; Newman CLI:</strong> Nền tảng kiểm thử API phổ biến nhất toàn cầu. Cung cấp môi trường đồ họa trực quan (GUI), hỗ trợ viết script kiểm thử bằng JavaScript (Chai.js BDD), quản lý biến đa tầng và chạy tự động không cần giao diện qua Newman CLI.</li>
+<li><strong>Karate Framework:</strong> Công cụ kiểm thử tự động mã nguồn mở độc đáo dựa trên cú pháp Gherkin BDD. Điểm đột phá là không cần viết code Java phức tạp (&quot;No-code / Low-code&quot;), tích hợp sẵn native fuzzy matchers và xử lý JSON mạnh mẽ.</li>
+<li><strong>Pact JS:</strong> Framework kiểm thử hợp đồng chuẩn công nghiệp hàng đầu cho hệ sinh thái JavaScript/Node.js, hỗ trợ triển khai hoàn hảo mô hình CDCT và cổng kiểm soát release CI/CD.</li>
+</ol>
+<h3>3.2. Ma trận so sánh toàn diện 8 tiêu chí kỹ thuật</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">#</th>
+<th>Tiêu chí đánh giá</th>
+<th>Postman &amp; Newman</th>
+<th>Karate Framework</th>
+<th>Pact JS (CDCT)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>1</strong></td>
+<td><strong>Mục tiêu cốt lõi</strong></td>
+<td>Kiểm thử chức năng, thăm dò, tài liệu hóa</td>
+<td>Tự động hóa E2E API &amp; Luồng nghiệp vụ</td>
+<td>Kiểm thử hợp đồng giao tiếp giữa các bên</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>2</strong></td>
+<td><strong>Cú pháp / Format</strong></td>
+<td>JavaScript (GUI + Script Sandbox)</td>
+<td>Gherkin BDD DSL (Cucumber-like)</td>
+<td>JavaScript / TypeScript (Code-first)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>3</strong></td>
+<td><strong>Cơ chế Assertions</strong></td>
+<td>Chai.js BDD (<code>pm.test()</code>, <code>pm.expect()</code>)</td>
+<td>Native Fuzzy Matchers (<code>#number</code>, <code>#string</code>)</td>
+<td>Contract Value &amp; Type Matchers</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>4</strong></td>
+<td><strong>Data-Driven Testing</strong></td>
+<td>File CSV/JSON qua Collection Runner</td>
+<td>Bảng <code>Examples</code> trực tiếp trong Feature</td>
+<td>Khởi tạo qua Provider States</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>5</strong></td>
+<td><strong>Khả năng bắt API Drift</strong></td>
+<td>Kém (chỉ kiểm tra tại thời điểm SUT online)</td>
+<td>Kém (phụ thuộc SUT thật đang chạy)</td>
+<td><strong>Tuyệt vời</strong> (Bắt lỗi từ file hợp đồng độc lập)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>6</strong></td>
+<td><strong>Tích hợp CI/CD</strong></td>
+<td>Newman CLI + Báo cáo HTML Extra</td>
+<td>Maven / Gradle / JUnit 5 runner</td>
+<td>Pact CLI + Pact Broker (<code>can-i-deploy</code>)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>7</strong></td>
+<td><strong>Độ phức tạp cài đặt</strong></td>
+<td>Cực thấp (giao diện kéo thả + npm)</td>
+<td>Trung bình (cần Java 17 + Maven)</td>
+<td>Trung bình đến cao (cần tư duy Consumer/Provider)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>8</strong></td>
+<td><strong>Tài nguyên tiêu tốn</strong></td>
+<td>Thấp khi chạy Newman, nặng khi mở GUI</td>
+<td>Rất nhẹ, chạy headless tối ưu</td>
+<td>Rất nhẹ, mock server cục bộ</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3. Cây quyết định lựa chọn công cụ (Decision Tree)</h3>
+<pre><code class="language-mermaid">flowchart TD
+    Start[&quot;Bắt đầu lựa chọn công cụ kiểm thử&quot;] --&gt; Q1{&quot;Mục tiêu kiểm thử là gì?&quot;}
+    
+    Q1 -- &quot;Thăm dò API, làm tài liệu, test thủ công&quot; --&gt; Postman[&quot;POSTMAN &amp; NEWMAN\n(Nhanh, trực quan, dễ chia sẻ)&quot;]
+    Q1 -- &quot;Tự động hóa luồng E2E tích hợp phức tạp&quot; --&gt; Karate[&quot;KARATE FRAMEWORK\n(Gherkin DSL, không cần code Java)&quot;]
+    Q1 -- &quot;Đảm bảo tương thích Microservices nhiều team&quot; --&gt; Q2{&quot;Có nhiều Consumer phát triển độc lập?&quot;}
+    
+    Q2 -- &quot;Có (Web, Mobile, External API)&quot; --&gt; Pact[&quot;PACT JS (CDCT)\n(Bắt API Drift, chặn Breaking Change)&quot;]
+    Q2 -- &quot;Không (Monolith nội bộ)&quot; --&gt; Karate
+</code></pre>
+<hr />
+<h2>4. Phần III — Triển Khai Thực Hành Trên Hệ Thống SUT EShop</h2>
+<h3>4.1. Giới thiệu hệ thống kiểm thử SUT EShop</h3>
+<p>Hệ thống SUT (System Under Test) được cung cấp bởi bộ môn là <strong>EShop</strong>, một kiến trúc thương mại điện tử đa nền tảng hoàn chỉnh:</p>
+<ul>
+<li><strong>API Provider:</strong> Backend Node.js/Express kết nối cơ sở dữ liệu SQLite (<code>backend/server.js</code>, chạy trên cổng 3000).</li>
+<li><strong>Web Consumer:</strong> Ứng dụng React Web (<code>frontend-web</code>, cổng 5173).</li>
+<li><strong>Admin Consumer:</strong> Cổng quản trị React Admin (<code>frontend-admin</code>, cổng 5174).</li>
+<li><strong>Mobile Consumer:</strong> Ứng dụng di động React Native (<code>frontend-mobile</code>).</li>
+</ul>
+<pre><code class="language-bash"># Khởi động toàn bộ SUT EShop
+./run_servers.sh
+</code></pre>
+<hr />
+<h3>4.2. Công cụ 1 — Postman &amp; Newman (Kịch bản P1, P2, P3)</h3>
+<p><em>Người thực hiện chính: Hà Quốc Kiên &amp; Nguyễn Hoàng Anh Tú</em></p>
+<h4>4.2.1. Kịch bản P1: Cài đặt, Cấu hình Environment &amp; Request Cơ bản</h4>
+<ul>
+<li><strong>Environment:</strong> Tạo <code>EShop_Local</code> với biến <code>baseUrl = http://localhost:3000</code>.</li>
+<li><strong>Request 1 (<code>POST /api/auth/login</code>):</strong> Đăng nhập với tài khoản <code>test@eshop.com</code> / <code>Test1234!</code>. Kiểm tra Status 200, lưu token vào biến môi trường:<pre><code class="language-javascript">pm.test(&quot;Status code is 200&quot;, function () {
+    pm.response.to.have.status(200);
+    var res = pm.response.json();
+    pm.environment.set(&quot;jwt_token&quot;, res.token);
+});
+</code></pre>
+</li>
+<li><strong>Request 2 (<code>GET /api/products</code>):</strong> Truy vấn danh mục sản phẩm, kiểm tra Status 200 và header <code>Content-Type: application/json</code>.</li>
+</ul>
+<h4>4.2.2. Kịch bản P2: Runner, Data-Driven CSV &amp; Advanced Checkpoints</h4>
+<ul>
+<li>Sử dụng file dữ liệu [<code>login_data.csv</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/login_data.csv) (15 trường hợp kiểm thử) và [<code>product_ids.csv</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/product_ids.csv).</li>
+<li>Áp dụng kỹ thuật nạp dữ liệu:<pre><code class="language-javascript">var expectedStatus = pm.iterationData.get(&quot;status&quot;);
+pm.test(&quot;Status matches test matrix: &quot; + expectedStatus, function () {
+    pm.response.to.have.status(expectedStatus);
+});
+</code></pre>
+</li>
+<li><strong>Bộ Checkpoints nâng cao:</strong>
+<ol>
+<li><em>SLA Response Time:</em> <code>pm.expect(pm.response.responseTime).to.be.below(200);</code></li>
+<li><em>Schema Validation:</em> Kiểm tra các thuộc tính <code>id</code>, <code>name</code>, <code>price</code>, <code>stock</code> luôn tồn tại trong mỗi phần tử.</li>
+</ol>
+</li>
+</ul>
+<h4>4.2.3. Kịch bản P3: Tự động hóa Newman CLI &amp; Báo cáo HTML</h4>
+<p>Chạy toàn bộ kiểm thử từ dòng lệnh không cần mở giao diện đồ họa:</p>
+<pre><code class="language-bash">newman run deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-tests/collections/eshop_api_all_tests.postman_collection.json \
+  -e tests/postman/environments/local_env.json \
+  -d deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-tests/data/login_data.csv \
+  --reporters cli,htmlextra \
+  --reporter-htmlextra-export deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-tests/reports/newman-dashboard.html
+</code></pre>
+<ul>
+<li><strong>Kết quả:</strong> Báo cáo HTML Dashboard trực quan hóa toàn bộ số lượng passed/failed assertions, biểu đồ thời gian phản hồi phục vụ pipeline CI/CD.</li>
+</ul>
+<hr />
+<h3>4.3. Công cụ 2 — Karate Framework (Kịch bản K1, K2, K3 &amp; Phát hiện 2 Bug SUT)</h3>
+<p><em>Người thực hiện chính: Nguyễn Quốc Kỳ (MSSV: 23120138)</em><br />
+<em>Reviewer &amp; Phối hợp tích hợp AI: Hà Quốc Kiên (MSSV: 23120056)</em><br />
+<em>Mã nguồn kiểm thử:</em> [<code>tests/karate/</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/karate)</p>
+<h4>4.3.1. Kiến trúc &amp; Cấu hình Môi trường Karate Framework</h4>
+<p>Karate là framework kiểm thử tự động mã nguồn mở độc đáo kết hợp giữa cú pháp hành vi <strong>Gherkin BDD</strong> và khả năng thực thi trực tiếp trên máy ảo Java (JVM) mà không đòi hỏi lập trình viên phải viết các Step Definitions bằng Java như Cucumber truyền thống.</p>
+<ol>
+<li><strong>Cấu hình Maven (<code>pom.xml</code>):</strong>
+<ul>
+<li>Phiên bản: Karate JUnit 5 (<code>1.4.1</code>), tương thích Java 17 LTS.</li>
+<li>Cơ chế nạp tài nguyên: Cấu hình <code>&lt;testResources&gt;</code> đảm bảo toàn bộ tệp <code>.feature</code> trong <code>src/test/java/eshop/</code> được đóng gói tự động vào test classpath khi biên dịch.</li>
+</ul>
+</li>
+<li><strong>Cấu hình môi trường toàn cục (<code>karate-config.js</code>):</strong><pre><code class="language-javascript">function fn() {
+  var env = karate.env || 'dev';
+  var config = {
+    baseUrl: 'http://localhost:3000'
+  };
+  karate.configure('connectTimeout', 5000);
+  karate.configure('readTimeout', 5000);
+  return config;
+}
+</code></pre>
+</li>
+<li><strong>Cơ chế Discovery Runner (<code>EshopTest.java</code>):</strong>
+Sử dụng <code>@Karate.Test</code> quét đệ quy toàn bộ thư mục <code>eshop/</code> (<code>relativeTo(getClass())</code>). Thiết kế này cho phép hệ thống tự động nhận diện và thực thi cả các kịch bản <code>.feature</code> do AI Agent của Kiên sinh ra tại <code>src/test/java/eshop/generated/</code> mà không cần chỉnh sửa mã nguồn Java runner:<pre><code class="language-java">package eshop;
+import com.intuit.karate.junit5.Karate;
+
+class EshopTest {
+    @Karate.Test
+    Karate testAll() {
+        return Karate.run().relativeTo(getClass());
+    }
+}
+</code></pre>
+</li>
+</ol>
+<hr />
+<h4>4.3.2. Kịch bản K1: Smoke Test &amp; Native Fuzzy Matchers (<code>products.feature</code>)</h4>
+<ul>
+<li><strong>Mục tiêu:</strong> Kiểm tra độ sẵn sàng (Smoke Test) của API danh mục sản phẩm, xác nhận cấu trúc danh sách mảng và tính hợp lệ của lược đồ (Schema Conformance) cho từng bản ghi.</li>
+<li><strong>Mã kịch bản Gherkin DSL:</strong><pre><code class="language-cucumber">@products
+Feature: EShop Product Catalog API
+
+  Background:
+    * url baseUrl
+
+  @k1 @smoke
+  Scenario: K1 - Get all products returns a valid array and schema
+    # Step 1: Gửi yêu cầu HTTP GET tới endpoint /api/products
+    Given path 'api', 'products'
+    When method get
+
+    # Step 2: Kiểm tra mã trạng thái HTTP 200 OK
+    Then status 200
+
+    # Step 3: Xác thực cấu trúc mảng JSON và kiểm tra mảng không rỗng
+    And match response == '#[]'
+    And assert response.length &gt; 0
+
+    # Step 4: Kiểm tra schema của phần tử đầu tiên bằng Fuzzy Matchers
+    And match response[0] contains
+      &quot;&quot;&quot;
+      {
+        &quot;id&quot;: '#number',
+        &quot;name&quot;: '#string',
+        &quot;price&quot;: '#number',
+        &quot;description&quot;: '#string',
+        &quot;imageUrl&quot;: '#string',
+        &quot;category_id&quot;: '#number'
+      }
+      &quot;&quot;&quot;
+</code></pre>
+</li>
+<li><strong>Phân tích kỹ thuật &amp; Ưu thế của Karate:</strong>
+<ul>
+<li>Cú pháp <code>match response == '#[]'</code> là Native Array Matcher của Karate, kiểm tra phản hồi phải là một JSON Array mà không cần duyệt qua mảng bằng code JavaScript.</li>
+<li>Các chỉ định <code>#number</code>, <code>#string</code> là <strong>Fuzzy Matchers</strong>, cho phép kiểm tra tính đúng đắn về kiểu dữ liệu (data types) mà không bị phụ thuộc vào giá trị cụ thể (dynamic data).</li>
+<li>So với Postman (phải viết schema JSON Schema Draft 7 dài 40–50 dòng kèm <code>tv4</code> hoặc <code>ajv</code>), Karate đạt được mục tiêu tương đương chỉ với 10 dòng biểu diễn trực quan, dễ đọc đối với cả kỹ sư QA lẫn Product Owner.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h4>4.3.3. Kịch bản K2: Data-Driven Testing &amp; <strong>Phát hiện 2 Lỗi Thực Tế của SUT EShop</strong></h4>
+<ul>
+<li>
+<p><strong>Mục tiêu:</strong> Áp dụng phương pháp kiểm thử hướng dữ liệu (Data-Driven Testing) với bảng <code>Scenario Outline</code> và <code>Examples</code> để kiểm thử biên, đồng thời truy vấn chi tiết từng sản phẩm theo ID.</p>
+</li>
+<li>
+<p><strong>Mã kịch bản Gherkin DSL:</strong></p>
+<pre><code class="language-cucumber">@k2 @data-driven
+Scenario Outline: K2 - Query product by ID with boundary &amp; discrepancy assertions: &lt;testCase&gt;
+  Given path 'api', 'products', &lt;productId&gt;
+  When method get
+  Then status &lt;expectedStatus&gt;
+  And match response contains &lt;expectedMatch&gt;
+
+  Examples:
+    | productId | expectedStatus | expectedMatch        | testCase                                                                        |
+    | 1         | 200            | { price: '#number' } | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
+    | 2         | 200            | { price: '#string' } | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
+    | 9999      | 200            | {}                   | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
+</code></pre>
+</li>
+<li>
+<p><strong>Phân tích chi tiết 2 khiếm khuyết (Bugs) được phát hiện trên SUT EShop:</strong>
+Nhóm kiểm thử phát hiện 2 khiếm khuyết nghiêm trọng trong mã nguồn <code>backend/server.js</code> (dòng 165–170):</p>
+<pre><code class="language-javascript">// Trích đoạn mã nguồn backend/server.js của SUT EShop
+app.get(&quot;/api/products/:id&quot;, (req, res) =&gt; {
+  db.get(&quot;SELECT * FROM products WHERE id = ?&quot;, [req.params.id], (err, row) =&gt; {
+    if (!row) return res.status(200).json({});                     // &lt;-- BUG 2: 200 OK thay vì 404
+    if (row.id % 2 === 0) row.price = row.price.toString();         // &lt;-- BUG 1: Ép kiểu string nếu ID chẵn
+    res.json(row);
+  });
+});
+</code></pre>
+<ol>
+<li>
+<p>🚨 <strong>Bug 1: Lỗi Bất Đồng Bộ Kiểu Dữ Liệu (Schema Type Inconsistency):</strong></p>
+<ul>
+<li><strong>Hiện tượng:</strong> Khi truy vấn sản phẩm có ID lẻ (<code>id = 1</code>), trường <code>price</code> trả về kiểu <code>number</code> (<code>30000000</code>). Nhưng khi truy vấn sản phẩm có ID chẵn (<code>id = 2</code>), trường <code>price</code> bị backend ép kiểu thành chuỗi <code>&quot;28000000&quot;</code>.</li>
+<li><strong>Hậu quả:</strong> Gây lỗi tính toán số học trên ứng dụng Frontend/Mobile (ví dụ phép cộng chuỗi <code>'28000000' + 50000 = '2800000050000'</code>).</li>
+<li><strong>Khả năng bắt lỗi của Karate:</strong> Khi viết assertion <code>match response.price == '#number'</code>, Karate lập tức đánh FAIL tại <code>id = 2</code> với thông báo: <code>actual: &quot;28000000&quot;, expected: '#number', reason: not a number</code>.</li>
+</ul>
+</li>
+<li>
+<p>🚨 <strong>Bug 2: Vi phạm chuẩn RESTful HTTP Status (Missing 404 Not Found):</strong></p>
+<ul>
+<li><strong>Hiện tượng:</strong> Khi truy vấn một sản phẩm không tồn tại trong cơ sở dữ liệu (<code>id = 9999</code>), SUT trả về mã <strong>HTTP 200 OK kèm payload rỗng <code>{}</code></strong>, thay vì trả về <strong>HTTP 404 Not Found</strong>.</li>
+<li><strong>Hậu quả:</strong> Các client ứng dụng di động sẽ hiểu nhầm là request thành công nhưng dữ liệu bị thiếu, dẫn đến crash giao diện khi render các thuộc tính <code>product.name</code> (<code>Cannot read properties of undefined</code>).</li>
+<li><strong>Xử lý trong Karate:</strong> Kịch bản K2 ghi nhận chính xác hành vi thực tế kèm tag <code>@discrepancy</code> để làm minh chứng báo cáo lỗi phần mềm.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr />
+<h4>4.3.4. Kịch bản K3: Stateful E2E Shopping Workflow &amp; Bảo Mật (<code>auth-cart-checkout.feature</code>)</h4>
+<ul>
+<li>
+<p><strong>Mục tiêu:</strong> Mô phỏng chuỗi quy trình mua sắm hoàn chỉnh có quản lý trạng thái (Stateful) và kiểm thử bảo mật phân quyền token.</p>
+</li>
+<li>
+<p><strong>Xử lý rào cản SUT (Account Lockout Bypass):</strong><br />
+Trong <code>backend/server.js</code> (dòng 60–65), SUT có cơ chế: nếu đăng nhập sai quá 2 lần, tài khoản bị khóa 3 phút (<code>login_attempts &gt;= 3</code>). Để đảm bảo bộ test tự động có thể chạy lặp lại vô hạn lần trong pipeline CI/CD mà không bị lỗi khóa tài khoản hoặc xung đột giỏ hàng cũ, kịch bản K3 áp dụng kỹ thuật <strong>khởi tạo tài khoản động theo Timestamp</strong>:
+<code>karate_k3_&lt;System.currentTimeMillis()&gt;@eshop.com</code>.</p>
+</li>
+<li>
+<p><strong>Mã kịch bản Happy Path 7 bước:</strong></p>
+<pre><code class="language-cucumber">@workflow
+Feature: EShop Authenticated Shopping &amp; Checkout Workflow (K3)
+
+  Background:
+    * url baseUrl
+
+  @k3 @e2e @smoke
+  Scenario: K3 - Complete End-to-End Shopping Workflow
+    # Bước 1: Khởi tạo tài khoản động đảm bảo môi trường sạch
+    * def timestamp = java.lang.System.currentTimeMillis()
+    * def testEmail = 'karate_k3_' + timestamp + '@eshop.com'
+    * def testPassword = 'Password123!'
+    * def registerPayload = { name: '#(&quot;Karate User &quot; + timestamp)', email: '#(testEmail)', password: '#(testPassword)' }
+    Given path 'api', 'register'
+    And request registerPayload
+    When method post
+    Then status 200
+    And match response.message == 'User registered successfully'
+
+    # Bước 2: Đăng nhập lấy JWT Auth Token (Token Chaining)
+    Given path 'api', 'login'
+    And request { email: '#(testEmail)', password: '#(testPassword)' }
+    When method post
+    Then status 200
+    And match response.token == '#string'
+    * def authToken = response.token
+
+    # Bước 3: Lấy danh mục sản phẩm và chọn sản phẩm đầu tiên
+    Given path 'api', 'products'
+    When method get
+    Then status 200
+    * def selectedProduct = response[0]
+    * def selectedProductId = selectedProduct.id
+    * def selectedProductPrice = selectedProduct.price
+
+    # Bước 4: Thêm sản phẩm vào giỏ hàng với Bearer Token
+    Given path 'api', 'cart'
+    And header Authorization = 'Bearer ' + authToken
+    And request { productId: '#(selectedProductId)', name: '#(selectedProduct.name)', price: '#(selectedProductPrice)', quantity: 1 }
+    When method post
+    Then status 200
+    And match response.message == 'Added to cart'
+
+    # Bước 5: Xác minh sản phẩm tồn tại trong giỏ hàng (Deep Assert)
+    Given path 'api', 'cart'
+    And header Authorization = 'Bearer ' + authToken
+    When method get
+    Then status 200
+    And match response contains deep { productId: '#(selectedProductId)' }
+
+    # Bước 6: Tiến hành thanh toán đơn hàng (Checkout)
+    * def shippingAddr = '227 Nguyen Van Cu, Ward 4, District 5, HCMC'
+    Given path 'api', 'checkout'
+    And header Authorization = 'Bearer ' + authToken
+    And request { total_amount: '#(selectedProductPrice)', shipping_address: '#(shippingAddr)' }
+    When method post
+    Then status 200
+    And match response.message == 'Checkout successful'
+    And match response.orderId == '#number'
+    * def generatedOrderId = response.orderId
+
+    # Bước 7: Xác nhận đơn hàng hiển thị trong lịch sử My Orders
+    Given path 'api', 'orders', 'my-orders'
+    And header Authorization = 'Bearer ' + authToken
+    When method get
+    Then status 200
+    And match response[0].id == generatedOrderId
+    And match response[0].status == 'pending'
+    And match response[0].shipping_address == shippingAddr
+</code></pre>
+</li>
+<li>
+<p><strong>Kịch bản kiểm thử bảo mật tiêu cực (Security Negative Test):</strong></p>
+<pre><code class="language-cucumber">@k3 @security @negative
+Scenario: K3 - Security Negative Test: Accessing protected cart without token must return 401 Unauthorized
+  Given path 'api', 'cart'
+  When method get
+  Then status 401
+  And match response.error == 'Unauthorized'
+</code></pre>
+</li>
+</ul>
+<hr />
+<h4>4.3.5. Thực Thi &amp; Báo Cáo Trực Quan (HTML Reports)</h4>
+<ul>
+<li><strong>Lệnh thực thi dòng lệnh:</strong><pre><code class="language-bash"># Chạy toàn bộ test suite Karate
+cd tests/karate &amp;&amp; mvn clean test
+
+# Chạy riêng từng kịch bản hoặc theo tag
+mvn test -Dkarate.options=&quot;--tags @k1&quot;
+mvn test -Dkarate.options=&quot;--tags @k2&quot;
+mvn test -Dkarate.options=&quot;--tags @k3&quot;
+</code></pre>
+</li>
+<li><strong>Báo cáo HTML Dashboard:</strong>
+Karate tự động tổng hợp toàn bộ kết quả thực thi thành các tệp HTML trực quan tại <code>tests/karate/target/karate-reports/</code>:
+<ul>
+<li><code>karate-summary.html</code>: Tổng hợp số lượng kịch bản Passed/Failed, thời gian phản hồi (Response Time) từng endpoint.</li>
+<li><code>eshop.products.html</code> &amp; <code>eshop.auth-cart-checkout.html</code>: Bóc tách chi tiết toàn bộ HTTP Wire Logs (HTTP Method, URL, Request Headers, Request Body, Response Status, Response Headers, Response Body). Mọi assertion thất bại đều được highlight đỏ với lý do sai lệch chi tiết.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>4.4. Công cụ 3 — Pact JS Contract Testing (Kịch bản C1, C2, C3)</h3>
+<p><em>Người thực hiện chính: Nguyễn Hoàng Anh Tú &amp; Nguyễn Quốc Kỳ</em></p>
+<p>Mã nguồn đặt tại [<code>tests/pact/</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact).</p>
+<h4>4.4.1. Kịch bản C1: Consumer Contract Test (<code>product.consumer.test.js</code>)</h4>
+<ul>
+<li>Mô phỏng ứng dụng di động <code>EShopMobile</code> gửi <code>GET /api/products</code> đến Pact Mock Server.</li>
+<li>Định nghĩa rõ hợp đồng: Phải trả về Status 200, mảng chứa các trường <code>id</code> (int), <code>name</code> (string), <code>price</code> (number), <code>stock</code> (int).</li>
+<li>Lệnh chạy: <code>npm run test:consumer</code></li>
+<li><strong>Kết quả:</strong> Sinh thành công file hợp đồng JSON tại [<code>tests/pact/pacts/EShopMobile-EShopBackend.json</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact/pacts/EShopMobile-EShopBackend.json).</li>
+</ul>
+<h4>4.4.2. Kịch bản C2: Provider Verification (<code>verify.js</code>)</h4>
+<ul>
+<li>Khởi chạy Backend EShop thật trên cổng 3000.</li>
+<li>Pact Verifier đọc file hợp đồng trên và phát lại request vào backend thật.</li>
+<li>Lệnh chạy: <code>npm run test:provider</code></li>
+<li><strong>Kết quả:</strong> <code>1 interaction, 0 failures</code> — Backend thỏa mãn 100% cam kết hợp đồng.</li>
+</ul>
+<h4>4.4.3. Kịch bản C3: Giả Lập &amp; Bắt Lỗi Breaking Change (<code>verify-breaking.js</code> &amp; <code>pact-c3-runner.js</code>)</h4>
+<p><em>Người thực hiện chính: Nguyễn Quốc Kỳ (MSSV: 23120138)</em><br />
+<em>Reviewer &amp; Phối hợp: Nguyễn Hoàng Anh Tú (MSSV: 23120183)</em><br />
+<em>Mã nguồn &amp; Hướng dẫn kỹ thuật:</em> [<code>tests/pact/breaking-change/</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/pact/breaking-change)</p>
+<h5>1. Đặt Vấn Đề &amp; Bản Chất Nguy Hiểm Của Breaking Change</h5>
+<p>Trong quy trình phát triển Microservices, Provider (Backend) thường xuyên tái cấu trúc hoặc tối ưu hóa dữ liệu. Nếu Provider thay đổi cấu trúc trả về mà không thông báo, các Consumer đã phát hành ngoài thị trường (như <code>EShopMobile</code> trên App Store / Google Play) sẽ lập tức gặp lỗi.</p>
+<pre><code class="language-mermaid">flowchart TD
+    subgraph Consumer_Side [&quot; Consumer (EShopMobile) &quot;]
+        A[ProductClient.js] --&gt;|Khai báo kỳ vọng| B[Pact V3 Mock Server]
+        B --&gt;|Sinh hợp đồng| C[&quot;File Contract JSON&lt;br/&gt;EShopMobile-EShopBackend.json&quot;]
+    end
+
+    subgraph CI_Pipeline [&quot; Provider CI/CD Pipeline (Deployment Gate) &quot;]
+        C --&gt;|Nạp vào| D[Pact Rust Core Verifier]
+        E[EShopBackend Provider] --&gt;|Replay HTTP Request| D
+        D --&gt;|Khớp hợp đồng 100%| F[✅ Deploy to Production]
+        D --&gt;|Lệch Schema / Thiếu Field| G[❌ Chặn Deploy - Breaking Change Detected]
+    end
+
+    style G fill:#ffdddd,stroke:#ff0000,stroke-width:2px;
+    style F fill:#ddffdd,stroke:#00aa00,stroke-width:2px;
+</code></pre>
+<p><strong>Giới hạn chết người của Functional API Testing (Postman):</strong>
+Khi Provider đổi tên trường <code>price</code> thành <code>unit_price</code>, server vẫn trả về mã <strong>HTTP 200 OK</strong>. Các bộ test Postman thông thường (nếu chỉ assert status 200) sẽ báo <strong>PASS (False Positive)</strong>. Tuy nhiên, khi ứng dụng Mobile nhận payload này, biểu thức <code>product.price</code> trả về <code>undefined</code>, phép tính <code>product.price * quantity</code> trả về <code>NaN</code>, làm văng ứng dụng (crash) ngay tại màn hình giỏ hàng của người dùng.</p>
+<h5>2. Quy Trình Thực Thi 3 Pha (Three-Phase Protocol)</h5>
+<p>Để chứng minh năng lực ngăn chặn lỗi tự động của Pact, nhóm đã thiết kế bộ điều phối <code>pact-c3-runner.js</code> theo quy trình 3 pha khép kín:</p>
+<pre><code>[PHA 1: Baseline Verification]  --&gt; Hợp đồng khớp 100% (PASS)
+               ↓
+[PHA 2: Mutation &amp; Injection]   --&gt; Tiêm 2 dạng Breaking Change (Pact FAILED &amp; BLOCKED)
+                                    và 1 dạng Non-breaking Change (Pact PASSED)
+               ↓
+[PHA 3: Rollback &amp; Re-verify]   --&gt; Khôi phục trạng thái chuẩn (PASS trở lại)
+</code></pre>
+<ol>
+<li>
+<p><strong>Pha 1: Baseline Verification (Kiểm chứng Hợp đồng Chuẩn):</strong></p>
+<ul>
+<li>Provider phản hồi đúng cấu trúc cam kết trong hợp đồng (<code>price = 30000000</code> kiểu Integer).</li>
+<li>Kết quả: <code>1 interaction, 0 failures</code> (PASS 100%).</li>
+</ul>
+</li>
+<li>
+<p><strong>Pha 2: Tiêm Biến Thể Đột Biến (Mutation &amp; Injection):</strong></p>
+<ul>
+<li>
+<p><strong>Pha 2A — Tiêm Breaking Change Dạng 1 (Field Renamed / Missing Property):</strong>
+Backend đổi trường <code>price</code> thành <code>unit_price</code> nhưng vẫn trả về HTTP 200 OK.</p>
+<pre><code class="language-text">Failures:
+1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists
+   1.1) has a matching body
+        $ -&gt; Actual map is missing the following keys: price
+[ERROR] pact-core: Verification unsuccessful (BLOCKED)
+</code></pre>
+<p>⟹ <em>Pact Rust Verifier phát hiện thiếu trường bắt buộc <code>price</code>, lập tức trả về Exit Code khác 0 để đánh trượt pipeline CI.</em></p>
+</li>
+<li>
+<p><strong>Pha 2B — Tiêm Breaking Change Dạng 2 (Data Type Mismatch):</strong>
+Backend tự ý format giá tiền thành chuỗi hiển thị <code>'30.000.000 ₫'</code> thay vì số nguyên thô <code>30000000</code> (tái hiện khiếm khuyết SUT EShop tìm thấy ở Karate K2).</p>
+<pre><code class="language-text">Failures:
+1) Verifying a pact between EShopMobile and EShopBackend Given product with ID 1 exists
+   1.1) has a matching body
+        $.price -&gt; Expected '30.000.000 ₫' (String) to be an integer number
+[ERROR] pact-core: Verification unsuccessful (BLOCKED)
+</code></pre>
+<p>⟹ <em>Pact Matcher <code>integer</code> bắt trọn lỗi sai kiểu dữ liệu.</em></p>
+</li>
+<li>
+<p><strong>Pha 2C — Tiêm Thay Đổi Không Phá Vỡ (Non-breaking Evolution):</strong>
+Provider bổ sung thuộc tính mới <code>brand: &quot;Apple&quot;</code> mà Consumer Mobile chưa sử dụng.
+⟹ <em>Kết quả: PASS 100%. Pact tôn trọng nguyên lý Postel: chỉ kiểm tra những gì Consumer yêu cầu, cho phép Provider tiến hóa mở rộng mà không làm vỡ hệ thống.</em></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Pha 3: Rollback &amp; Re-verification (Khôi Phục Trạng Thái An Toàn):</strong></p>
+<ul>
+<li>Hoàn nguyên mã nguồn backend về định dạng chuẩn.</li>
+<li>Kết quả: Pact Verifier báo xanh trở lại, xác nhận tính ổn định và khả năng phục hồi hoàn toàn.</li>
+</ul>
+</li>
+</ol>
+<h5>3. Bảng Tổng Hợp Kết Quả Thực Nghiệm Kịch Bản C3</h5>
+<p>Chạy trực tiếp từ terminal bằng lệnh: <code>npm run test:c3</code></p>
+<pre><code class="language-text">┌─────────┬────────────────────────────────────┬────────────────┬───────────┬──────────────────────────────────┐
+│ (index) │ phase                              │ expected       │ actual    │ verdict                          │
+├─────────┼────────────────────────────────────┼────────────────┼───────────┼──────────────────────────────────┤
+│ 0       │ 'Pha 1: Baseline'                  │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Hợp đồng toàn vẹn)'        │
+│ 1       │ 'Pha 2A: Rename price-&gt;unit_price' │ 'BLOCK (FAIL)' │ 'BLOCKED' │ 'ĐẠT (Bắt đúng breaking change)' │
+│ 2       │ 'Pha 2B: Type Integer-&gt;String'     │ 'BLOCK (FAIL)' │ 'BLOCKED' │ 'ĐẠT (Bắt đúng type mismatch)'   │
+│ 3       │ 'Pha 2C: Add brand (Non-breaking)' │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Tiến hóa an toàn)'         │
+│ 4       │ 'Pha 3: Rollback &amp; Re-verify'      │ 'PASS'         │ 'PASS'    │ 'ĐẠT (Hệ thống an toàn)'         │
+└─────────┴────────────────────────────────────┴────────────────┴───────────┴──────────────────────────────────┘
+</code></pre>
+<h5>4. Phân Tích Chuyên Sâu &amp; Bẫy Kỹ Thuật (Pact Rust FFI Coercion Trap)</h5>
+<p>Trong quá trình thực nghiệm Kịch bản C3, tác giả đã phát hiện và ghi nhận một đặc điểm kỹ thuật chuyên sâu của lõi <strong>Pact Rust FFI Engine</strong>:</p>
+<ul>
+<li>Nếu một trường được khai báo matcher <code>integer</code>, nhưng Provider trả về một chuỗi ký tự chỉ chứa các chữ số (ví dụ <code>&quot;30000000&quot;</code>), bộ phân tích của Pact Rust Core có cơ chế ép kiểu tự động (Type Coercion) và có thể vẫn đánh giá là hợp lệ.</li>
+<li><strong>Giải pháp xử lý:</strong> Để kiểm chứng lỗi Type Mismatch một cách tuyệt đối và phản ánh đúng thực tế hiển thị tiền tệ, kịch bản C3 đã cố ý sử dụng chuỗi có ký tự định dạng đặc biệt (<code>'30.000.000 ₫'</code>). Điều này giúp kiểm thử viên hoàn toàn kiểm soát hành vi xác thực kiểu dữ liệu, ngăn ngừa rủi ro sai sót trong môi trường thực tế.</li>
+</ul>
+<h5>5. So Sánh Năng Lực Phát Hiện Breaking Change Giữa 3 Công Cụ</h5>
+<table>
+<thead>
+<tr>
+<th>Tiêu chí so sánh</th>
+<th>Postman &amp; Newman (P1–P3)</th>
+<th>Karate Framework (K1–K3)</th>
+<th>Pact JS CDCT (C1–C3)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cơ sở phát hiện lỗi</strong></td>
+<td>So sánh với dữ liệu kỳ vọng viết tĩnh trong test script</td>
+<td>So sánh với Fuzzy Matchers trong kịch bản Gherkin</td>
+<td>So sánh trực tiếp với <strong>Hợp đồng độc lập do chính Consumer ký</strong></td>
+</tr>
+<tr>
+<td><strong>Phản ứng khi đổi tên trường</strong></td>
+<td>Dễ báo <strong>PASS nhầm</strong> nếu chỉ assert status 200</td>
+<td>Bắt được nếu có schema match, nhưng phải duy trì schema thủ công</td>
+<td><strong>Tự động bắt FAIL 100%</strong>, chỉ rõ chính xác trường bị thiếu</td>
+</tr>
+<tr>
+<td><strong>Phản ứng khi thêm trường mới</strong></td>
+<td>Có thể bị fail nếu dùng strict schema</td>
+<td>Dễ bị fail nếu dùng exact match <code>match response ==</code></td>
+<td><strong>PASS an toàn</strong> (Tự động bỏ qua trường thừa không cam kết)</td>
+</tr>
+<tr>
+<td><strong>Vai trò trong CI/CD</strong></td>
+<td>Báo cáo kiểm thử sau khi đã deploy môi trường test</td>
+<td>Báo cáo kiểm thử hồi quy tích hợp E2E</td>
+<td><strong>Deployment Gate (<code>can-i-deploy</code>)</strong> chặn deploy ngay tại khâu Provider build</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. Phần IV — Ứng Dụng AI Agent Trong API &amp; Contract Testing</h2>
+<h3>5.1. Quy trình Human-in-the-Loop</h3>
+<p>Nhóm triển khai mô hình cộng tác giữa AI và Kỹ sư kiểm thử theo chuẩn <strong>AI-Integrated Work</strong>:</p>
+<pre><code class="language-text">[ OpenAPI 3.0 Spec ] + [ AI Testing Skill ]
+               |
+               v
+      ( AI Prompt / Agent )
+               |
+               v
+  [ Test Matrix &amp; Scaffold Tests ]
+               |
+               v
+  [ Human Reviewer Thẩm Định &amp; Bổ Sung Business Rules ]
+               |
+               v
+  [ Test Suite Chính Thức (Karate / Postman) ]
+</code></pre>
+<h3>5.2. Thực nghiệm sinh test từ OpenAPI 3.0 (eshop.openapi.yaml)</h3>
+<ul>
+<li><strong>Đầu vào:</strong> File đặc tả [<code>specs/eshop.openapi.yaml</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/specs/eshop.openapi.yaml) và Agent Skill [<code>tests/ai-agent/skills/api-test-design/SKILL.md</code>](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/ai-agent/skills/api-test-design/SKILL.md).</li>
+<li><strong>Thực thi:</strong> AI phân tích endpoint <code>POST /api/coupons/apply</code> và sinh ma trận ca kiểm thử (Test Matrix) gồm 8 trường hợp: Happy path, Mã không tồn tại, Mã hết hạn, Đơn hàng chưa đạt giá trị tối thiểu, SQL injection trong mã coupon.</li>
+</ul>
+<h3>5.3. Đánh giá ưu điểm và phân tích các Failure Modes của AI</h3>
+<table>
+<thead>
+<tr>
+<th>Khía cạnh đánh giá</th>
+<th>Điểm mạnh của AI (Pros)</th>
+<th>Giới hạn &amp; Điểm yếu (Failure Modes / Cons)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tốc độ sinh mã</strong></td>
+<td>Sinh toàn bộ khung ca test (scaffold) và schema assertions cho hàng chục endpoints chỉ trong vài giây.</td>
+<td>Mã sinh ra đôi khi dùng các thư viện cú pháp cũ hoặc không khớp runner cấu hình sẵn.</td>
+</tr>
+<tr>
+<td><strong>Bao phủ Schema</strong></td>
+<td>Bắt trọn vẹn 100% các kiểu dữ liệu và thuộc tính bắt buộc khai báo trong YAML.</td>
+<td><strong>Hoàn toàn mù mờ về logic nghiệp vụ ngầm (Business Rules)</strong>: Ví dụ AI không biết một coupon chỉ dùng được 1 lần/user nếu spec không ghi rõ.</td>
+</tr>
+<tr>
+<td><strong>Kiểm thử biên (Edge)</strong></td>
+<td>Đề xuất tốt các giá trị biên thông thường (chuỗi rỗng, số 0).</td>
+<td>Thường bỏ qua các lỗi phức tạp về Race Condition hoặc Deadlock dữ liệu.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Kết luận:</strong> AI là công cụ tăng tốc tuyệt vời (tiết kiệm ≈ 70% thời gian boilerplate), nhưng Kỹ sư QA bắt buộc phải giữ vai trò chốt chặn (<em>Human-in-the-loop</em>) để thẩm định logic nghiệp vụ.</p>
+</blockquote>
+<hr />
+<h2>6. Phần V — Phân Tích Sự Cố Thường Gặp &amp; Cách Khắc Phục (Troubleshooting)</h2>
+<h3>6.1. Bảng phân tích sự cố và giải pháp khắc phục chuẩn</h3>
+<table>
+<thead>
+<tr>
+<th>Công cụ</th>
+<th>Sự cố phổ biến (Failure Modes)</th>
+<th>Nguyên nhân gốc rễ</th>
+<th>Giải pháp khắc phục chuẩn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Postman / Newman</strong></td>
+<td>Lỗi 401 Unauthorized hàng loạt khi chạy Newman</td>
+<td>Token lưu ở biến Global bị ghi đè hoặc hết hạn giữa chừng</td>
+<td>Thiết lập Pre-request Script tự động gọi API Login lấy token mới ở cấp Collection</td>
+</tr>
+<tr>
+<td><strong>Postman / Newman</strong></td>
+<td>Newman chạy sai bộ dữ liệu CSV</td>
+<td>Header file CSV chứa ký tự ẩn (BOM UTF-8) hoặc khoảng trắng thừa</td>
+<td>Kiểm tra header file CSV bằng VS Code, loại bỏ BOM</td>
+</tr>
+<tr>
+<td><strong>Karate</strong></td>
+<td>Lỗi kết nối <code>Connection Refused: localhost:3000</code></td>
+<td>Backend SUT chưa được khởi động trước khi chạy lệnh Maven</td>
+<td>Cấu hình Hook trong Karate hoặc chạy <code>./run_servers.sh</code> trước khi chạy test</td>
+</tr>
+<tr>
+<td><strong>Karate</strong></td>
+<td><code>match each response</code> thất bại ngẫu nhiên</td>
+<td>Một số phần tử trong cơ sở dữ liệu bị thiếu trường hoặc null</td>
+<td>Dùng matcher dạng tùy chọn: <code>stock: '##number'</code> (chấp nhận số hoặc null)</td>
+</tr>
+<tr>
+<td><strong>Karate</strong></td>
+<td>Kịch bản K3 thất bại do lỗi 403 <code>Tài khoản đã bị khóa</code></td>
+<td>SUT EShop tự động khóa tài khoản 3 phút nếu <code>login_attempts &gt;= 3</code> khi chạy lặp lại</td>
+<td>Khởi tạo tài khoản động theo timestamp (<code>karate_k3_&lt;timestamp&gt;@eshop.com</code>) tại Step 1 kịch bản K3</td>
+</tr>
+<tr>
+<td><strong>Pact JS</strong></td>
+<td>Verification thất bại do sai lệch dữ liệu động</td>
+<td>Dữ liệu ngày tháng (timestamp) hoặc ID tự tăng thay đổi giữa các lần chạy</td>
+<td>Sử dụng Matchers dạng type (<code>like()</code>, <code>iso8601DateTime()</code>) thay vì so sánh giá trị cứng</td>
+</tr>
+<tr>
+<td><strong>Pact JS</strong></td>
+<td>Port 1234 bị chiếm dụng khi chạy Consumer test</td>
+<td>Tiến trình Pact Mock Server của lần chạy trước chưa tắt hẳn</td>
+<td>Chạy lệnh <code>npx kill-port 1234</code> hoặc khởi động lại terminal</td>
+</tr>
+<tr>
+<td><strong>Pact JS (C3)</strong></td>
+<td>Kiểm thử Type Mismatch báo PASS giả (False Positive)</td>
+<td>Lõi Pact Rust Core FFI tự động ép kiểu (Coercion) chuỗi thuần chữ số thành integer</td>
+<td>Sử dụng chuỗi định dạng tiền tệ chuyên biệt (<code>'30.000.000 ₫'</code>) để kiểm soát chặt chẽ việc chặn kiểu String</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>7. Phần VI — Quản Lý Dự Án, Minh Chứng Đóng Góp &amp; AI Policy</h2>
+<h3>7.1. Bảng phân công 4 giai đoạn &amp; Tiến độ</h3>
+<p>Nhóm tuân thủ nghiêm ngặt mô hình xoay vòng công việc (Cross-functional) và review chéo được ghi nhận trong bảng Kanban Notion và Gantt chart:</p>
+<ul>
+<li><strong>Giai đoạn 1 (W02 - W03):</strong> Khảo sát lý thuyết, thiết lập repository, meeting GV lần 1 (Hoàn thành 100%).</li>
+<li><strong>Giai đoạn 2 (W03 - W05):</strong> Triển khai mã nguồn kiểm thử Postman, Karate, Pact, và kịch bản AI (Hoàn thành 100%).</li>
+<li><strong>Giai đoạn 3 (W06):</strong> Hoàn thiện Slide, đóng gói Báo cáo tổng hợp W06, quay video demo (Đạt ≥ 90% tiến độ).</li>
+<li><strong>Giai đoạn 4 (W07 - W12):</strong> Trình bày thử trước GV, seminar chính thức và nộp bản hiệu chỉnh cuối kỳ.</li>
+</ul>
+<h3>7.2. Minh chứng Git Commits cá nhân</h3>
+<p>100% thành viên tham gia commit bằng tài khoản Git cá nhân trên GitHub:</p>
+<ul>
+<li><strong>Nguyễn Hoàng Anh Tú (<code>faker26052005-lgtm</code>):</strong> Phụ trách Pact C1/C2, Newman P3, Middleware Backend Request Logger, Slide Markdown, Quản lý hồ sơ nhóm.</li>
+<li><strong>Nguyễn Quốc Kỳ (<code>quocky05</code>):</strong> Phụ trách Karate Setup, Feature K1, K2, K3, Pact Breaking Change C3.</li>
+<li><strong>Hà Quốc Kiên (<code>kienha5</code>):</strong> Phụ trách Postman Collection P1, P2, Data-driven CSV, Thực nghiệm AI Agent OpenAPI.</li>
+</ul>
+<h3>7.3. Cam kết AI Policy &amp; Tuyên bố liêm chính học thuật</h3>
+<ul>
+<li>Nhóm sử dụng công cụ AI (ChatGPT, Claude, Gemini) để hỗ trợ tra cứu tài liệu và sinh khung ca kiểm thử theo đúng danh mục <strong>AI Use Category 5 (AI-Integrated Work)</strong> của nhà trường.</li>
+<li>Mọi nội dung, mã nguồn và kết quả kiểm thử đều do sinh viên trực tiếp chạy, đối soát và chịu trách nhiệm 100%. Không sao chép nguyên văn văn bản từ AI mà không qua biên tập của con người.</li>
+</ul>
+<hr />
+<h2>8. Phần VII — Kết Luận &amp; Tài Liệu Tham Khảo</h2>
+<h3>8.1. Kết luận</h3>
+<p>Seminar <strong>T06: API &amp; Contract Testing</strong> đã giúp nhóm nắm vững cả về chiều sâu lý thuyết lẫn kỹ năng thực chiến tự động hóa kiểm thử phần mềm. Việc kết hợp hài hòa giữa <strong>API Functional Testing</strong> (Postman/Karate) và <strong>Consumer-Driven Contract Testing</strong> (Pact) tạo nên một lá chắn vững chắc giúp các đội ngũ kỹ sư tự tin phát hành phần mềm liên tục mà không lo sợ rủi ro gãy vỡ hệ thống.</p>
+<h3>8.2. Tài liệu tham khảo</h3>
+<ol>
+<li>Mark Winteringham, <em>API Testing in Action</em>, Manning Publications, 2022.</li>
+<li>Pact Documentation, <em>Consumer Driven Contracts</em>, <a href="https://docs.pact.io/">https://docs.pact.io/</a>.</li>
+<li>Karate Framework Official Guide, <a href="https://github.com/karatelabs/karate">https://github.com/karatelabs/karate</a>.</li>
+<li>Postman Learning Center, <em>Newman CLI &amp; Continuous Integration</em>, <a href="https://learning.postman.com/">https://learning.postman.com/</a>.</li>
+<li>Martin Fowler, <em>GivenWhenThen &amp; Consumer-Driven Contracts</em>, <a href="http://martinfowler.com">martinfowler.com</a>.</li>
+<li>FIT@HCMUS, <em>T06 API &amp; Contract Testing Specification &amp; Seminar Master Guide</em>, 2026.</li>
+</ol>
+
+    </div>
+</body>
+</html>
