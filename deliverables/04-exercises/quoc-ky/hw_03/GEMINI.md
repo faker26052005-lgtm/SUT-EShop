@@ -11,8 +11,8 @@ Individual assignment. I test the EShop web app and mobile app, run a usability 
 | Local path of the Git repo | `/home/quocky05/academy/software-testing/seminar/SUT-EShop/` (the workspace root below is this repo) |
 | Student ID / full name | `23120138` / `Nguyễn Quốc Kỳ` |
 | Student email (identity overlay on cross-platform screenshots) | `quockinguyen.lv@gmail.com` |
-| My checklist screens | `<e.g. Cart, Checkout>` (must not duplicate other group members' primary screen) |
-| My usability flow | `<e.g. Sign-up → Add to cart → Checkout with a coupon>` (must not duplicate other group members') |
+| My checklist screens | `Cart, Checkout` (Pool B: FR-07, FR-08, FR-09) |
+| My usability flow | `Product selection → Add to cart → Apply coupon → Checkout` |
 | Test platforms (at least 3) | `BrowserStack (Chrome , FireFox and Safari)` |
 | Audit log skill | `hw-ai-audit` |
 | Deadline | 10/11/2026 |
