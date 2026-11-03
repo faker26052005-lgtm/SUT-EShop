@@ -134,11 +134,11 @@ flowchart TD
   - Launch backend (Express/Nest/FastAPI or MongoDB/Postgres as configured in EShop).
   - Launch web frontend (`localhost:3000` / `localhost:5173`).
   - Verify responsive viewport and API connectivity.
-- [ ] **Step 1.2: Populate `screen-maps/eshop.md`**
+- [x] **Step 1.2: Populate `screen-maps/eshop.md`**
   - Map chosen screens to requirements:
     - *Cart Screen* $\rightarrow$ Pool B: FR-07.
     - *Checkout Screen* $\rightarrow$ Pool B: FR-08, FR-09.
-- [ ] **Step 1.3: Capture Screen Context in `screen-context/<slug>.md`**
+- [x] **Step 1.3: Capture Screen Context in `screen-context/<slug>.md`**
   - Enumerate real UI elements (buttons, inputs, labels, steppers, modals).
   - Document key UI states: `default`, `empty`, `loading`, `validation_error`.
   - Save reference screenshots in `screen-context/images/` for grounding.
