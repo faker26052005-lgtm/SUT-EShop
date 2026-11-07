@@ -16,8 +16,8 @@
 | Phase 3: Initial Checklist | AI generates 48-60 items across IA-01..IA-04 | **PASSED** | Checkpoint 3 passed: 85 items generated across all 4 IAs (IA-01: 23, IA-02: 27, IA-03: 17, IA-04: 18), all strict rules applied. |
 | Phase 4: Review & Deduplication | Student reviews AI items (Keep/Edit/Reject) | **PASSED** | Checkpoint 4 passed: Rà soát toàn diện 4 IAs, chốt 70 items chính thức (Cart: 22, Checkout: 48). Đã loại bỏ/gộp 19 items trùng lặp/backend, ghi đầy đủ lý do từ chối. Đã audit Artifacts #13-#16 vào AI_Audit_Report.md. |
 | Phase 5: Gap Analysis | Student adds human items + reasons why AI missed them | **PASSED** | Checkpoint 5 passed: Thêm 3 items Source: Human (H-01, H-02, H-05) bù đắp vùng mù AI (a11y touch target, a11y E2E keyboard flow, localization dấu chấm phân cách). Cập nhật 3 sửa nhỏ (contrast ratio measurement & whitespace). Tổng checklist đạt 73 items (70 AI + 3 Human). |
-| Phase 6: Execution Sheet | Multi-platform execution on Chrome, Firefox, Safari | **IN PROGRESS (Chrome: 73/73 DONE; Firefox: 73/73 DONE)** | Hoàn thành thực thi 100% trên cả Chrome và Firefox: 73/73 items (51 Passed, 22 Failed, 0 N/A trên mỗi nền tảng). Đã đồng bộ chi tiết vào `checklist.xlsx` và `checklist.md`. Tiếp tục thực thi trên Safari (BrowserStack). |
-| Phase 7: Bugs & Summary | File GitHub issues, reconcile counts, cross-platform matrix | PENDING | Batch issue creation + test summary. |
+| Phase 6: Execution Sheet | Multi-platform execution on Chrome, Firefox, Safari | **PASSED** | Checkpoint 6 passed: Hoàn thành 100% thực thi trên cả 3 nền tảng (Chrome, Firefox, Safari): 73/73 items executed (51 Passed, 22 Failed trên mỗi nền tảng). Đầy đủ ghi chú thực tế và link ảnh minh chứng trong `checklist.xlsx` và `checklist.md`. |
+| Phase 7: Bugs & Summary | File GitHub issues, reconcile counts, cross-platform matrix | **IN PROGRESS** | Gom nhóm 22 lỗi đa nền tảng, soạn thảo bug drafts, chuẩn bị đẩy ảnh minh chứng và tạo GitHub Issues. |
 
 ## Checkpoint 1 Gate Review (Phase 1: Scope)
 - [x] Every screen has an FR mapping in `screen-maps/eshop.md` (Cart $\rightarrow$ FR-07, Checkout $\rightarrow$ FR-08, FR-09).
@@ -59,8 +59,9 @@
 - [x] Toàn bộ 22 mục `Failed` trên Chrome có ghi chú thực tế chi tiết tại cột Notes và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Chrome.png` tại cột Screenshot ref.
 - [x] Thực thi hoàn tất trên Mozilla Firefox (Gecko Desktop): 73/73 items được kiểm tra thực tế, ghi nhận kết quả 51 Passed, 22 Failed, 0 N/A.
 - [x] Toàn bộ 22 mục `Failed` trên Firefox có ghi chú thực tế chi tiết (tiền tố `Firefox:`) và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Firefox.png` tại cột Screenshot ref.
-- [x] Không có ô Result nào do AI tự ý điền (toàn bộ kết quả đều do sinh viên quan sát và quyết định Pass/Fail trên SUT thực tế).
-- [ ] Thực thi trên Safari (WebKit engine qua BrowserStack).
+- [x] Thực thi hoàn tất trên Apple Safari / WebKit (Playwright WebKit): 73/73 items được kiểm tra thực tế, ghi nhận kết quả 51 Passed, 22 Failed, 0 N/A.
+- [x] Toàn bộ 22 mục `Failed` trên Safari có ghi chú thực tế chi tiết (tiền tố `Safari:`) và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Safari.png` tại cột Screenshot ref.
+- [x] Không có ô Result nào do AI tự ý điền (toàn bộ kết quả đều do sinh viên quan sát và quyết định Pass/Fail trên SUT thực tế trên cả 3 nền tảng).
 
 ## Log of Rejected AI Items (For Oral Defense)
 
