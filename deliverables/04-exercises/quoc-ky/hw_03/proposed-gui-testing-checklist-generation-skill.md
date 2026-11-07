@@ -148,15 +148,25 @@ Every item has these fields:
 | Field | Rule |
 |---|---|
 | ID | `<SCREEN>-<IA>-<NN>`, for example `CART-IA02-03` |
-| Screen | The screen under test |
-| IA | IA-01, IA-02, IA-03, or IA-04 |
-| Category | From the taxonomy |
-| Check | One action or inspection on one element |
-| Expected result | A single observable outcome, written so two testers would agree on Pass or Fail |
-| Priority | High, Medium, or Low |
-| Source | `AI` at this stage |
+| Screen | The screen under test (`Cart`, `Checkout`, etc.) |
+| IA | `IA-01`, `IA-02`, `IA-03`, or `IA-04` |
+| Category | Strictly canonical name from the course taxonomy |
+| Preconditions / Test data | Specific initial conditions: button state, coupon code, cart products/quantities, auth state, viewport (e.g., 1280x720 desktop or 375x667 mobile) |
+| Check | One action or inspection on one concrete element |
+| Expected result | A single observable outcome described strictly by visible properties (color, text, position, visual behavior), NEVER using CSS/Tailwind class names. Strictly binary without words like "hoặc", "đúng chuẩn", "gọn gàng", "phù hợp" |
+| Observed | Left blank during design; populated with empirical results during execution |
+| Priority | `High`, `Medium`, or `Low` |
+| Priority rationale | 1 sentence explaining the justification based on business impact, conversion risk, or UI hierarchy |
+| Technical notes | Implementation details, CSS/Tailwind classes, HEX colors, DevTools measurements (e.g., contrast ratio) |
+| Source | `AI` at this stage (`Human` in Phase 5) |
 
-Write each item so it can be judged Passed or Failed without interpretation. "Error messages are clear" is not testable. "An invalid email shows an inline message beneath the field, in red, naming the problem" is.
+### Strict item generation rules:
+1. **Visible Observable Expectations:** Describe what the human eye sees on screen (text, relative position, visual color shade, cursor changes, state transitions). Move all implementation details (Tailwind classes like `text-red-500`, `bg-green-600`, DOM attributes) into the Technical Notes column.
+2. **Empirical SUT Data Grounding:** All test data, product names, prices, and coupon codes must strictly correspond to real seeded data in the SUT (e.g., `Samsung Galaxy S24 Ultra` 28,000,000 ₫, coupon `SAVE10`, `BIGBUY`, `VIP100`). Never fabricate fictitious prices or products (e.g., no generic `350,000 ₫`).
+3. **Strict Binary Testability:** Each Expected Result must define exactly one unambiguous outcome. Forbid ambiguous phrasing such as "hoặc", "đúng chuẩn", "gọn gàng", "phù hợp", "hợp lý".
+4. **State-based Element Decomposition:** When an element has distinct interactive states (e.g., empty field vs populated field affecting button disabled/enabled state, hover state vs idle state), decompose them into separate checklist items.
+5. **Cross-Screen Consistency Checks:** When evaluating `Consistency across screens`, directly compare against sibling screens (e.g., Home vs Cart/Checkout for currency symbol "VND" vs "₫", Cart vs Checkout for container width and CTA button color shade `#22c55e` vs `#16a34a`).
+6. **Semantic & Grammatical Label Checks:** Inspect label consistency across screens, casing standards (Title Case vs Sentence case), and confusing duplicate label semantics (e.g., editable input total vs final summary total).
 
 Save the items to `checklist.md` as a draft.
 

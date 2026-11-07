@@ -122,8 +122,15 @@ def parse_bug_draft(filepath):
     # Derive labels
     labels = ["bug", f"severity:{severity}"]
     ia_match = re.search(r"IA\d{2}", item_id)
+    if not ia_match:
+        ia_match = re.search(r"\*\*Interface Aspect:\*\*\s*`?(IA-\d{2})`?", content)
+        if not ia_match:
+            ia_match = re.search(r"IA-\d{2}", content)
     if ia_match:
-        labels.append(f"IA-{ia_match.group(0)[2:]}")
+        raw_ia = ia_match.group(1) if ia_match.groups() else ia_match.group(0)
+        num_match = re.search(r"\d{2}", raw_ia)
+        if num_match:
+            labels.append(f"IA-{num_match.group(0)}")
     
     # Platform labels
     for plat in ["Chrome", "Firefox", "Safari", "Android", "Expo"]:
