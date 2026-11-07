@@ -1,5 +1,7 @@
 # [Checkout] Bất đồng bộ dữ liệu giữa ô tổng tiền phía trên và dòng tổng thanh toán sau khi áp mã giảm giá
 
+**GitHub Issue:** [#129](https://github.com/faker26052005-lgtm/SUT-EShop/issues/129)
+
 **Checklist item:** `CHCK-IA02-10`  
 **Interface Aspect:** `IA-02` (Control state vs. data state)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,9 +22,9 @@
 - Safari: Bất đồng bộ dữ liệu: sau khi áp mã SAVE10, ô input phía trên vẫn giữ nguyên 28000000, không tự động cập nhật về số tiền sau giảm 25,200,000 ₫ đồng nhất với dòng Tổng thanh toán
 
 ## Evidence
-![CHCK-IA02-10 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-10_Chrome.png?raw=true)
+![CHCK-IA02-10 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-10_Chrome.png?raw=true)
 
-![CHCK-IA02-10 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-10_Firefox.png?raw=true)
+![CHCK-IA02-10 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-10_Firefox.png?raw=true)
 
-![CHCK-IA02-10 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-10_Safari.png?raw=true)
+![CHCK-IA02-10 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-10_Safari.png?raw=true)
 

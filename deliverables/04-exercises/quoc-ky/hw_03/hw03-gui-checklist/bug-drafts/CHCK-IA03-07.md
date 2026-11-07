@@ -1,5 +1,7 @@
 # [Checkout] Bấm Back sau khi đặt hàng thành công lùi về /cart vẫn còn nguyên sản phẩm cũ
 
+**GitHub Issue:** [#134](https://github.com/faker26052005-lgtm/SUT-EShop/issues/134)
+
 **Checklist item:** `CHCK-IA03-07`  
 **Interface Aspect:** `IA-03` (Window system commands (close, back))  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,15 +22,15 @@ Trình duyệt chuyển hướng về trang `/cart`, không quay lại form than
 - Safari: Lỗi điều hướng/nghiệp vụ: Bấm Back sau khi thanh toán thành công lùi về /cart vẫn còn nguyên sản phẩm cũ do không clearCart, có nguy cơ gửi lại đơn hàng trùng lặp
 
 ## Evidence
-![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_01.png?raw=true)
+![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_01.png?raw=true)
 
-![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_02.png?raw=true)
+![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_02.png?raw=true)
 
-![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_03.png?raw=true)
+![CHCK-IA03-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Chrome_03.png?raw=true)
 
-![CHCK-IA03-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Firefox_01.png?raw=true)
+![CHCK-IA03-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Firefox_01.png?raw=true)
 
-![CHCK-IA03-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Firefox_02.png?raw=true)
+![CHCK-IA03-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Firefox_02.png?raw=true)
 
-![CHCK-IA03-07 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA03-07_Safari_01.png?raw=true)
+![CHCK-IA03-07 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA03-07_Safari_01.png?raw=true)
 

@@ -1,5 +1,7 @@
 # [Checkout] Backend tính sai công thức giảm giá mã SAVE10, số tiền chiết khấu và thành tiền hiển thị sai
 
+**GitHub Issue:** [#135](https://github.com/faker26052005-lgtm/SUT-EShop/issues/135)
+
 **Checklist item:** `CHCK-IA04-03`  
 **Interface Aspect:** `IA-04` (Success confirmation)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,9 +22,9 @@ Xuất hiện khối thông báo màu xanh gồm 3 dòng: (1) "✅ Áp dụng th
 - Safari: Lỗi tính toán và phản hồi: Backend tính sai công thức mã SAVE10, hiển thị số tiền tiết kiệm và thành tiền bị sai lệch hoàn toàn, không đạt mức 25,200,000 ₫ theo yêu cầu
 
 ## Evidence
-![CHCK-IA04-03 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA04-03_Chrome.png?raw=true)
+![CHCK-IA04-03 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA04-03_Chrome.png?raw=true)
 
-![CHCK-IA04-03 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA04-03_Firefox.png?raw=true)
+![CHCK-IA04-03 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA04-03_Firefox.png?raw=true)
 
-![CHCK-IA04-03 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA04-03_Safari.png?raw=true)
+![CHCK-IA04-03 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA04-03_Safari.png?raw=true)
 

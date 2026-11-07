@@ -202,6 +202,23 @@ def write_back_issue_link(draft_path, checklist_md_path, item_id, issue_number, 
         with open(checklist_md_path, "w", encoding="utf-8") as f:
             f.writelines(new_lines)
 
+    # 3. Update checklist.xlsx Bug ID column (col 15) if file exists
+    xlsx_path = checklist_md_path.replace(".md", ".xlsx") if checklist_md_path else None
+    if xlsx_path and os.path.exists(xlsx_path):
+        try:
+            import openpyxl
+            wb = openpyxl.load_workbook(xlsx_path)
+            ws = wb["Checklist"]
+            clean_target = item_id.replace("`", "").strip()
+            for r in range(2, ws.max_row + 1):
+                val = ws.cell(row=r, column=1).value
+                if val and str(val).replace("`", "").strip() == clean_target:
+                    ws.cell(row=r, column=15, value=f"#{issue_number}")
+                    break
+            wb.save(xlsx_path)
+        except Exception as e:
+            print(f"  [!] Note: could not update xlsx: {e}")
+
 def run():
     parser = argparse.ArgumentParser(description="Create GitHub Issues for HW03 GUI Testing (Phase 7)")
     parser.add_argument("--mode", choices=["dry-run", "pilot", "batch"], default="dry-run",

@@ -1,5 +1,7 @@
 # [Checkout] Nút "Áp dụng" mã giảm giá có độ tương phản chữ không đạt chuẩn WCAG AA
 
+**GitHub Issue:** [#123](https://github.com/faker26052005-lgtm/SUT-EShop/issues/123)
+
 **Checklist item:** `CHCK-IA01-05`  
 **Interface Aspect:** `IA-01` (Color scheme)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,9 +22,9 @@ Tỷ lệ tương phản đạt tối thiểu 4.5:1 (WCAG AA)
 - Safari: Tỷ lệ tương phản chữ trắng trên nền cam bg-orange-500 chỉ đạt ~2.94:1, không đạt chuẩn WCAG AA tối thiểu 4.5:1
 
 ## Evidence
-![CHCK-IA01-05 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-05_Chrome.png?raw=true)
+![CHCK-IA01-05 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-05_Chrome.png?raw=true)
 
-![CHCK-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-05_Firefox.png?raw=true)
+![CHCK-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-05_Firefox.png?raw=true)
 
-![CHCK-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-05_Safari.png?raw=true)
+![CHCK-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-05_Safari.png?raw=true)
 

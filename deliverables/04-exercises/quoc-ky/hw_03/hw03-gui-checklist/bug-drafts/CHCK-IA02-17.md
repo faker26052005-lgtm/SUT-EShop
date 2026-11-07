@@ -1,5 +1,7 @@
 # [Checkout] Thẻ label "Mã Giảm Giá" thiếu thuộc tính htmlFor, nhấp chuột vào nhãn không kích hoạt focus
 
+**GitHub Issue:** [#131](https://github.com/faker26052005-lgtm/SUT-EShop/issues/131)
+
 **Checklist item:** `CHCK-IA02-17`  
 **Interface Aspect:** `IA-02` (Focus on the right object)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,9 +22,9 @@ Con trỏ văn bản nhấp nháy (focus) tự động kích hoạt bên trong �
 - Safari: Thẻ label thiếu thuộc tính htmlFor liên kết với id của input, click vào chữ nhãn không kích hoạt focus ô nhập
 
 ## Evidence
-![CHCK-IA02-17 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-17_Chrome.png?raw=true)
+![CHCK-IA02-17 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-17_Chrome.png?raw=true)
 
-![CHCK-IA02-17 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-17_Firefox.png?raw=true)
+![CHCK-IA02-17 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-17_Firefox.png?raw=true)
 
-![CHCK-IA02-17 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-17_Safari.png?raw=true)
+![CHCK-IA02-17 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-17_Safari.png?raw=true)
 

@@ -1,5 +1,7 @@
 # [Checkout] Không nhất quán quy cách viết hoa giữa nhãn "Mã Giảm Giá" và "Sản phẩm:"
 
+**GitHub Issue:** [#126](https://github.com/faker26052005-lgtm/SUT-EShop/issues/126)
+
 **Checklist item:** `CHCK-IA01-11`  
 **Interface Aspect:** `IA-01` (Labels)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -19,9 +21,9 @@ Hai nhãn 'Mã Giảm Giá' và 'Sản phẩm:' cùng một cách viết hoa
 - Safari: Không nhất quán viết hoa: nhãn "Mã Giảm Giá" dùng Title Case, nhãn "Sản phẩm:" dùng Sentence case
 
 ## Evidence
-![CHCK-IA01-11 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-11_Chrome.png?raw=true)
+![CHCK-IA01-11 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-11_Chrome.png?raw=true)
 
-![CHCK-IA01-11 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-11_Firefox.png?raw=true)
+![CHCK-IA01-11 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-11_Firefox.png?raw=true)
 
-![CHCK-IA01-11 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-11_Safari.png?raw=true)
+![CHCK-IA01-11 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-11_Safari.png?raw=true)
 

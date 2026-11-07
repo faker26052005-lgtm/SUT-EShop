@@ -1,5 +1,7 @@
 # [Cart] Không nhất quán ký hiệu đơn vị tiền tệ giữa Trang chủ (VND) và Giỏ hàng (₫)
 
+**GitHub Issue:** [#118](https://github.com/faker26052005-lgtm/SUT-EShop/issues/118)
+
 **Checklist item:** `CART-IA01-05`  
 **Interface Aspect:** `IA-01` (Consistency across screens)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,13 +22,13 @@
 - Safari: Không nhất quán đơn vị tiền tệ: Trang chủ hiển thị "VND", trong khi trang Cart hiển thị ký hiệu "₫"
 
 ## Evidence
-![CART-IA01-05 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-05_Chrome.png?raw=true)
+![CART-IA01-05 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-05_Chrome.png?raw=true)
 
-![CART-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-05_Firefox_01.png?raw=true)
+![CART-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-05_Firefox_01.png?raw=true)
 
-![CART-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-05_Firefox_02.png?raw=true)
+![CART-IA01-05 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-05_Firefox_02.png?raw=true)
 
-![CART-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-05_Safari_01.png?raw=true)
+![CART-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-05_Safari_01.png?raw=true)
 
-![CART-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-05_Safari_02.png?raw=true)
+![CART-IA01-05 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-05_Safari_02.png?raw=true)
 

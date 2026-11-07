@@ -1,5 +1,7 @@
 # [Checkout] Trùng lặp ngữ nghĩa gây khó hiểu giữa nhãn ô nhập phía trên và nhãn tóm tắt phía dưới
 
+**GitHub Issue:** [#125](https://github.com/faker26052005-lgtm/SUT-EShop/issues/125)
+
 **Checklist item:** `CHCK-IA01-10`  
 **Interface Aspect:** `IA-01` (Labels)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -19,9 +21,9 @@ Không có hai nhãn khác nhau chỉ một từ cho cùng giá trị 28,000,000
 - Safari: Trùng lặp ngữ nghĩa gây khó hiểu: dòng trên ghi "Tổng tiền thanh toán (VND):", dòng dưới ghi "Tổng thanh toán: ... ₫"
 
 ## Evidence
-![CHCK-IA01-10 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-10_Chrome.png?raw=true)
+![CHCK-IA01-10 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-10_Chrome.png?raw=true)
 
-![CHCK-IA01-10 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-10_Firefox.png?raw=true)
+![CHCK-IA01-10 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-10_Firefox.png?raw=true)
 
-![CHCK-IA01-10 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-10_Safari.png?raw=true)
+![CHCK-IA01-10 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-10_Safari.png?raw=true)
 

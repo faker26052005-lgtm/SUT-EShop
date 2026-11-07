@@ -1,5 +1,7 @@
 # [Checkout] Ô "Tổng tiền thanh toán" hiển thị số thô không có dấu phân cách hàng nghìn
 
+**GitHub Issue:** [#124](https://github.com/faker26052005-lgtm/SUT-EShop/issues/124)
+
 **Checklist item:** `CHCK-IA01-07`  
 **Interface Aspect:** `IA-01` (Consistency across screens)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -19,9 +21,9 @@
 - Safari: Ô input hiển thị số thô 28000000 không có dấu phân cách hàng nghìn, không đồng nhất với định dạng tiền tệ ở Cart và dòng Tổng thanh toán
 
 ## Evidence
-![CHCK-IA01-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-07_Chrome.png?raw=true)
+![CHCK-IA01-07 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-07_Chrome.png?raw=true)
 
-![CHCK-IA01-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-07_Firefox.png?raw=true)
+![CHCK-IA01-07 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-07_Firefox.png?raw=true)
 
-![CHCK-IA01-07 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA01-07_Safari.png?raw=true)
+![CHCK-IA01-07 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA01-07_Safari.png?raw=true)
 

@@ -1,5 +1,7 @@
 # [Cart] Nút "Tiến hành thanh toán" có độ tương phản chữ không đạt chuẩn WCAG AA
 
+**GitHub Issue:** [#117](https://github.com/faker26052005-lgtm/SUT-EShop/issues/117)
+
 **Checklist item:** `CART-IA01-04`  
 **Interface Aspect:** `IA-01` (Color scheme)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -21,9 +23,9 @@ Nút có nền màu xanh lá cây, chữ màu trắng, tỷ lệ tương phản 
 - Safari: Tỷ lệ tương phản chữ trắng trên nền xanh bg-green-500 #22c55e chỉ đạt ~2.44:1, không đạt chuẩn WCAG AA tối thiểu 4.5:1
 
 ## Evidence
-![CART-IA01-04 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-04_Chrome.png?raw=true)
+![CART-IA01-04 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-04_Chrome.png?raw=true)
 
-![CART-IA01-04 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-04_Firefox.png?raw=true)
+![CART-IA01-04 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-04_Firefox.png?raw=true)
 
-![CART-IA01-04 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CART-IA01-04_Safari.png?raw=true)
+![CART-IA01-04 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CART-IA01-04_Safari.png?raw=true)
 

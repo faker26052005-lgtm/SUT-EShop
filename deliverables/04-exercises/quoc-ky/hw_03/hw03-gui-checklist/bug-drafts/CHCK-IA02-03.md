@@ -1,5 +1,7 @@
 # [Checkout] Ô tổng tiền thanh toán cho phép người dùng tự do chỉnh sửa và nhận các giá trị biên/phi số
 
+**GitHub Issue:** [#127](https://github.com/faker26052005-lgtm/SUT-EShop/issues/127)
+
 **Checklist item:** `CHCK-IA02-03`  
 **Interface Aspect:** `IA-02` (Data validation (EP/BVA boundaries))  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -21,9 +23,9 @@
 - Safari: Lỗi nghiệp vụ: Ô tổng tiền không ở chế độ chỉ đọc, WebKit vẫn cho phép người dùng tự do nhập các giá trị 0, số âm, số thập phân và tràn số
 
 ## Evidence
-![CHCK-IA02-03 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-03_Chrome.png?raw=true)
+![CHCK-IA02-03 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-03_Chrome.png?raw=true)
 
-![CHCK-IA02-03 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-03_Firefox.png?raw=true)
+![CHCK-IA02-03 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-03_Firefox.png?raw=true)
 
-![CHCK-IA02-03 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-03_Safari.png?raw=true)
+![CHCK-IA02-03 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-03_Safari.png?raw=true)
 

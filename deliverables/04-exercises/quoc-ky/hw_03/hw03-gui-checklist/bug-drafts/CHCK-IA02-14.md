@@ -1,5 +1,7 @@
 # [Checkout] Ô nhập mã giảm giá không phản hồi khi người dùng nhấn phím Enter
 
+**GitHub Issue:** [#130](https://github.com/faker26052005-lgtm/SUT-EShop/issues/130)
+
 **Checklist item:** `CHCK-IA02-14`  
 **Interface Aspect:** `IA-02` (Control state vs. data state)  
 **Platforms affected:** Google Chrome, Mozilla Firefox, Apple Safari (WebKit)  
@@ -20,9 +22,9 @@ Khối kết quả giảm giá xuất hiện tương đương như khi click chu
 - Safari: Ô input không nằm trong thẻ form và thiếu sự kiện onKeyDown bắt phím Enter, người dùng nhấn Enter không có phản hồi
 
 ## Evidence
-![CHCK-IA02-14 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-14_Chrome.png?raw=true)
+![CHCK-IA02-14 on Chrome](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-14_Chrome.png?raw=true)
 
-![CHCK-IA02-14 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-14_Firefox.png?raw=true)
+![CHCK-IA02-14 on Firefox](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-14_Firefox.png?raw=true)
 
-![CHCK-IA02-14 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/evidence/screenshots/FAILED_CHCK-IA02-14_Safari.png?raw=true)
+![CHCK-IA02-14 on Safari](https://github.com/faker26052005-lgtm/SUT-EShop/blob/224ce3c24112f189468b42b95357d4c6c1993e7d/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots/FAILED_CHCK-IA02-14_Safari.png?raw=true)
 
