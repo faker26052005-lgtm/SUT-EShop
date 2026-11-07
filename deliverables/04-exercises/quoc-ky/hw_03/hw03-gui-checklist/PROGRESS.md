@@ -16,7 +16,7 @@
 | Phase 3: Initial Checklist | AI generates 48-60 items across IA-01..IA-04 | **PASSED** | Checkpoint 3 passed: 85 items generated across all 4 IAs (IA-01: 23, IA-02: 27, IA-03: 17, IA-04: 18), all strict rules applied. |
 | Phase 4: Review & Deduplication | Student reviews AI items (Keep/Edit/Reject) | **PASSED** | Checkpoint 4 passed: Rà soát toàn diện 4 IAs, chốt 70 items chính thức (Cart: 22, Checkout: 48). Đã loại bỏ/gộp 19 items trùng lặp/backend, ghi đầy đủ lý do từ chối. Đã audit Artifacts #13-#16 vào AI_Audit_Report.md. |
 | Phase 5: Gap Analysis | Student adds human items + reasons why AI missed them | **PASSED** | Checkpoint 5 passed: Thêm 3 items Source: Human (H-01, H-02, H-05) bù đắp vùng mù AI (a11y touch target, a11y E2E keyboard flow, localization dấu chấm phân cách). Cập nhật 3 sửa nhỏ (contrast ratio measurement & whitespace). Tổng checklist đạt 73 items (70 AI + 3 Human). |
-| Phase 6: Execution Sheet | Multi-platform execution on Chrome, Firefox, Safari | **IN PROGRESS (Chrome: 73/73 DONE)** | Hoàn thành thực thi 100% trên Chrome: 73/73 items (51 Passed, 22 Failed, 0 N/A). Đã đồng bộ chi tiết vào `checklist.xlsx` và `checklist.md`. Tiếp tục thực thi trên Firefox và Safari (BrowserStack). |
+| Phase 6: Execution Sheet | Multi-platform execution on Chrome, Firefox, Safari | **IN PROGRESS (Chrome: 73/73 DONE; Firefox: 73/73 DONE)** | Hoàn thành thực thi 100% trên cả Chrome và Firefox: 73/73 items (51 Passed, 22 Failed, 0 N/A trên mỗi nền tảng). Đã đồng bộ chi tiết vào `checklist.xlsx` và `checklist.md`. Tiếp tục thực thi trên Safari (BrowserStack). |
 | Phase 7: Bugs & Summary | File GitHub issues, reconcile counts, cross-platform matrix | PENDING | Batch issue creation + test summary. |
 
 ## Checkpoint 1 Gate Review (Phase 1: Scope)
@@ -57,8 +57,9 @@
 - [x] Bản nháp chi tiết đầy đủ ghi chú kỹ thuật, lý do priority và quan sát ban đầu được lưu trữ an toàn tại `checklist_draft_p3_p5.md`.
 - [x] Thực thi hoàn tất trên Google Chrome (Desktop): 73/73 items được kiểm tra thực tế, ghi nhận kết quả 51 Passed, 22 Failed, 0 N/A.
 - [x] Toàn bộ 22 mục `Failed` trên Chrome có ghi chú thực tế chi tiết tại cột Notes và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Chrome.png` tại cột Screenshot ref.
+- [x] Thực thi hoàn tất trên Mozilla Firefox (Gecko Desktop): 73/73 items được kiểm tra thực tế, ghi nhận kết quả 51 Passed, 22 Failed, 0 N/A.
+- [x] Toàn bộ 22 mục `Failed` trên Firefox có ghi chú thực tế chi tiết (tiền tố `Firefox:`) và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Firefox.png` tại cột Screenshot ref.
 - [x] Không có ô Result nào do AI tự ý điền (toàn bộ kết quả đều do sinh viên quan sát và quyết định Pass/Fail trên SUT thực tế).
-- [ ] Thực thi trên Firefox (Gecko engine qua BrowserStack / Local).
 - [ ] Thực thi trên Safari (WebKit engine qua BrowserStack).
 
 ## Log of Rejected AI Items (For Oral Defense)
