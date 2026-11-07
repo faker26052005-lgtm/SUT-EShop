@@ -17,7 +17,7 @@
 | Phase 4: Review & Deduplication | Student reviews AI items (Keep/Edit/Reject) | **PASSED** | Checkpoint 4 passed: Rà soát toàn diện 4 IAs, chốt 70 items chính thức (Cart: 22, Checkout: 48). Đã loại bỏ/gộp 19 items trùng lặp/backend, ghi đầy đủ lý do từ chối. Đã audit Artifacts #13-#16 vào AI_Audit_Report.md. |
 | Phase 5: Gap Analysis | Student adds human items + reasons why AI missed them | **PASSED** | Checkpoint 5 passed: Thêm 3 items Source: Human (H-01, H-02, H-05) bù đắp vùng mù AI (a11y touch target, a11y E2E keyboard flow, localization dấu chấm phân cách). Cập nhật 3 sửa nhỏ (contrast ratio measurement & whitespace). Tổng checklist đạt 73 items (70 AI + 3 Human). |
 | Phase 6: Execution Sheet | Multi-platform execution on Chrome, Firefox, Safari | **PASSED** | Checkpoint 6 passed: Hoàn thành 100% thực thi trên cả 3 nền tảng (Chrome, Firefox, Safari): 73/73 items executed (51 Passed, 22 Failed trên mỗi nền tảng). Đầy đủ ghi chú thực tế và link ảnh minh chứng trong `checklist.xlsx` và `checklist.md`. |
-| Phase 7: Bugs & Summary | File GitHub issues, reconcile counts, cross-platform matrix | **IN PROGRESS** | Gom nhóm 22 lỗi đa nền tảng, soạn thảo bug drafts, chuẩn bị đẩy ảnh minh chứng và tạo GitHub Issues. |
+| Phase 7: Bugs & Summary | File GitHub issues, reconcile counts, cross-platform matrix | **PASSED** | Checkpoint 7 passed: Tạo thành công 22 GitHub Issues (#117-#138) trên repo faker26052005-lgtm/SUT-EShop với đầy đủ nhãn và ảnh nhúng commit-pinned (224ce3c). Đồng bộ 100% số Issue vào checklist.xlsx và checklist.md. Khớp số liệu 73 Designed == 73 Executed == 51 Passed + 22 Failed. Biên soạn hoàn chỉnh test-summary.md chứa Cross-Platform Matrix. |
 
 ## Checkpoint 1 Gate Review (Phase 1: Scope)
 - [x] Every screen has an FR mapping in `screen-maps/eshop.md` (Cart $\rightarrow$ FR-07, Checkout $\rightarrow$ FR-08, FR-09).
@@ -62,6 +62,15 @@
 - [x] Thực thi hoàn tất trên Apple Safari / WebKit (Playwright WebKit): 73/73 items được kiểm tra thực tế, ghi nhận kết quả 51 Passed, 22 Failed, 0 N/A.
 - [x] Toàn bộ 22 mục `Failed` trên Safari có ghi chú thực tế chi tiết (tiền tố `Safari:`) và đường dẫn ảnh minh chứng `evidence/screenshots/FAILED_<ID>_Safari.png` tại cột Screenshot ref.
 - [x] Không có ô Result nào do AI tự ý điền (toàn bộ kết quả đều do sinh viên quan sát và quyết định Pass/Fail trên SUT thực tế trên cả 3 nền tảng).
+
+## Checkpoint 7 Gate Review (Phase 7: Bugs & Summary)
+- [x] Gom nhóm 22 lỗi thực tế từ 3 nền tảng kiểm thử (Chrome, Firefox, Safari) thành 22 bug reports duy nhất.
+- [x] Phân loại Severity chuẩn xác theo công thức Criticality học phần (1 Blocker, 9 Major, 9 Minor, 3 Cosmetic) và được sinh viên thẩm định phê duyệt.
+- [x] Toàn bộ 81 ảnh minh chứng được commit (`224ce3c`) và đẩy lên GitHub remote, đường dẫn ảnh trong bug drafts được commit-pinned chính xác.
+- [x] Chạy quy trình Pilot kiểm tra định dạng và hiển thị ảnh thành công với Issue #117 (`CART-IA01-04`).
+- [x] Chạy Batch tự động tạo toàn bộ 21 Issues còn lại (#118 - #138) trên repository `faker26052005-lgtm/SUT-EShop` với đầy đủ labels (`bug`, `severity`, `IA`, `platform`).
+- [x] Đồng bộ và ghi ngược 100% số GitHub Issue vào cột Bug ID của `checklist.xlsx`, `checklist.md` và các file draft markdown.
+- [x] Biên soạn hoàn chỉnh `hw03-gui-checklist/test-summary.md` chứa bảng đối chiếu số liệu (Designed=73, Executed=73, Passed=51, Failed=22) và Ma trận tương thích đa nền tảng Task 3 kèm link truy vết Issue.
 
 ## Log of Rejected AI Items (For Oral Defense)
 
