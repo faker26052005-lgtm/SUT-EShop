@@ -27,7 +27,7 @@ This evaluation investigates three specific, measurable usability research quest
 Participants are given a realistic, goal-directed purchase scenario to execute independently on a live instance of EShop. 
 
 ### Key Objectives:
-- Measure total task duration (Time on Task) against an empirical benchmark (Initial baseline: $\le 180$ seconds; to be formally calibrated based on the Phase 5 Pilot session results).
+- Measure total task duration (Time on Task) against an empirical benchmark ($\le 150$ seconds, calibrated from Phase 5 Pilot review).
 - Evaluate unassisted task completion rate across the 7 experimental participants.
 - Identify and catalog specific usability friction points and genuine functional defects encountered during execution.
 - Measure overall perceived usability via the standard 10-item System Usability Scale (SUS).

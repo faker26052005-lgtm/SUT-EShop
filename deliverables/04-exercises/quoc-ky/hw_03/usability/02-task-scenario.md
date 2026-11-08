@@ -30,7 +30,7 @@
 | **User Task** | Select a product priced $\ge 300,000$ ₫ from the catalog, place it in the cart, apply the promotional discount code `SAVE10`, and complete the checkout order. |
 | **Machine State** | - SUT running locally on `http://localhost:3000` (backend on `http://localhost:5000`).<br>- Logged in with test user account (`test@eshop.com`).<br>- Shopping cart is empty.<br>- Coupon `SAVE10` is active in database and has zero prior uses recorded in `coupon_usage` for the test user. |
 | **Successful Completion Criteria** | Order confirmation page rendered successfully displaying confirmation message ("Thanh toán thành công!" / Order ID) with the 10% discount correctly subtracted from the total. |
-| **Time Benchmark** | $\le 180$ seconds (3 minutes) — *Initial baseline; to be formally calibrated based on the actual Pilot session results in Phase 5.* |
+| **Time Benchmark** | $\le 150$ seconds (2 minutes 30 seconds) — *Calibrated from Phase 5 Pilot session (pilot completed in 142s).* |
 
 ---
 

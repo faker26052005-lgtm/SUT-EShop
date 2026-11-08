@@ -18,7 +18,7 @@ git commit -m "docs(usability): write task scenario, components, and instruments
 
 ## Step 3: Pilot Session & Calibration (Phase 5)
 ```bash
-git add usability/05-pilot-review.md usability/PROGRESS.md
+git add usability/05-pilot-review.md usability/PROGRESS.md usability/01-test-plan.md usability/02-task-scenario.md
 git commit -m "test(usability): record pilot session and refinements"
 ```
 
