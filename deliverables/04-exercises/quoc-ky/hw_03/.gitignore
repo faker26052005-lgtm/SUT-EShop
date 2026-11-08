@@ -4,3 +4,6 @@ participants.md
 submission/
 *.mp4
 *.mkv
+__pycache__/
+*.pyc
+

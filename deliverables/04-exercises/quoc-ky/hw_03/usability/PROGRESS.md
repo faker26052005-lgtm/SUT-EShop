@@ -26,9 +26,9 @@
 | Phase 3: Participant Instruments (VI) | Vietnamese consent form, moderator script, SUS questionnaire, probes (`03-instruments-vi.md`) | **PASSED** | Checkpoint 3 passed: Natural Vietnamese consent form, think-aloud moderator script, 10-item standard SUS questionnaire, and 4-dimension probe questions table complete. |
 | Phase 4: Participants & Logistics | Masked participant roster schema (`participants.md` - gitignored) | **PASSED** | Checkpoint 4 passed: 8 participants (1 Pilot + 7 P01–P07) confirmed, contact masked (4 middle digits), enrolled_in_hw03 = no verified, consent recorded, .gitignore active. |
 | Phase 5: Pilot Session | Pilot execution, scenario validation, timing calibration (`05-pilot-review.md`) | **PASSED** | Checkpoint 5 passed: Pilot session completed in 142s, scenario validated, SUT & reset verified, benchmark calibrated to <= 150s, 05-pilot-review.md compiled. |
-| Phase 6: Session Execution (P01–P07) | Moderated sessions, raw notes, `sus.csv`, `performance.csv` (1 commit/session) | **IN_PROGRESS** | Conducting 7 moderated think-aloud sessions, recording raw observation logs, SUS ratings, and performance times. |
-| Phase 7: Data Analysis & Synthesis | Automated SUS/performance scoring, qualitative themes, criticality matrix (`06-analysis.md`) | PENDING | Pending Checkpoint 6 sign-off. |
-| Phase 8: Usability Bugs & GitHub Issues | File genuine usability defects on GitHub repository (`07-bugs/`) | PENDING | Pending Checkpoint 7 sign-off. |
+| Phase 6: Session Execution (P01–P07) | Moderated sessions, raw notes, `sus.csv`, `performance.csv` (1 commit/session) | **PASSED** | Checkpoint 6 passed: All 7 moderated sessions executed, standardized into `usability/sessions/<Pxx>/notes.md`, raw data ingested into `sus.csv` & `performance.csv`, 7 atomic Git commits recorded. |
+| Phase 7: Data Analysis & Synthesis | Automated SUS/performance scoring, qualitative themes, criticality matrix (`06-analysis.md`) | **PASSED** | Checkpoint 7 passed: Automated `score_usability.py` run on benchmark 150s, 5 findings cataloged in `findings.csv`, qualitative themes synthesized with participant citations, criticality matrix computed with Major Override for F-01. |
+| Phase 8: Usability Bugs & GitHub Issues | File genuine usability defects on GitHub repository (`07-bugs/`) | **IN_PROGRESS** | Drafting bug reports for F-01 and F-02, capturing evidence, and interactively filing GitHub Issues upon student authorization. |
 | Phase 9: Final Report & Summary | Consolidated report (`08-usability-report.md`), summary, commit suggestions | PENDING | Pending Checkpoint 8 sign-off. |
 
 ---
@@ -59,5 +59,27 @@
 - [x] Time benchmark calibrated: Formally adjusted from $\le 180$s down to $\le 150$s for P01–P07.
 - [x] Pilot review report documented: Compiled in `usability/05-pilot-review.md`.
 - [x] Data boundary enforced: Pilot metrics excluded from final statistical CSVs per Default Plan.
+
+---
+
+## Checkpoint 6 Gate Review (Phase 6: Session Execution)
+- [x] All 7 participant sessions executed and structured into `usability/sessions/<Pxx>/notes.md` (P01 through P07).
+- [x] 100% of rows appended to `usability/data/sus.csv` (7 rows, Q1–Q10 Likert responses).
+- [x] 100% of rows appended to `usability/data/performance.csv` (7 rows, time, outcome, error_count, help_requests).
+- [x] Strict atomic Git timeline: 7 independent commits created (`test(usability): record session P01` through `P07`).
+- [x] Qualitative observation logs include timestamps, think-aloud reactions, and 4-dimension probe answers for each participant.
+
+---
+
+## Checkpoint 7 Gate Review (Phase 7: Data Analysis & Synthesis)
+- [x] Automated scoring script `score_usability.py` executed successfully with calibrated benchmark 150s.
+- [x] SUS statistics verified: Mean $\bar{x} = 76.79$, Median = 77.50, $s = 18.64$, Range: $42.5 - 100.0$.
+- [x] Performance metrics verified: 100% completion rate (85.7% unassisted, 14.3% assisted), 71.4% within benchmark, mean duration 140.9s, average errors 1.29.
+- [x] Quantitative probe dimensions computed: Speed (4.43) and Trust (4.43) rated highest; Error Recovery (3.29) identified as primary friction.
+- [x] Qualitative themes synthesized: 5 findings identified and every synthesis statement cites participant IDs in brackets (`[P01]`, `[P05]`, etc.).
+- [x] Criticality matrix populated in `usability/data/findings.csv` and adjusted with Major Override rule (F-01 elevated to *Fix First (Major Override)*).
+- [x] Consolidated analysis authored in `usability/06-analysis.md`.
+
+
 
 

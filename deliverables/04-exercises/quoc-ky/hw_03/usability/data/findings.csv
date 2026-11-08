@@ -1,1 +1,6 @@
 id,title,type,severity,affected_participants
+F-01,Cryptic error message on coupon condition failure causing checkout deadlock,genuine bug,major,P03;P05
+F-02,Coupon input field does not submit on Enter key press,genuine bug,minor,P01
+F-03,Missing success toast notification upon applying coupon code,usability issue,minor,P01;P07
+F-04,Low visual prominence and discoverability of coupon entry in cart,usability issue,minor,P01;P02
+F-05,Ambiguous dual navigation controls on cart drawer slide-out,usability issue,cosmetic,P06
