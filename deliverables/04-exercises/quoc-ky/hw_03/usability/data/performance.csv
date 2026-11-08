@@ -2,3 +2,4 @@ participant,time_seconds,outcome,error_count,help_requests
 P01,135,success,1,0
 P02,168,success,2,0
 P03,118,success,1,0
+P04,105,success,0,0
