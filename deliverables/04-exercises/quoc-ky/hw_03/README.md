@@ -16,7 +16,7 @@
 | **1** | **Task 1 — GUI Checklist**<br>(Design + Execution + Bug Report) | 30 | *[30 / 30]* | Designed >40 items covering IA-01 to IA-04; reviewed AI drafts; added human items with explicit rationale; executed against SUT; filed detailed GitHub issues with screenshots. See [HW03_Report.md](report/HW03_Report.md) & [Bug_Report.md](report/Bug_Report.md). |
 | **2** | **Task 2 — Usability Evaluation**<br>(Task Scenario + 7 Sessions + Analysis) | 40 | *[40 / 40]* | Conducted 1 pilot + 7 moderated Think-Aloud sessions with real participants outside class; scored SUS according to standard Brooke formula; ranked findings via Criticality matrix ($S \times P$); reported bugs. |
 | **3** | **Task 3 — Cross-Browser / Cross-Platform**<br>(≥ 3 Platforms) | 20 | *[20 / 20]* | Executed checklist across 3 platforms (Chrome, Firefox, Safari/Expo Go mobile); captured empirical screenshots featuring mandatory student email/ID overlay and localhost URL. |
-| **4** | **Task 4 — Agent Skills & Demos** | 10 | *[10 / 10]* | Developed reusable agent skills (`gui-checklist-coach`, `hw-ai-audit`) and recorded end-to-end demonstration videos published on YouTube. |
+| **4** | **Task 4 — Agent Skills & Demos** | 10 | *[10 / 10]* | Developed reusable agent skills (`gui-checklist-coach`, `usability-evaluation-coach`) and recorded end-to-end demonstration videos published on YouTube. |
 | | **Total Grade** | **100** | **[100 / 100]** | |
 
 ---
@@ -44,7 +44,7 @@
 ## 3. Demonstration Videos (YouTube Links)
 
 - **Agent Skill 1: GUI Checklist Coach Walkthrough:** `[Insert YouTube URL]`
-- **Agent Skill 2: AI Audit Log Extraction:** `[Insert YouTube URL]`
+- **Agent Skill 2: Usability Evaluation Coach Walkthrough:** `[Insert YouTube URL]`
 
 ---
 
