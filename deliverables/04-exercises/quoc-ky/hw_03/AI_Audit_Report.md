@@ -74,7 +74,9 @@ Aggregate the verdicts from Section 3 and complete the table below.
 
 ## **5. Conclusion — When should AI be used (or not)?**
 
-*(In progress — to be finalized at the conclusion of all testing phases as per assignment guidelines).*
+Quá trình cộng tác với AI (Gemini 3.8 Flash) trong HW03 đã chứng minh AI là công cụ tăng tốc vượt trội trong việc phác thảo kế hoạch kiểm thử, xây dựng script tự động hóa, cấu trúc hóa biên bản phiên test và tính toán các chỉ số thống kê chuẩn hóa (SUS, ma trận Criticality). Tuy nhiên, 7/24 artifacts (29.17%) bị đánh giá INCOMPLETE do AI thường xuyên gặp ảo giác về DOM frontend, tự suy diễn cơ chế bàn phím, và bỏ sót các thuộc tính phi chức năng sâu (chuẩn bản địa hóa tiền tệ vi-VN, độ tương phản WCAG 2.1 AA, kích thước vùng chạm touch target WCAG 2.5.5).
+
+**Khuyến nghị:** Nên tận dụng AI tối đa cho các tác vụ khởi tạo khung làm việc, sinh mã script và chuẩn hóa cấu trúc báo cáo; tuyệt đối không dùng AI để thay thế việc quan sát thực nghiệm trên trình duyệt thật hoặc tự ý đưa ra kết luận Pass/Fail. Kỹ sư kiểm thử con người bắt buộc phải giữ vai trò phản biện trung tâm (Human-in-the-Loop) để bảo đảm tính xác thực, độ tin cậy và chất lượng toàn diện của sản phẩm phần mềm.
 
 ## **6. Mandatory Disclosure (paste verbatim)**
 
