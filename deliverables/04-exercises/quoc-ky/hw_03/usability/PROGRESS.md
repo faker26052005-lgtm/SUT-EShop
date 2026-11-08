@@ -29,7 +29,7 @@
 | Phase 6: Session Execution (P01–P07) | Moderated sessions, raw notes, `sus.csv`, `performance.csv` (1 commit/session) | **PASSED** | Checkpoint 6 passed: All 7 moderated sessions executed, standardized into `usability/sessions/<Pxx>/notes.md`, raw data ingested into `sus.csv` & `performance.csv`, 7 atomic Git commits recorded. |
 | Phase 7: Data Analysis & Synthesis | Automated SUS/performance scoring, qualitative themes, criticality matrix (`06-analysis.md`) | **PASSED** | Checkpoint 7 passed: Automated `score_usability.py` run on benchmark 150s, 5 findings cataloged in `findings.csv`, qualitative themes synthesized with participant citations, criticality matrix computed with Major Override for F-01. |
 | Phase 8: Usability Bugs & GitHub Issues | File genuine usability defects on GitHub repository (`07-bugs/`) | **PASSED** | Checkpoint 8 passed: 2 genuine usability bugs filed as GitHub issues (#159, #160) on faker26052005-lgtm/SUT-EShop with commit-pinned evidence images (e289d73), drafts and findings.csv synchronized. |
-| Phase 9: Final Report & Summary | Consolidated report (`08-usability-report.md`), summary, commit suggestions | **IN_PROGRESS** | Compiling final consolidated report in English, updating usability-summary.md for root README.md. |
+| Phase 9: Final Report & Summary | Consolidated report (`08-usability-report.md`), summary, commit suggestions | **PASSED** | Checkpoint 9 passed: Final consolidated usability report `08-usability-report.md` compiled, executive `usability-summary.md` created, root `README.md` metrics updated, commit sequence reconciled. |
 
 ---
 
@@ -88,6 +88,15 @@
 - [x] Genuine defect F-01 filed as GitHub Issue [#159](https://github.com/faker26052005-lgtm/SUT-EShop/issues/159) with `severity:Major`, `usability`, `platform:Chrome`.
 - [x] Genuine defect F-02 filed as GitHub Issue [#160](https://github.com/faker26052005-lgtm/SUT-EShop/issues/160) with `severity:Minor`, `usability`, `platform:Chrome`.
 - [x] Issue numbers and permanent URLs synchronized into `usability/07-bugs/F-01.md`, `usability/07-bugs/F-02.md`, and `usability/data/findings.csv`.
+
+---
+
+## Checkpoint 9 Gate Review (Phase 9: Final Report & Summary)
+- [x] Comprehensive, consolidated Task 2 Usability Report authored in `usability/08-usability-report.md` (9 detailed sections covering Plan, Scenario, Reset, Pilot, SUS, Performance, Probe dimensions, Criticality, GitHub Issues, UX Recommendations, Limitations).
+- [x] Executive Usability Summary compiled in `usability/usability-summary.md`.
+- [x] Root `README.md` test summary table reconciled and updated with verified metrics.
+- [x] All Git commits clean, atomic, and conforming to conventional commit guidelines.
+
 
 
 

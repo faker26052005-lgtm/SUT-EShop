@@ -27,17 +27,17 @@
 |---|---|---|
 | **Screens Tested (Task 1 & 3)** | $\ge 1$ screen (2 recommended) | **2 screens:** `Cart` & `Checkout` |
 | **Usability Flow Tested (Task 2)** | 1 End-to-End User Flow | `Product Selection → Add to Cart → Apply Coupon → Checkout` |
-| **Checklist Items Designed** | $> 40$ items | *[e.g., 48 items]* |
-| **Checklist Items Executed (per platform)** | Complete execution on $\ge 3$ platforms | *[e.g., 48 per platform]* |
-| **Checklist Passed (Platform 1: Chrome)** | Audited Pass/Fail | *[e.g., 42 Passed]* |
-| **Checklist Failed (Platform 1: Chrome)** | Audited with Notes & Screenshots | *[e.g., 6 Failed]* |
-| **Checklist Passed (Platform 2: Firefox)** | Audited Pass/Fail | *[e.g., 41 Passed]* |
-| **Checklist Failed (Platform 2: Firefox)** | Audited with Notes & Screenshots | *[e.g., 7 Failed]* |
-| **Checklist Passed (Platform 3: Safari/Mobile)**| Audited Pass/Fail | *[e.g., 39 Passed]* |
-| **Checklist Failed (Platform 3: Safari/Mobile)**| Audited with Notes & Screenshots | *[e.g., 9 Failed]* |
-| **Genuine Bugs Discovered & Logged** | Reported in Markdown + GitHub Issues | *[e.g., 8 Bugs]* |
-| **Real Usability Participants Tested** | Exactly 7 non-classmate participants | **7 participants** (`P01` to `P07`) + 1 pilot (`P00`) |
-| **Average System Usability Score (SUS)**| Evaluated vs. industry avg (68) | *[e.g., 63.9 / 100]* |
+| **Checklist Items Designed** | $> 40$ items | **73 items** (70 AI + 3 Human items across IA-01..IA-04) |
+| **Checklist Items Executed (per platform)** | Complete execution on $\ge 3$ platforms | **73 per platform** (100% executed on Chrome, Firefox, Safari) |
+| **Checklist Passed (Platform 1: Chrome)** | Audited Pass/Fail | **51 Passed** |
+| **Checklist Failed (Platform 1: Chrome)** | Audited with Notes & Screenshots | **22 Failed** (Audited with empirical screenshots) |
+| **Checklist Passed (Platform 2: Firefox)** | Audited Pass/Fail | **51 Passed** |
+| **Checklist Failed (Platform 2: Firefox)** | Audited with Notes & Screenshots | **22 Failed** (Audited with empirical screenshots) |
+| **Checklist Passed (Platform 3: Safari/Mobile)**| Audited Pass/Fail | **51 Passed** |
+| **Checklist Failed (Platform 3: Safari/Mobile)**| Audited with Notes & Screenshots | **22 Failed** (Audited with empirical screenshots) |
+| **Genuine Bugs Discovered & Logged** | Reported in Markdown + GitHub Issues | **24 Bugs** (22 GUI Bugs #117–#138 + 2 Usability Bugs #159, #160) |
+| **Real Usability Participants Tested** | Exactly 7 non-classmate participants | **7 participants** (`P01` to `P07`) + 1 pilot (`PILOT`) |
+| **Average System Usability Score (SUS)**| Evaluated vs. industry avg (68) | **76.79 / 100** (Median: 77.50; +8.79 vs. industry avg ~68.0) |
 
 ---
 
