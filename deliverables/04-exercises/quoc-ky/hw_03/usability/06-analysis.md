@@ -147,18 +147,18 @@ Where:
 
 | ID | Title | Type | Severity | Affected ($n=7$) | Prob | Criticality | Priority Band | Recommended Action |
 |:---:|---|:---:|:---:|:---:|:---:|:---:|:---:|---|
-| **F-01** | Cryptic error message on coupon condition failure causing checkout deadlock | `genuine bug` | **Major (3)** | `[P03, P05]` (2) | 0.29 | 0.86 | **Fix First (Major Override)** | Display specific backend error messages (e.g., minimum order requirement, trim trailing spaces). File GitHub Issue. |
+| **F-01** | Cryptic error message on coupon condition failure causing checkout deadlock | `genuine bug` | **Major (3)** | `[P03, P05]` (2) | 0.29 | 0.86 | **Fix First (Major Override)** | Display specific backend error messages (min order requirement, trim trailing spaces). Filed as GitHub Issue [#159](https://github.com/faker26052005-lgtm/SUT-EShop/issues/159). |
 | **F-03** | Missing success toast notification upon applying coupon code | `usability issue` | **Minor (2)** | `[P01, P07]` (2) | 0.29 | 0.57 | **Medium** | Add green success toast: *"Áp dụng mã SAVE10 thành công (-10%)"*. |
 | **F-04** | Low visual prominence and discoverability of coupon entry in cart | `usability issue` | **Minor (2)** | `[P01, P02]` (2) | 0.29 | 0.57 | **Medium** | Enhance container border, add promo tag icon, increase touch target. |
-| **F-02** | Coupon input field does not submit on Enter key press | `genuine bug` | **Minor (2)** | `[P01]` (1) | 0.14 | 0.29 | **Low** | Bind `onKeyDown` (Enter) to trigger coupon verification function. File GitHub Issue. |
+| **F-02** | Coupon input field does not submit on Enter key press | `genuine bug` | **Minor (2)** | `[P01]` (1) | 0.14 | 0.29 | **Low** | Bind `onKeyDown` (Enter) to trigger coupon verification function. Filed as GitHub Issue [#160](https://github.com/faker26052005-lgtm/SUT-EShop/issues/160). |
 | **F-05** | Ambiguous dual navigation controls on cart drawer slide-out | `usability issue` | **Cosmetic (1)** | `[P06]` (1) | 0.14 | 0.14 | **Low** | Add visual hierarchy distinction between "View Cart" and "Instant Checkout". |
 
 ---
 
 ## 4. Synthesis Conclusions & Phase 8 Transition
-- **Genuine Functional Bugs (for GitHub Issues in Phase 8):**
-  1. `F-01`: Cryptic coupon error message causing task deadlock (`Major`, Priority: *Fix First*).
-  2. `F-02`: Coupon input field ignores Enter key press (`Minor`, Priority: *Low*).
+- **Genuine Functional Bugs Filed as GitHub Issues:**
+  1. `F-01`: Cryptic coupon error message causing task deadlock (`Major`, Priority: *Fix First*) $\rightarrow$ GitHub Issue [#159](https://github.com/faker26052005-lgtm/SUT-EShop/issues/159).
+  2. `F-02`: Coupon input field ignores Enter key press (`Minor`, Priority: *Low*) $\rightarrow$ GitHub Issue [#160](https://github.com/faker26052005-lgtm/SUT-EShop/issues/160).
 - **Usability Enhancement Recommendations (for Final Report):**
   - `F-03`: Success toast notification for discounts.
   - `F-04`: Visual accent and contrast enhancement for the cart coupon section.
