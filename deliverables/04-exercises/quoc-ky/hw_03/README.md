@@ -43,8 +43,8 @@
 
 ## 3. Demonstration Videos (YouTube Links)
 
-- **Agent Skill 1: GUI Checklist Coach Walkthrough:** `[Insert YouTube URL]`
-- **Agent Skill 2: Usability Evaluation Coach Walkthrough:** `[Insert YouTube URL]`
+- **Agent Skills Demonstration (`gui-checklist-coach` & `usability-evaluation-coach`):** [https://www.youtube.com/watch?v=hHmWuolx5Dk](https://www.youtube.com/watch?v=hHmWuolx5Dk)  
+  *(Comprehensive walkthrough of both agent skills: GUI checklist 7-phase execution, Pilot & Batch GitHub automation, think-aloud usability evaluation, and automated SUS/Criticality computation).*
 
 ---
 

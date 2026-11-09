@@ -260,8 +260,7 @@ skills/
 
 | Skill Name | Demonstrated Capabilities | YouTube Demonstration Link |
 |---|---|:---:|
-| **GUI Checklist Coach** | Scope mapping, taxonomy alignment, binary item review, Excel generation, Pilot & Batch GitHub issue creation | `[Insert YouTube Walkthrough URL]` |
-| **Usability Evaluation Coach** | Scenario planning, think-aloud session note structuring, automated SUS scoring script, Criticality override ranking | `[Insert YouTube Walkthrough URL]` |
+| **Agent Skills Demonstration**<br>(`gui-checklist-coach` & `usability-evaluation-coach`) | End-to-end demonstration: GUI checklist scoping, taxonomy alignment, binary review, Excel generation, Pilot & Batch GitHub issues, and moderated usability evaluation with Think-Aloud protocol, automated Brooke SUS calculation, and Criticality override ranking | [https://www.youtube.com/watch?v=hHmWuolx5Dk](https://www.youtube.com/watch?v=hHmWuolx5Dk) |
 
 ---
 
