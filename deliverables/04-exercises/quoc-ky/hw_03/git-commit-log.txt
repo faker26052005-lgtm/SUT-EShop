@@ -234,3 +234,4 @@ b6a8f16 | 2026-11-08 08:11:49 +0700 | Nguyen Quoc Ky | docs(report): assemble fi
 1f48a92 | 2026-11-08 08:32:31 +0700 | Nguyen Quoc Ky | docs(report): record student AI critique in Vietnamese and finalize audit conclusion
 d5ed0b3 | 2026-11-08 08:33:11 +0700 | Nguyen Quoc Ky | docs(readme): update agent skills references to reflect actual developed skills
 849dcd1 | 2026-11-09 15:32:19 +0700 | Nguyen Quoc Ky | docs(report): embed agent skills demonstration video link and presentation script
+6bd083b | 2026-11-09 15:49:14 +0700 | Nguyen Quoc Ky | docs(report): add PDF reports and export git commit log
