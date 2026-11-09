@@ -1,4 +1,4 @@
-# AI Critique (200–300 Từ, Bắt Buộc)
+# AI Critique 
 
 **Môn học:** Kiểm thử phần mềm (CSC13003) – FIT @ HCMUS  
 **Họ và tên:** Nguyễn Quốc Kỳ  
@@ -14,7 +14,7 @@
 
 ---
 
-### Phản Biện Của Sinh Viên (Student Critique)
+### Student Critique
 
 Trong suốt quy trình đánh giá độ khả dụng, trợ lý AI đóng vai trò là công cụ tăng tốc hiệu quả để soạn thảo kế hoạch kiểm thử, cấu trúc hóa biên bản và tính toán các chỉ số chuẩn hóa. Tuy nhiên, nhiều lỗ hổng và ảo giác (hallucination) nghiêm trọng đã xuất hiện:
 
@@ -24,9 +24,4 @@ Trong suốt quy trình đánh giá độ khả dụng, trợ lý AI đóng vai 
 
 **Bài học rút ra:** AI chỉ là trợ lý tăng tốc công việc cơ học, hoàn toàn không thể thay thế kỹ sư QA. Con người bắt buộc phải giữ vai trò phản biện trung tâm, luôn đối chiếu đề xuất của AI trên ứng dụng thật và giữ vững tính liêm chính dựa trên bằng chứng quan sát thực tế.
 
----
 
-### Xác Minh Số Lượng Từ (Word Count Verification)
-
-- **Số lượng từ:** **292 từ** (Đáp ứng nghiêm ngặt ngưỡng yêu cầu: **200–300 từ** theo §10 đề bài).
-- **Trạng thái:** **PASSED** (Đạt chuẩn quy chế bài tập).
