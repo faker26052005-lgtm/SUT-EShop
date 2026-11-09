@@ -48,12 +48,36 @@
 
 ---
 
-## 4. Deliverables Index
+## 4. Deliverables Index & Submission Architecture
 
-- **Main Testing Report:** [`HW03_Report.md`](HW03_Report.md) (and `HW03_Report.pdf`)
-- **Defect Bug Report:** [`Bug_Report.md`](Bug_Report.md) (and `Bug_Report.pdf`)
-- **AI Audit Report:** [`AI_Audit_Report.md`](AI_Audit_Report.md) (and `AI_Audit_Report.pdf`)
-- **AI Critique (200–300 words):** [`AI_Critique.md`](AI_Critique.md) (and `AI_Critique.pdf`)
-- **Implementation Plan:** [`PLAN.md`](PLAN.md)
-- **Execution Checklist (Excel):** `hw03-gui-checklist/checklist.xlsx` *(generated in Phase 4)*
-- **Git Commit Log:** `submission/git-commit-log.txt` *(exported in Phase 10)*
+Tất cả các tài liệu nộp bài được tổ chức khoa học, tuân thủ nghiêm ngặt quy chế §14 ([hw03.md](hw03.md)) và giải quyết triệt để giới hạn dung lượng tải lên của Moodle ($\le 20\text{ MB}$):
+
+### 4.1 Báo cáo & Tài liệu nghiệm thu (Reports & Documents)
+
+| Tài liệu | Định dạng | Mục đích & Nội dung chi tiết |
+|---|:---:|---|
+| **Main Testing Report** | [`HW03_Report.md`](HW03_Report.md)<br>[`HW03_Report.pdf`](HW03_Report.pdf) | Báo cáo chính toàn diện kết hợp: Task 1 (Thiết kế & thực thi 73 items GUI Checklist), Task 2 (Kế hoạch, kịch bản, bảng điểm SUS 76.79 trên 7 người dùng), Task 3 (Ma trận so sánh cross-platform Chrome/Firefox/Safari), và Task 4 (Tổng quan 2 Agent Skills). |
+| **Defect Bug Report** | [`Bug_Report.md`](Bug_Report.md)<br>[`Bug_Report.pdf`](Bug_Report.pdf) | Báo cáo chi tiết **24 lỗi thực tế** (22 lỗi GUI #117–#138, 2 lỗi Usability #159, #160). Mỗi lỗi đều được đặc tả theo chuẩn IEEE 829 với đầy đủ bước tái hiện, kết quả mong đợi/thực tế và ảnh minh chứng nhúng trực tiếp. |
+| **AI Audit Report** | [`AI_Audit_Report.md`](AI_Audit_Report.md)<br>[`AI_Audit_Report.pdf`](AI_Audit_Report.pdf) | Phụ lục kiểm toán bắt buộc ghi nhận chi tiết 24 artifacts tương tác AI theo chuẩn FIT@HCMUS, có đầy đủ prompt, output, phán quyết, trích dẫn ISTQB FL v4.0 và kết luận. |
+| **AI Critique** | [`AI_Critique.md`](AI_Critique.md)<br>[`AI_Critique.pdf`](AI_Critique.pdf) | Đoạn văn phản biện bắt buộc 200–300 từ (thực tế: **292 từ**) do sinh viên trực tiếp đúc kết từ trải nghiệm thực tế với AI, phân tích ảo giác DOM/CSS, thiên kiến US và bài học về vai trò trung tâm của con người. |
+| **Git Commit Log** | [`git-commit-log.txt`](git-commit-log.txt) | Toàn bộ lịch sử commit Git định dạng chuẩn `%h \| %ad \| %an \| %s`, phản ánh timeline thực tế của từng bước kiểm thử (checklist, review, execution, 7 sessions, bugs, reports). |
+| **YouTube Video Demo** | [`youtube-demo-link.txt`](youtube-demo-link.txt) | File text độc lập lưu trữ thông tin sinh viên, kịch bản tóm tắt và đường link video YouTube trình diễn trọn vẹn 2 Agent Skills: [https://www.youtube.com/watch?v=hHmWuolx5Dk](https://www.youtube.com/watch?v=hHmWuolx5Dk). |
+
+### 4.2 Dữ liệu kiểm thử & Hồ sơ minh chứng (Test Artifacts & Evidence)
+
+| Hạng mục | Thư mục / File | Mô tả chi tiết |
+|---|---|---|
+| **GUI Checklist** | [`hw03-gui-checklist/`](hw03-gui-checklist/) | Gồm file bảng tính `checklist.xlsx` (73 items phủ 4 khía cạnh IA-01..IA-04, có công thức đếm động cho 3 nền tảng), bản sao `checklist.md`, và báo cáo đối chiếu `test-summary.md`. |
+| **Hồ sơ Usability** | [`usability/`](usability/) | Kế hoạch kiểm thử (`01-test-plan.md`), kịch bản nhiệm vụ (`02-task-scenario.md`), bộ công cụ tiếng Việt (`03-instruments-vi.md`), báo cáo pilot (`05-pilot-review.md`), ghi chép 7 phiên thực tế (`sessions/P01..P07`), dữ liệu định lượng (`data/*.csv`), và báo cáo tổng kết (`08-usability-report.md`). |
+| **Danh sách 7 người tham gia** | [`usability/participants.md`](usability/participants.md) | Bảng thông tin 7 người tham gia thực tế ngoài lớp + 1 pilot (đã che 4 số giữa SĐT để bảo mật). File này được đưa vào gói ZIP để phục vụ TA gọi ngẫu nhiên hậu kiểm (§11). |
+| **Mã nguồn Agent Skills** | [`skills/`](skills/) | Mã nguồn hoàn chỉnh của 2 skills: `gui-checklist-coach` và `usability-evaluation-coach`, kèm các script tự động hóa (`generate_checklist_excel.py`, `create_github_issues.py`, `score_usability.py`). |
+| **Kịch bản Demo Video** | [`Agent-Skill-script-HW03.md`](Agent-Skill-script-HW03.md) | Bản kịch bản chi tiết từng bước, lời thoại và thao tác quay màn hình cho video demo 2 Agent Skills. |
+
+### 4.3 Lưu ý về Hình ảnh Minh chứng & Giới hạn dung lượng Moodle (20 MB)
+
+> [!NOTE]
+> **Giải pháp tối ưu dung lượng gói nộp bài:**
+> 1. **Hiển thị trực quan:** Toàn bộ 81 ảnh minh chứng lỗi giao diện đa nền tảng đã được **nhúng trực tiếp, sắc nét trong file `Bug_Report.pdf` và `HW03_Report.pdf`** để Giảng viên và TA thuận tiện xem và chấm điểm ngay lập tức.
+> 2. **Lưu trữ gốc trên GitHub:** Do hệ thống Moodle giới hạn file tải lên tối đa **20 MB**, toàn bộ 81 file ảnh PNG gốc chất lượng cao (~39 MB) được lưu trữ vĩnh viễn trên repository:  
+>    🔗 **Remote Evidence:** [`faker26052005-lgtm/SUT-EShop/evidence/screenshots`](https://github.com/faker26052005-lgtm/SUT-EShop/tree/QuocKy-HW03/deliverables/04-exercises/quoc-ky/hw_03/evidence/screenshots)  
+>    Từng issue trên GitHub (`#117`–`#138`) và từng mục trong file Markdown đều liên kết trực tiếp (commit-pinned) tới các ảnh này.

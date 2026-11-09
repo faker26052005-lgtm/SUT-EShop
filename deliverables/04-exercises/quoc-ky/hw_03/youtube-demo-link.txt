@@ -1,0 +1,28 @@
+HW03 – GUI & Usability Testing Demonstration Video
+Student Name: Nguyễn Quốc Kỳ
+Student ID: 23120138
+Email: quockinguyen.lv@gmail.com
+Course: Software Testing (CSC13003) – FIT @ HCMUS
+Target Repository: https://github.com/faker26052005-lgtm/SUT-EShop
+
+================================================================================
+YouTube Video Demonstration Link:
+https://www.youtube.com/watch?v=hHmWuolx5Dk
+================================================================================
+
+Video Overview & Content Covered:
+1. Agent Skill 1: gui-checklist-coach
+   - 7-Phase GUI testing workflow conforming to Course Lecture S13.
+   - Requirement-to-screen mapping (Cart -> FR-07, Checkout -> FR-08, FR-09).
+   - Seed taxonomy alignment across IA-01 to IA-04 (>40 items target, 73 items achieved).
+   - Deduplication and Human Gap Analysis (touch targets WCAG 2.5.5, keyboard flow WCAG 2.1.1, vi-VN currency formatting).
+   - Automated Excel workbook generation (checklist.xlsx) with dynamic Pass/Fail formulas.
+   - GitHub Issue automation with Dry-run -> Pilot (#117) -> Batch (#118-#138) protocol.
+
+2. Agent Skill 2: usability-evaluation-coach
+   - Moderated Think-Aloud usability testing lifecycle on purchase flow.
+   - Natural, goal-oriented task scenario and reset protocol.
+   - 7 Non-IT participants outside class (P01-P07) + 1 Pilot.
+   - Automated quantitative SUS calculation (Brooke 1996 formula: Mean 76.79 / 100).
+   - Criticality prioritization matrix with Small-Sample Major Override rule.
+   - Automated filing of genuine usability defects (#159, #160).
