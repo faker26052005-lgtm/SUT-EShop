@@ -236,3 +236,5 @@ d5ed0b3 | 2026-11-08 08:33:11 +0700 | Nguyen Quoc Ky | docs(readme): update agen
 849dcd1 | 2026-11-09 15:32:19 +0700 | Nguyen Quoc Ky | docs(report): embed agent skills demonstration video link and presentation script
 6bd083b | 2026-11-09 15:49:14 +0700 | Nguyen Quoc Ky | docs(report): add PDF reports and export git commit log
 8e66ea2 | 2026-11-09 15:49:22 +0700 | Nguyen Quoc Ky | docs(log): synchronize git commit log with latest commit
+71aadca | 2026-11-09 15:49:36 +0700 | Nguyen Quoc Ky | docs(log): finalize git commit log for submission
+fb0c182 | 2026-11-09 16:00:41 +0700 | Nguyen Quoc Ky | refactor(report): move all reports to root directory and remove report folder
