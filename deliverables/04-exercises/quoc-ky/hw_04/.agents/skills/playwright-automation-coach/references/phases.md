@@ -102,18 +102,21 @@ Tài liệu này chi tiết hóa từng bước thực hiện, mục tiêu và �
 ## Phase 6: Rà soát & Phân tích Khoảng cách (Review & Gap Analysis)
 **Mục tiêu:** Sinh viên rà soát mã nguồn AI sinh, sửa lỗi, và viết phân tích khoảng cách bằng chính ngôn ngữ của mình.
 
-1. Sử dụng `references/review-checklist.md` rà soát từng spec và page object:
-   - Selector dễ vỡ (fragile selectors)?
-   - Assertion yếu hoặc thiếu (weak/missing assertions)?
-   - Chờ cố định flaky (`waitForTimeout`)?
-   - Thiếu edge case hoặc phân vùng tương đương?
-   - Sai lệch kết quả mong đợi so với SRS?
+### 5 Tiêu chí Đánh giá Script cần Chỉnh sửa:
+1. **Độ bền vững của Selector (Locators):** Thay thế CSS class dài, layout-dependent (`button.btn-primary.mt-2`, `div > span:nth-child(2)`) và XPath tuyệt đối bằng **Accessible Locators** (`getByRole`, `getByLabel`, `getByPlaceholder`, `getByTestId`).
+2. **Cơ chế chờ đợi & Triệt tiêu Flakiness (Waits):** Loại bỏ 100% `page.waitForTimeout()` hoặc `sleep()` cố định (bị đề bài cấm). Thay bằng **Web-first Assertions** tự động retry (`await expect(locator).toBeVisible()`) hoặc `page.waitForResponse()`.
+3. **Chất lượng & Đa dạng Assertion:** Bắt buộc phối hợp $\ge 3$ nhóm assertion khác nhau (`toHaveURL`, `toBeVisible`, `toHaveText`, network response status); thay thế các assertion yếu (`toBeTruthy`, non-retrying) bằng web-first retry assertions.
+4. **Cách ly Dữ liệu & Trạng thái (Test Independence):** Loại bỏ việc dùng chung tài khoản cố định gây kẹt counter khóa 180s (FR-02); tích hợp API helper `registerFreshUser()` để mỗi test có 1 user riêng; bổ sung hook `afterEach` xóa coupon test (FR-17).
+5. **Độ chính xác theo Đặc tả SRS:** Kết quả mong đợi phải bám sát `specs/system_requirements_specification.md`, không sao chép theo hành vi lỗi hiện tại của app. Nếu app khác SRS thì expected vẫn giữ theo SRS để ghi nhận bug.
+
+### Các bước thực hiện:
+1. Đối chiếu mã nguồn AI Draft với 5 tiêu chí trên và checklist chi tiết tại [`references/review-checklist.md`](review-checklist.md).
 2. Ghi nhận vào bảng Gap Analysis trong `docs/main-report.md`:
    | STT | Feature | Case ID | Lỗi của AI | Phân loại | Cách sinh viên sửa | Nguyên nhân AI mắc lỗi |
    | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 3. **Quy tắc quan trọng:** AI chỉ gợi ý phân loại; sinh viên phải tự viết cột nguyên nhân và chọn ra ít nhất 1 lỗi điển hình để thuyết minh trong video demo.
 4. **Checkpoint 6 đạt khi:**
-   - Bảng phân tích khoảng cách có đầy đủ các mục sửa thực tế, kèm diff tương ứng trong Git.
+   - Bảng phân tích khoảng cách có đầy đủ các mục sửa thực tế, kèm diff tương ứng trong Git (`fix(...)`).
 
 ---
 
