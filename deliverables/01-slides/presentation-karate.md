@@ -298,7 +298,7 @@ Tập trung vào logic nghiệp vụ và chất lượng kiểm thử thay vì b
     <tr>
       <td><code>contains deep</code></td>
       <td>Khớp thuộc tính lồng nhau</td>
-      <td><code>match response[0] contains { id: '#number' }</code></td>
+      <td><code>match each response contains { id: '#number' }</code></td>
     </tr>
   </tbody>
 </table>
@@ -396,20 +396,48 @@ Không có công cụ nào tự động chống False Positive; chính kiến tr
 
 <!-- Slide 9: Matrix K2 & Discrepancies -->
 
-# Ma Trận K2: Đối Soát Hành Vi Thực Tế vs Kiểm Chứng Đặc Tả
+# Ma Trận K2: Kiểm Chứng Đặc Tả & Bắt Trọn Khiếm Khuyết SUT
 
-| Case kiểm thử | ID Sản phẩm | Mục đích kiểm thử | Hành vi Backend SUT | Assertion áp dụng trong kịch bản |
-|:---:|:---:|---|---|---|
-| **Case 1** | `1` | **Happy Path** (ID lẻ chuẩn) | Trả về `price: 30000000` (Number) | `match response contains { price: '#number' }` |
-| **Case 2** | `2` | **Characterization** (ID chẵn lệch kiểu) | Trả về `price: "28000000"` (String) | `match response contains { price: '#string' }` |
-| **Case 3** | `9999` | **Characterization** (ID không tồn tại) | Trả về `200 OK` + `{}` (thay vì 404) | `status 200` & `match response == {}` |
+| Case kiểm thử | ID Sản phẩm | Kỳ vọng theo Đặc tả (Spec) | Hành vi Backend SUT | Kết quả (Verdict) | Ý nghĩa kiểm thử |
+|:---:|:---:|---|---|:---:|---|
+| **Case 1** | `1` | `status 200` & `price: '#number'` | Trả về `price: 30000000` (Number) | ✅ **PASSED** | **Happy Path:** Chuẩn mực đặc tả |
+| **Case 2** | `2` | `status 200` & `price: '#number'` | Trả về `price: "28000000"` (String) | ❌ **FAILED** | **BẮT LỖI 1:** Sai lệch kiểu dữ liệu |
+| **Case 3** | `9999` | `status 404` | Trả về `200 OK` + `{}` | ❌ **FAILED** | **BẮT LỖI 2:** Vi phạm chuẩn RESTful 404 |
 
-### ⚠️ Lưu ý kỹ thuật về cơ chế so khớp Object rỗng trong Karate:
-* Trong Karate, cú pháp `match response contains {}` **luôn luôn trả về TRUE với mọi JSON Object** (kể cả object có chứa thuộc tính), do đó hoàn toàn vô giá trị trong việc chứng minh response rỗng!
-* Để khẳng định chính xác response trả về một JSON Object rỗng, bắt buộc phải sử dụng phép so khớp bằng tuyệt đối: match response == {}
+<div class="highlight-box">
+<b>Tư duy kiểm thử chuẩn mực:</b> Nhóm không thỏa hiệp với lỗi của SUT để "ép xanh" báo cáo. Hai ca FAILED chính là <b>Bằng chứng kiểm thử (Defect Evidence)</b> minh bạch nhất để QA yêu cầu đội ngũ lập trình viên sửa lỗi!
+</div>
 
 ---
 
+<!-- Slide 10: Execution Results & SUT Defects -->
+
+# Kết Quả Thực Nghiệm: Báo Cáo HTML & Khiếm Khuyết SUT
+
+<div class="grid-2">
+<div class="card-blue">
+
+### 📊 Chỉ số thực thi trên `karate-summary.html`
+* **Kịch bản K1 (@smoke):** **`100% Passed`** — Danh mục đáp ứng hoàn hảo schema qua `match each`.
+* **Kịch bản K2 (@data-driven):** **`1 Passed, 2 Failed`** — Bắt trọn 2 lỗi lệch đặc tả của SUT.
+* **Kịch bản K3 (@e2e):** **`100% Passed`** — 7 bước mua hàng và ca bảo mật 401 hoạt động bền bỉ.
+* **Tổng thời gian thực thi:** **~350 mili-giây** (Cực nhanh qua JVM HTTP Client).
+
+</div>
+<div class="card-red">
+
+### 🚨 Bằng chứng 2 khiếm khuyết của SUT EShop
+* **Khiếm khuyết 1 (Sai kiểu dữ liệu ở ID chẵn):** `GET /api/products/2` trả về `price: "28000000"` (String) thay vì Number, gây lỗi số học khi tính tổng tiền.
+* **Khiếm khuyết 2 (Thiếu mã lỗi RESTful 404):** `GET /api/products/9999` trả về `200 OK` kèm `{}` thay vì `404 Not Found`, gây crash client ứng dụng di động.
+
+</div>
+</div>
+
+<div class="highlight-box">
+Báo cáo HTML là <b>Bằng chứng kiểm thử (Test Evidence)</b> độc lập, minh bạch, sẵn sàng đính kèm trực tiếp vào ticket lỗi cho đội ngũ Backend Developer.
+</div>
+
+---
 
 <!-- Slide 11: Multi-Tool Synergy & Limitations -->
 
@@ -436,5 +464,30 @@ Không có công cụ nào tự động chống False Positive; chính kiến tr
 
 <div class="highlight-box">
 <b>Đánh giá khách quan:</b> Không có một công cụ vạn năng duy nhất. Sự kết hợp hiệp đồng giữa Postman, Pact và Karate tạo nên chiến lược bảo đảm chất lượng toàn diện cho hệ thống.
+</div>
+
+---
+
+<!-- Slide 12: Conclusion & Q&A -->
+
+# Tổng Kết & Thảo Luận (Q&A)
+
+<div class="grid-2">
+<div class="card">
+
+### 🎯 3 Thông điệp kỹ thuật đúc kết
+1. **Tinh gọn & Thực chiến:** Karate BDD DSL loại bỏ hoàn toàn mã trung gian (No Step Definitions), tích hợp thẳng HTTP Engine và Fuzzy Matchers.
+2. **Đối soát trung thực:** Phân định Characterization Test vs Specification Test giúp ghi nhận và bắt trọn khiếm khuyết SUT mà không ép xanh kịch bản.
+3. **Sẵn sàng CI/CD:** Email động (Timestamp) cô lập dữ liệu triệt để, bộ test suite sẵn sàng làm cổng kiểm soát chất lượng tự động.
+
+</div>
+<div class="card">
+
+### 🤝 Liên kết & Chuyển giao Seminar
+* **Mã nguồn:** Toàn bộ kịch bản và báo cáo tại `tests/karate/`.
+* **Cầu nối sang AI Agent:** Bộ kịch bản K1–K3 này là chuẩn mực (*Ground Truth*) để phần tiếp theo kiểm chứng khả năng tự động sinh test của **AI Agent + Skill `api-test-design`**!
+* **Hỏi đáp (Q&A):** Rất mong nhận được các câu hỏi thảo luận từ Thầy và các bạn!
+
+</div>
 </div>
 

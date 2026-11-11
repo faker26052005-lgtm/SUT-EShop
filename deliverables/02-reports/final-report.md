@@ -341,8 +341,8 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
       And match response == '#[]'
       And assert response.length > 0
 
-      # Step 4: Kiểm tra schema của phần tử đầu tiên bằng Fuzzy Matchers
-      And match response[0] contains
+      # Step 4: Xác thực schema cho toàn bộ danh sách bằng Native 'match each'
+      And match each response contains
         """
         {
           "id": '#number',
@@ -366,7 +366,7 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
 - **Mã kịch bản Gherkin DSL:**
   ```cucumber
   @k2 @data-driven
-  Scenario Outline: K2 - Query product by ID with boundary & discrepancy assertions: <testCase>
+  Scenario Outline: K2 - Query product by ID adheres to specification & catches SUT defects: <testCase>
     Given path 'api', 'products', <productId>
     When method get
     Then status <expectedStatus>
@@ -374,9 +374,9 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
 
     Examples:
       | productId | expectedStatus | expectedMatch        | testCase                                                                        |
-      | 1         | 200            | { price: '#number' } | Valid Odd ID - iPhone 15 Pro Max (Price is Number)                              |
-      | 2         | 200            | { price: '#string' } | Valid Even ID - Samsung S24 Ultra (@discrepancy: Price converted to String)     |
-      | 9999      | 200            | {}                   | Non-existent ID (@discrepancy: Returns 200 OK with empty object instead of 404) |
+      | 1         | 200            | { price: '#number' } | Valid ID 1 - iPhone 15 Pro Max (Spec: 200 OK & Price is Number -> PASS)         |
+      | 2         | 200            | { price: '#number' } | Valid ID 2 - Samsung S24 Ultra (Spec: Price is Number -> CATCH BUG: String)     |
+      | 9999      | 404            | {}                   | Non-existent ID (Spec: 404 Not Found -> CATCH BUG: Returns 200 + Empty Object) |
   ```
 
 - **Phân tích chi tiết 2 khiếm khuyết (Bugs) được phát hiện trên SUT EShop:**

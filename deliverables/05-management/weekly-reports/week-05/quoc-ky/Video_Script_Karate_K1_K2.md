@@ -125,11 +125,9 @@
 > 
 > Bằng cách sử dụng `Scenario Outline`, Karate tách biệt hoàn toàn giữa logic kiểm thử và dữ liệu đầu vào. Mỗi dòng trong bảng `Examples` đại diện cho một vòng lặp kiểm thử độc lập.
 > 
-> Ở đây, chúng ta cần phân biệt rõ hai loại bài test:
-> - **Thứ nhất là Characterization Test (hay Baseline Test):** Mục tiêu là ghi nhận chính xác hành vi thực tế hiện tại của hệ thống EShop làm mốc đối soát — ví dụ ghi nhận việc backend trả về trường giá tiền dạng chuỗi ở ID 2 và trả về mã 200 kèm object rỗng ở ID 9999.
-> - **Thứ hai là Specification Test:** Là bài test áp đặt hành vi đúng chuẩn đặc tả — ví dụ chuẩn RESTful yêu cầu ID không tồn tại phải trả về mã 404 Not Found. Khi chạy Spec Test này, bài test sẽ FAIL và chính thất bại đó là bằng chứng phát hiện lỗi minh bạch để làm việc với đội ngũ phát triển.
-> 
-> Đồng thời, một lưu ý kỹ thuật quan trọng: Để kiểm tra object rỗng, cú pháp `match response contains {}` luôn đúng với mọi object; vì vậy chúng ta cần dùng so khớp tuyệt đối `match response == {}` để khẳng định response thực sự rỗng."*
+> Ở đây, kịch bản K2 được nhóm xây dựng theo triết lý **Specification-First Testing (Kiểm thử bám sát đặc tả chuẩn)**:
+> - Thay vì viết kỳ vọng thỏa hiệp theo lỗi của backend để 'ép xanh' bài test, kịch bản K2 áp đặt nghiêm ngặt các ràng buộc theo đặc tả kỹ thuật: giá tiền bắt buộc phải là kiểu số (`#number`) và ID không tồn tại bắt buộc phải trả về mã HTTP 404 Not Found.
+> - Khi hành vi của SUT EShop bị sai lệch so với đặc tả, bài test sẽ **FAILED ngay lập tức**. Và chính thất bại đó là **Bằng chứng khiếm khuyết (Defect Evidence)** minh bạch nhất để QA chuyển giao cho đội ngũ lập trình viên sửa lỗi."*
 
 ---
 
@@ -178,17 +176,19 @@
 
 #### 1. Thao tác hiển thị màn hình:
 
-- Chiếu Slide 09: Bảng ma trận 3 ca kiểm thử K2 (ID 1 Happy Path, ID 2 Characterization lệch kiểu String, ID 9999 Characterization mã 200 + Object rỗng).
-- Highlight dòng ghi chú kỹ thuật: Dùng `match response == {}` để khẳng định object rỗng.
+- Chiếu Slide 09: Bảng ma trận 3 ca kiểm thử K2 bám sát chuẩn đặc tả:
+    - Ca 1: ID 1 chuẩn mực đặc tả (Expected: 200, Price Number -> PASS).
+    - Ca 2: ID 2 kiểm chứng chuẩn đặc tả (Expected: 200, Price Number -> Bắt Bug SUT trả về String).
+    - Ca 3: ID 9999 kiểm chứng chuẩn RESTful (Expected: 404 Not Found -> Bắt Bug SUT trả về 200 kèm object rỗng).
 
 #### 2. Lời thoại thuyết minh (Script):
 
 > *"Trước khi bước vào màn hình thực nghiệm, xin mời Thầy và các bạn quan sát bảng ma trận kịch bản K2 trên Slide 09:
-> - Ca 1 kiểm thử trường hợp chuẩn mực với giá tiền kiểu số.
-> - Ca 2 ghi nhận thực tế backend trả về giá tiền kiểu chuỗi.
-> - Ca 3 ghi nhận biên khi ID không tồn tại trả về mã 200 kèm object rỗng `match response == {}`.
+> - Ca 1 kiểm thử trường hợp chuẩn mực với giá tiền kiểu số theo đúng đặc tả.
+> - Ca 2 áp chuẩn đặc tả giá tiền phải là Number để chủ động bắt lỗi backend ép kiểu thành chuỗi ở các ID số chẵn.
+> - Ca 3 áp chuẩn RESTful bắt buộc ID không tồn tại phải trả về mã 404 để bắt lỗi backend trả về 200 kèm object rỗng.
 > 
-> Ngay sau đây, chúng ta sẽ chuyển sang cửa sổ làm việc trực tiếp để quan sát mã nguồn và thực thi bộ test trên Terminal!"*
+> Ngay sau đây, chúng ta sẽ chuyển sang cửa sổ làm việc trực tiếp để quan sát mã nguồn và kích hoạt bộ test trên Terminal!"*
 
 ## III. Demo
 
@@ -198,7 +198,7 @@
 
 - Mở VS Code (Light Theme, phóng to chữ 17pt). Mở cây thư mục `tests/karate/src/test/java/eshop/`.
 - **Thao tác 1:** Mở file `products.feature`:
-    - Cuộn chuột lướt qua Scenario K1: Highlight dòng tag `@k1 @smoke`, checkpoint mảng `match response == '#[]'` và khối schema validation `response[0] contains {...}`.
+    - Cuộn chuột lướt qua Scenario K1: Highlight dòng tag `@k1 @smoke`, checkpoint mảng `match response == '#[]'` và khối native schema validation duyệt toàn bộ danh sách `match each response contains {...}`.
     - Cuộn xuống Scenario Outline K2: Highlight tag `@k2 @data-driven` và bảng `Examples:` gồm 3 dòng dữ liệu (ID = 1, 2, 9999).
 - **Thao tác 2:** Mở chuyển sang file `auth-cart-checkout.feature`:
     - Highlight tag `@k3 @e2e @smoke` và lướt qua 7 bước nghiệp vụ (Step 1 Register với timestamp → Step 2 Login lấy token → Step 3 Products → Step 4 Add Cart → Step 5 Verify Cart → Step 6 Checkout → Step 7 My Orders).
@@ -260,24 +260,23 @@
     
 - Chờ Maven biên dịch và chạy qua JUnit 5 (khoảng 2–3 giây).
 - Khi kết quả in ra, cuộn chậm terminal:
-    - Dừng lại tại phần **HTTP Wire Logs** (các dòng có tiền tố `1 > GET` và `1 < 200 OK` do `logback-test.xml` in ra).
-    - Dừng lại ở kết quả từng kịch bản: K1 (`Get all products returns a valid array and schema`) và 3 ca kiểm thử của K2 (`Scenario Outline`).
-    - Dừng lại ở dòng tổng kết cuối cùng: `BUILD SUCCESS` (Scenarios: 4 passed, 0 failed).
+    - Dừng lại tại phần **HTTP Wire Logs** (các dòng có tiền tố `1 > GET` và `1 < 200 OK` do `logback-test.xml` in ra).
+    - Dừng lại ở kết quả từng kịch bản: K1 (`Get all products returns a valid array and schema`) PASSED xanh lá.
+    - Dừng lại ở 3 ca kiểm thử của K2: Ca 1 PASSED; Ca 2 và Ca 3 báo đỏ FAILED do không thỏa mãn đặc tả chuẩn.
+    - Trỏ chuột giải thích: Hai ca FAILED này chính là **Bằng chứng khiếm khuyết (Defect Evidence)** phát hiện lỗi SUT.
 
 #### 2. Lời thoại thuyết minh (Script):
 
-> *"Tại thư mục `tests/karate`, mình kích hoạt bộ kiểm thử bằng Maven CLI: `mvn test -Dkarate.options="classpath:eshop/products.feature"`
+> *"Tại thư mục `tests/karate`, mình kích hoạt bộ kiểm thử bằng Maven CLI: `mvn test -Dkarate.options="classpath:eshop/products.feature"`
 > 
+> Hãy cùng quan sát nhật ký thực thi trên màn hình:
+> - **Thứ nhất, đối với Kịch bản K1 (@smoke):** Nhờ cấu hình `logback-test.xml`, Karate hiển thị minh bạch toàn bộ HTTP Wire Logs. Request `GET /api/products` phản hồi HTTP 200 OK. Checkpoint `match response == '#[]'` và `assert response.length > 0` vượt qua thành công. Đặc biệt, từ khóa `match each` đã kiểm chứng chuẩn xác schema kiểu dữ liệu trên 100% phần tử trong danh mục: `id` là số, `name` là chuỗi, `price` là số.
+> - **Thứ hai, đối với Kịch bản K2 (@data-driven):** Kịch bản áp chuẩn đặc tả OpenAPI nên mang lại kết quả phát hiện lỗi vô cùng rõ nét:
+>     - *Ca ID = 1 (iPhone 15 Pro Max):* Happy Path chuẩn mực, giá trị `price` là số nguyên `30000000`, **PASSED**.
+>     - *Ca ID = 2 (Samsung S24 Ultra):* Karate bắt lỗi ngay lập tức vì backend trả về `price` dạng chuỗi `"28000000"` thay vì số nguyên: `actual: "28000000", expected: '#number'`. Đây là bằng chứng bắt trọn **Khiếm khuyết nghiệp vụ số 1 (Discrepancy 1)**.
+>     - *Ca ID = 9999 (Ca biên):* Backend trả về HTTP 200 kèm object rỗng thay vì 404, Karate chặn đứng với thông báo: `status code was: 200, expected: 404`. Đây là bằng chứng bắt trọn **Khiếm khuyết nghiệp vụ số 2 (Discrepancy 2)**.
 > 
-> Quá trình chạy đã hoàn tất! Hãy cùng phân tích nhật ký thực thi trên màn hình:
-> 
-> - **Thứ nhất, đối với Kịch bản K1 (@smoke):** Nhờ cấu hình `logback-test.xml`, Karate hiển thị minh bạch toàn bộ HTTP Wire Logs. Request gửi đi là `GET /api/products`, server phản hồi HTTP 200 OK kèm mảng danh mục sản phẩm. Checkpoint `match response == '#[]'` và điều kiện `assert response.length > 0` đều vượt qua thành công. Đặc biệt, schema của phần tử đầu tiên đã được kiểm chứng chuẩn xác từng kiểu dữ liệu: `id` là số, `name` là chuỗi, `price` là số.
-> - **Thứ hai, đối với Kịch bản K2 (@data-driven):** Karate tự động thực thi 3 vòng lặp tương ứng với 3 ca kiểm thử:
->     - *Ca ID = 1 (iPhone 15 Pro Max):* Happy Path chuẩn mực, giá trị `price` là số nguyên `30000000`, khớp với matcher `#number`.
->     - *Ca ID = 2 (Samsung S24 Ultra):* Karate ghi nhận trường `price` bị chuyển thành chuỗi `"28000000"`. Đây chính là **Khiếm khuyết nghiệp vụ số 1 (Discrepancy 1)** của backend EShop. Kịch bản của nhóm ghi nhận trung thực bằng matcher `#string` thay vì cố tình sửa dữ liệu để ép xanh.
->     - *Ca ID = 9999 (Ca biên - Boundary):* Khi truy vấn sản phẩm không tồn tại, backend SUT trả về HTTP 200 kèm một object rỗng `{}` thay vì mã 404 Not Found. Kịch bản K2 ghi nhận trung thực **Khiếm khuyết nghiệp vụ số 2 (Discrepancy 2)**.
-> 
-> Kết quả: **Toàn bộ 4 Scenarios đều PASSED 100%**, với thời gian thực thi cực nhanh, chỉ mất chưa tới 40 mili-giây!"*
+> Hai ca FAILED này chính là bằng chứng xác thực nhất khẳng định: Bộ test Karate tuân thủ nghiêm ngặt theo đặc tả chứ không thỏa hiệp với lỗi của hệ thống!"*
 > 
 
 #### **PHÂN ĐOẠN 4.3: CHẠY KỊCH BẢN K3 — WORKFLOW E2E MUA HÀNG & BẢO MẬT (06:40 – 07:35)**
@@ -320,48 +319,29 @@
 
 ---
 
-#### **PHÂN ĐOẠN 4.4: MINH HỌA SPECIFICATION TEST BẮT LỖI SAI LỆCH ĐẶC TẢ (07:15 – 07:50)**
+#### **PHÂN ĐOẠN 4.4: BÓC TÁCH BẰNG CHỨNG KHIẾM KHUYẾT (DEFECT EVIDENCE ANALYSIS) (07:15 – 07:50)**
 
 #### 1. Thao tác hiển thị màn hình:
 
-- Chuyển sang cửa sổ VS Code, mở `products.feature`.
-- Cuộn xuống dòng 44 (Ca ID = 9999).
-- Sửa giá trị `expectedStatus` từ `200` thành `404` (áp chuẩn RESTful). Nhấn `Ctrl + S`.
-- Chuyển sang Terminal, chạy lại lệnh:
-    
-    ```bash
-    mvn test -Dkarate.options="classpath:eshop/products.feature"
+- Tại Terminal, dừng hình và phóng to phần chi tiết lỗi của 2 ca FAILED trong kịch bản K2:
+  - **Highlight Lỗi 1 (Ca ID = 2):** Trỏ chuột vào dòng:
+    ```text
+    match failed: CONTAINS, path: $.price, actual: "28000000", expected: '#number', reason: not a number
     ```
-    
-- Dừng hình khi terminal xuất hiện thông báo lỗi màu đỏ rực. Trỏ chuột highlight vào dòng log:
-    
+  - **Highlight Lỗi 2 (Ca ID = 9999):** Trỏ chuột vào dòng:
     ```text
     status code was: 200, expected: 404, response: {}
-    BUILD FAILURE
     ```
-    
-- Chuyển lại VS Code, nhấn `Ctrl + Z` hoàn nguyên về `200`, nhấn `Ctrl + S`.
-- **Thao tác quan trọng tại Terminal:** Chạy lại toàn bộ test suite để nạp lại baseline sạch:
-    
-    ```bash
-    mvn test
-    ```
-    
-- Quan sát thông báo: **`BUILD SUCCESS`** (Cả 2 features, 6 scenarios đều Passed 100%).
+- Nhấn mạnh: Màu đỏ ở đây không phải do lỗi môi trường hay kịch bản viết sai, mà chính là thành công của bộ test khi bóc trần đúng 2 khiếm khuyết của hệ thống SUT.
 
 #### 2. Lời thoại thuyết minh (Script):
 
-> *"Để làm rõ hơn sự khác biệt giữa Characterization Test và Specification Test:
+> *"Bây giờ, chúng ta hãy cùng phân tích sâu giá trị chuyên môn của 2 thông báo lỗi màu đỏ mà Karate vừa bắt được:
 > 
-> Tại dòng 44 của kịch bản K2, mình sẽ chuyển đổi ca ID = 9999 từ việc ghi nhận hành vi hiện tại sang một **Specification Test chuẩn mực**: sửa `expectedStatus` từ `200` thành `404` theo đúng tài liệu thiết kế RESTful.
+> - **Thứ nhất, tại Ca ID = 2:** Khi truy vấn sản phẩm số chẵn, backend tự ý chuyển đổi trường `price` thành chuỗi `"28000000"`. Karate lập tức chặn đứng với lỗi: `actual: "28000000", expected: '#number'`. Nếu lỗi này lọt ra bản phát hành, ứng dụng Frontend hoặc Mobile khi thực hiện phép tính tổng tiền sẽ bị lỗi số học kinh điển: chuỗi cộng số biến thành phép nối chuỗi (`'28000000' + 50000 = '2800000050000'`), gây sai lệch tài chính nghiêm trọng!
+> - **Thứ hai, tại Ca ID = 9999:** Khi truy vấn ID không tồn tại, backend trả về HTTP 200 kèm object rỗng `{}` thay vì mã chuẩn 404 Not Found. Karate phát hiện ngay sai lệch: `status code was: 200, expected: 404`. Lỗi này khiến client lầm tưởng request thành công nhưng khi truy xuất `product.name` sẽ gặp ngoại lệ `Cannot read properties of undefined` và crash ứng dụng.
 > 
-> Mình lưu file và kích hoạt kiểm thử: `mvn test -Dkarate.options="classpath:eshop/products.feature"`
-> 
-> *(Chỉ chuột vào màn hình)* Ngay lập tức, Maven dừng tiến trình và báo **BUILD FAILURE**! Dòng log chỉ rõ: `status code was: 200, expected: 404, response: {}`.
-> 
-> Thử nghiệm này khẳng định: Bộ test Karate phát hiện rất nhạy bén khi hành vi hệ thống bị lệch khỏi kỳ vọng đặc tả. Khi chúng ta siết chặt các ràng buộc kỹ thuật, kịch bản sẽ bắt trọn lỗi của Backend và ngăn chặn việc lọt lỗi ra bản phát hành.
-> 
-> Bây giờ, mình hoàn nguyên kỳ vọng về `200` để giữ toàn vẹn baseline, và chạy lại lệnh `mvn test` toàn bộ suite để hệ thống nạp lại trạng thái xanh sạch 100%."*
+> Việc giữ nguyên chuẩn đặc tả thay vì thỏa hiệp để 'ép xanh' kịch bản giúp chúng ta có được **Bằng chứng khiếm khuyết (Defect Evidence)** minh bạch và trung thực nhất!"*
 > 
 
 ---
@@ -372,17 +352,17 @@
 
 - Chuyển sang trình duyệt Google Chrome (toàn màn hình):
     - Mở file báo cáo tổng thể: `tests/karate/target/karate-reports/karate-summary.html`.
-    - Trỏ chuột vào chỉ số: **2 Features, 6 Scenarios Passed 100%, 0 Failed**.
-    - Nhấp mở `eshop.products.html`: Cuộn xem các step xanh lá, mở rộng xem trường `"price": "28000000"` ở ca ID = 2 và `{}` ở ca ID = 9999.
-    - Nhấp chuyển sang `eshop.auth-cart-checkout.html`: Mở rộng xem chuỗi Request/Response của bước đăng nhập lấy JWT và bước thanh toán đơn hàng.
+    - Trỏ chuột vào các chỉ số: K1 và K3 xanh lá (Passed), K2 hiển thị 2 ca FAILED màu đỏ làm bằng chứng bắt lỗi SUT.
+    - Nhấp mở `eshop.products.html`: Cuộn xem các step đỏ trực quan, mở rộng xem chi tiết lỗi lệch kiểu ở ca ID = 2 và thiếu mã 404 ở ca ID = 9999.
+    - Nhấp chuyển sang `eshop.auth-cart-checkout.html`: Mở rộng xem chuỗi Request/Response xanh mượt từ token JWT cho đến mã đơn hàng vừa tạo.
 
 #### 2. Lời thoại thuyết minh (Script):
 
-> *"Sau khi toàn bộ suite đã hoàn tất, chúng ta hãy cùng chiêm ngưỡng báo cáo HTML độc lập do chính Karate tự động sinh ra tại `karate-summary.html`:
+> *"Sau khi suite hoàn tất, chúng ta hãy cùng quan sát báo cáo HTML độc lập do chính Karate tự động tổng hợp tại `karate-summary.html`:
 > 
-> - Trang tổng quan ghi nhận trọn vẹn cả 2 feature files (`products` và `auth-cart-checkout`), **100% Passed trên toàn bộ 6 scenarios**, với tổng thời gian thực thi của toàn bộ suite chỉ khoảng 350 mili-giây.
-> - Khi mở chi tiết `eshop.products.html`: Từng bước Gherkin đều có màu xanh lục trực quan. Mọi dữ liệu JSON payload đều được format rõ ràng, lưu giữ bằng chứng cụ thể về 2 điểm sai lệch đặc tả của SUT để làm việc với đội ngũ Backend Dev.
-> - Khi chuyển sang `eshop.auth-cart-checkout.html`: Chúng ta có thể kiểm tra chi tiết toàn bộ HTTP Wire Logs từ token JWT cho đến mã đơn hàng vừa tạo.
+> - Trang tổng quan ghi nhận trung thực kết quả thực thi: Kịch bản K1 và K3 đạt kết quả xanh lá tuyệt đối, trong khi K2 hiển thị rõ 2 ca thất bại màu đỏ.
+> - Khi mở chi tiết `eshop.products.html`: Karate highlight đỏ rực chính xác từng dòng assertion bị vi phạm. Mọi dữ liệu JSON payload và HTTP Wire Logs đều được format rõ ràng, lưu giữ bằng chứng cụ thể về 2 điểm sai lệch đặc tả của SUT để làm việc với đội ngũ Backend Dev.
+> - Khi chuyển sang `eshop.auth-cart-checkout.html`: Chúng ta có thể kiểm tra chi tiết toàn bộ HTTP Wire Logs từ token JWT cho đến mã đơn hàng vừa tạo đều thành công 100%.
 > 
 > Báo cáo này chính là **Bằng chứng kiểm thử (Test Evidence)** độc lập và minh bạch nhất, sẵn sàng đính kèm trực tiếp vào ticket báo cáo lỗi."*
 

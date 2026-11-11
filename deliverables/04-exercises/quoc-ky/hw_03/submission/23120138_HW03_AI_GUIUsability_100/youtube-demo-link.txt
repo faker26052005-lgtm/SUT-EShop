@@ -1,0 +1,11 @@
+HW03 – GUI & Usability Testing Demonstration Video
+Student Name: Nguyễn Quốc Kỳ
+Student ID: 23120138
+Email: quockinguyen.lv@gmail.com
+Course: Software Testing (CSC13003) – FIT @ HCMUS
+Target Repository: https://github.com/faker26052005-lgtm/SUT-EShop
+
+================================================================================
+YouTube Video Demonstration Link:
+https://www.youtube.com/watch?v=hHmWuolx5Dk
+================================================================================

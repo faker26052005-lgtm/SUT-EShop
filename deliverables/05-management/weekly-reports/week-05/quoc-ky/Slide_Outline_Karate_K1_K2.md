@@ -149,7 +149,7 @@ timeline
   - **Minh họa kiểm tra trong K1:**
     ```cucumber
     And match response == '#[]'
-    And match response[0] contains { id: '#number', name: '#string', price: '#number' }
+    And match each response contains { id: '#number', name: '#string', price: '#number' }
     ```
 - **Mô tả Hình ảnh / Sơ đồ:**
   - Bảng highlight màu sắc tương ứng từng kiểu dữ liệu với icon kiểm tra toàn vẹn cấu trúc.
@@ -232,23 +232,23 @@ timeline
 
 ---
 
-### SLIDE 09: MA TRẬN K2 — ĐỐI SOÁT HÀNH VI HIỆN TẠI VS KIỂM CHỨNG ĐẶC TẢ
-- **Mục tiêu:** Chiếu bảng ma trận K2 trước khi vào demo, làm rõ vai trò của từng ca kiểm thử và lưu ý kỹ thuật về so khớp object rỗng.
+### SLIDE 09: MA TRẬN K2 — KIỂM CHỨNG ĐẶC TẢ & BẮT TRỌN KHIẾM KHUYẾT SUT
+- **Mục tiêu:** Chiếu bảng ma trận K2 bám sát đặc tả chuẩn (Specification-First), minh chứng năng lực phát hiện khiếm khuyết thực tế của SUT EShop.
 - **Bố cục đề xuất (Layout):**
-  - **Dạng:** Decision Table & Technical Alert (Bảng ma trận 3 ca K2 ở trên, khung ghi chú kỹ thuật `match response == {}` ở dưới).
+  - **Dạng:** Decision Table & Defect Evidence (Bảng ma trận 3 ca K2 chuẩn đặc tả ở trên, phân tích kết quả ở dưới).
 - **Nội dung hiển thị chi tiết:**
-  - **Tiêu đề slide:** Ma Trận K2: Đối Soát Hành Vi Thực Tế vs Kiểm Chứng Đặc Tả
+  - **Tiêu đề slide:** Ma Trận K2: Kiểm Chứng Đặc Tả & Bắt Trọn Khiếm Khuyết SUT
   - **Bảng ma trận 3 ca kiểm thử của Kịch bản K2:**
-    | Ca kiểm thử | ID Sản phẩm | Mục đích kiểm thử | Hành vi Backend SUT | Assertion áp dụng trong kịch bản |
-    | :---: | :---: | :--- | :--- | :--- |
-    | **Ca 1** | `1` | Happy Path | Trả về `price: 30000000` (Number) | `match response contains { price: '#number' }` |
-    | **Ca 2** | `2` | Characterization (Ghi nhận lệch kiểu) | Trả về `price: "28000000"` (String) | `match response contains { price: '#string' }` |
-    | **Ca 3** | `9999` | Characterization (Ghi nhận biên) | Trả về `200 OK` + `{}` (thay vì 404) | `status 200` & `match response == {}` |
-  - **⚠️ Lưu ý kỹ thuật quan trọng về so khớp:**
-    - Cú pháp `match response contains {}` luôn đúng với mọi JSON Object, do đó không thể chứng minh response rỗng!
-    - Để khẳng định response thực sự là object rỗng, nhóm áp dụng so khớp bằng tuyệt đối: **`match response == {}`**.
+    | Ca kiểm thử | ID Sản phẩm | Kỳ vọng theo Đặc tả (Spec) | Hành vi Backend SUT | Kết quả Test (Verdict) | Ý nghĩa kiểm thử |
+    | :---: | :---: | :--- | :--- | :---: | :--- |
+    | **Ca 1** | `1` | `status 200` & `price: '#number'` | Trả về `price: 30000000` (Number) | ✅ **PASSED** | **Happy Path:** Chuẩn mực đặc tả |
+    | **Ca 2** | `2` | `status 200` & `price: '#number'` | Trả về `price: "28000000"` (String) | ❌ **FAILED** | **BẮT LỖI 1:** Sai lệch kiểu dữ liệu |
+    | **Ca 3** | `9999` | `status 404` | Trả về `200 OK` + `{}` | ❌ **FAILED** | **BẮT LỖI 2:** Vi phạm chuẩn RESTful 404 |
+  - **💡 Thông điệp chuyên môn cốt lõi:**
+    - Kịch bản kiểm thử không thỏa hiệp với lỗi của SUT để "ép xanh" báo cáo.
+    - Hai ca FAILED chính là **Bằng chứng kiểm thử (Defect Evidence)** minh bạch và giá trị nhất để đội ngũ phát triển sửa lỗi trước khi phát hành.
 - **Mô tả Hình ảnh / Sơ đồ:**
-  - Bảng biểu rõ ràng, có highlight cảnh báo kỹ thuật màu vàng ở góc dưới.
+  - Bảng biểu rõ ràng, Ca 1 xanh lá, Ca 2 và Ca 3 highlight màu đỏ cam cảnh báo khiếm khuyết.
 - **Ghi chú chuyển cảnh (BẮT ĐẦU VÀO PHẦN DEMO THỰC TẾ):**
   - Chuyển màn hình từ Slide sang cửa sổ làm việc: **Mở VS Code + Terminal + Trình duyệt Chrome**.
   - *(Từ phút 03:30 đến 08:30 không cần chiếu slide, tập trung 100% vào màn hình quay thật).*
@@ -257,36 +257,37 @@ timeline
 
 ### 🖥️ KHUNG HÌNH THỰC NGHIỆM TRÊN MÀN HÌNH THẬT (TỪ 03:30 ĐẾN 08:30 — KHÔNG DÙNG SLIDE)
 *Ghi chú hướng dẫn các thao tác chuẩn xác cần quay trên màn hình:*
-1. **VS Code (Toàn màn hình):** Lướt qua `products.feature` và `auth-cart-checkout.feature` giải thích nhanh cấu trúc Gherkin.
+1. **VS Code (Toàn màn hình):** Lướt qua `products.feature` và `auth-cart-checkout.feature` giải thích nhanh cấu trúc Gherkin:
+   - K1: Smoke test danh mục duyệt toàn bộ danh sách bằng `match each`.
+   - K2: Data-driven bám sát đặc tả chuẩn với 3 ca kiểm thử.
+   - K3: Chuỗi mua sắm E2E 7 bước với email dynamic timestamp và Bearer token.
 2. **Terminal (Chia đôi với VS Code):**
    - Lệnh 1: `curl -I http://localhost:3000/api/products` $\rightarrow$ Xác nhận SUT sẵn sàng 200 OK.
-   - Lệnh 2: `mvn test -Dkarate.options="classpath:eshop/products.feature"` $\rightarrow$ Chỉ rõ HTTP Wire Logs và 4 Scenarios Passed.
-   - Lệnh 3: `mvn test -Dkarate.options="classpath:eshop/auth-cart-checkout.feature"` $\rightarrow$ Chỉ rõ email dynamic, chuỗi JWT Bearer và ca 401.
-3. **Thử nghiệm Spec Test (Intentional Failure):**
-   - Sửa dòng 44 `products.feature`: `expectedStatus` từ `200` $\rightarrow$ `404`.
-   - Chạy `mvn test -Dkarate.options="classpath:eshop/products.feature"` $\rightarrow$ Maven dừng ngay với `BUILD FAILURE`, chỉ rõ `status code was: 200, expected: 404`. Minh chứng test phát hiện đúng khi hành vi lệch đặc tả.
-   - Nhấn `Ctrl + Z` hoàn nguyên về `200`.
-4. **QUY TRÌNH CHUẨN ĐỂ SINH BÁO CÁO HTML:**
-   - **Thao tác bắt buộc:** Chạy lại toàn bộ test suite bằng lệnh:
-     ```bash
-     mvn test
-     ```
-   - Chờ hoàn tất: Toàn bộ 2 Features, 6 Scenarios đạt **`BUILD SUCCESS`**.
-5. **Google Chrome:** Mở file `tests/karate/target/karate-reports/karate-summary.html` để trực quan hóa báo cáo.
-6. **Sau khi xem báo cáo xong $\rightarrow$ Chuyển lại Slide 10 để tổng kết.**
+   - Lệnh 2: `mvn test -Dkarate.options="classpath:eshop/products.feature"`:
+     - K1: `PASSED` (Wire logs hiển thị rõ ràng).
+     - K2 Ca 1: `PASSED`.
+     - K2 Ca 2: `FAILED` $\rightarrow$ Highlight terminal: `actual: "28000000", expected: '#number'`. Minh chứng bắt Bug 1!
+     - K2 Ca 3: `FAILED` $\rightarrow$ Highlight terminal: `status code was: 200, expected: 404`. Minh chứng bắt Bug 2!
+   - Lệnh 3: `mvn test -Dkarate.options="classpath:eshop/auth-cart-checkout.feature"`:
+     - K3: `BUILD SUCCESS` (Toàn bộ 7 bước nghiệp vụ và ca Negative 401 đều Passed 100%).
+3. **Google Chrome:** Mở file `tests/karate/target/karate-reports/karate-summary.html` để trực quan hóa báo cáo:
+   - Mở `eshop.products.html`: Xem 2 step đỏ trực quan lưu giữ bằng chứng cụ thể về 2 điểm sai lệch đặc tả của SUT.
+   - Mở `eshop.auth-cart-checkout.html`: Xem chuỗi HTTP Wire Logs xanh mượt từ token JWT đến đơn hàng.
+4. **Sau khi xem báo cáo xong $\rightarrow$ Chuyển lại Slide 10 để tổng kết.**
 
 ---
 
 ### SLIDE 10: KẾT QUẢ THỰC NGHIỆM — BẰNG CHỨNG BÁO CÁO HTML & KHIẾM KHUYẾT SUT
-- **Mục tiêu:** Trình chiếu số liệu tổng kết từ báo cáo HTML sau khi chạy lại suite hoàn chỉnh và tổng hợp 2 khiếm khuyết phát hiện được của SUT.
+- **Mục tiêu:** Trình chiếu số liệu tổng kết từ báo cáo HTML sau khi chạy suite và phân tích chuyên sâu 2 khiếm khuyết bắt được của SUT.
 - **Bố cục đề xuất (Layout):**
   - **Dạng:** Dashboard & Bug Evidence (Bên trái: Thống kê số liệu HTML; Bên phải: 2 bằng chứng khiếm khuyết SUT).
 - **Nội dung hiển thị chi tiết:**
   - **Tiêu đề slide:** Kết Quả Thực Nghiệm: Bằng Chứng Báo Cáo HTML & Khiếm Khuyết SUT
   - **Bên trái — Chỉ số thực thi trên `karate-summary.html`:**
-    - Tổng số Feature Files: **2 Features** (`products` & `auth-cart-checkout`)
-    - Tổng số Scenarios: **6 Scenarios (Passed 100%, 0 Failed)**
-    - Tổng thời gian thực thi: **~350 mili-giây** (Hiệu năng cao nhờ chạy qua HTTP Client tối ưu)
+    - **Kịch bản K1 (@smoke):** 100% Passed — Danh mục sản phẩm đáp ứng hoàn hảo schema.
+    - **Kịch bản K2 (@data-driven):** 1 Passed, 2 Failed — Phát hiện thành công 2 khiếm khuyết sai lệch đặc tả.
+    - **Kịch bản K3 (@e2e):** 100% Passed — Chuỗi mua sắm 7 bước và ca bảo mật hoạt động ổn định.
+    - **Tổng thời gian thực thi:** **~350 mili-giây** (Cực nhanh qua JVM HTTP Client).
   - **Bên phải — Bằng chứng 2 khiếm khuyết của SUT EShop:**
     - **Khiếm khuyết 1 (Sai kiểu dữ liệu ở ID chẵn):** Endpoint `GET /api/products/2` trả về `price: "28000000"` (String) thay vì Number, gây rủi ro tính toán giỏ hàng.
     - **Khiếm khuyết 2 (Thiếu mã lỗi 404 RESTful):** Endpoint `GET /api/products/9999` trả về `200 OK` kèm `{}` thay vì mã chuẩn `404 Not Found`.
