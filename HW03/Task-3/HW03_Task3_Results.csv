@@ -1,0 +1,52 @@
+﻿ID,IA,Màn hình,Mục kiểm tra,Firefox 157 (Windows),Chrome 159 (Windows),"Safari 27 (macOS, BrowserStack)",Khác biệt giữa nền tảng,Bug liên quan,Notes (mục Failed)
+UI-01,IA-01,All,"Header, logo, font chữ nhất quán giữa ba màn hình",Passed,Passed,Passed,Không,,
+UI-02,IA-01,All,"Màu sắc và style nút chính (Đăng ký, Đăng nhập, Lưu)",Failed,Failed,Failed,Không,GUI-BUG-07,"Màn hình Register dùng nút ""Đăng Ký"" màu đỏ, trong khi màn hình Login (""Sign In"") và Profile (""Cập nhật"") lại dùng nút màu xanh. Thiếu sự nhất quán về màu sắc."
+UI-03,IA-01,All,Căn lề và khoảng cách giữa các thành phần trong form,Passed,Passed,Passed,Không,,
+UI-04,IA-01,All,Hiển thị tiếng Việt có dấu,Passed,Passed,Passed,Không,,
+UI-05,IA-01,All,Tiêu đề trang và tiêu đề tab trình duyệt,Failed,Failed,Failed,Không,GUI-BUG-05,"Tiêu đề trên màn hình Login bị sai (hiển thị là ""Đăng Ký"" thay vì ""Đăng Nhập"")."
+UI-06,IA-01,All,Responsive trên màn hình nhỏ (khoảng 375px),Passed,Passed,Passed,Không,,
+UI-07,IA-01,All,Hiển thị trên màn hình rộng (desktop),Passed,Passed,Passed,Không,,
+UI-08,IA-01,All,Độ tương phản và cỡ chữ,Passed,Passed,Passed,Không,,
+UI-09,IA-01,All,Chính tả và ngôn ngữ nhãn,Failed,Failed,Failed,Không,GUI-BUG-06,"Màn hình Login trộn lẫn ngôn ngữ Anh - Việt (""Username"", ""Sign In"" xen kẽ ""Mật khẩu"", ""Quên mật khẩu?"")."
+UI-10,IA-02,R,Nhãn từng ô và dấu hiệu trường bắt buộc,Failed,Failed,Failed,Không,GUI-BUG-08,Có label nhưng không có đánh dấu trường bắt buộc.
+UI-11,IA-02,R,Gửi form khi để trống các trường bắt buộc,Passed,Passed,Passed,Không,,
+UI-12,IA-02,R,Nhập email sai định dạng,Failed,Failed,Failed,Không,GUI-BUG-02,Không có báo lỗi sai định dạng email mà báo lỗi mật khẩu không đúng định dạng.
+UI-13,IA-02,R,Đăng ký bằng email đã tồn tại (FR-01),Failed,Failed,Failed,Không,GUI-BUG-02,"Đăng ký bằng email đã tồn tại (test@eshop.com) kèm mật khẩu đúng quy tắc: chỉ hiện lỗi ""Mật khẩu quá yếu"", không báo email đã được sử dụng."
+UI-14,IA-02,R,Quy tắc mật khẩu,Failed,Failed,Failed,Không,GUI-BUG-02,"Quy tắc mật khẩu hiển thị rõ dưới ô nhập và trong thông báo lỗi, và thông báo đúng với trường hợp mật khẩu yếu. Nhưng cùng một thông báo mật khẩu xuất hiện cả khi mật khẩu đúng quy tắc hoặc khi sai ở ô khác, nên không giúp người dùng biết lỗi thật nằm ở đâu."
+UI-16,IA-02,"R, L",Ẩn và hiện mật khẩu,Failed,Failed,Failed,Không,GUI-BUG-09,Mật khẩu được che nhưng không có nút hiện mật khẩu.
+UI-17,IA-02,"R, P","Độ dài và ký tự không hợp lệ ở họ tên, số điện thoại",Failed,Failed,Failed,Không,GUI-BUG-03,"Đăng ký: mọi trường hợp chỉ hiện thông báo lỗi mật khẩu. Profile: mọi giá trị số điện thoại đã thử (đúng định dạng, không có số 0 đầu, chữ, ký tự đặc biệt) đều bị báo không hợp lệ, không phân biệt được lỗi về độ dài hay ký tự."
+UI-18,IA-02,"R, P","Nhập ký tự đặc biệt, emoji, chuỗi giống mã script vào ô văn bản",Passed,Passed,Passed,Không,,
+UI-19,IA-02,"R, L, P",Giữ dữ liệu đã nhập khi gửi form lỗi,Failed,Failed,Failed,Không,GUI-BUG-10,"Không giữ dữ liệu, toàn bộ đều bị reset."
+UI-20,IA-02,"R, L, P",Chống gửi trùng,Passed,Passed,Passed,Không,,
+UI-21,IA-02,"R, L, P",Thứ tự Tab và phím Enter,Passed,Passed,Passed,Không,,
+UI-22,IA-02,L,Gửi form đăng nhập khi để trống,Passed,Passed,Passed,Không,,
+UI-23,IA-02,L,Đăng nhập sai email hoặc mật khẩu,Passed,Passed,Passed,Không,,
+UI-24,IA-02,P,Dữ liệu hiện tại được điền sẵn,Passed,Passed,Passed,Không,,
+UI-25,IA-02,P,Kiểm tra dữ liệu khi cập nhật hồ sơ,Failed,Failed,Failed,Không,GUI-BUG-03,"Mọi số điện thoại đã thử, kể cả số đúng theo FR-04 (0912345678, 0123456789) và số không có số 0 đầu, đều bị báo không hợp lệ. Thông báo ghi ""9-10 chữ số"", khác FR-04 (10-11 chữ số). Không có request nào được gửi tới server."
+UI-26,IA-03,"R, L",Liên kết qua lại giữa Đăng ký và Đăng nhập,Passed,Passed,Passed,Không,,
+UI-27,IA-03,R,Chuyển hướng sau khi đăng ký thành công,Failed,Failed,Failed,Không,GUI-BUG-01,"Khi đăng ký chỉ hiện lỗi sai mật khẩu, không đăng ký thành công được."
+UI-28,IA-03,L,Chuyển hướng sau khi đăng nhập thành công,Passed,Passed,Passed,Không,,
+UI-29,IA-03,P,Truy cập Profile khi chưa đăng nhập,Passed,Passed,Passed,Không,,
+UI-30,IA-03,"R, L",Vào Đăng ký hoặc Đăng nhập khi đã đăng nhập,Failed,Failed,Failed,Không,GUI-BUG-12,"Vào trang Login khi đã đăng nhập thì vẫn hiện form đăng nhập, trong khi góc trái vẫn hiển thị trạng thái đang đăng nhập."
+UI-31,IA-03,P,Lối vào trang Profile và nút Đăng xuất,Passed,Passed,Passed,Không,,
+UI-32,IA-03,P,Đăng xuất,Passed,Passed,Passed,Không,,
+UI-33,IA-03,"R, L, P",Nút Back của trình duyệt,Failed,Failed,Failed,Không,GUI-BUG-11,"Khi bấm Back, trang luôn reset về trạng thái ban đầu, dữ liệu đã nhập bị mất mà không có cảnh báo; xem là mất dữ liệu bất ngờ."
+UI-34,IA-03,L,"Liên kết ""Quên mật khẩu"" (FR-03)",Passed,Passed,Passed,Không,,
+UI-35,IA-03,P,Huỷ chỉnh sửa hoặc quay lại,Passed,Passed,Passed,Không,,
+UI-36,IA-03,P,Tải lại trang (F5) khi đã đăng nhập,Passed,Passed,Passed,Không,,
+UI-37,IA-04,R,Thông báo đăng ký thành công,Failed,Failed,Failed,Không,GUI-BUG-01,"Không đăng ký được, luôn hiện lỗi mật khẩu."
+UI-38,IA-04,"R, L, P",Trạng thái đang xử lý khi gửi form,Passed,Passed,Passed,Không,,
+UI-39,IA-04,"R, L, P",Lỗi mạng hoặc lỗi máy chủ,Passed,Passed,Passed,Không,,
+UI-40,IA-04,L,Khoá tài khoản sau nhiều lần đăng nhập sai (FR-02),Failed,Failed,Failed,Không,GUI-BUG-04,Tài khoản có bị khoá (đã kiểm chứng qua API call) nhưng giao diện không hiện lý do không đăng nhập được.
+UI-41,IA-04,L,Hết thời gian khoá hoặc cách mở khoá (FR-02),Failed,Failed,Failed,Không,GUI-BUG-04,Màn hình không hiện trạng thái khoá; khi bấm đăng nhập với tài khoản bị khoá thì không có phản hồi nào.
+UI-42,IA-04,P,Cập nhật hồ sơ thành công (FR-04),Failed,Failed,Failed,Không,GUI-BUG-03,Khi cập nhật thì luôn báo lỗi số điện thoại.
+UI-43,IA-04,P,Cập nhật hồ sơ thất bại,Failed,Failed,Failed,Không,GUI-BUG-03,Không thông báo rõ mà chỉ có lỗi số điện thoại.
+UI-44,IA-04,P,Nút Lưu khi chưa thay đổi gì,Failed,Failed,Failed,Không,GUI-BUG-03,Nút bấm sẽ báo lỗi số điện thoại khi chưa nhập gì.
+UI-45,IA-04,P,Rời trang khi có thay đổi chưa lưu,Failed,Failed,Failed,Không,GUI-BUG-13,"Không có cảnh báo, các thay đổi sẽ mất."
+UI-46,IA-04,All,"Trạng thái hover, focus, disabled của nút và link",Passed,Passed,Passed,Không,,
+UI-47,IA-04,P,Phiên đăng nhập hết hạn,Passed,Passed,Passed,Không,,
+UI-48,IA-01,All,"Phóng to trang lên 200% (Ctrl + ""+"")",Passed,Passed,Passed,Không,,
+UI-49,IA-02,"R, L",Thuộc tính tự động điền của trình duyệt (Autocomplete),Passed,Passed,Passed,Không,,
+UI-50,IA-02,"R, L",Hành vi Copy/Paste tại ô Mật khẩu / Xác nhận mật khẩu,Passed,Failed,Passed,Có,GUI-BUG-15 (Chrome),"Chrome: mật khẩu vừa dán hiển thị đầy đủ dạng chữ thường, không bị che (khi gõ trực tiếp thì được che bình thường). Firefox và Safari: dán bình thường, mật khẩu được che."
+UI-51,IA-03,L,Xử lý phiên làm việc trên nhiều tab (Multi-tab behaviour),Passed,Passed,Passed,Không,,
+UI-52,IA-04,"R, P",Thời gian hiển thị thông báo (Toast/Alert Timeout),Failed,Failed,Failed,Không,GUI-BUG-14,Các thông báo sẽ hiện vĩnh viễn tới khi tải lại trang.

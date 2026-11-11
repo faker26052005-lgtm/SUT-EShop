@@ -11,6 +11,15 @@ Ví dụ:
   python scripts/stamp.py shots/chrome --text "email@student.edu.vn | MSSV 12345678 | Ho Ten | Chrome 130 / Windows 11"
   python scripts/stamp.py shots/chrome/UI-12.png --text "..." --out stamped
 
+Một thư mục chứa ảnh của NHIỀU nền tảng trộn lẫn, phân biệt bằng tên file (vd GUI-BUG-01-Chrome.png):
+  python scripts/stamp.py Task-3/screenshots --out Task-3/stamped \
+      --text "email@student.edu.vn | MSSV 12345678 | Ho Ten | http://localhost:5173" \
+      --platform "Chrome=Chrome 130 / Windows 11" \
+      --platform "Firefox=Firefox 132 / Windows 11" \
+      --platform "Safari=Safari 17 / macOS Sonoma (BrowserStack)"
+  Mỗi ảnh được ghép dòng chữ chung (--text) với phần mô tả của nền tảng có tên xuất hiện trong tên file.
+  Ảnh không khớp nền tảng nào sẽ bị bỏ qua và được báo lại, để không đóng dấu sai.
+
 Mặc định ảnh mới được ghi vào thư mục <nguồn>_stamped, ảnh gốc không bị thay đổi.
 """
 import argparse
@@ -98,6 +107,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src", help="một file ảnh hoặc một thư mục chứa ảnh")
     ap.add_argument("--text", required=True, help="dòng chữ cần đóng dấu (email, MSSV, họ tên, nền tảng...)")
+    ap.add_argument("--platform", action="append", default=[], metavar="TÊN=MÔ TẢ",
+                    help="ghép thêm mô tả nền tảng cho ảnh có TÊN trong tên file, vd \"Chrome=Chrome 130 / Windows 11\" (dùng được nhiều lần)")
     ap.add_argument("--out", help="thư mục ghi ảnh mới (mặc định: <nguồn>_stamped)")
     ap.add_argument("--position", choices=["top", "bottom"], default="bottom", help="vị trí dải chữ")
     a = ap.parse_args()
@@ -109,10 +120,28 @@ def main():
     if not files:
         sys.exit("Không có ảnh nào trong %s" % src)
     out_dir = Path(a.out) if a.out else (src.parent / (src.stem + "_stamped") if src.is_file() else src.parent / (src.name + "_stamped"))
+    plats = []
+    for item in a.platform:
+        if "=" not in item:
+            sys.exit("--platform phải có dạng TÊN=MÔ TẢ, nhận được: %s" % item)
+        name, desc = item.split("=", 1)
+        plats.append((name.strip(), desc.strip()))
+    done, skipped = 0, []
     for f in files:
-        stamp_image(f, out_dir / f.name, a.text, a.position)
+        text = a.text
+        if plats:
+            hits = [(n, d) for n, d in plats if n.lower() in f.stem.lower()]
+            if not hits:
+                skipped.append(f.name)
+                continue
+            n, d = max(hits, key=lambda x: len(x[0]))  # khớp tên dài nhất, tránh nhầm lẫn
+            text = a.text + " | " + d
+        stamp_image(f, out_dir / f.name, text, a.position)
+        done += 1
         print("Đã đóng dấu:", f.name)
-    print("Ảnh mới nằm trong:", out_dir)
+    for name in skipped:
+        print("BỎ QUA (không khớp nền tảng nào):", name)
+    print("Đã đóng dấu %d ảnh, bỏ qua %d ảnh. Ảnh mới nằm trong: %s" % (done, len(skipped), out_dir))
 
 
 if __name__ == "__main__":
