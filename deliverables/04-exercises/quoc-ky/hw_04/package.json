@@ -1,0 +1,19 @@
+{
+  "name": "hw04-eshop-automation",
+  "version": "1.0.0",
+  "description": "Playwright TypeScript automated tests for SUT EShop (HW04)",
+  "scripts": {
+    "test": "playwright test",
+    "test:fr02": "FEATURE=fr02-login playwright test tests/fr02-login.spec.ts",
+    "test:fr07": "FEATURE=fr07-cart playwright test tests/fr07-cart.spec.ts",
+    "test:fr17": "FEATURE=fr17-coupon playwright test tests/fr17-coupon.spec.ts",
+    "test:all": "node .agents/skills/playwright-automation-coach/assets/run-all.mjs",
+    "check": "python3 .agents/skills/playwright-automation-coach/scripts/check_requirements.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.6.0"
+  }
+}
