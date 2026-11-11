@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC_FR02_01",
+    "title": "Verify login authentication with valid registered credentials",
+    "type": "positive",
+    "username": "test@eshop.com",
+    "password": "Test1234!",
+    "expectedStatus": 200,
+    "expectedUrl": "/"
+  },
+  {
+    "id": "TC_FR02_03",
+    "title": "Validate consecutive failure counter increment on attempt N=1",
+    "type": "negative",
+    "username": "test@eshop.com",
+    "password": "WrongPassword1!",
+    "expectedStatus": 401,
+    "expectedMessage": "Sai tên đăng nhập hoặc mật khẩu"
+  },
+  {
+    "id": "TC_FR02_15",
+    "title": "Validate rejection of empty email field on Web Client",
+    "type": "negative",
+    "username": "",
+    "password": "Test1234!",
+    "expectedStatus": 400
+  },
+  {
+    "id": "TC_FR02_18",
+    "title": "Verify acceptance of email with maximum allowable RFC 5321 length",
+    "type": "edge",
+    "username": "a_valid_long_email_within_boundary@eshop.com",
+    "password": "Test1234!",
+    "expectedStatus": 200,
+    "expectedUrl": "/"
+  }
+]

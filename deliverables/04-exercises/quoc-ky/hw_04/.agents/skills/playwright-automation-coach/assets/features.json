@@ -1,0 +1,32 @@
+[
+  {
+    "fr": "FR-02",
+    "name": "Đăng nhập & khóa tài khoản",
+    "slug": "fr02-login",
+    "spec": "tests/fr02-login.spec.ts",
+    "data": "data/fr02-login.json",
+    "pool": "A",
+    "app": "web",
+    "port": 5173
+  },
+  {
+    "fr": "FR-07",
+    "name": "Giỏ hàng",
+    "slug": "fr07-cart",
+    "spec": "tests/fr07-cart.spec.ts",
+    "data": "data/fr07-cart.json",
+    "pool": "B",
+    "app": "web",
+    "port": 5173
+  },
+  {
+    "fr": "FR-17",
+    "name": "Quản lý mã giảm giá",
+    "slug": "fr17-coupon",
+    "spec": "tests/fr17-coupon.spec.ts",
+    "data": "data/fr17-coupon.json",
+    "pool": "C",
+    "app": "admin",
+    "port": 5174
+  }
+]
