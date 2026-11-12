@@ -67,3 +67,15 @@
   2. **Update Isolation Race Condition (`TC-FR15-12`):** Synchronized on both `PUT /api/products/` response and the `"Cập nhật thành công!"` `dialog` event before asserting that other product rows remained unchanged — accurately exposing `BUG-FR15-02` (`fakeMassUpdatedProducts`) across all 3 browsers.
   3. **WebKit Admin Login Race & DB Cleanup (`pages/AdminProductPage.ts`, `tests/fr15-products.spec.ts`):** Updated `gotoAndLogin()` to wait for `domcontentloaded` and `Promise.race([loginButton, productsNavItem])` for reliable WebKit navigation, and added `DELETE /api/products/${createdId}` cleanup after positive create tests.
   4. **Verified Result:** Re-run across all 3 browsers completed in **3.1m** with **27 passed, 18 failed** (identical 6 real SUT defects $\times$ 3 browsers: `TC-FR15-04`, `06`, `08`, `09`, `12`, `15`; 0 flaky browser errors).
+
+---
+
+### Entry 5 — Stage 5: Consolidated Multi-Browser Execution & Final Stabilization
+- **AI Tool:** Antigravity (Gemini 3.8 Flash)
+- **Date & Time:** `2026-11-12 17:08 +07:00`
+- **Prompt:**
+  > Chạy toàn bộ 3 bộ test (`FR-01` + `FR-09` + `FR-15`) liên tiếp trên cả 3 trình duyệt (`npm test`, 135 runs) để kiểm tra tính ổn định cross-browser và xuất HTML Report tổng hợp.
+- **Findings & Human Review Fixes Applied:**
+  1. **WebKit DOM Commit Race in `TC-FR15-12` (`43ec92f`):** First consolidated run returned `88 passed, 47 failed` because `TC-FR15-12` passed falsely on WebKit (`alert()` fired before React committed `setProducts(fakeMassUpdatedProducts)` to DOM). Fixed by asserting row 0 commits `resolvedName` before checking row 1 isolation.
+  2. **Standardized Traceability Annotations (`64e888e`):** Extracted `annotateTestRun()` into `utils/testHelpers.ts` and applied it across all 3 `.spec.ts` files (`Feature`, `Run by: 23120183`, and `SUT Defect Note`).
+  3. **Final Verified Multi-Browser Run:** `npm test` completed in **8.1m** with **87 passed, 48 failed** across **135 total runs** (Chromium: `29 passed, 16 failed`; Firefox: `29 passed, 16 failed`; WebKit: `29 passed, 16 failed` — 100% deterministic across all 3 engines). HTML report visibly displays `Run by: 23120183` and ISO timestamp `2026-11-12T10:06:01.914Z`.
