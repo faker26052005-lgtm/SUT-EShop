@@ -3,35 +3,63 @@
     "id": "TC_FR02_01",
     "title": "Verify login authentication with valid registered credentials",
     "type": "positive",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": {
+      "user_state": "registered_active"
+    },
     "username": "test@eshop.com",
     "password": "Test1234!",
-    "expectedStatus": 200,
-    "expectedUrl": "/"
+    "expected": {
+      "status": 200,
+      "url": "/"
+    }
   },
   {
     "id": "TC_FR02_03",
     "title": "Validate consecutive failure counter increment on attempt N=1",
     "type": "negative",
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "preconditions": {
+      "user_state": "registered_active"
+    },
     "username": "test@eshop.com",
     "password": "WrongPassword1!",
-    "expectedStatus": 401,
-    "expectedMessage": "Sai tên đăng nhập hoặc mật khẩu"
+    "expected": {
+      "status": 401,
+      "message": "Sai tên đăng nhập hoặc mật khẩu"
+    }
   },
   {
-    "id": "TC_FR02_15",
-    "title": "Validate rejection of empty email field on Web Client",
-    "type": "negative",
-    "username": "",
-    "password": "Test1234!",
-    "expectedStatus": 400
+    "id": "TC_FR02_06",
+    "title": "Account lockout triggered on 5th consecutive failure",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR02-LOCKOUT-STATUS",
+    "preconditions": {
+      "consecutive_failures": 4
+    },
+    "username": "test@eshop.com",
+    "password": "WrongPassword5!",
+    "expected": {
+      "status": 423,
+      "message": "Tài khoản tạm thời bị khóa"
+    }
   },
   {
-    "id": "TC_FR02_18",
-    "title": "Verify acceptance of email with maximum allowable RFC 5321 length",
+    "id": "TC_FR02_12",
+    "title": "Lockout cycle resets failure counter upon lockout expiration",
     "type": "edge",
-    "username": "a_valid_long_email_within_boundary@eshop.com",
+    "automation_decision": "blocked_deferred",
+    "test_layer": "integration",
+    "blocker_reason": "Backend hardcodes LOCK_TIME = 180s without backend time travel API; full 2-cycle validation requires > 360s real-time sleep.",
+    "unblock_condition": "Implement BACKEND_LOCK_TIME_MS env var or mockable server clock.",
+    "username": "test@eshop.com",
     "password": "Test1234!",
-    "expectedStatus": 200,
-    "expectedUrl": "/"
+    "expected": {
+      "status": 200
+    }
   }
 ]

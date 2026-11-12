@@ -21,12 +21,23 @@
 
 ---
 
-## 2. Bảng Phân chia Vai trò & Trách nhiệm (Division of Labour)
+## 2. Bảng Phân chia Vai trò & Quy định Quyền hạn Reviewer
+
+Bài tập HW04 đánh giá năng lực kiểm soát, phản biện và trách nhiệm cá nhân của sinh viên đối với sản phẩm kiểm thử. AI chỉ là trợ lý có kỷ luật, **Reviewer (Sinh viên Nguyễn Quốc Kỳ) nắm giữ quyền quyết định tối cao**.
+
+### 🛡️ Nguyên tắc Vận hành Bắt buộc giữa AI và Reviewer:
+1. **Kiểm soát Từng Phase Độc lập (Strict Phase-by-Phase Gate):**
+   - AI bắt buộc phải làm việc theo **từng phase đơn lẻ**.
+   - **Tuyệt đối cấm gộp (batching) thực hiện liên tiếp 2–3 phase rồi mới báo cáo cho Reviewer.** Sau khi kết thúc mỗi phase, AI phải dừng lại, trình bày kết quả chi tiết, chỉ rõ trạng thái Checkpoint và chờ Reviewer phê duyệt nghiệm thu mới được chuyển sang phase tiếp theo.
+2. **Quy tắc "Hỏi trước khi Áp dụng" (Ask-Before-Apply):**
+   - Trước khi tạo mới tập tin, chỉnh sửa mã nguồn trên đĩa hoặc thực thi lệnh thay đổi trạng thái (cài đặt package, chạy test suite, commit git), AI **bắt buộc phải giải thích lý do, nội dung thay đổi dự kiến và hỏi ý kiến Reviewer trước khi thực hiện**.
+   - Reviewer có quyền từ chối, yêu cầu giải thích thêm hoặc yêu cầu chỉnh sửa phương án trước khi bất kỳ thay đổi nào được ghi xuống hệ thống.
 
 | Nội dung công việc | Trách nhiệm của AI Assistant | Trách nhiệm của Reviewer (Sinh viên Nguyễn Quốc Kỳ) |
 | :--- | :--- | :--- |
+| **Quyết định thay đổi & thực thi** | Trình bày đề xuất, giải thích phương án kỹ thuật và **xin phép trước khi thao tác** | **Phê duyệt hoặc từ chối** trước khi AI áp dụng thay đổi thật xuống đĩa |
 | **Phân tích yêu cầu & Chọn test case** | Phân tích SRS và bảng HW02, gợi ý các case thích hợp data-driven | **Quyết định** đưa vào, sửa đổi hoặc loại bỏ test case; chịu trách nhiệm danh sách chọn |
-| **Trích xuất dữ liệu kiểm thử** | Chạy script trích xuất JSON, chuẩn hóa schema | **Kiểm chứng** từng giá trị expected với tài liệu đặc tả SRS `specs/system_requirements_specification.md` |
+| **Trích xuất dữ liệu kiểm thử** | Chạy script trích xuất JSON khi được duyệt, chuẩn hóa schema | **Kiểm chứng** từng giá trị expected với tài liệu đặc tả SRS `specs/system_requirements_specification.md` |
 | **Sinh mã nguồn kiểm thử** | Sinh bản thảo Page Objects và Playwright Specs (AI Draft) | **Rà soát từng dòng code**, sửa lỗi selector, bổ sung assertion, tối ưu wait |
 | **Thực thi kiểm thử** | Cung cấp script runner `run-all.mjs` và config Playwright | **Trực tiếp chạy test** trên máy local qua 3 trình duyệt; tuyệt đối không để AI can thiệp |
 | **Báo cáo kết quả & Thẩm định** | Cung cấp công cụ thẩm định tự động `check_requirements.py` | Mở trực quan từng HTML report, xác nhận hiển thị `Run by: 23120138` |
@@ -37,6 +48,8 @@
 
 > [!CAUTION]
 > **Ranh giới Đạo đức Kiểm thử (Testing Integrity Rules):**
+> - Tuyệt đối không tự ý chạy liên tiếp 2–3 phase mà không dừng lại xin phép Reviewer nghiệm thu từng phase.
+> - Tuyệt đối không tự ý tạo/sửa file hoặc chạy lệnh thay đổi trạng thái khi chưa hỏi trước Reviewer.
 > - Tuyệt đối không để AI tạo giả hoặc chỉnh sửa file HTML Report, timestamp ISO, ảnh chụp màn hình hay log chạy terminal.
 > - Tuyệt đối không để AI viết hộ bài AI Critique (200–300 từ) hoặc tự ý đánh giá điểm số.
 > - Nếu test fail vì lỗi thật của SUT, tuyệt đối không được sửa script hay sửa expected value cho pass. Phải giữ nguyên và ghi nhận bug.

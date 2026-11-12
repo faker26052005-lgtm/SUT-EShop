@@ -53,62 +53,66 @@ def determine_type(classification: str, title: str) -> str:
 
 
 def parse_fr02_inputs(input_raw: str, expected_raw: str):
-    data = {}
+    inputs = {}
+    expected = {}
     # Extract HTTP status
     status_match = re.search(r"HTTP\s+(\d{3})", expected_raw)
-    data["expectedStatus"] = int(status_match.group(1)) if status_match else 200
+    expected["status"] = int(status_match.group(1)) if status_match else 200
 
     # Extract redirect or URL
     if "redirect" in expected_raw.lower() or "/" in expected_raw:
         url_match = re.search(r"redirect\s+[`'\"]?(/[^`'\s\"]*)", expected_raw)
-        data["expectedUrl"] = url_match.group(1) if url_match else "/"
+        expected["url"] = url_match.group(1) if url_match else "/"
 
     # Extract username / password from input_raw
-    # Patterns like: `test@eshop.com` / `Test1234!`
     parts = input_raw.split("/")
     if len(parts) >= 2:
         username = clean_cell(parts[0]).replace("$", "").strip()
         password = clean_cell(parts[1]).replace("$", "").split("(")[0].strip()
-        data["username"] = username
-        data["password"] = password
+        inputs["username"] = username
+        inputs["password"] = password
     else:
-        data["username"] = input_raw
-        data["password"] = ""
+        inputs["username"] = input_raw
+        inputs["password"] = ""
 
-    return data
+    return inputs, expected
 
 
 def parse_fr07_inputs(input_raw: str, expected_raw: str):
-    data = {}
+    inputs = {}
+    expected = {}
     # Extract product ID if present: id = 1
     id_match = re.search(r"id\s*=\s*['\"]?(\w+)", input_raw)
-    data["productId"] = id_match.group(1) if id_match else "1"
+    inputs["product_id"] = id_match.group(1) if id_match else "1"
 
     # Extract quantity: Q = 1
     q_match = re.search(r"Q\s*=\s*(-?\d+)", input_raw)
-    data["quantity"] = int(q_match.group(1)) if q_match else 1
+    q_val = int(q_match.group(1)) if q_match else 1
+    inputs["quantity"] = q_val
+    expected["quantity"] = q_val if q_val > 0 else 0
 
-    return data
+    return inputs, expected
 
 
 def parse_fr17_inputs(input_raw: str, expected_raw: str):
-    data = {}
+    inputs = {}
+    expected = {}
     # Extract code="PROMO2026"
     code_match = re.search(r"code\s*=\s*\"([^\"]+)\"", input_raw)
-    data["code"] = code_match.group(1) if code_match else "PROMO2026"
+    inputs["code"] = code_match.group(1) if code_match else "PROMO2026"
 
     # Extract type="percent" | "fixed"
     type_match = re.search(r"type\s*=\s*\"([^\"]+)\"", input_raw)
-    data["discount_type"] = type_match.group(1) if type_match else "percent"
+    inputs["discount_type"] = type_match.group(1) if type_match else "percent"
 
     # Extract val=10
     val_match = re.search(r"val\s*=\s*([0-9.]+)", input_raw)
-    data["discount_value"] = float(val_match.group(1)) if val_match else 10.0
+    inputs["discount_value"] = float(val_match.group(1)) if val_match else 10.0
 
     status_match = re.search(r"HTTP\s+(\d{3})", expected_raw)
-    data["expectedStatus"] = int(status_match.group(1)) if status_match else 201
+    expected["status"] = int(status_match.group(1)) if status_match else 201
 
-    return data
+    return inputs, expected
 
 
 def parse_test_cases(markdown_path: Path, prefix: str, fr_code: str):
@@ -148,23 +152,30 @@ def parse_test_cases(markdown_path: Path, prefix: str, fr_code: str):
             "id": tc_id,
             "title": objective,
             "type": tc_type,
+            "automation_decision": "automate",
+            "test_layer": "ui_e2e",
             "ep_code": ep_code,
             "bva_code": bva_code,
+            "preconditions": {},
             "raw_input": raw_input,
             "raw_expected": raw_expected,
+            "expected": {},
             "human_verification": "TODO: verify with specs/system_requirements_specification.md",
         }
 
         # Feature-specific parsing helpers
         if fr_code == "FR-02":
-            specifics = parse_fr02_inputs(raw_input, raw_expected)
+            specifics, expected_obj = parse_fr02_inputs(raw_input, raw_expected)
             record.update(specifics)
+            record["expected"] = expected_obj
         elif fr_code == "FR-07":
-            specifics = parse_fr07_inputs(raw_input, raw_expected)
+            specifics, expected_obj = parse_fr07_inputs(raw_input, raw_expected)
             record.update(specifics)
+            record["expected"] = expected_obj
         elif fr_code == "FR-17":
-            specifics = parse_fr17_inputs(raw_input, raw_expected)
+            specifics, expected_obj = parse_fr17_inputs(raw_input, raw_expected)
             record.update(specifics)
+            record["expected"] = expected_obj
 
         cases.append(record)
 

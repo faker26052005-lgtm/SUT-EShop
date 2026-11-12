@@ -11,12 +11,20 @@ import { LoginPage } from '../pages/login.page';
 interface LoginTestCase {
   id: string;              // e.g., 'TC_FR02_01'
   title: string;          // Human-readable case title from HW02
-  type: 'positive' | 'negative' | 'edge';
+  type: 'positive' | 'negative' | 'boundary' | 'edge';
+  automation_decision: 'automate' | 'automate_expected_failure' | 'blocked_deferred';
+  test_layer: 'ui_e2e' | 'api' | 'integration';
+  defect_id?: string;
+  blocker_reason?: string;
+  unblock_condition?: string;
+  preconditions?: Record<string, unknown>;
   username: string;
   password: string;
-  expectedStatus: number;  // HTTP status from /api/login
-  expectedUrl?: string;    // Regex/path pattern for redirection
-  expectedMessage?: string;// UI error text on rejection
+  expected: {
+    status?: number;       // HTTP status from /api/login
+    url?: string;          // Regex/path pattern for redirection
+    message?: string;      // UI error text on rejection
+  };
 }
 
 const dataFilePath = path.resolve(__dirname, '../../data/fr02-login.json');
@@ -24,6 +32,13 @@ const testCases: LoginTestCase[] = JSON.parse(fs.readFileSync(dataFilePath, 'utf
 
 test.describe('FR-02: Đăng nhập & Khóa tài khoản', () => {
   for (const tc of testCases) {
+    if (tc.automation_decision === 'blocked_deferred') {
+      test.skip(`${tc.id} [${tc.type}] ${tc.title}`, async () => {
+        // Blocked: tc.blocker_reason
+      });
+      continue;
+    }
+
     test(`${tc.id} [${tc.type}] ${tc.title}`, async ({ page }) => {
       const loginPage = new LoginPage(page);
       await loginPage.goto();
@@ -36,18 +51,20 @@ test.describe('FR-02: Đăng nhập & Khóa tài khoản', () => {
       await loginPage.login(tc.username, tc.password);
       const response = await responsePromise;
 
-      expect(response.status()).toBe(tc.expectedStatus);
-
-      if (tc.expectedUrl) {
-        // Pattern 2: URL navigation verification
-        await expect(page).toHaveURL(new RegExp(tc.expectedUrl));
+      if (tc.expected.status !== undefined) {
+        expect(response.status()).toBe(tc.expected.status);
       }
 
-      if (tc.expectedMessage) {
+      if (tc.expected.url) {
+        // Pattern 2: URL navigation verification
+        await expect(page).toHaveURL(new RegExp(tc.expected.url));
+      }
+
+      if (tc.expected.message) {
         // Pattern 3: Visibility of error alert
         await expect(loginPage.errorAlert).toBeVisible();
         // Pattern 4: Exact or containing text assertion
-        await expect(loginPage.errorAlert).toContainText(tc.expectedMessage);
+        await expect(loginPage.errorAlert).toContainText(tc.expected.message);
       }
     });
   }

@@ -87,7 +87,7 @@ def find_spec_files(root: Path, feat_cfg: dict):
 
 
 def count_data_cases(root: Path, feat_cfg: dict):
-    """Counts test cases from data JSON or CSV file."""
+    """Counts test cases from data JSON or CSV file and analyzes decision & layer stats."""
     data_rel = feat_cfg.get("data", f"data/{feat_cfg.get('slug')}.json")
     dfile = root / data_rel
     if not dfile.exists():
@@ -98,20 +98,44 @@ def count_data_cases(root: Path, feat_cfg: dict):
                 dfile = alt
                 break
 
+    stats = {
+        "automate": 0,
+        "automate_expected_failure": 0,
+        "blocked_deferred": 0,
+        "layers": {"ui_e2e": 0, "api": 0, "integration": 0},
+        "has_expected_obj": True
+    }
+
     if not dfile.exists():
-        return None, 0
+        return None, 0, stats
 
     try:
         if dfile.suffix == ".json":
             content = json.loads(dfile.read_text(encoding="utf-8"))
-            return dfile, len(content) if isinstance(content, list) else 0
+            if isinstance(content, list):
+                for item in content:
+                    dec = item.get("automation_decision", "automate")
+                    if dec in stats:
+                        stats[dec] += 1
+                    else:
+                        stats["automate"] += 1
+
+                    layer = item.get("test_layer", "ui_e2e")
+                    if layer in stats["layers"]:
+                        stats["layers"][layer] += 1
+
+                    if "expected" not in item:
+                        stats["has_expected_obj"] = False
+
+                return dfile, len(content), stats
+            return dfile, 0, stats
         elif dfile.suffix == ".csv":
             with dfile.open(encoding="utf-8", newline="") as fh:
-                return dfile, max(sum(1 for _ in csv.reader(fh)) - 1, 0)
+                return dfile, max(sum(1 for _ in csv.reader(fh)) - 1, 0), stats
     except Exception as e:
         print(f"Warning reading {dfile}: {e}")
 
-    return dfile, 0
+    return dfile, 0, stats
 
 
 def get_git_author(root: Path, user_override: str = None):
@@ -137,7 +161,17 @@ def main():
 
     problems = []
     warnings = []
-    totals = dict(cases=0, executed=0, passed=0, failed=0, runs=0)
+    totals = dict(
+        cases=0,
+        executed=0,
+        passed=0,
+        failed=0,
+        runs=0,
+        automate=0,
+        automate_expected_failure=0,
+        blocked_deferred=0,
+        layers={"ui_e2e": 0, "api": 0, "integration": 0},
+    )
 
     print("=====================================================================")
     print(f"HW04 Requirement Compliance Check: Student ID = {student_id}")
@@ -165,13 +199,28 @@ def main():
         slug = feat.get("slug", feat.get("fr"))
         fr_code = feat.get("fr", slug)
         specs = find_spec_files(root, feat)
-        dfile, num_rows = count_data_cases(root, feat)
+        dfile, num_rows, dstats = count_data_cases(root, feat)
 
         totals["cases"] += num_rows
+        totals["automate"] += dstats.get("automate", 0)
+        totals["automate_expected_failure"] += dstats.get("automate_expected_failure", 0)
+        totals["blocked_deferred"] += dstats.get("blocked_deferred", 0)
+        for lk, lv in dstats.get("layers", {}).items():
+            if lk in totals["layers"]:
+                totals["layers"][lk] += lv
 
         print(f"\n[{fr_code} | {slug}]")
         print(f"  Specs found ({len(specs)}): {[s.name for s in specs]}")
         print(f"  Data file: {dfile.relative_to(root) if dfile else 'MISSING'} ({num_rows} test cases)")
+        print(f"    Decisions: automate={dstats.get('automate', 0)}, "
+              f"automate_expected_failure={dstats.get('automate_expected_failure', 0)}, "
+              f"blocked_deferred={dstats.get('blocked_deferred', 0)}")
+        print(f"    Layers: ui_e2e={dstats.get('layers', {}).get('ui_e2e', 0)}, "
+              f"api={dstats.get('layers', {}).get('api', 0)}, "
+              f"integration={dstats.get('layers', {}).get('integration', 0)}")
+
+        if not dstats.get("has_expected_obj", True):
+            problems.append(f"{fr_code}: Data file has items missing standard 'expected' object")
 
         if not specs:
             problems.append(f"{fr_code}: No spec file found")
@@ -323,6 +372,13 @@ def main():
     print("\n=====================================================================")
     print("Summary Totals:")
     print(f"  Test cases defined in data: {totals['cases']}")
+    print(f"    - automate (Expected Pass): {totals['automate']}")
+    print(f"    - automate_expected_failure (Expected Fail / SUT Defect): {totals['automate_expected_failure']}")
+    print(f"    - blocked_deferred (Environment / Blocker): {totals['blocked_deferred']}")
+    automated_count = totals['automate'] + totals['automate_expected_failure']
+    pct = (automated_count / totals['cases'] * 100) if totals['cases'] else 0
+    print(f"  Automated cases: {automated_count}/{totals['cases']} ({pct:.1f}%)")
+    print(f"  Layers: ui_e2e={totals['layers']['ui_e2e']}, api={totals['layers']['api']}, integration={totals['layers']['integration']}")
     print(f"  Total browser runs: {totals['runs']} (Minimum required: 9)")
     print(f"  Total tests executed across runs: {totals['executed']}")
     print(f"  Passed: {totals['passed']} | Failed: {totals['failed']}")

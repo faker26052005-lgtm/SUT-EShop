@@ -16,21 +16,32 @@ Hệ thống hướng dẫn và đồng hành (coaching workflow) dành cho sinh
 
 ---
 
-## 1. Nguyên tắc Cốt lõi & Phân công Trách nhiệm
+## 1. Nguyên tắc Cốt lõi & Vai trò Người Reviewer (Reviewer Gatekeeper Protocol)
 
 Bài tập đánh giá năng lực kiểm soát, rà soát phản biện và tính xác thực của bằng chứng kiểm thử. AI đóng vai trò trợ lý có kỷ luật, **không phải hộp đen** tự động sinh toàn bộ code.
 
-| Nhiệm vụ của AI | Trách nhiệm BẮT BUỘC của Sinh viên |
+### 🛡️ Vai trò và Quyền hạn Tối cao của Reviewer (Sinh viên Nguyễn Quốc Kỳ):
+1. **Kiểm soát Từng Phase Độc lập (Strict Phase-by-Phase Gate):**
+   - AI bắt buộc phải thực hiện và hoàn tất **từng phase một cách tuần tự**. 
+   - **Tuyệt đối cấm gộp (batching) thực hiện liên tục 2–3 phase rồi mới thông báo**. Sau mỗi phase, AI phải dừng lại, báo cáo kết quả cụ thể và chờ Reviewer phê duyệt nghiệm thu (Checkpoint Approval) mới được sang phase kế tiếp.
+2. **Quy tắc "Hỏi trước khi Áp dụng" (Ask-Before-Apply):**
+   - Trước khi tạo mới, chỉnh sửa bất kỳ tập tin nào trên đĩa hoặc thực thi lệnh thay đổi trạng thái (chạy test, commit git), AI **bắt buộc phải giải thích nội dung thay đổi dự kiến và hỏi ý kiến Reviewer trước khi thực hiện**.
+   - Chỉ khi Reviewer đồng ý, AI mới được phép tiến hành thay đổi thật.
+
+| Nhiệm vụ của AI | Trách nhiệm BẮT BUỘC của Reviewer (Sinh viên) |
 | :--- | :--- |
-| Hỗ trợ phân tích đặc tả SRS và cấu trúc DOM | Quyết định đưa vào, sửa đổi hoặc loại bỏ test case |
-| Sinh mã nguồn bản nháp (draft Page Objects, specs, data) | Review từng dòng code, sửa lỗi và chịu trách nhiệm cuối cùng |
-| Cung cấp công cụ chuyển đổi data (`tc_to_json.py`) và kiểm tra (`check_requirements.py`) | Trực tiếp chạy test suite trên máy local trên cả 3 trình duyệt |
-| Gợi ý danh mục lỗi dựa trên `review-checklist.md` | Tự viết phân tích khoảng cách (Gap Analysis) và AI Critique bằng lời của mình |
-| Hỗ trợ soạn thảo khung báo cáo lỗi (Bug Report draft) | Xác định lỗi SUT thật, chụp ảnh màn hình, tạo GitHub Issues |
-| Gợi ý commit message chuẩn Conventional Commits | Trực tiếp thực hiện git commit và xuất file git log |
+| Trình bày đề xuất, phân tích SRS và giải thích phương án trước khi làm | **Xem xét, phê duyệt hoặc yêu cầu chỉnh sửa** trước khi AI áp dụng thay đổi |
+| Hỗ trợ phân tích đặc tả SRS và cấu trúc DOM | **Quyết định** đưa vào, sửa đổi hoặc loại bỏ test case |
+| Soạn thảo bản nháp (draft) sau khi được Reviewer đồng ý | **Review từng dòng code**, sửa lỗi và chịu trách nhiệm cuối cùng |
+| Cung cấp công cụ chuyển đổi data (`tc_to_json.py`) và kiểm tra (`check_requirements.py`) | **Trực tiếp chạy test suite** trên máy local trên cả 3 trình duyệt |
+| Gợi ý danh mục lỗi dựa trên `review-checklist.md` | **Tự viết** phân tích khoảng cách (Gap Analysis) và AI Critique bằng lời của mình |
+| Hỗ trợ soạn thảo khung báo cáo lỗi (Bug Report draft) | **Xác nhận lỗi SUT thật**, chụp ảnh màn hình, tạo GitHub Issues |
+| Gợi ý commit message chuẩn Conventional Commits | **Trực tiếp phê duyệt và thực hiện** git commit; xuất file git log |
 
 > [!CAUTION]
 > **Tuyệt đối KHÔNG ĐƯỢC:**
+> - Tự ý làm liên tiếp nhiều phase mà không dừng lại xin ý kiến Reviewer.
+> - Tự ý ghi/sửa file hoặc chạy lệnh thay đổi trạng thái khi chưa hỏi trước.
 > - Bịa đặt hoặc chỉnh sửa file HTML report, timestamp ISO, ảnh chụp màn hình, hay log terminal.
 > - Viết hộ phần AI Critique (200–300 từ) hoặc tự ý đánh giá điểm số.
 > - Sửa code test hay sửa kết quả mong đợi cho pass khi SUT bị lỗi thật.
@@ -83,8 +94,8 @@ flowchart TD
 
 ### Tóm tắt các Checkpoint bắt buộc:
 1. **Checkpoint 1 (Scope):** Thống nhất 3 feature (FR-02, FR-07, FR-17), SUT chạy local, file `.env` sẵn sàng.
-2. **Checkpoint 2 (Test Selection):** Mỗi feature có ≥ 12 test case tự động hóa (lấy từ HW02 `TC_FRxx_xx`). Các case không thể tự động hóa phải ghi rõ lý do.
-3. **Checkpoint 3 (Test Data):** Dữ liệu nằm độc lập trong `data/*.json`, không hardcode inline array trong spec. Sử dụng `scripts/tc_to_json.py` để trích xuất.
+2. **Checkpoint 2 (Test Selection):** Mỗi feature có ≥ 12 test case tự động hóa (lấy từ HW02 `TC_FRxx_xx`). Áp dụng chuẩn **3 trạng thái phân loại** (`automate`, `automate_expected_failure`, `blocked_deferred`) và **3 tầng kiểm thử** (`ui_e2e`, `api`, `integration`). Phân biệt rạch ròi Testability và kết quả Pass/Fail; các case SUT có defect hoặc thiếu tính năng vẫn phải automate và gắn nhãn `automate_expected_failure`.
+3. **Checkpoint 3 (Test Data):** Dữ liệu nằm độc lập trong `data/*.json`, không hardcode inline array trong spec. Áp dụng cấu trúc chuẩn với object `expected`, định nghĩa locator qua semantic role & name (không dùng raw CSS selectors). Case `blocked_deferred` bắt buộc có `blocker_reason` và `unblock_condition`.
 4. **Checkpoint 4 (Script Draft):** Page Object và Spec biên dịch thành công. Áp dụng **≥ 3 kiểu assertion khác nhau**. Tách commit "bản AI sinh" và "bản sinh viên sửa".
 5. **Checkpoint 5 (Multi-Browser Runs):** Hoàn thành **9 lượt chạy thực tế** (3 features x Chromium, Firefox, WebKit). Báo cáo HTML hiển thị `Run by: 23120138` và ISO timestamp.
 6. **Checkpoint 6 (Review & Gap Analysis):** Rà soát theo `review-checklist.md`. Ghi nhận các lỗi của AI vào `docs/main-report.md`. Chuẩn bị ít nhất 1 lỗi điển hình để thuyết minh trong video.
