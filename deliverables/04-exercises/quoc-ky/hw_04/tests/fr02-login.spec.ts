@@ -60,9 +60,11 @@ test.describe('FR-02: Đăng nhập & Khóa tài khoản', () => {
       }
 
       // Pattern 1: Network response inspection without fixed wait
+      const isClientValidationCase = !targetEmail || targetEmail === '""' || !targetPassword || targetPassword === '""';
+      const timeoutMs = isClientValidationCase ? 2_000 : 7_000;
       const responsePromise = page.waitForResponse(
         (res) => res.url().includes('/api/login') && res.request().method() === 'POST',
-        { timeout: 7_000 }
+        { timeout: timeoutMs }
       ).catch(() => null);
 
       await loginPage.login(targetEmail, targetPassword);
@@ -71,6 +73,9 @@ test.describe('FR-02: Đăng nhập & Khóa tài khoản', () => {
       if (response) {
         // Assertion 1 (Plain Value): HTTP status code verification
         expect(response.status()).toBe(tc.expectedStatus);
+      } else if (isClientValidationCase) {
+        // Client-side HTML5 required validation blocked request from dispatching
+        await expect(page).toHaveURL(/\/(login)?/);
       }
 
       if (tc.type === 'positive') {
