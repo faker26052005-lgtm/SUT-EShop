@@ -21,3 +21,18 @@
 - **Human Review Notes:**
   - Verified that `Register.jsx` `<label>` elements lack `htmlFor`, so `getByLabel()` cannot be used; confirmed `form div:has(> label:text-is(...)) input` matches exact DOM elements.
   - Verified `frontend-admin/src/App.jsx` has a secondary CSV preview `<table>`, so `AdminProductPage` explicitly scopes to `table:has(th:text-is("Tên SP"))`.
+
+---
+
+### Entry 2 — Stage 2: Feature A (`FR-01` Account Registration) Script Generation & Human Review
+- **AI Tool:** Antigravity (Gemini 3.8 Flash)
+- **Date & Time:** `2026-11-12 13:09 +07:00`
+- **Prompt:**
+  > Dựa trên `test-data/fr01-register.json` và `pages/RegisterPage.ts`, viết kịch bản `tests/fr01-register.spec.ts` chạy Data-Driven trên cả 3 trình duyệt (Chromium, Firefox, WebKit) với tối thiểu 3 assertion patterns (URL, Visibility/State, Text/Attribute/DOM validity). Sau đó chạy thử trên SUT thật, rà soát và sửa các điểm yếu của script.
+- **AI Output Summary:**
+  - Generated `tests/fr01-register.spec.ts` executing 15 test cases across 3 browsers (45 total runs).
+  - Observed consistent results across all 3 browsers: **21 passed, 24 failed** (8 real SUT defects per browser: flawed password regex requiring whitespace instead of special characters, missing Confirm Password field, missing email format validation, missing duplicate email check, accepting whitespace/numeric/XSS names).
+- **Human Review & Fixes Applied:**
+  1. **Anti-Cheat Report Visibility Gap:** Discovered Playwright's built-in HTML reporter did not render `config.metadata.runBy` visibly in `playwright-report/index.html`. Added `reporters/antiCheatReporter.ts` to inject a visible header banner (`Run by: 23120183` + ISO timestamp) and update `<title>`.
+  2. **Weak HTML5 Validation Assertions:** Initial AI script only checked `el.checkValidity() === false`. Strengthened `html5_invalid` assertions to also verify `el.validationMessage.length > 0` and assert zero `POST /api/register` network requests were sent.
+  3. **Cross-Browser Email Isolation & Timeout Tuning:** Included `browserName` in `uniqueSuffix` to prevent cross-browser email collisions and tuned failure timeouts (`2000ms–2500ms`) with descriptive bug notes in assertion messages (reducing total run time from 4.5m to 3.9m).

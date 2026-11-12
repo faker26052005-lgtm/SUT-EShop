@@ -30,6 +30,7 @@ export default defineConfig({
         open: 'never',
       },
     ],
+    ['./reporters/antiCheatReporter.ts'],
   ],
   use: {
     baseURL: 'http://localhost:5173',
