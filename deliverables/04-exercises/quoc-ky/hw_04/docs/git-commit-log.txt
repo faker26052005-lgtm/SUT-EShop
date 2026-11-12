@@ -1,3 +1,5 @@
+697967f | Nguyen Quoc Ky | 2026-11-12 23:23:47 +0700 | docs(audit): update ai audit report with in-depth review sessions 08-12
+cd68c2d | Nguyen Quoc Ky | 2026-11-12 23:19:19 +0700 | docs(git): update git commit log after completing FR-17 review
 f1cbb39 | Nguyen Quoc Ky | 2026-11-12 23:19:09 +0700 | fix(FR-17): enhance assertions for API validation, auth modes and delete outcomes
 5bf4ccd | Nguyen Quoc Ky | 2026-11-12 23:12:55 +0700 | docs(git): update git commit log after FR-17 review fixes
 b78b48c | Nguyen Quoc Ky | 2026-11-12 23:12:28 +0700 | fix(FR-17): route API coupon validation and auth modes with strict targets
