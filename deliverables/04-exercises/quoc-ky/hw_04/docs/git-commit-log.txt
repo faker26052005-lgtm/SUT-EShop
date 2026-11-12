@@ -1,3 +1,5 @@
+f1cbb39 | Nguyen Quoc Ky | 2026-11-12 23:19:09 +0700 | fix(FR-17): enhance assertions for API validation, auth modes and delete outcomes
+5bf4ccd | Nguyen Quoc Ky | 2026-11-12 23:12:55 +0700 | docs(git): update git commit log after FR-17 review fixes
 b78b48c | Nguyen Quoc Ky | 2026-11-12 23:12:28 +0700 | fix(FR-17): route API coupon validation and auth modes with strict targets
 e0f5628 | Nguyen Quoc Ky | 2026-11-12 23:06:02 +0700 | docs(git): update git commit log after FR-07 review fixes
 567f91f | Nguyen Quoc Ky | 2026-11-12 23:05:58 +0700 | fix(FR-07): refine TC_FR07_01 and TC_FR07_02 with strict assertions and stable identifiers
