@@ -1,0 +1,188 @@
+[
+  {
+    "id": "TC-FR09-01",
+    "category": "Positive",
+    "title": "Valid fixed coupon BIGBUY on order total 600000 VND",
+    "couponCode": "BIGBUY",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "50,000",
+      "finalAmountText": "550,000"
+    }
+  },
+  {
+    "id": "TC-FR09-02",
+    "category": "Positive",
+    "title": "Valid percentage coupon SAVE10 (10%) on order total 400000 VND",
+    "couponCode": "SAVE10",
+    "orderTotal": 400000,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "40,000",
+      "finalAmountText": "360,000",
+      "bugNote": "server.js:406 computes total * (1 - 10) = -3,600,000, inflating total to 4,000,000 (BUG-FR09-01)"
+    }
+  },
+  {
+    "id": "TC-FR09-03",
+    "category": "Positive",
+    "title": "Valid multi-use fixed coupon VIP100 on order total 600000 VND",
+    "couponCode": "VIP100",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "100,000",
+      "finalAmountText": "500,000"
+    }
+  },
+  {
+    "id": "TC-FR09-04",
+    "category": "Positive",
+    "title": "Lowercase coupon code 'bigbuy' is normalized and applied",
+    "couponCode": "bigbuy",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "50,000",
+      "finalAmountText": "550,000"
+    }
+  },
+  {
+    "id": "TC-FR09-05",
+    "category": "Negative",
+    "title": "Empty coupon code disables the Apply button",
+    "couponCode": "",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "button_disabled",
+      "buttonDisabled": true
+    }
+  },
+  {
+    "id": "TC-FR09-06",
+    "category": "Negative",
+    "title": "Whitespace-only coupon code disables the Apply button",
+    "couponCode": "   ",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "button_disabled",
+      "buttonDisabled": true
+    }
+  },
+  {
+    "id": "TC-FR09-07",
+    "category": "Negative",
+    "title": "Non-existent coupon code shows not found error",
+    "couponCode": "NONEXISTENT",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "Mã giảm giá không tồn tại"
+    }
+  },
+  {
+    "id": "TC-FR09-08",
+    "category": "Negative",
+    "title": "Expired coupon code EXPIRED shows expiration error",
+    "couponCode": "EXPIRED",
+    "orderTotal": 200000,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "Mã giảm giá đã hết hạn"
+    }
+  },
+  {
+    "id": "TC-FR09-09",
+    "category": "Negative",
+    "title": "Order total below minimum threshold (400000 < 500000 for BIGBUY)",
+    "couponCode": "BIGBUY",
+    "orderTotal": 400000,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "chưa đủ giá trị tối thiểu"
+    }
+  },
+  {
+    "id": "TC-FR09-10",
+    "category": "Edge",
+    "title": "Order total at exact minimum boundary - 1 (499999 VND for BIGBUY)",
+    "couponCode": "BIGBUY",
+    "orderTotal": 499999,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "chưa đủ giá trị tối thiểu"
+    }
+  },
+  {
+    "id": "TC-FR09-11",
+    "category": "Edge",
+    "title": "Order total at exact minimum boundary (500000 VND for BIGBUY per C3 >= min)",
+    "couponCode": "BIGBUY",
+    "orderTotal": 500000,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "50,000",
+      "finalAmountText": "450,000",
+      "bugNote": "server.js:385 uses '>' instead of '>=' and wrongly rejects 500000 VND (BUG-FR09-02)"
+    }
+  },
+  {
+    "id": "TC-FR09-12",
+    "category": "Edge",
+    "title": "Order total at minimum boundary + 1 (500001 VND for BIGBUY)",
+    "couponCode": "BIGBUY",
+    "orderTotal": 500001,
+    "expected": {
+      "outcome": "applied",
+      "buttonDisabled": false,
+      "discountAmountText": "50,000",
+      "finalAmountText": "450,001"
+    }
+  },
+  {
+    "id": "TC-FR09-13",
+    "category": "Edge",
+    "title": "Order total at zero (0 VND) is rejected",
+    "couponCode": "BIGBUY",
+    "orderTotal": 0,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "chưa đủ giá trị tối thiểu"
+    }
+  },
+  {
+    "id": "TC-FR09-14",
+    "category": "Edge",
+    "title": "SQL injection payload in coupon code is safely rejected",
+    "couponCode": "' OR '1'='1",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "Mã giảm giá không tồn tại"
+    }
+  },
+  {
+    "id": "TC-FR09-15",
+    "category": "Edge",
+    "title": "XSS payload in coupon code does not execute and shows error safely",
+    "couponCode": "<script>alert(1)</script>",
+    "orderTotal": 600000,
+    "expected": {
+      "outcome": "error",
+      "buttonDisabled": false,
+      "errorContains": "Mã giảm giá không tồn tại"
+    }
+  }
+]

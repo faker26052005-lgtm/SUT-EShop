@@ -1,0 +1,215 @@
+[
+  {
+    "id": "TC-FR15-01",
+    "category": "Positive",
+    "action": "create",
+    "title": "Create product with valid SRS baseline data",
+    "name": "Bàn phím cơ DareU EK87 {{ts}}",
+    "price": "500000",
+    "description": "Bàn phím TKL chính hãng",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "3",
+    "expected": {
+      "outcome": "created_in_table"
+    }
+  },
+  {
+    "id": "TC-FR15-02",
+    "category": "Edge",
+    "action": "create",
+    "title": "Create product with minimum Name length (1 char)",
+    "name": "A",
+    "price": "500000",
+    "description": "Min length name",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "created_in_table"
+    }
+  },
+  {
+    "id": "TC-FR15-03",
+    "category": "Edge",
+    "action": "create",
+    "title": "Create product with maximum allowed Name length (255 chars)",
+    "nameRepeat": { "char": "P", "length": 255 },
+    "price": "500000",
+    "description": "Max 255 chars",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "created_in_table"
+    }
+  },
+  {
+    "id": "TC-FR15-04",
+    "category": "Negative",
+    "action": "create",
+    "title": "Create product with overlimit Name length (256 chars) should be rejected",
+    "nameRepeat": { "char": "Q", "length": 256 },
+    "price": "500000",
+    "description": "Over 255 chars",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "rejected",
+      "bugNote": "Backend & DB do not enforce 255-char max length (BUG-FR15-04)"
+    }
+  },
+  {
+    "id": "TC-FR15-05",
+    "category": "Negative",
+    "action": "create",
+    "title": "Create product with empty Name triggers HTML5 required validation",
+    "name": "",
+    "price": "500000",
+    "description": "Empty name",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "html5_invalid"
+    }
+  },
+  {
+    "id": "TC-FR15-06",
+    "category": "Negative",
+    "action": "create",
+    "title": "Create product with whitespace-only Name should be rejected",
+    "name": "   ",
+    "price": "500000",
+    "description": "Whitespace name",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "rejected",
+      "bugNote": "Form & backend accept whitespace-only product names (BUG-FR15-04)"
+    }
+  },
+  {
+    "id": "TC-FR15-07",
+    "category": "Edge",
+    "action": "create",
+    "title": "Create product with minimum valid positive Price (1 VND)",
+    "name": "MinPrice Item {{ts}}",
+    "price": "1",
+    "description": "Price = 1",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "created_in_table"
+    }
+  },
+  {
+    "id": "TC-FR15-08",
+    "category": "Edge",
+    "action": "create",
+    "title": "Create product with Price = 0 VND should be rejected",
+    "name": "ZeroPrice Item {{ts}}",
+    "price": "0",
+    "description": "Price = 0",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "rejected",
+      "bugNote": "Backend allows 0 VND products (BUG-FR15-03)"
+    }
+  },
+  {
+    "id": "TC-FR15-09",
+    "category": "Negative",
+    "action": "create",
+    "title": "Create product with negative Price (-50000 VND) should be rejected",
+    "name": "NegPrice Item {{ts}}",
+    "price": "-50000",
+    "description": "Negative price",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "rejected",
+      "bugNote": "Backend allows negative product prices (BUG-FR15-03)"
+    }
+  },
+  {
+    "id": "TC-FR15-10",
+    "category": "Edge",
+    "action": "create",
+    "title": "Create product with extreme upper Price (1000000000 VND)",
+    "name": "Luxury Item {{ts}}",
+    "price": "1000000000",
+    "description": "1 billion VND",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "2",
+    "expected": {
+      "outcome": "created_in_table"
+    }
+  },
+  {
+    "id": "TC-FR15-11",
+    "category": "Edge",
+    "action": "create",
+    "title": "Stored XSS script in product Name renders safely as escaped text",
+    "name": "<script>alert('XSS')</script> {{ts}}",
+    "price": "500000",
+    "description": "XSS test",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "created_escaped_no_alert"
+    }
+  },
+  {
+    "id": "TC-FR15-12",
+    "category": "Positive",
+    "action": "update_isolation",
+    "title": "Updating one product must keep all other product names unchanged",
+    "name": "Updated Solo Product {{ts}}",
+    "price": "990000",
+    "description": "Updated desc",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "1",
+    "expected": {
+      "outcome": "only_target_updated",
+      "bugNote": "frontend-admin/src/App.jsx:110 overwrites all product names in UI state (BUG-FR15-02)"
+    }
+  },
+  {
+    "id": "TC-FR15-13",
+    "category": "Positive",
+    "action": "cancel_edit",
+    "title": "Clicking Cancel Edit restores form to Add New Product mode",
+    "name": "Seeded Target",
+    "price": "100000",
+    "expected": {
+      "outcome": "form_reset_to_add"
+    }
+  },
+  {
+    "id": "TC-FR15-14",
+    "category": "Positive",
+    "action": "delete",
+    "title": "Deleting a created product removes it from the product table",
+    "name": "Delete Target {{ts}}",
+    "price": "250000",
+    "description": "Temp product for deletion",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "3",
+    "expected": {
+      "outcome": "deleted_from_table"
+    }
+  },
+  {
+    "id": "TC-FR15-15",
+    "category": "Negative",
+    "action": "delete_confirm",
+    "title": "Clicking Delete product should prompt a confirmation dialog",
+    "name": "Confirm Delete Target {{ts}}",
+    "price": "300000",
+    "description": "Confirm dialog check",
+    "imageUrl": "https://placehold.co/300",
+    "categoryId": "3",
+    "expected": {
+      "outcome": "confirm_dialog_shown",
+      "bugNote": "deleteProduct() calls DELETE API immediately with no window.confirm() (BUG-FR15-08)"
+    }
+  }
+]

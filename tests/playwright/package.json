@@ -1,0 +1,21 @@
+{
+  "name": "eshop-playwright-automation",
+  "version": "1.0.0",
+  "description": "HW04-AI Web Frontend Automation Testing Suite for EShop SUT (FR-01, FR-09, FR-15)",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:fr01": "playwright test tests/fr01-register.spec.ts",
+    "test:fr09": "playwright test tests/fr09-coupons.spec.ts",
+    "test:fr15": "playwright test tests/fr15-products.spec.ts",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

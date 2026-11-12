@@ -1,0 +1,211 @@
+[
+  {
+    "id": "TC-FR01-01",
+    "category": "Positive",
+    "title": "Valid registration with SRS-compliant strong password (ValidPass@123)",
+    "name": "Nguyen Van A",
+    "email": "validuser_{{ts}}@gmail.com",
+    "password": "ValidPass@123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "redirect_login",
+      "expectedUrl": "/login",
+      "bugNote": "SUT regex rejects '@' special char and requires whitespace (BUG-FR01-01)"
+    }
+  },
+  {
+    "id": "TC-FR01-02",
+    "category": "Negative",
+    "title": "Empty Name triggers HTML5 required validation",
+    "name": "",
+    "email": "emptyname_{{ts}}@gmail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "html5_invalid",
+      "invalidField": "name",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-03",
+    "category": "Negative",
+    "title": "Whitespace-only Name should be rejected",
+    "name": "   ",
+    "email": "wsname_{{ts}}@gmail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "SUT does not trim whitespace-only name and allows registration"
+    }
+  },
+  {
+    "id": "TC-FR01-04",
+    "category": "Negative",
+    "title": "Numeric-only Name should be rejected",
+    "name": "12345678",
+    "email": "numname_{{ts}}@gmail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "SUT lacks alphabetic character validation for Name"
+    }
+  },
+  {
+    "id": "TC-FR01-05",
+    "category": "Edge",
+    "title": "XSS payload in Name should be rejected or safely neutralized",
+    "name": "<script>alert(1)</script>",
+    "email": "xssname_{{ts}}@gmail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "SUT accepts raw script tags in Name; Header renders with dangerouslySetInnerHTML"
+    }
+  },
+  {
+    "id": "TC-FR01-06",
+    "category": "Negative",
+    "title": "Empty Email triggers HTML5 required validation",
+    "name": "Nguyen Van A",
+    "email": "",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "html5_invalid",
+      "invalidField": "email",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-07",
+    "category": "Negative",
+    "title": "Email missing @ symbol should be rejected",
+    "name": "Nguyen Van A",
+    "email": "invalidemail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "Email input uses type='text' and lacks format regex"
+    }
+  },
+  {
+    "id": "TC-FR01-08",
+    "category": "Negative",
+    "title": "Email missing domain (user@) should be rejected",
+    "name": "Nguyen Van A",
+    "email": "user@",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "Email input uses type='text' and backend lacks format validation"
+    }
+  },
+  {
+    "id": "TC-FR01-09",
+    "category": "Negative",
+    "title": "Duplicate existing Email (test@eshop.com) should be rejected",
+    "name": "Nguyen Van A",
+    "email": "test@eshop.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "expectedUrl": "/register",
+      "bugNote": "users.email has no UNIQUE constraint and /api/register does not check duplicates"
+    }
+  },
+  {
+    "id": "TC-FR01-10",
+    "category": "Negative",
+    "title": "Empty Password triggers HTML5 required validation",
+    "name": "Nguyen Van A",
+    "email": "emptypw_{{ts}}@gmail.com",
+    "password": "",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "html5_invalid",
+      "invalidField": "password",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-11",
+    "category": "Negative",
+    "title": "Password missing uppercase letter shows weak password error",
+    "name": "Nguyen Van A",
+    "email": "noupper_{{ts}}@gmail.com",
+    "password": "validpass@123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "errorContains": "Mật khẩu quá yếu!",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-12",
+    "category": "Negative",
+    "title": "Password missing special character shows weak password error",
+    "name": "Nguyen Van A",
+    "email": "nospecial_{{ts}}@gmail.com",
+    "password": "ValidPass1234",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "errorContains": "Mật khẩu quá yếu!",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-13",
+    "category": "Edge",
+    "title": "Password length below minimum boundary (7 chars: V@1aAbc)",
+    "name": "Nguyen Van A",
+    "email": "pw7_{{ts}}@gmail.com",
+    "password": "V@1aAbc",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "error_banner",
+      "errorContains": "Mật khẩu quá yếu!",
+      "expectedUrl": "/register"
+    }
+  },
+  {
+    "id": "TC-FR01-14",
+    "category": "Edge",
+    "title": "Confirm Password field must exist on Register form per FR-01 SRS",
+    "name": "Nguyen Van A",
+    "email": "confirm_{{ts}}@gmail.com",
+    "password": "ValidPass 123",
+    "checkConfirmField": true,
+    "expected": {
+      "outcome": "confirm_field_visible",
+      "expectedUrl": "/register",
+      "bugNote": "Register.jsx completely omits the Confirm Password input field (BUG-FR01-02)"
+    }
+  },
+  {
+    "id": "TC-FR01-15",
+    "category": "Edge",
+    "title": "Shortest valid Name (1 char) and shortest valid Email (a@b.co) with workaround password",
+    "name": "A",
+    "email": "a@b.co",
+    "password": "ValidPass 123",
+    "checkConfirmField": false,
+    "expected": {
+      "outcome": "redirect_login",
+      "expectedUrl": "/login"
+    }
+  }
+]
