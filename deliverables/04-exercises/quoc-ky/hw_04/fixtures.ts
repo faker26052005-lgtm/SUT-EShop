@@ -1,17 +1,37 @@
 import { APIRequestContext, expect } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
+
+export interface RegisterUserOptions {
+  apiUrl?: string;
+  password?: string;
+  name?: string;
+}
 
 /**
  * Helper to register a unique test user via API.
  * Ensures isolation for login counter and lockout tests (FR-02) and fresh checkout (FR-07).
+ * Supports custom passwords and uses crypto.randomUUID() for collision-free emails.
  */
 export async function registerFreshUser(
   request: APIRequestContext,
-  apiUrl: string = process.env.API_URL ?? 'http://localhost:3000'
-) {
-  const uniqueSuffix = `${Date.now()}_${Math.floor(Math.random() * 10000)}`;
-  const email = `test_user_${uniqueSuffix}@eshop.com`;
-  const password = 'Test1234!';
-  const name = `Test User ${uniqueSuffix}`;
+  apiUrlOrOptions: string | RegisterUserOptions = process.env.API_URL ?? 'http://localhost:3000',
+  customPassword?: string
+): Promise<{ email: string; password: string; name: string }> {
+  let apiUrl = process.env.API_URL ?? 'http://localhost:3000';
+  let password = customPassword ?? 'Test1234!';
+  let namePrefix = 'Test User';
+
+  if (typeof apiUrlOrOptions === 'object' && apiUrlOrOptions !== null) {
+    apiUrl = apiUrlOrOptions.apiUrl ?? apiUrl;
+    password = apiUrlOrOptions.password ?? password;
+    namePrefix = apiUrlOrOptions.name ?? namePrefix;
+  } else if (typeof apiUrlOrOptions === 'string') {
+    apiUrl = apiUrlOrOptions;
+  }
+
+  const uniqueId = randomUUID();
+  const email = `test_user_${uniqueId}@eshop.com`;
+  const name = `${namePrefix} ${uniqueId.substring(0, 8)}`;
 
   const response = await request.post(`${apiUrl}/api/register`, {
     data: {
@@ -22,7 +42,11 @@ export async function registerFreshUser(
     },
   });
 
-  expect(response.status(), `Register fresh user failed: ${await response.text()}`).toBe(201);
+  expect(
+    response.status(),
+    `Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`
+  ).toBe(201);
+
   return { email, password, name };
 }
 
