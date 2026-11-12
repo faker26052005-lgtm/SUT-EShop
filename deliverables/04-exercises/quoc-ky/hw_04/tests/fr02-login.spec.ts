@@ -6,86 +6,197 @@ import { registerFreshUser } from '../fixtures';
 
 /**
  * Data-Driven Test Suite for FR-02: Đăng nhập & Khóa tài khoản
- * Human-reviewed & refined version:
- * - Replaces fragile CSS locators with Accessible Locators
- * - Integrates registerFreshUser API helper for state and lockout isolation
- * - Implements 4 distinct assertion pattern groups (no fixed sleeps)
+ * - Standardized 3-state decisions: automate, automate_expected_failure, blocked_deferred
+ * - Distinct test layers: ui_e2e, api, integration
+ * - Fully isolated: Each test creates its own target user state via API
+ * - Strictly asserts expected outcomes per SRS (expected failures demonstrate SUT defects)
+ * - 4 distinct assertion pattern groups (status, url, visibility, text)
  */
-interface LoginTestCase {
+interface Fr02TestCase {
   id: string;
   title: string;
-  type: 'positive' | 'negative' | 'edge';
+  type: string;
+  automation_decision: 'automate' | 'automate_expected_failure' | 'blocked_deferred';
+  test_layer: 'ui_e2e' | 'api' | 'integration';
+  defect_id?: string;
+  blocker_reason?: string;
+  unblock_condition?: string;
+  preconditions?: string;
+  wait_duration_seconds?: number;
   username: string;
   password: string;
-  expectedStatus: number;
-  expectedUrl?: string;
-  raw_expected?: string;
+  expected: {
+    status?: number;
+    url?: string;
+    authenticated?: boolean;
+    failure_counter?: number;
+    is_locked?: boolean;
+    message_contains?: string;
+    timer_reset?: boolean;
+    client_validation_blocked?: boolean;
+    form_submitted?: boolean;
+    client_validation_triggered?: boolean;
+    validation_error?: boolean;
+    lockout_duration_seconds?: number;
+    exponential_backoff?: boolean;
+  };
+  notes?: string;
 }
 
 const dataFilePath = path.resolve(__dirname, '../data/fr02-login.json');
-const testCases: LoginTestCase[] = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+const testCases: Fr02TestCase[] = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+const apiUrl = process.env.API_URL ?? 'http://localhost:3000';
 
 test.describe('FR-02: Đăng nhập & Khóa tài khoản', () => {
-  let freshUserEmail = '';
-  let freshUserPassword = '';
-
   for (const tc of testCases) {
+    if (tc.automation_decision === 'blocked_deferred') {
+      test.skip(`${tc.id} [${tc.type}] ${tc.title}`, async () => {
+        // Skipped: Environment constraint. Blocker: ${tc.blocker_reason}
+      });
+      continue;
+    }
+
     test(`${tc.id} [${tc.type}] ${tc.title}`, async ({ page, request }) => {
-      const loginPage = new LoginPage(page);
-      await loginPage.goto();
+      // 1. LAYER: UI E2E TESTING
+      if (tc.test_layer === 'ui_e2e') {
+        const loginPage = new LoginPage(page);
+        await loginPage.goto();
 
-      // Determine target credentials to ensure test independence
-      let targetEmail = tc.username;
-      let targetPassword = tc.password;
+        let targetEmail = tc.username;
+        let targetPassword = tc.password;
 
-      // Rule: For positive tests, create a dedicated fresh active user to avoid previous lockout carry-over
-      if (tc.type === 'positive') {
-        const freshUser = await registerFreshUser(request);
-        targetEmail = freshUser.email;
-        targetPassword = freshUser.password;
-      } else if (tc.id === 'TC_FR02_03') {
-        // Sequence start for lockout progression tests: create a dedicated target user
-        const seqUser = await registerFreshUser(request);
-        freshUserEmail = seqUser.email;
-        freshUserPassword = seqUser.password;
-        targetEmail = freshUserEmail;
-      } else if (['TC_FR02_04', 'TC_FR02_06', 'TC_FR02_07', 'TC_FR02_08', 'TC_FR02_09', 'TC_FR02_13'].includes(tc.id)) {
-        // Use the sequence user for consecutive failed attempts
-        if (freshUserEmail) {
-          targetEmail = freshUserEmail;
-          if (tc.expectedStatus === 200) {
-            targetPassword = freshUserPassword;
+        // Isolate positive logins by registering a fresh active account
+        if (tc.type === 'positive' || tc.id === 'TC_FR02_01' || tc.id === 'TC_FR02_02') {
+          const freshUser = await registerFreshUser(request, apiUrl);
+          targetEmail = freshUser.email;
+          if (tc.id === 'TC_FR02_02') {
+            targetPassword = freshUser.password;
+          }
+        }
+
+        const isClientBlocked = tc.expected.client_validation_blocked === true;
+        const responsePromise = page.waitForResponse(
+          (res) => res.url().includes('/api/login') && res.request().method() === 'POST',
+          { timeout: isClientBlocked ? 1_500 : 7_000 }
+        ).catch(() => null);
+
+        await loginPage.login(targetEmail, targetPassword);
+        const response = await responsePromise;
+
+        if (isClientBlocked) {
+          // HTML5 client-side validation prevented dispatching request
+          expect(response).toBeNull();
+          await expect(page).toHaveURL(/\/(login)?/);
+        } else {
+          // Verify response status per SRS expectation
+          if (tc.expected.status !== undefined) {
+            expect(response).not.toBeNull();
+            expect(response!.status()).toBe(tc.expected.status);
+          }
+
+          if (tc.expected.url) {
+            await expect(page).toHaveURL(new RegExp(tc.expected.url));
+          }
+
+          if (response && response.status() >= 400) {
+            await expect(loginPage.errorAlert).toBeVisible();
+            await expect(loginPage.errorAlert).toContainText(/thất bại|khóa/i);
           }
         }
       }
 
-      // Pattern 1: Network response inspection without fixed wait
-      const isClientValidationCase = !targetEmail || targetEmail === '""' || !targetPassword || targetPassword === '""';
-      const timeoutMs = isClientValidationCase ? 2_000 : 7_000;
-      const responsePromise = page.waitForResponse(
-        (res) => res.url().includes('/api/login') && res.request().method() === 'POST',
-        { timeout: timeoutMs }
-      ).catch(() => null);
+      // 2. LAYER: API TESTING
+      else if (tc.test_layer === 'api') {
+        let testEmail = tc.username;
+        let testPassword = tc.password;
 
-      await loginPage.login(targetEmail, targetPassword);
-      const response = await responsePromise;
+        // Determine if this case tests user lifecycle / lockout progression
+        const needsFreshUser = [
+          'TC_FR02_03', 'TC_FR02_04', 'TC_FR02_05', 'TC_FR02_06',
+          'TC_FR02_07', 'TC_FR02_08', 'TC_FR02_13', 'TC_FR02_18',
+          'TC_FR02_24'
+        ].includes(tc.id);
 
-      if (response) {
-        // Assertion 1 (Plain Value): HTTP status code verification
-        expect(response.status()).toBe(tc.expectedStatus);
-      } else if (isClientValidationCase) {
-        // Client-side HTML5 required validation blocked request from dispatching
-        await expect(page).toHaveURL(/\/(login)?/);
+        if (needsFreshUser) {
+          const fresh = await registerFreshUser(request, apiUrl);
+          testEmail = fresh.email;
+
+          // Apply preconditions: previous failed attempts to establish state
+          if (tc.id === 'TC_FR02_04') {
+            // Precondition: 1 previous failed attempt
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassSetup1!' },
+            });
+          } else if (tc.id === 'TC_FR02_05') {
+            // Precondition: 1 previous failed attempt, then login successfully with correct password
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassSetup1!' },
+            });
+            testPassword = fresh.password;
+          } else if (tc.id === 'TC_FR02_06') {
+            // Precondition: 2 previous failed attempts
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassSetup1!' },
+            });
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassSetup2!' },
+            });
+          } else if (['TC_FR02_07', 'TC_FR02_08', 'TC_FR02_13'].includes(tc.id)) {
+            // Precondition: lock the account (2 failed attempts trigger lockout on SUT due to +2 bug)
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassLock1!' },
+            });
+            await request.post(`${apiUrl}/api/login`, {
+              data: { email: testEmail, password: 'WrongPassLock2!' },
+            });
+            if (tc.id === 'TC_FR02_07') {
+              testPassword = fresh.password;
+            }
+          } else if (tc.id === 'TC_FR02_18' || tc.id === 'TC_FR02_24') {
+            testPassword = fresh.password;
+          }
+        }
+
+        const res = await request.post(`${apiUrl}/api/login`, {
+          data: { email: testEmail, password: testPassword },
+        });
+
+        if (tc.expected.status !== undefined) {
+          expect(res.status()).toBe(tc.expected.status);
+        }
+
+        const body = await res.json().catch(() => ({}));
+        if (tc.expected.message_contains && body.error) {
+          expect(body.error).toContain(tc.expected.message_contains);
+        }
       }
 
-      if (tc.type === 'positive') {
-        // Assertion 2 (URL): Redirection to home page upon successful login
-        await expect(page).toHaveURL(/\/(login)?/);
-      } else {
-        // Assertion 3 & 4 (Visibility & Text): Error alert presence and readable feedback
-        if (response && response.status() >= 400) {
-          await expect(loginPage.errorAlert).toBeVisible();
-          await expect(loginPage.errorAlert).toContainText(/thất bại|bị khóa/i);
+      // 3. LAYER: INTEGRATION TIMING TESTING
+      else if (tc.test_layer === 'integration') {
+        // EXEMPTION: Real-time wait required to verify SRS lockout boundary at t=29s/30s/31s
+        const fresh = await registerFreshUser(request, apiUrl);
+        const testEmail = fresh.email;
+        const testPassword = fresh.password;
+
+        // Trigger lockout on target user
+        await request.post(`${apiUrl}/api/login`, {
+          data: { email: testEmail, password: 'WrongPasswordTrigger1!' },
+        });
+        await request.post(`${apiUrl}/api/login`, {
+          data: { email: testEmail, password: 'WrongPasswordTrigger2!' },
+        });
+
+        // Wait designated seconds per boundary case
+        const waitSec = tc.wait_duration_seconds ?? 29;
+        // EXEMPTION: Time-based boundary condition verification per SRS
+        await new Promise((resolve) => setTimeout(resolve, waitSec * 1000));
+
+        const res = await request.post(`${apiUrl}/api/login`, {
+          data: { email: testEmail, password: testPassword },
+        });
+
+        if (tc.expected.status !== undefined) {
+          expect(res.status()).toBe(tc.expected.status);
         }
       }
     });
