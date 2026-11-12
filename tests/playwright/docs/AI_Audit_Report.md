@@ -51,3 +51,19 @@
   1. **WebKit Auth Hydration Race Condition (`pages/CheckoutCouponPage.ts`):** Diagnosed via `error-context.md` that calling `page.goto('/')` after `loginAsCustomer()` reloaded React and reset `AuthContext` `user` back to `null` until `GET /api/users/me` resolved. On WebKit, clicking through to `Tiến hành thanh toán` raced ahead of `/api/users/me`, causing `Cart.jsx` to alert and redirect back to `/login`. Fixed by waiting for the authenticated `Thoát` button in Header after login and removing the redundant `page.goto('/')` reload.
   2. **API Synchronization & Stronger Assertions (`tests/fr09-coupons.spec.ts`):** Added explicit `page.waitForResponse` for `POST /api/apply-coupon`, verified `type="number"` attribute on total input, asserted mutual exclusivity of `couponSuccessBox` vs `couponErrorMessage`, and verified `finalTotalLabel` (`Tổng thanh toán`) in addition to `couponSuccessBox`.
   3. **Verified Result:** Re-run across all 3 browsers completed in **2.4m** with **39 passed, 6 failed** (0 flaky WebKit errors; 100% consistent across Chromium, Firefox, WebKit).
+
+---
+
+### Entry 4 — Stage 4: Feature C (`FR-15` Admin Product Management CRUD) Script Generation & Human Review
+- **AI Tool:** Antigravity (Gemini 3.8 Flash)
+- **Date & Time:** `2026-11-12 16:33 +07:00`
+- **Prompt:**
+  > Dựa trên `test-data/fr15-products.json` và `pages/AdminProductPage.ts`, tạo kịch bản `tests/fr15-products.spec.ts` kiểm thử Data-Driven chức năng Admin Product Management CRUD (`http://localhost:5174`) trên 3 trình duyệt (Chromium, Firefox, WebKit) với tối thiểu 3 assertion patterns. Sau đó chạy thử trên SUT thật, rà soát các false positives và race condition.
+- **AI Output Summary:**
+  - Generated `tests/fr15-products.spec.ts` (45 runs across 3 browsers).
+  - First run yielded **36 passed, 9 failed** (2.5m), missing real SUT defects due to async timing false positives (`TC-FR15-04`, `08`, `09`, `12` passed falsely because assertions ran before `POST`/`PUT` or React state update completed, and `TC-FR15-06` matched substring `'   '` instead of exact whitespace/row-count delta).
+- **Human Review & Fixes Applied:**
+  1. **Async CRUD False Positives (`tests/fr15-products.spec.ts`):** Added explicit `page.waitForResponse` on `POST /api/products` and `PUT /api/products/` to assert HTTP status `>= 400` and product row count unchanged for invalid inputs (`TC-FR15-04`, `06`, `08`, `09`).
+  2. **Update Isolation Race Condition (`TC-FR15-12`):** Synchronized on both `PUT /api/products/` response and the `"Cập nhật thành công!"` `dialog` event before asserting that other product rows remained unchanged — accurately exposing `BUG-FR15-02` (`fakeMassUpdatedProducts`) across all 3 browsers.
+  3. **WebKit Admin Login Race & DB Cleanup (`pages/AdminProductPage.ts`, `tests/fr15-products.spec.ts`):** Updated `gotoAndLogin()` to wait for `domcontentloaded` and `Promise.race([loginButton, productsNavItem])` for reliable WebKit navigation, and added `DELETE /api/products/${createdId}` cleanup after positive create tests.
+  4. **Verified Result:** Re-run across all 3 browsers completed in **3.1m** with **27 passed, 18 failed** (identical 6 real SUT defects $\times$ 3 browsers: `TC-FR15-04`, `06`, `08`, `09`, `12`, `15`; 0 flaky browser errors).

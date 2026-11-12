@@ -50,7 +50,11 @@ export class AdminProductPage {
   }
 
   async gotoAndLogin(email: string, password: string): Promise<void> {
-    await this.page.goto(this.adminUrl);
+    await this.page.goto(this.adminUrl, { waitUntil: 'domcontentloaded' });
+    await Promise.race([
+      this.loginButton.waitFor({ state: 'visible' }),
+      this.productsNavItem.waitFor({ state: 'visible' }),
+    ]);
     if (await this.loginButton.isVisible()) {
       await this.emailInput.fill(email);
       await this.passwordInput.fill(password);
