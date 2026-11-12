@@ -1,3 +1,7 @@
+86d8124 | Nguyen Quoc Ky | 2026-11-12 22:53:05 +0700 | fix(FR-02): enforce srs preconditions and robust assertions in login spec
+35234e3 | Nguyen Quoc Ky | 2026-11-12 22:53:02 +0700 | feat(skill): enhance registerFreshUser helper with custom credentials and uuid
+7a657df | Nguyen Quoc Ky | 2026-11-12 22:52:54 +0700 | fix(FR-02): refine boundary data and preconditions in fr02-login.json
+76e97ee | Nguyen Quoc Ky | 2026-11-12 22:28:03 +0700 | docs(git): update commit log after AI draft generation
 80d9486 | Nguyen Quoc Ky | 2026-11-12 22:27:32 +0700 | test(FR-17): generate AI multi-layer spec for coupon management
 5b3149c | Nguyen Quoc Ky | 2026-11-12 22:27:28 +0700 | test(FR-07): generate AI multi-layer spec for cart operations
 b97620a | Nguyen Quoc Ky | 2026-11-12 22:27:24 +0700 | test(FR-02): generate AI multi-layer spec for login and lockout
