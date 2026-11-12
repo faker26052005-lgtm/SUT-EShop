@@ -48,10 +48,12 @@ export class CheckoutCouponPage {
     await this.loginPasswordInput.fill(password);
     await this.loginSubmitButton.click();
     await this.page.waitForURL('**/');
+    // Wait for AuthContext user state to hydrate in Header before leaving the page
+    await this.page.getByRole('button', { name: 'Thoát' }).waitFor({ state: 'visible' });
   }
 
   async addFirstProductAndGoToCheckout(): Promise<void> {
-    await this.page.goto('/');
+    // Already on '/' after loginAsCustomer(); avoid page.goto('/') reload that resets AuthContext user to null
     await this.addToCartButtons.first().click();
     await this.cartNavLink.click();
     await this.proceedToCheckoutButton.click();

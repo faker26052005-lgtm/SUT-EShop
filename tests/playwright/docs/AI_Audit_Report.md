@@ -36,3 +36,18 @@
   1. **Anti-Cheat Report Visibility Gap:** Discovered Playwright's built-in HTML reporter did not render `config.metadata.runBy` visibly in `playwright-report/index.html`. Added `reporters/antiCheatReporter.ts` to inject a visible header banner (`Run by: 23120183` + ISO timestamp) and update `<title>`.
   2. **Weak HTML5 Validation Assertions:** Initial AI script only checked `el.checkValidity() === false`. Strengthened `html5_invalid` assertions to also verify `el.validationMessage.length > 0` and assert zero `POST /api/register` network requests were sent.
   3. **Cross-Browser Email Isolation & Timeout Tuning:** Included `browserName` in `uniqueSuffix` to prevent cross-browser email collisions and tuned failure timeouts (`2000ms–2500ms`) with descriptive bug notes in assertion messages (reducing total run time from 4.5m to 3.9m).
+
+---
+
+### Entry 3 — Stage 3: Feature B (`FR-09` Discount Coupons) Script Generation & Human Review
+- **AI Tool:** Antigravity (Gemini 3.8 Flash)
+- **Date & Time:** `2026-11-12 16:01 +07:00`
+- **Prompt:**
+  > Dựa trên `test-data/fr09-coupons.json` và `pages/CheckoutCouponPage.ts`, tạo kịch bản `tests/fr09-coupons.spec.ts` kiểm thử Data-Driven chức năng áp dụng mã giảm giá tại `/checkout` trên 3 trình duyệt (Chromium, Firefox, WebKit) với tối thiểu 3 assertion patterns. Sau đó chạy thử trên SUT thật, rà soát và xử lý các lỗi đồng bộ giữa các trình duyệt.
+- **AI Output Summary:**
+  - Generated `tests/fr09-coupons.spec.ts` (45 runs across 3 browsers).
+  - First run yielded **35 passed, 10 failed** (4.5m): Chromium and Firefox failed only on the 2 real SUT bugs (`TC-FR09-02` `SAVE10` formula bug, `TC-FR09-11` `>` vs `>=` boundary bug), whereas **WebKit failed 4 extra tests** (`TC-FR09-06`, `07`, `09`, `10`) with 30s timeout at `waitForURL('**/checkout')`.
+- **Human Review & Fixes Applied:**
+  1. **WebKit Auth Hydration Race Condition (`pages/CheckoutCouponPage.ts`):** Diagnosed via `error-context.md` that calling `page.goto('/')` after `loginAsCustomer()` reloaded React and reset `AuthContext` `user` back to `null` until `GET /api/users/me` resolved. On WebKit, clicking through to `Tiến hành thanh toán` raced ahead of `/api/users/me`, causing `Cart.jsx` to alert and redirect back to `/login`. Fixed by waiting for the authenticated `Thoát` button in Header after login and removing the redundant `page.goto('/')` reload.
+  2. **API Synchronization & Stronger Assertions (`tests/fr09-coupons.spec.ts`):** Added explicit `page.waitForResponse` for `POST /api/apply-coupon`, verified `type="number"` attribute on total input, asserted mutual exclusivity of `couponSuccessBox` vs `couponErrorMessage`, and verified `finalTotalLabel` (`Tổng thanh toán`) in addition to `couponSuccessBox`.
+  3. **Verified Result:** Re-run across all 3 browsers completed in **2.4m** with **39 passed, 6 failed** (0 flaky WebKit errors; 100% consistent across Chromium, Firefox, WebKit).
