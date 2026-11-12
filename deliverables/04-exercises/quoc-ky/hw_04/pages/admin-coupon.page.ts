@@ -2,7 +2,9 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object Model for EShop Admin Coupon Management.
- * AI Draft implementation for FR-17.
+ * Refined implementation:
+ * - Uses accessible role locators and resilient selectors
+ * - Handles alert dialogs gracefully
  */
 export class AdminCouponPage {
   readonly page: Page;
@@ -18,6 +20,7 @@ export class AdminCouponPage {
   readonly expiredDateInput: Locator;
   readonly maxUsesInput: Locator;
   readonly submitButton: Locator;
+  readonly couponTable: Locator;
   readonly couponRows: Locator;
 
   constructor(page: Page) {
@@ -25,9 +28,9 @@ export class AdminCouponPage {
     this.adminUrl = process.env.ADMIN_URL ?? 'http://localhost:5174';
 
     // Admin login locators
-    this.emailInput = page.locator('input[type="email"]').or(page.locator('input').first());
-    this.passwordInput = page.locator('input[type="password"]').or(page.locator('input').nth(1));
-    this.loginButton = page.getByRole('button', { name: /đăng nhập|login/i });
+    this.emailInput = page.getByPlaceholder(/email/i).or(page.locator('input[type="email"], input[type="text"]').first());
+    this.passwordInput = page.getByPlaceholder(/mật khẩu|password/i).or(page.locator('input[type="password"]'));
+    this.loginButton = page.getByRole('button', { name: /đăng nhập/i });
 
     // Coupon tab navigation
     this.couponTab = page.getByText('Mã Giảm Giá');
@@ -37,9 +40,10 @@ export class AdminCouponPage {
     this.typeSelect = page.locator('select').first();
     this.valueInput = page.getByPlaceholder(/Giá trị %|Số tiền/i);
     this.minOrderInput = page.getByPlaceholder(/Đơn tối thiểu/i);
-    this.expiredDateInput = page.locator('input[type="date"]').or(page.getByPlaceholder(/Ngày hết hạn/i));
+    this.expiredDateInput = page.locator('input[type="date"]');
     this.maxUsesInput = page.getByPlaceholder(/Số lần dùng tối đa/i);
     this.submitButton = page.getByRole('button', { name: 'Tạo mã' });
+    this.couponTable = page.locator('table');
     this.couponRows = page.locator('table tbody tr');
   }
 
@@ -59,9 +63,9 @@ export class AdminCouponPage {
       await this.loginButton.click();
     }
     // Navigate to coupons tab
-    await expect(this.couponTab).toBeVisible();
+    await expect(this.couponTab).toBeVisible({ timeout: 5000 });
     await this.couponTab.click();
-    await expect(this.submitButton).toBeVisible();
+    await expect(this.submitButton).toBeVisible({ timeout: 5000 });
   }
 
   async createCoupon(data: {
@@ -85,7 +89,7 @@ export class AdminCouponPage {
     if (data.expiredAt) {
       await this.expiredDateInput.fill(data.expiredAt);
     } else {
-      // Default to 30 days ahead
+      // Default to valid future date (30 days from now)
       const nextMonth = new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0];
       await this.expiredDateInput.fill(nextMonth);
     }
