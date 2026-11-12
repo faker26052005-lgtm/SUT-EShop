@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { CheckoutCouponPage } from '../pages/CheckoutCouponPage';
 import { loadJsonData } from '../utils/dataLoader';
+import { annotateTestRun } from '../utils/testHelpers';
 
 interface CouponTestCase {
   id: string;
@@ -23,9 +24,11 @@ const testCases = loadJsonData<CouponTestCase>('fr09-coupons.json');
 test.describe('FR-09: Discount Coupons at Checkout (Data-Driven)', () => {
   for (const tc of testCases) {
     test(`[${tc.id}] (${tc.category}) ${tc.title}`, async ({ page }) => {
-      test.info().annotations.push({
-        type: 'Run by: 23120183',
-        description: new Date().toISOString(),
+      annotateTestRun(test.info(), {
+        feature: 'FR-09',
+        tcId: tc.id,
+        category: tc.category,
+        bugNote: tc.expected.bugNote,
       });
 
       const checkoutPage = new CheckoutCouponPage(page);

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { RegisterPage } from '../pages/RegisterPage';
 import { loadJsonData } from '../utils/dataLoader';
+import { annotateTestRun } from '../utils/testHelpers';
 
 interface RegisterTestCase {
   id: string;
@@ -24,9 +25,11 @@ const testCases = loadJsonData<RegisterTestCase>('fr01-register.json');
 test.describe('FR-01: Account Registration (Data-Driven)', () => {
   for (const tc of testCases) {
     test(`[${tc.id}] (${tc.category}) ${tc.title}`, async ({ page, browserName }) => {
-      test.info().annotations.push({
-        type: 'Run by: 23120183',
-        description: new Date().toISOString(),
+      annotateTestRun(test.info(), {
+        feature: 'FR-01',
+        tcId: tc.id,
+        category: tc.category,
+        bugNote: tc.expected.bugNote,
       });
 
       const registerPage = new RegisterPage(page);

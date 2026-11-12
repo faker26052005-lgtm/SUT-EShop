@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AdminProductPage } from '../pages/AdminProductPage';
 import { loadJsonData } from '../utils/dataLoader';
+import { annotateTestRun } from '../utils/testHelpers';
 
 interface ProductTestCase {
   id: string;
@@ -24,9 +25,11 @@ const testCases = loadJsonData<ProductTestCase>('fr15-products.json');
 test.describe('FR-15: Admin Product Management CRUD (Data-Driven)', () => {
   for (const tc of testCases) {
     test(`[${tc.id}] (${tc.category}) ${tc.title}`, async ({ page, browserName, request }) => {
-      test.info().annotations.push({
-        type: 'Run by: 23120183',
-        description: new Date().toISOString(),
+      annotateTestRun(test.info(), {
+        feature: 'FR-15',
+        tcId: tc.id,
+        category: tc.category,
+        bugNote: tc.expected.bugNote,
       });
 
       const adminPage = new AdminProductPage(page);
