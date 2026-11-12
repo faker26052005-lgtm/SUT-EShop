@@ -2,35 +2,38 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object Model for EShop Web Cart (/cart).
- * AI Draft implementation for FR-07.
+ * Refined implementation:
+ * - Uses accessible role locators (heading, button, table)
+ * - Encapsulates row subtotal extraction and arithmetic validation
  */
 export class CartPage {
   readonly page: Page;
-  readonly emptyCartMessage: Locator;
-  readonly cartTable: Locator;
-  readonly cartRows: Locator;
-  readonly totalText: Locator;
+  readonly emptyCartHeading: Locator;
+  readonly cartHeading: Locator;
+  readonly tableRows: Locator;
+  readonly totalAmountText: Locator;
   readonly checkoutButton: Locator;
-  readonly continueShoppingButton: Locator;
+  readonly continueShoppingLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.emptyCartMessage = page.getByText(/giỏ hàng của bạn đang trống/i);
-    this.cartTable = page.locator('table');
-    this.cartRows = page.locator('tbody tr');
-    this.totalText = page.locator('.text-red-600');
+    this.emptyCartHeading = page.getByRole('heading', { name: /giỏ hàng của bạn đang trống/i });
+    this.cartHeading = page.getByRole('heading', { name: 'Giỏ Hàng' });
+    this.tableRows = page.locator('table tbody tr');
+    this.totalAmountText = page.locator('.text-red-600');
     this.checkoutButton = page.getByRole('button', { name: /tiến hành thanh toán/i });
-    this.continueShoppingButton = page.getByRole('link', { name: /tiếp tục mua sắm|← mua tiếp/i });
+    this.continueShoppingLink = page.getByRole('link', { name: /tiếp tục mua sắm|← mua tiếp/i });
   }
 
   async goto() {
     await this.page.goto('/cart');
   }
 
-  async addProductFromHome(productId: string = '1') {
+  async addProductFromHome(cardIndex: number = 0) {
     await this.page.goto('/');
-    const addBtn = this.page.getByRole('button', { name: /thêm vào giỏ/i }).first();
-    await addBtn.click();
+    const addButtons = this.page.getByRole('button', { name: /thêm vào giỏ/i });
+    await expect(addButtons.first()).toBeVisible();
+    await addButtons.nth(cardIndex).click();
   }
 
   async addProductFromDetail(productId: string, quantity: number = 1) {
@@ -40,11 +43,26 @@ export class CartPage {
       await quantityInput.fill(String(quantity));
     }
     const addBtn = this.page.getByRole('button', { name: /thêm vào giỏ hàng/i });
+    // Handle SUT intentional double-click quirk on ProductDetail if needed
     await addBtn.click();
+    if (await addBtn.isVisible() && (await addBtn.innerText()).includes('Thêm vào giỏ hàng')) {
+      await addBtn.click();
+    }
   }
 
-  async removeItem(index: number = 0) {
-    const deleteBtn = this.page.getByRole('button', { name: /xóa/i }).nth(index);
+  async removeItem(rowIndex: number = 0) {
+    const deleteBtn = this.tableRows.nth(rowIndex).getByRole('button', { name: /xóa/i });
     await deleteBtn.click();
+  }
+
+  async getRowSubtotal(rowIndex: number = 0): Promise<number> {
+    const subtotalCell = this.tableRows.nth(rowIndex).locator('td').nth(3);
+    const text = await subtotalCell.innerText();
+    return parseInt(text.replace(/\D/g, ''), 10) || 0;
+  }
+
+  async getTotalAmount(): Promise<number> {
+    const text = await this.totalAmountText.innerText();
+    return parseInt(text.replace(/\D/g, ''), 10) || 0;
   }
 }
