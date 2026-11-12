@@ -3,320 +3,343 @@
     "id": "TC_FR02_01",
     "title": "Verify login authentication with valid registered credentials on Web & API",
     "type": "positive",
-    "ep_code": "EP-02-01, EP-02-06",
-    "bva_code": "BVA-02-03-IN",
-    "raw_input": "test@eshop.com / Test1234! (Len=9)",
-    "raw_expected": "HTTP 200, JWT token, redirect /",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
-    "expectedUrl": "/",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 200,
+      "url": "/",
+      "authenticated": true
+    }
   },
   {
     "id": "TC_FR02_02",
     "title": "Verify login authentication with boundary password length exactly 8 chars",
-    "type": "edge",
-    "ep_code": "EP-02-01, EP-02-06",
-    "bva_code": "BVA-02-03-ON",
-    "raw_input": "test@eshop.com / Pass123! (Len=8)",
-    "raw_expected": "HTTP 200, xác thực thành công",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "username": "test@eshop.com",
-    "password": "Pass123!"
+    "password": "Pass123!",
+    "expected": {
+      "status": 200,
+      "authenticated": true
+    }
   },
   {
     "id": "TC_FR02_03",
     "title": "Validate consecutive failure counter increment on attempt N=1 (Below threshold)",
     "type": "negative",
-    "ep_code": "EP-02-07",
-    "bva_code": "BVA-02-04-IN",
-    "raw_input": "test@eshop.com / WrongPass1!",
-    "raw_expected": "HTTP 401, login_attempts = 1, chưa khóa",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR02-02",
     "username": "test@eshop.com",
-    "password": "WrongPass1!"
+    "password": "WrongPass1!",
+    "expected": {
+      "status": 401,
+      "failure_counter": 1,
+      "is_locked": false
+    },
+    "notes": "SUT tăng bộ đếm +2 thay vì +1 theo yêu cầu SRS."
   },
   {
     "id": "TC_FR02_04",
     "title": "Validate consecutive failure counter increment on attempt N=2 (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-02-07",
-    "bva_code": "BVA-02-01-OFF, BVA-02-04-ON",
-    "raw_input": "test@eshop.com / WrongPass2!",
-    "raw_expected": "HTTP 401, login_attempts = 2, chưa khóa",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR02-02",
+    "preconditions": "Đã có 1 lần đăng nhập sai trước đó",
     "username": "test@eshop.com",
-    "password": "WrongPass2!"
+    "password": "WrongPass2!",
+    "expected": {
+      "status": 401,
+      "failure_counter": 2,
+      "is_locked": false
+    },
+    "notes": "SUT bị khóa sớm từ lần 2 do bộ đếm tăng +2 thành 4 >= 3."
   },
   {
     "id": "TC_FR02_05",
     "title": "Verify failure counter reset to 0 upon submitting correct password after N=2 failures",
     "type": "positive",
-    "ep_code": "EP-02-06, EP-02-10",
-    "bva_code": "BVA-02-04-ON",
-    "raw_input": "test@eshop.com / Test1234!",
-    "raw_expected": "HTTP 200, reset login_attempts = 0",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "preconditions": "Đã có 1 lần đăng nhập sai trước đó",
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 200,
+      "failure_counter": 0,
+      "authenticated": true
+    }
   },
   {
     "id": "TC_FR02_06",
     "title": "Validate account lockout activation upon reaching threshold N=3 consecutive failures",
-    "type": "negative",
-    "ep_code": "EP-02-07, EP-02-11",
-    "bva_code": "BVA-02-01-ON, BVA-02-04-OFF",
-    "raw_input": "test@eshop.com / WrongPass3!",
-    "raw_expected": "HTTP 401/403, khóa đúng 30 giây",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
-    "expectedUrl": "/",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR02-02",
+    "preconditions": "Đã có 2 lần đăng nhập sai trước đó",
     "username": "test@eshop.com",
-    "password": "WrongPass3!"
+    "password": "WrongPass3!",
+    "expected": {
+      "status": 401,
+      "failure_counter": 3,
+      "is_locked": true
+    },
+    "notes": "SRS quy định lần 3 kích hoạt khóa tài khoản. SUT bị lỗi bộ đếm nên đã khóa từ lần 2."
   },
   {
     "id": "TC_FR02_07",
     "title": "Validate login rejection when submitting correct password during lockout at t=15s",
     "type": "negative",
-    "ep_code": "EP-02-13a",
-    "bva_code": "BVA-02-02-OFF",
-    "raw_input": "test@eshop.com / Test1234! (t=15s)",
-    "raw_expected": "HTTP 403 Forbidden, từ chối mở sớm",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 403,
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "preconditions": "Tài khoản đang trong thời gian bị khóa (t=15s)",
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 403,
+      "message_contains": "khóa"
+    }
   },
   {
     "id": "TC_FR02_08",
     "title": "Validate lockout timer non-reset behavior when submitting wrong password at t=15s",
     "type": "negative",
-    "ep_code": "EP-02-13b",
-    "bva_code": "N/A (State Probe)",
-    "raw_input": "test@eshop.com / WrongPassMid! (t=15s)",
-    "raw_expected": "HTTP 403, timer 30s KHÔNG bị reset",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 403,
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "preconditions": "Tài khoản đang trong thời gian bị khóa (t=15s)",
     "username": "test@eshop.com",
-    "password": "WrongPassMid!"
+    "password": "WrongPassMid!",
+    "expected": {
+      "status": 403,
+      "timer_reset": false
+    }
   },
   {
     "id": "TC_FR02_09",
     "title": "Validate lockout rejection enforcement at boundary offset t=29s (1s before unlock)",
-    "type": "negative",
-    "ep_code": "EP-02-13a",
-    "bva_code": "BVA-02-02-OFF (t=29s)",
-    "raw_input": "test@eshop.com / Test1234! (t=29s)",
-    "raw_expected": "HTTP 403 Forbidden, vẫn đang bị khóa",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 403,
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "integration",
+    "preconditions": "Tài khoản bị khóa, thời gian trôi qua t=29s (1s trước mốc 30s)",
+    "wait_duration_seconds": 29,
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 403,
+      "is_locked": true
+    },
+    "notes": "SRS quy định tại 29s chưa hết 30s khóa nên vẫn bị từ chối 403. SUT khóa 180s nên tại 29s kết quả trùng hợp PASS."
   },
   {
     "id": "TC_FR02_10",
     "title": "Verify automatic account unlock transition at exact boundary expiration t=30s",
-    "type": "edge",
-    "ep_code": "EP-02-14",
-    "bva_code": "BVA-02-02-ON (t=30s)",
-    "raw_input": "test@eshop.com / Test1234! (t=30s)",
-    "raw_expected": "HTTP 200 OK, mở khóa, cấp JWT",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "integration",
+    "defect_id": "BUG-FR02-01",
+    "preconditions": "Tài khoản bị khóa, thời gian chờ đúng mốc boundary t=30s theo SRS",
+    "wait_duration_seconds": 30,
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 200,
+      "authenticated": true,
+      "is_locked": false
+    },
+    "notes": "SRS quy định mở khóa tại t=30s; SUT khóa 180s nên tại t=30s vẫn trả 403 Forbidden."
   },
   {
     "id": "TC_FR02_11",
     "title": "Verify login authentication success at boundary offset t=31s (1s after unlock)",
-    "type": "edge",
-    "ep_code": "EP-02-14",
-    "bva_code": "BVA-02-02-IN (t=31s)",
-    "raw_input": "test@eshop.com / Test1234! (t=31s)",
-    "raw_expected": "HTTP 200 OK, đăng nhập thành công",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "integration",
+    "defect_id": "BUG-FR02-01",
+    "preconditions": "Tài khoản bị khóa, thời gian chờ mốc t=31s (1s sau khi mở khóa theo SRS)",
+    "wait_duration_seconds": 31,
     "username": "test@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 200,
+      "authenticated": true
+    },
+    "notes": "SRS quy định đã mở khóa hoàn toàn; SUT vẫn trả 403 do khóa 180s."
   },
   {
     "id": "TC_FR02_12",
     "title": "Validate lockout duration non-escalation behavior on repeated second lockout cycle",
     "type": "negative",
-    "ep_code": "EP-02-12",
-    "bva_code": "BVA-02-01-ON",
-    "raw_input": "3 lần thử sai liên tiếp lần 2",
-    "raw_expected": "Khóa lần 2 vẫn đúng 30s (không backoff)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
-    "username": "3 lần thử sai liên tiếp lần 2",
-    "password": ""
+    "automation_decision": "blocked_deferred",
+    "test_layer": "integration",
+    "blocker_reason": "SUT hardcode thời gian khóa 180s (180000ms), không có test hook hay biến môi trường cấu hình thời gian. Chờ 2 chu kỳ khóa thực tế mất > 360 giây gây nghẽn CI/CD.",
+    "unblock_condition": "SUT hỗ trợ cấu hình LOCK_TIME_MS hoặc có endpoint test hook đặt trạng thái locked_until.",
+    "username": "test@eshop.com",
+    "password": "WrongPassCycle2!",
+    "expected": {
+      "lockout_duration_seconds": 30,
+      "exponential_backoff": false
+    }
   },
   {
     "id": "TC_FR02_13",
     "title": "Validate rejection of additional login attempt N=4 while already in lockout",
     "type": "negative",
-    "ep_code": "EP-02-11",
-    "bva_code": "BVA-02-01-IN (N=4)",
-    "raw_input": "test@eshop.com / WrongPass4!",
-    "raw_expected": "HTTP 403 Forbidden, giữ nguyên khóa",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 403,
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "preconditions": "Tài khoản đang trong thời gian bị khóa",
     "username": "test@eshop.com",
-    "password": "WrongPass4!"
+    "password": "WrongPass4!",
+    "expected": {
+      "status": 403
+    }
   },
   {
     "id": "TC_FR02_14",
     "title": "Validate rejection of invalid email format lacking '@' symbol (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-02",
-    "bva_code": "N/A (Format)",
-    "raw_input": "testeshop.com / Test1234!",
-    "raw_expected": "HTML5 validation tooltip / HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 400,
-    "expectedUrl": "/",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR02-05",
     "username": "testeshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 400,
+      "client_validation_triggered": true
+    },
+    "notes": "SUT dùng input type='text' không chặn thiếu '@', gửi lên backend trả 401."
   },
   {
     "id": "TC_FR02_15",
     "title": "Validate rejection of empty email field on Web Client & API (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-03",
-    "bva_code": "N/A (Required)",
-    "raw_input": "\"\" / Test1234!",
-    "raw_expected": "HTML5 required tooltip / HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 400,
-    "expectedUrl": "/",
-    "username": "\"\"",
-    "password": "Test1234!"
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "username": "",
+    "password": "Test1234!",
+    "expected": {
+      "client_validation_blocked": true,
+      "form_submitted": false
+    }
   },
   {
     "id": "TC_FR02_16",
     "title": "Validate rejection of email containing only whitespace characters (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-04",
-    "bva_code": "N/A (Whitespace)",
-    "raw_input": "\"     \" / Test1234!",
-    "raw_expected": "Báo lỗi định dạng email / HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 400,
-    "expectedUrl": "/",
-    "username": "\"     \"",
-    "password": "Test1234!"
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR02-05",
+    "username": "     ",
+    "password": "Test1234!",
+    "expected": {
+      "status": 400,
+      "validation_error": true
+    },
+    "notes": "SUT không trim khoảng trắng; gửi lên API trả 401."
   },
   {
     "id": "TC_FR02_17",
     "title": "Validate rejection of email exceeding RFC 5321 max length 254 chars (Single Fault)",
-    "type": "negative",
-    "ep_code": "EP-02-04b",
-    "bva_code": "BVA-02-05-OFF (Len=255)",
-    "raw_input": "Email 255 chars / Test1234!",
-    "raw_expected": "Báo lỗi chuỗi quá dài / HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 400,
-    "expectedUrl": "/",
-    "username": "Email 255 chars",
-    "password": "Test1234!"
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR02-05",
+    "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@eshop.com",
+    "password": "Test1234!",
+    "expected": {
+      "status": 400,
+      "validation_error": true
+    },
+    "notes": "Vượt chuẩn RFC 5321 (254 ký tự). SUT không cài maxlength và trả 401."
   },
   {
     "id": "TC_FR02_18",
     "title": "Verify acceptance of email with maximum allowable RFC 5321 length of 254 chars",
-    "type": "edge",
-    "ep_code": "EP-02-01",
-    "bva_code": "BVA-02-05-ON (Len=254)",
-    "raw_input": "Email 254 chars / Test1234!",
-    "raw_expected": "HTTP 200 OK, xác thực thành công",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
-    "username": "Email 254 chars",
-    "password": "Test1234!"
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@eshop.com",
+    "password": "Test1234!",
+    "expected": {
+      "status": 200
+    }
   },
   {
     "id": "TC_FR02_19",
     "title": "Validate generic error response when submitting non-existent email (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-05",
-    "bva_code": "N/A (Account)",
-    "raw_input": "notfound@eshop.com / Test1234!",
-    "raw_expected": "HTTP 401, không lộ email chưa tồn tại",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
+    "automation_decision": "automate",
+    "test_layer": "api",
     "username": "notfound@eshop.com",
-    "password": "Test1234!"
+    "password": "Test1234!",
+    "expected": {
+      "status": 401,
+      "message_contains": "Invalid email or password"
+    }
   },
   {
     "id": "TC_FR02_20",
     "title": "Validate rejection of empty password field on Web Client & API (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-08",
-    "bva_code": "N/A (Required)",
-    "raw_input": "test@eshop.com / \"\"",
-    "raw_expected": "HTML5 required tooltip / HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 400,
-    "expectedUrl": "/",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "username": "test@eshop.com",
-    "password": "\"\""
+    "password": "",
+    "expected": {
+      "client_validation_blocked": true,
+      "form_submitted": false
+    }
   },
   {
     "id": "TC_FR02_21",
     "title": "Validate rejection of password containing only whitespace characters (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-02-09",
-    "bva_code": "N/A (Whitespace)",
-    "raw_input": "test@eshop.com / \"    \"",
-    "raw_expected": "HTTP 401 Unauthorized, tăng đếm sai",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
+    "automation_decision": "automate",
+    "test_layer": "api",
     "username": "test@eshop.com",
-    "password": "\"    \""
+    "password": "    ",
+    "expected": {
+      "status": 401
+    }
   },
   {
     "id": "TC_FR02_22",
     "title": "Validate rejection of password below minimum 8 chars length at Len=7 (Single Fault)",
-    "type": "negative",
-    "ep_code": "EP-02-07",
-    "bva_code": "BVA-02-03-OFF (Len=7)",
-    "raw_input": "test@eshop.com / Pass12! (Len=7)",
-    "raw_expected": "HTTP 401 Unauthorized, tăng đếm sai",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "api",
     "username": "test@eshop.com",
-    "password": "Pass12!"
+    "password": "Pass12!",
+    "expected": {
+      "status": 401
+    }
   },
   {
     "id": "TC_FR02_23",
     "title": "Validate handling of password exceeding OWASP max length at Len=256 (Single Fault)",
-    "type": "negative",
-    "ep_code": "EP-02-09b",
-    "bva_code": "BVA-02-06-OFF (Len=256)",
-    "raw_input": "test@eshop.com / Pass 256 chars",
-    "raw_expected": "HTTP 401/400, không bị treo CPU DoS",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 401,
-    "expectedUrl": "/",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "api",
     "username": "test@eshop.com",
-    "password": "Pass 256 chars"
+    "password": "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+    "expected": {
+      "status": 401
+    }
   },
   {
     "id": "TC_FR02_24",
     "title": "Verify acceptance of password with maximum safe OWASP length of 255 chars",
-    "type": "edge",
-    "ep_code": "EP-02-06",
-    "bva_code": "BVA-02-06-ON (Len=255)",
-    "raw_input": "test@eshop.com / Pass 255 chars",
-    "raw_expected": "HTTP 200 OK, băm và khớp thành công",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "expectedStatus": 200,
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "api",
     "username": "test@eshop.com",
-    "password": "Pass 255 chars"
+    "password": "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+    "expected": {
+      "status": 200
+    }
   }
 ]

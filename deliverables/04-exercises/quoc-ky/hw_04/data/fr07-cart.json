@@ -3,240 +3,315 @@
     "id": "TC_FR07_01",
     "title": "Verify adding a new valid product to empty cart on Web & API",
     "type": "positive",
-    "ep_code": "EP-07-01, STATE-07-01",
-    "bva_code": "BVA-07-01-ON, BVA-07-02-ON",
-    "raw_input": "Giỏ rỗng; thêm id = 1 (iPhone 15, giá 30tr), Q = 1",
-    "raw_expected": "Tạo đúng 1 dòng trong giỏ, hiển thị đủ 5 cột, Thành tiền 30tr, Tổng 30tr.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-01",
+    "action": "add_from_product_detail",
+    "product_id": "1",
+    "quantity": 1,
+    "expected": {
+      "row_count": 1,
+      "quantity": 1,
+      "subtotal": 30000000,
+      "total": 30000000
+    },
+    "notes": "Nút Thêm vào giỏ tại ProductDetail đòi hỏi click 2 lần mới thêm được."
   },
   {
     "id": "TC_FR07_02",
     "title": "Verify adding duplicate product increments quantity without creating new row",
     "type": "positive",
-    "ep_code": "RULE-07-01, EP-07-04",
-    "bva_code": "BVA-07-01-IN (Q=2)",
-    "raw_input": "Giỏ đã có id = 1 (Q=1); thêm tiếp id = 1 (Q_{add}=1)",
-    "raw_expected": "Số lượng tăng 1 to 2 trên dòng hiện tại, vẫn duy trì đúng 1 dòng; Thành tiền 60tr.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-02",
+    "preconditions": "Giỏ hàng đã có sẵn sản phẩm id=1 (Q=1)",
+    "action": "add_duplicate_product",
+    "product_id": "1",
+    "quantity": 1,
+    "expected": {
+      "row_count": 1,
+      "quantity": 2,
+      "subtotal": 60000000,
+      "total": 60000000
+    },
+    "notes": "CartContext append thêm dòng mới thành 2 dòng thay vì tăng số lượng trên 1 dòng."
   },
   {
     "id": "TC_FR07_03",
     "title": "Validate rejection when adding well-formed non-existent product ID (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-02",
-    "bva_code": "N/A (Product DB)",
-    "raw_input": "id = 9999, Q = 1",
-    "raw_expected": "Báo lỗi không tìm thấy sản phẩm; không thêm bản ghi rác vào giỏ.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "9999",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-04",
+    "action": "view_non_existent_product",
+    "product_id": "9999",
+    "quantity": 1,
+    "expected": {
+      "error_displayed": true,
+      "added_to_cart": false
+    },
+    "notes": "ProductDetail bị lỗi trắng trang khi ID không tồn tại."
   },
   {
     "id": "TC_FR07_04",
     "title": "Validate rejection when submitting malformed product ID via API (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-03",
-    "bva_code": "N/A (Format/Type)",
-    "raw_input": "id = \"abc\" (hoặc -1), Q = 1 gửi qua POST /api/cart",
-    "raw_expected": "HTTP 400 Bad Request; từ chối xử lý dữ liệu sai kiểu.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "abc",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR07-05",
+    "action": "post_malformed_cart_item",
+    "product_id": "abc",
+    "quantity": 1,
+    "expected": {
+      "status": 400
+    },
+    "notes": "Backend nhận id chữ và trả 200 thay vì 400 Bad Request."
   },
   {
     "id": "TC_FR07_05",
     "title": "Validate rejection of quantity zero input on Cart item (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-07-05",
-    "bva_code": "BVA-07-01-OFF (Q=0)",
-    "raw_input": "Giỏ có SP1; sửa ô số lượng thành Q = 0",
-    "raw_expected": "Chặn không cho nhập 0, hoặc tự khôi phục về 1, hoặc hiện dialog hỏi xóa; không lưu Q=0.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 0
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-06",
+    "action": "input_quantity_zero",
+    "product_id": "1",
+    "quantity": 0,
+    "expected": {
+      "blocked": true,
+      "subtotal_greater_than_zero": true
+    },
+    "notes": "Cho phép nhập 0 và thêm sản phẩm 0 ₫ vào giỏ hàng."
   },
   {
     "id": "TC_FR07_06",
     "title": "Validate rejection of negative integer quantity input (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-06",
-    "bva_code": "N/A (Negative Range)",
-    "raw_input": "Giỏ có SP1; nhập Q = -1 (hoặc -5)",
-    "raw_expected": "Chặn ký tự - hoặc tự khôi phục về 1; không để thành tiền âm.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": -1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-07",
+    "action": "input_negative_quantity",
+    "product_id": "1",
+    "quantity": -1,
+    "expected": {
+      "blocked": true,
+      "allow_negative": false
+    },
+    "notes": "Cho phép nhập số lượng âm, dẫn đến thành tiền âm."
   },
   {
     "id": "TC_FR07_07",
     "title": "Validate rejection of empty or whitespace quantity input (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-07, EP-07-08",
-    "bva_code": "N/A (Required)",
-    "raw_input": "Giỏ có SP1; xóa trắng ô số lượng (Q = text{\"\"} hoặc text{\"   \"})",
-    "raw_expected": "Chặn submit hoặc tự động khôi phục về giá trị hợp lệ trước đó.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-08",
+    "action": "input_empty_quantity",
+    "product_id": "1",
+    "quantity": "",
+    "expected": {
+      "blocked": true,
+      "nan_prevented": true
+    },
+    "notes": "Ô rỗng gây lỗi NaN ₫ trên giỏ hàng."
   },
   {
     "id": "TC_FR07_08",
     "title": "Validate rejection of non-numeric string characters in quantity field (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-09",
-    "bva_code": "N/A (Format)",
-    "raw_input": "Giỏ có SP1; gõ ký tự chữ Q = text{\"abc\"}",
-    "raw_expected": "Input type=\"number\" chặn ký tự chữ; không làm xuất hiện lỗi NaN.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "action": "input_text_quantity",
+    "product_id": "1",
+    "quantity": "abc",
+    "expected": {
+      "blocked_by_input_type": true,
+      "nan_prevented": true
+    }
   },
   {
     "id": "TC_FR07_09",
     "title": "Validate rejection of decimal quantity near lower boundary (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-07-10",
-    "bva_code": "BVA-07-04-OFF (Q=1.5)",
-    "raw_input": "Giỏ có SP1; nhập số thập phân Q = 1.5 (hoặc 0.9 / 1.1)",
-    "raw_expected": "Chặn ký tự dấu . / ,; chỉ chấp nhận số nguyên dương Q in mathbb{Z}^+.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-09",
+    "action": "input_decimal_quantity",
+    "product_id": "1",
+    "quantity": 1.5,
+    "expected": {
+      "blocked": true,
+      "only_positive_integers": true
+    },
+    "notes": "Cho phép nhập số thập phân, tính tiền lẻ sai SRS."
   },
   {
     "id": "TC_FR07_10",
     "title": "Validate API rejection when quantity is omitted or null in payload (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-07-11",
-    "bva_code": "N/A (Payload)",
-    "raw_input": "POST /api/cart với payload thiếu quantity hoặc quantity: null",
-    "raw_expected": "HTTP 400 Bad Request; backend bắt buộc trường số lượng nguyên dương.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR07-10",
+    "action": "post_missing_quantity_payload",
+    "product_id": "1",
+    "expected": {
+      "status": 400
+    },
+    "notes": "Backend nhận payload thiếu trường quantity và trả 200."
   },
   {
     "id": "TC_FR07_11",
     "title": "Validate system robustness against extremely large integer quantity (Robustness)",
-    "type": "positive",
-    "ep_code": "EP-07-12",
-    "bva_code": "BVA-07-05 (Q=10^9)",
-    "raw_input": "Giỏ có SP1; nhập Q = 10^9",
-    "raw_expected": "Hệ thống xử lý an toàn không treo máy, không gây tràn số JS hay biến thành Infinity.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 10
+    "type": "edge",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "action": "input_large_quantity",
+    "product_id": "1",
+    "quantity": 1000000000,
+    "expected": {
+      "crash_prevented": true,
+      "infinity_prevented": true,
+      "nan_prevented": true
+    }
   },
   {
     "id": "TC_FR07_12",
     "title": "Verify arithmetic calculation of line subtotals and cart total for multiple items",
     "type": "positive",
-    "ep_code": "RULE-07-02, RULE-07-03",
-    "bva_code": "BVA-07-02-IN (Items=2)",
-    "raw_input": "SP1 (30tr, Q=2) + SP2 (AirPods 6tr, Q=1)",
-    "raw_expected": "Thành tiền SP1: 60tr; SP2: 6tr; Tổng tiền: 66.000.000 ₫ (khớp công thức sum Subtotal).",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 2
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Giỏ hàng có 2 sản phẩm khác nhau (SP1: giá 30tr, Q=2; SP2: giá 6tr, Q=1)",
+    "expected": {
+      "subtotal_item_1": 60000000,
+      "subtotal_item_2": 6000000,
+      "total": 66000000
+    }
   },
   {
     "id": "TC_FR07_13",
     "title": "Verify quantity decrement via '-' button when quantity exceeds minimum (Normal)",
     "type": "positive",
-    "ep_code": "ACTION-07-01",
-    "bva_code": "BVA-07-03-IN (Q=2 to 1)",
-    "raw_input": "Đang có SP1 với Q = 2; bấm nút -",
-    "raw_expected": "Số lượng giảm về Q = 1; Thành tiền giảm từ 60tr về 30tr; Tổng tiền cập nhật tương ứng.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 2
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-03",
+    "preconditions": "Giỏ hàng đang có SP1 với Q=2",
+    "action": "click_decrement_button",
+    "product_id": "1",
+    "expected": {
+      "element": {
+        "role": "button",
+        "name": "-"
+      },
+      "quantity": 1,
+      "subtotal": 30000000
+    },
+    "notes": "Giao diện Cart.jsx không có nút '-' theo SRS FR-07."
   },
   {
     "id": "TC_FR07_14",
     "title": "Validate boundary decrement behavior via '-' button at minimum quantity Q=1 (Probe)",
-    "type": "edge",
-    "ep_code": "ACTION-07-02",
-    "bva_code": "BVA-07-03-ON (Q=1)",
-    "raw_input": "Đang có SP1 với Q = 1; bấm nút -",
-    "raw_expected": "Nút - bị disabled HOẶC bật dialog xác nhận xóa; tuyệt đối KHÔNG tự ý giảm âm Q le 0.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-03",
+    "preconditions": "Giỏ hàng đang có SP1 với Q=1",
+    "action": "check_decrement_at_minimum",
+    "product_id": "1",
+    "expected": {
+      "element": {
+        "role": "button",
+        "name": "-"
+      },
+      "disabled": true
+    },
+    "notes": "Cart.jsx không có nút '-'."
   },
   {
     "id": "TC_FR07_15",
     "title": "Verify item removal upon confirming delete dialog (Interaction Flow)",
     "type": "positive",
-    "ep_code": "ACTION-07-03",
-    "bva_code": "N/A (Delete Flow)",
-    "raw_input": "Giỏ có 2 SP; bấm \"Xóa\" tại SP1 to Bấm \"OK / Đồng ý\" trên dialog",
-    "raw_expected": "Dialog xác nhận xuất hiện; sau khi xác nhận, SP1 bị xóa khỏi giỏ, tổng tiền cập nhật lại.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-11",
+    "preconditions": "Giỏ hàng có 2 sản phẩm",
+    "action": "confirm_delete_dialog",
+    "row_index": 0,
+    "expected": {
+      "dialog_triggered": true,
+      "dialog_type": "confirm",
+      "item_removed": true
+    },
+    "notes": "Cart.jsx xóa ngay lập tức không có dialog xác nhận theo SRS."
   },
   {
     "id": "TC_FR07_16",
     "title": "Verify item retention upon cancelling delete dialog (Interaction Flow)",
     "type": "positive",
-    "ep_code": "ACTION-07-04",
-    "bva_code": "N/A (Cancel Flow)",
-    "raw_input": "Giỏ có 1 SP; bấm \"Xóa\" to Bấm \"Cancel / Hủy\" trên dialog",
-    "raw_expected": "Dialog xác nhận xuất hiện; sau khi bấm Cancel, SP vẫn giữ nguyên vẹn trong giỏ hàng.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-11",
+    "preconditions": "Giỏ hàng có 1 sản phẩm",
+    "action": "cancel_delete_dialog",
+    "row_index": 0,
+    "expected": {
+      "dialog_triggered": true,
+      "item_retained": true,
+      "row_count": 1
+    },
+    "notes": "Không có dialog xác nhận nên không thể test hủy xóa."
   },
   {
     "id": "TC_FR07_17",
     "title": "Verify empty cart state display upon deleting last remaining item (State Boundary)",
-    "type": "edge",
-    "ep_code": "STATE-07-02",
-    "bva_code": "BVA-07-02-OFF (Items=0)",
-    "raw_input": "Giỏ còn đúng 1 SP (Items=1); xóa SP đó khỏi giỏ to Items=0",
-    "raw_expected": "Ẩn bảng sản phẩm; bắt buộc hiển thị đồng thời cả hình minh họa và thông báo giỏ rỗng.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Giỏ hàng có 1 sản phẩm cuối cùng",
+    "action": "remove_last_item",
+    "expected": {
+      "row_count": 0,
+      "empty_message_visible": true
+    }
   },
   {
     "id": "TC_FR07_18",
-    "title": "Validate total amount UI label matches required \"Tổng cộng\" text (UI Assertion)",
+    "title": "Validate total amount UI label matches required 'Tổng cộng' text (UI Assertion)",
     "type": "negative",
-    "ep_code": "ASSERT-07-01",
-    "bva_code": "N/A (UI String)",
-    "raw_input": "Giỏ có sản phẩm; quan sát nhãn hiển thị cạnh số tiền tổng",
-    "raw_expected": "Nhãn hiển thị chính xác là \"Tổng cộng\"; cấm hiển thị \"Tổng tạm tính\" (SRS FR-07).",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-13",
+    "preconditions": "Giỏ hàng có sản phẩm",
+    "action": "check_total_label",
+    "expected": {
+      "label_exact_text": "Tổng cộng",
+      "forbidden_text": "Tổng tạm tính"
+    },
+    "notes": "Giao diện hiển thị nhãn 'Tổng tạm tính' vi phạm SRS FR-07."
   },
   {
     "id": "TC_FR07_19",
     "title": "Validate enforcement of confirmation dialog before product deletion (Safety Probe)",
     "type": "negative",
-    "ep_code": "ASSERT-07-02",
-    "bva_code": "N/A (Safety Check)",
-    "raw_input": "Giỏ có sản phẩm; bấm nút \"Xóa\" tại dòng sản phẩm",
-    "raw_expected": "Bắt buộc phải bật dialog xác nhận; nếu SP bị xóa ngay không hỏi to Defect vi phạm SRS.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR07-11",
+    "preconditions": "Giỏ hàng có sản phẩm",
+    "action": "assert_confirmation_dialog_enforced",
+    "expected": {
+      "dialog_enforced": true
+    },
+    "notes": "Assert dialog xuất hiện trước khi xóa thất bại do SUT xóa trực tiếp."
   },
   {
     "id": "TC_FR07_20",
-    "title": "Verify navigation back to home page via \"Tiếp tục mua sắm\" button (Navigation Flow)",
+    "title": "Verify navigation back to home page via 'Tiếp tục mua sắm' button (Navigation Flow)",
     "type": "positive",
-    "ep_code": "ACTION-07-05",
-    "bva_code": "N/A (Routing)",
-    "raw_input": "Tại trang giỏ hàng (/cart), bấm nút \"Tiếp tục mua sắm\"",
-    "raw_expected": "Trình duyệt chuyển hướng về trang chủ (/), giỏ hàng vẫn được bảo toàn nguyên trạng.",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "productId": "1",
-    "quantity": 1
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "action": "click_continue_shopping",
+    "expected": {
+      "redirect_url": "/",
+      "cart_preserved": true
+    }
   }
 ]

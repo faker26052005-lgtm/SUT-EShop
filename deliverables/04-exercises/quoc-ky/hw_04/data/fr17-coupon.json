@@ -3,504 +3,561 @@
     "id": "TC_FR17_01",
     "title": "Verify creating a valid percent coupon with standard baseline inputs on Admin Web & API",
     "type": "positive",
-    "ep_code": "EP-17-01, EP-17-09, EP-17-15, EP-17-26, EP-17-31, EP-17-36, AUTH-17-01, CPN-BR-12",
-    "bva_code": "BVA-17-03-IN",
-    "raw_input": "code=\"PROMO2026\", type=\"percent\", val=10, min=100000, max=1, expired=\"2026-12-31\"",
-    "raw_expected": "HTTP 200/201, tạo thành công coupon ID mới, hiển thị trên bảng Admin",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "code": "PROMO2026",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 200
+    "discount_value": 10,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_02",
     "title": "Verify creating a valid fixed amount coupon on Admin Web & API",
     "type": "positive",
-    "ep_code": "EP-17-01, EP-17-10, EP-17-16, EP-17-26, EP-17-31, EP-17-36, AUTH-17-01, CPN-BR-12",
-    "bva_code": "BVA-17-05-IN",
-    "raw_input": "code=\"FIXED50K\", type=\"fixed\", val=50000, min=100000, max=1, expired=\"2026-12-31\"",
-    "raw_expected": "HTTP 200/201, tạo thành công coupon trừ 50.000 ₫",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "code": "FIXED50K",
     "discount_type": "fixed",
-    "discount_value": 50000.0,
-    "expectedStatus": 200
+    "discount_value": 50000,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_03",
     "title": "Verify creating a percent coupon at upper boundary 100% (On-point)",
-    "type": "edge",
-    "ep_code": "EP-17-15",
-    "bva_code": "BVA-17-04-ON (V=100%)",
-    "raw_input": "val=100%, các trường khác chuẩn baseline",
-    "raw_expected": "Chấp nhận tạo mã giảm 100% (miễn phí toàn bộ đơn hàng)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "code": "FREE100",
     "discount_type": "percent",
-    "discount_value": 100.0,
-    "expectedStatus": 201
+    "discount_value": 100,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_04",
     "title": "Verify creating a percent coupon at lower boundary 1% (Off-point of >0)",
-    "type": "edge",
-    "ep_code": "EP-17-15",
-    "bva_code": "BVA-17-03-OFF (V=1%)",
-    "raw_input": "val=1%, các trường khác chuẩn baseline",
-    "raw_expected": "Chấp nhận tạo mã với tỷ lệ giảm nhỏ nhất 1%",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "code": "MIN1PCT",
     "discount_type": "percent",
-    "discount_value": 1.0,
-    "expectedStatus": 201
+    "discount_value": 1,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_05",
     "title": "Verify creating a coupon with zero minimum order amount (On-point M=0)",
-    "type": "edge",
-    "ep_code": "EP-17-27",
-    "bva_code": "BVA-17-06-ON (M=0text{ ₫})",
-    "raw_input": "min_order_amount=0, các trường khác chuẩn baseline",
-    "raw_expected": "Chấp nhận tạo mã không ràng buộc ngưỡng đơn hàng",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "code": "NOMIN0",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "min_order_amount": 0,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_06",
     "title": "Verify creating a coupon with minimum max uses per user 1 (On-point U=1)",
-    "type": "edge",
-    "ep_code": "EP-17-31",
-    "bva_code": "BVA-17-07-ON (U=1)",
-    "raw_input": "max_uses_per_user=1, các trường khác chuẩn baseline",
-    "raw_expected": "Chấp nhận tạo mã giới hạn 1 lượt dùng / người",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "code": "USE1TIME",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_07",
     "title": "Verify creating a coupon with code length exactly 1 char (On-point Len=1)",
-    "type": "edge",
-    "ep_code": "EP-17-01",
-    "bva_code": "BVA-17-01-ON (Len=1)",
-    "raw_input": "code=\"A\", các trường khác chuẩn baseline",
-    "raw_expected": "Chấp nhận tạo mã với độ dài 1 ký tự",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "code": "A",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "min_order_amount": 100000,
+    "max_uses_per_user": 1,
+    "expired_at": "2026-12-31",
+    "expected": {
+      "status": 201,
+      "table_contains_code": true
+    }
   },
   {
     "id": "TC_FR17_08",
     "title": "Verify viewing coupon list in Admin management table",
     "type": "positive",
-    "ep_code": "VAR-17-01..06, AUTH-17-01",
-    "bva_code": "N/A (List View)",
-    "raw_input": "Đăng nhập Admin, mở tab Mã Giảm Giá",
-    "raw_expected": "Bảng hiển thị đầy đủ các cột: Mã, Loại, Giá trị, Đơn tối thiểu, Hết hạn, Giới hạn/người, Hành động",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "expected": {
+      "table_visible": true,
+      "required_columns": [
+        "Mã",
+        "Loại",
+        "Giá trị",
+        "Đơn tối thiểu",
+        "Ngày hết hạn",
+        "Giới hạn/người",
+        "Hành động"
+      ]
+    }
   },
   {
     "id": "TC_FR17_09",
     "title": "Verify deleting an existing coupon by ID via Admin Web & API",
     "type": "positive",
-    "ep_code": "RES-17-01, AUTH-17-01, CPN-BR-13",
-    "bva_code": "N/A (Delete Flow)",
-    "raw_input": "Bấm \"Xóa\" tại coupon vừa tạo (DELETE /api/admin/coupons/:id)",
-    "raw_expected": "HTTP 200 OK, xóa thành công, bản ghi biến mất khỏi bảng Admin",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 200
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Đã có coupon được tạo sẵn trong CSDL",
+    "action": "delete_coupon",
+    "expected": {
+      "status": 200,
+      "record_removed": true
+    }
   },
   {
     "id": "TC_FR17_10",
     "title": "Validate rejection when creating coupon with duplicate code (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-02",
-    "bva_code": "N/A (Unique Constraint)",
-    "raw_input": "code=\"SAVE10\" (đã có trong DB), các trường khác chuẩn",
-    "raw_expected": "Báo lỗi mã coupon đã tồn tại; API trả về HTTP 400 hoặc 409, không sập 500",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-01",
+    "preconditions": "Mã code đã tồn tại trước đó trong CSDL",
     "code": "SAVE10",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "discount_value": 10,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "SUT văng lỗi HTTP 500 do SQLite UNIQUE constraint thay vì 400."
   },
   {
     "id": "TC_FR17_11",
     "title": "Validate rejection when coupon code is empty string (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-17-03",
-    "bva_code": "BVA-17-01-OFF (Len=0)",
-    "raw_input": "code=\"\", các trường khác chuẩn",
-    "raw_expected": "Báo lỗi trường bắt buộc không được để trống (UI tooltip / HTTP 400)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "code": "",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "discount_value": 10,
+    "expected": {
+      "form_blocked": true
+    }
   },
   {
     "id": "TC_FR17_12",
     "title": "Validate rejection when coupon code contains only whitespace (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-04",
-    "bva_code": "N/A (Whitespace)",
-    "raw_input": "code=\"     \", các trường khác chuẩn",
-    "raw_expected": "Hệ thống trim khoảng trắng và từ chối mã rỗng; HTTP 400",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "     ",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-02",
+    "code": "       ",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "discount_value": 10,
+    "expected": {
+      "status": 400
+    },
+    "notes": "Backend lưu chuỗi khoảng trắng, không trim."
   },
   {
     "id": "TC_FR17_13",
     "title": "Validate rejection when creating coupon with invalid type enum (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-11",
-    "bva_code": "N/A (Enum)",
-    "raw_input": "type=\"free_shipping\", các trường khác chuẩn",
-    "raw_expected": "API từ chối với HTTP 400 Bad Request (Invalid type enum)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-03",
+    "code": "INVALIDTYPE",
     "discount_type": "free_shipping",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "discount_value": 10,
+    "expected": {
+      "status": 400
+    },
+    "notes": "Backend nhận enum lạ không validate, trả 201."
   },
   {
     "id": "TC_FR17_14",
     "title": "Validate rejection when discount value is 0 for percent type (Boundary On-point)",
-    "type": "negative",
-    "ep_code": "EP-17-17",
-    "bva_code": "BVA-17-03-ON (V=0)",
-    "raw_input": "type=\"percent\", val=0, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối; báo lỗi giá trị giảm phải là số dương > 0 (HTTP 400)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-04",
+    "code": "ZEROVAL",
     "discount_type": "percent",
-    "discount_value": 0.0,
-    "expectedStatus": 400
+    "discount_value": 0,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon giảm 0%."
   },
   {
     "id": "TC_FR17_15",
     "title": "Validate rejection when discount value is negative for percent type (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-18",
-    "bva_code": "N/A (Negative Range)",
-    "raw_input": "type=\"percent\", val=-10, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối số âm; không để xảy ra lỗi làm tăng giá trị đơn hàng",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-04",
+    "code": "NEGVAL",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": -10,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon âm làm tăng giá trị đơn hàng."
   },
   {
     "id": "TC_FR17_16",
-    "title": "Validate rejection when discount value exceeds 100% at 101% for percent type (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-17-19",
-    "bva_code": "BVA-17-04-OFF (V=101%)",
-    "raw_input": "type=\"percent\", val=101, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối (HTTP 400); tỷ lệ % không thể vượt quá 100%",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "title": "Validate rejection when discount value exceeds 100% for percent type (Boundary Off-point)",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-05",
+    "code": "OVER100",
     "discount_type": "percent",
-    "discount_value": 101.0,
-    "expectedStatus": 400
+    "discount_value": 101,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon 101% không kiểm tra ngưỡng trên."
   },
   {
     "id": "TC_FR17_17",
-    "title": "Validate rejection when discount value is 0 for fixed type (Boundary On-point)",
-    "type": "negative",
-    "ep_code": "EP-17-17",
-    "bva_code": "BVA-17-05-ON (V=0text{ ₫})",
-    "raw_input": "type=\"fixed\", val=0, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối; giá trị giảm tiền mặt phải là số dương > 0",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "title": "Validate rejection when discount value is 0 for fixed amount type (Boundary On-point)",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-04",
+    "code": "ZEROFIXED",
     "discount_type": "fixed",
-    "discount_value": 0.0,
-    "expectedStatus": 201
+    "discount_value": 0,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon fixed 0 ₫."
   },
   {
     "id": "TC_FR17_18",
-    "title": "Validate rejection when min order amount is negative at -1 (Boundary Off-point)",
+    "title": "Validate rejection when discount value is negative for fixed amount type (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-28",
-    "bva_code": "BVA-17-06-OFF (M=-1text{ ₫})",
-    "raw_input": "min_order_amount=-1, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối; báo lỗi ngưỡng đơn hàng phải lớn hơn hoặc bằng 0",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-04",
+    "code": "NEGFIXED",
+    "discount_type": "fixed",
+    "discount_value": -50000,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon fixed âm."
   },
   {
     "id": "TC_FR17_19",
-    "title": "Validate rejection when max uses per user is 0 (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-17-32",
-    "bva_code": "BVA-17-07-OFF (U=0)",
-    "raw_input": "max_uses_per_user=0, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối; số lượt dùng tối đa của mỗi người dùng phải ge 1",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "title": "Validate rejection when minimum order amount is negative (Boundary Off-point)",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-06",
+    "code": "NEGMIN",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "min_order_amount": -1,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo min order âm."
   },
   {
     "id": "TC_FR17_20",
-    "title": "Validate rejection when max uses per user is negative (Single Fault)",
+    "title": "Validate rejection when expired_at date is in the past (Single Fault)",
     "type": "negative",
-    "ep_code": "EP-17-33",
-    "bva_code": "N/A (Negative Range)",
-    "raw_input": "max_uses_per_user=-1, các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối số âm; HTTP 400 Bad Request",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-07",
+    "code": "PASTEXP",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "discount_value": 10,
+    "expired_at": "2020-01-01",
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép chọn ngày quá khứ tạo coupon."
   },
   {
     "id": "TC_FR17_21",
-    "title": "Validate handling when expired_at is set in the past (Boundary Off-point)",
-    "type": "negative",
-    "ep_code": "EP-17-37",
-    "bva_code": "BVA-17-08-OFF (text{now}-1text{s})",
-    "raw_input": "expired_at=\"2020-01-01\" (hoặc text{now}-1text{s}), các trường khác chuẩn",
-    "raw_expected": "Hệ thống từ chối tạo mã hoặc gắn nhãn hết hạn ngay; cảnh báo Admin",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
+    "title": "Validate rejection when max uses per user is zero (Boundary Off-point)",
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-08",
+    "code": "ZEROMAX",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "max_uses_per_user": 0,
+    "expected": {
+      "status": 400,
+      "error_message_displayed": true
+    },
+    "notes": "Cho phép tạo coupon giới hạn 0 lượt dùng."
   },
   {
     "id": "TC_FR17_22",
-    "title": "Validate rejection when unauthenticated request calls create coupon API (Single Fault)",
+    "title": "Validate rejection when accessing Admin Coupon API without authentication token",
     "type": "negative",
-    "ep_code": "AUTH-17-02",
-    "bva_code": "N/A (No Auth Header)",
-    "raw_input": "Gửi POST /api/admin/coupons không kèm Authorization token",
-    "raw_expected": "API từ chối với HTTP 401 Unauthorized; không ghi dữ liệu",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 401
+    "automation_decision": "automate",
+    "test_layer": "api",
+    "expected": {
+      "status": 401
+    }
   },
   {
     "id": "TC_FR17_23",
-    "title": "Validate rejection when regular user with role 'user' calls admin coupon API (Single Fault)",
+    "title": "Validate rejection when accessing Admin Coupon API with non-admin customer token",
     "type": "negative",
-    "ep_code": "AUTH-17-03",
-    "bva_code": "N/A (Role Escalation)",
-    "raw_input": "Gửi POST /api/admin/coupons với token của test@eshop.com",
-    "raw_expected": "API từ chối với HTTP 403 Forbidden theo SEC-03; cấm leo thang đặc quyền",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 403
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-09",
+    "preconditions": "Sử dụng token của tài khoản customer thông thường",
+    "expected": {
+      "status": 403
+    },
+    "notes": "Backend thiếu kiểm tra role admin trên endpoint coupon."
   },
   {
     "id": "TC_FR17_24",
     "title": "Validate rejection when deleting non-existent coupon ID 9999 (Single Fault)",
     "type": "negative",
-    "ep_code": "RES-17-02",
-    "bva_code": "N/A (Non-existent ID)",
-    "raw_input": "DELETE /api/admin/coupons/9999 với token Admin",
-    "raw_expected": "API trả về HTTP 404 Not Found (hoặc lỗi rõ ràng); không sập server",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 404
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-10",
+    "action": "delete_coupon_id",
+    "target_id": 9999,
+    "expected": {
+      "status": 404
+    },
+    "notes": "SUT trả về HTTP 200 message 'Coupon deleted' dù ID không tồn tại."
   },
   {
     "id": "TC_FR17_25",
     "title": "Validate rejection when deleting coupon with negative ID -1 (Single Fault)",
     "type": "negative",
-    "ep_code": "RES-17-03",
-    "bva_code": "N/A (Negative Route Param)",
-    "raw_input": "DELETE /api/admin/coupons/-1 với token Admin",
-    "raw_expected": "API từ chối với HTTP 400 Bad Request; ID phải là số dương",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-11",
+    "action": "delete_coupon_id",
+    "target_id": -1,
+    "expected": {
+      "status": 400
+    },
+    "notes": "SUT nhận ID âm và trả HTTP 200."
   },
   {
     "id": "TC_FR17_26",
     "title": "Validate rejection when deleting coupon with malformed string ID 'abc' (Single Fault)",
     "type": "negative",
-    "ep_code": "RES-17-05",
-    "bva_code": "N/A (Malformed Route Param)",
-    "raw_input": "DELETE /api/admin/coupons/abc với token Admin",
-    "raw_expected": "API từ chối với HTTP 400 Bad Request do sai kiểu dữ liệu",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 400
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-12",
+    "action": "delete_coupon_id",
+    "target_id": "abc",
+    "expected": {
+      "status": 400
+    },
+    "notes": "SUT nhận ID chữ và trả HTTP 200."
   },
   {
     "id": "TC_FR17_27",
     "title": "Verify applying percent coupon discount arithmetic calculation at checkout",
     "type": "positive",
-    "ep_code": "CPN-BR-01",
-    "bva_code": "N/A (Formula Calc)",
-    "raw_input": "Đơn hàng 1.000.000 ₫; áp dụng mã 10%",
-    "raw_expected": "Giảm đúng 100.000 ₫; tổng thanh toán cập nhật thành 900.000 ₫",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-16",
+    "preconditions": "Đơn hàng trị giá 1.000.000 ₫; coupon 10% hợp lệ",
+    "coupon_code": "SAVE10",
+    "order_amount": 1000000,
+    "expected": {
+      "discount_amount": 100000,
+      "final_amount": 900000,
+      "applied": true
+    },
+    "notes": "Backend nhân (1 - 10) ra số âm khổng lồ."
   },
   {
     "id": "TC_FR17_28",
     "title": "Verify applying fixed coupon discount arithmetic calculation at checkout",
     "type": "positive",
-    "ep_code": "CPN-BR-02",
-    "bva_code": "N/A (Formula Calc)",
-    "raw_input": "Đơn hàng 1.000.000 ₫; áp dụng mã 50.000 ₫",
-    "raw_expected": "Giảm đúng 50.000 ₫; tổng thanh toán cập nhật thành 950.000 ₫",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Đơn hàng trị giá 1.000.000 ₫; coupon fixed 50.000 ₫",
+    "coupon_code": "BIGBUY",
+    "order_amount": 1000000,
+    "expected": {
+      "discount_amount": 50000,
+      "final_amount": 950000,
+      "applied": true
+    }
   },
   {
     "id": "TC_FR17_29",
-    "title": "Validate rejection when order total is below min_order_amount at boundary offset M-1 ₫",
-    "type": "negative",
-    "ep_code": "CPN-BR-03",
-    "bva_code": "BVA-17-09-OFF (M-1text{ ₫})",
-    "raw_input": "min=300.000 ₫; đơn hàng 299.999text{ ₫}",
-    "raw_expected": "Từ chối áp dụng; thông báo đơn hàng chưa đủ ngưỡng tối thiểu (C3)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "title": "Validate rejection when order total is below min_order_amount at boundary offset M-1",
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Coupon min_order_amount = 300.000 ₫",
+    "coupon_code": "SAVE10",
+    "order_amount": 299999,
+    "expected": {
+      "applied": false,
+      "error_message_contains": "ngưỡng tối thiểu"
+    }
   },
   {
     "id": "TC_FR17_30",
     "title": "Verify acceptance when order total equals exact min_order_amount at boundary On-point M",
-    "type": "edge",
-    "ep_code": "CPN-BR-04",
-    "bva_code": "BVA-17-09-ON (M=300.000text{ ₫})",
-    "raw_input": "min=300.000 ₫; đơn hàng đúng 300.000text{ ₫}",
-    "raw_expected": "Chấp nhận áp dụng mã thành công (thỏa mãn điều kiện toán học ge)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-17",
+    "preconditions": "Coupon min_order_amount = 300.000 ₫",
+    "coupon_code": "SAVE10",
+    "order_amount": 300000,
+    "expected": {
+      "applied": true
+    },
+    "notes": "Backend dùng toán tử '>' thay vì '>=' nên từ chối khi bằng đúng min."
   },
   {
     "id": "TC_FR17_31",
     "title": "Validate rejection when applying expired coupon at checkout",
     "type": "negative",
-    "ep_code": "CPN-BR-06",
-    "bva_code": "N/A (Expired State)",
-    "raw_input": "Áp dụng mã EXPIRED (expired_at='2020-01-01')",
-    "raw_expected": "Từ chối áp dụng; thông báo mã giảm giá đã hết hạn sử dụng (C2)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "coupon_code": "EXPIRED",
+    "order_amount": 500000,
+    "expected": {
+      "applied": false,
+      "error_message_contains": "hết hạn"
+    }
   },
   {
     "id": "TC_FR17_32",
     "title": "Validate rejection when user usage count reaches max_uses_per_user at boundary On-point",
-    "type": "negative",
-    "ep_code": "CPN-BR-09",
-    "bva_code": "BVA-17-10-ON (used=U)",
-    "raw_input": "max=1; user đã dùng 1 lần trong CSDL",
-    "raw_expected": "Từ chối áp dụng; thông báo người dùng đã dùng hết lượt cho phép (C5)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "User đã sử dụng coupon đủ 1 lần (max_uses_per_user = 1)",
+    "coupon_code": "SAVE10",
+    "order_amount": 500000,
+    "expected": {
+      "applied": false,
+      "error_message_contains": "giới hạn"
+    }
   },
   {
     "id": "TC_FR17_33",
     "title": "Verify acceptance when user usage count is max_uses_per_user - 1 at boundary Off-point",
-    "type": "edge",
-    "ep_code": "CPN-BR-08",
-    "bva_code": "BVA-17-10-OFF (used=U-1)",
-    "raw_input": "max=2; user đã dùng 1 lần trong CSDL",
-    "raw_expected": "Chấp nhận áp dụng mã cho lần thanh toán thứ 2 (1 < 2)",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "type": "boundary",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
+    "preconditions": "Coupon max_uses_per_user = 2; user mới dùng 1 lần",
+    "coupon_code": "VIP100",
+    "order_amount": 500000,
+    "expected": {
+      "applied": true
+    }
   },
   {
     "id": "TC_FR17_34",
     "title": "Validate system handling when fixed discount exceeds order total (Financial Boundary Defect Probe)",
-    "type": "edge",
-    "ep_code": "CPN-BR-10",
-    "bva_code": "BVA-17-11-OFF (discount>Total)",
-    "raw_input": "Đơn hàng 30.000 ₫; áp dụng mã fixed 50.000 ₫",
-    "raw_expected": "Tổng tiền đơn hàng giảm tối đa về 0 ₫; tuyệt đối KHÔNG bị âm tiền",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
-    "code": "PROMO2026",
-    "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "type": "boundary",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "ui_e2e",
+    "defect_id": "BUG-FR17-18",
+    "preconditions": "Đơn hàng trị giá 30.000 ₫; coupon fixed giảm 50.000 ₫",
+    "coupon_code": "BIGBUY",
+    "order_amount": 30000,
+    "expected": {
+      "final_amount": 0,
+      "allow_negative_total": false
+    },
+    "notes": "SUT tính ra số âm -20.000 ₫ do thiếu hàm Math.max(0, ...)."
   },
   {
     "id": "TC_FR17_35",
     "title": "Validate stored XSS escaping when viewing coupon with HTML tags on Admin Web",
     "type": "negative",
-    "ep_code": "EP-17-06, SEC-17-01",
-    "bva_code": "N/A (XSS Probe)",
-    "raw_input": "code=\"<script>alert('XSS')</script>\"",
-    "raw_expected": "Giao diện escape thẻ HTML (SEC-04); hiển thị text, không chạy mã script",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "automation_decision": "automate",
+    "test_layer": "ui_e2e",
     "code": "<script>alert('XSS')</script>",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "expected": {
+      "xss_executed": false,
+      "text_escaped": true
+    }
   },
   {
     "id": "TC_FR17_36",
     "title": "Validate race condition handling when creating duplicate coupon codes simultaneously",
-    "type": "positive",
-    "ep_code": "CPN-BR-14",
-    "bva_code": "N/A (Race Condition)",
-    "raw_input": "2 request POST cùng mã code=\"FLASH50\" trong 100ms",
-    "raw_expected": "Đúng 1 request thành công; request thứ 2 bị từ chối; CSDL duy nhất 1 bản ghi",
-    "human_verification": "TODO: verify with specs/system_requirements_specification.md",
+    "type": "edge",
+    "automation_decision": "automate_expected_failure",
+    "test_layer": "api",
+    "defect_id": "BUG-FR17-01",
     "code": "FLASH50",
     "discount_type": "percent",
-    "discount_value": 10.0,
-    "expectedStatus": 201
+    "discount_value": 10,
+    "concurrency_requests": 2,
+    "expected": {
+      "valid_response_statuses": [
+        200,
+        201,
+        400,
+        409
+      ],
+      "db_record_count": 1,
+      "unique_enforced": true
+    },
+    "notes": "Gửi đồng thời 2 request tạo cùng mã qua Promise.all(). CSDL lưu đúng 1 bản ghi (Pass), nhưng SUT văng HTTP 500 thay vì 400/409 (Fail). Promise.all() kiểm tra việc gửi đồng thời phía client, không đảm bảo lockstep concurrency ở critical section tầng DB."
   }
 ]
