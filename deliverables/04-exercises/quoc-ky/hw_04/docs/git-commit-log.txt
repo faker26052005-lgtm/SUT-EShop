@@ -1,4 +1,9 @@
-c385ecc | Nguyen Quoc Ky | 2026-11-12 08:20:15 +0700 | docs(report): complete main report, audit report, critique and bug reports
+80d9486 | Nguyen Quoc Ky | 2026-11-12 22:27:32 +0700 | test(FR-17): generate AI multi-layer spec for coupon management
+5b3149c | Nguyen Quoc Ky | 2026-11-12 22:27:28 +0700 | test(FR-07): generate AI multi-layer spec for cart operations
+b97620a | Nguyen Quoc Ky | 2026-11-12 22:27:24 +0700 | test(FR-02): generate AI multi-layer spec for login and lockout
+c092346 | Nguyen Quoc Ky | 2026-11-12 22:27:21 +0700 | test(data): standardize test data schema with expected objects and layers
+6899e5e | Nguyen Quoc Ky | 2026-11-12 22:27:17 +0700 | feat(skill): update automation coach skill and scripts for 3-state standard
+4b9f2b6 | Nguyen Quoc Ky | 2026-11-12 08:20:15 +0700 | docs(report): complete main report, audit report, critique and bug reports
 7893e01 | Nguyen Quoc Ky | 2026-11-12 08:17:05 +0700 | fix(FR-02): handle html5 client-side validation for empty credentials
 5139c1f | Nguyen Quoc Ky | 2026-11-12 08:16:30 +0700 | fix(FR-17): refine admin selectors and add coupon cleanup teardown
 6a906f3 | Nguyen Quoc Ky | 2026-11-12 08:15:54 +0700 | fix(FR-07): correct cart state assertions and dynamic row subtotal
