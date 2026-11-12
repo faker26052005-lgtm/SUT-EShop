@@ -193,7 +193,9 @@
     "expected": {
       "status": 400
     },
-    "notes": "Backend lưu chuỗi khoảng trắng, không trim."
+    "notes": "Backend lưu chuỗi khoảng trắng, không trim.",
+    "action": "create",
+    "auth_mode": "admin"
   },
   {
     "id": "TC_FR17_13",
@@ -208,7 +210,9 @@
     "expected": {
       "status": 400
     },
-    "notes": "Backend nhận enum lạ không validate, trả 201."
+    "notes": "Backend nhận enum lạ không validate, trả 201.",
+    "action": "create",
+    "auth_mode": "admin"
   },
   {
     "id": "TC_FR17_14",
@@ -349,7 +353,12 @@
     "test_layer": "api",
     "expected": {
       "status": 401
-    }
+    },
+    "action": "create",
+    "auth_mode": "none",
+    "code": "NOAUTH",
+    "discount_type": "percent",
+    "discount_value": 10
   },
   {
     "id": "TC_FR17_23",
@@ -362,7 +371,12 @@
     "expected": {
       "status": 403
     },
-    "notes": "Backend thiếu kiểm tra role admin trên endpoint coupon."
+    "notes": "Backend thiếu kiểm tra role admin trên endpoint coupon.",
+    "action": "create",
+    "auth_mode": "customer",
+    "code": "CUSTAUTH",
+    "discount_type": "percent",
+    "discount_value": 10
   },
   {
     "id": "TC_FR17_24",
@@ -376,7 +390,8 @@
     "expected": {
       "status": 404
     },
-    "notes": "SUT trả về HTTP 200 message 'Coupon deleted' dù ID không tồn tại."
+    "notes": "SUT trả về HTTP 200 message 'Coupon deleted' dù ID không tồn tại.",
+    "auth_mode": "admin"
   },
   {
     "id": "TC_FR17_25",
@@ -390,7 +405,8 @@
     "expected": {
       "status": 400
     },
-    "notes": "SUT nhận ID âm và trả HTTP 200."
+    "notes": "SUT nhận ID âm và trả HTTP 200.",
+    "auth_mode": "admin"
   },
   {
     "id": "TC_FR17_26",
@@ -404,7 +420,8 @@
     "expected": {
       "status": 400
     },
-    "notes": "SUT nhận ID chữ và trả HTTP 200."
+    "notes": "SUT nhận ID chữ và trả HTTP 200.",
+    "auth_mode": "admin"
   },
   {
     "id": "TC_FR17_27",

@@ -1,13 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type APIRequestContext } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 import { AdminCouponPage } from '../pages/admin-coupon.page';
-import { getAdminToken, deleteAdminCoupon } from '../fixtures';
+import { getAdminToken, deleteAdminCoupon, registerFreshUser } from '../fixtures';
 
 /**
  * Data-Driven Test Suite for FR-17: Quản lý mã giảm giá (Admin Web & API)
  * - Standardized 3-state decisions: automate, automate_expected_failure
  * - Multi-layer testing: ui_e2e and api
+ * - Structured API Routing: Dispatches POST /api/admin/coupons or DELETE /api/admin/coupons/:id
+ * - Distinct Auth Modes: admin (Bearer admin), customer (Bearer customer), none (unauthenticated)
+ * - Strict Target ID Preservation: Keeps raw string "abc" or negative integer without coercion
  * - Concurrency data integrity check via Promise.all() for TC_FR17_36
  * - Automated cleanup: Deletes created coupons via afterEach hook
  * - 4 distinct assertion pattern groups (status/plain value, visibility, text, count)
@@ -19,6 +22,9 @@ interface Fr17TestCase {
   automation_decision: 'automate' | 'automate_expected_failure' | 'blocked_deferred';
   test_layer: 'ui_e2e' | 'api';
   defect_id?: string;
+  action?: 'create' | 'delete' | 'delete_coupon_id' | string;
+  auth_mode?: 'admin' | 'customer' | 'none';
+  target_id?: number | string;
   code?: string;
   discount_type?: 'percent' | 'fixed' | string;
   discount_value?: number;
@@ -44,16 +50,31 @@ const dataFilePath = path.resolve(__dirname, '../data/fr17-coupon.json');
 const testCases: Fr17TestCase[] = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
 const apiUrl = process.env.API_URL ?? 'http://localhost:3000';
 
+/**
+ * Helper to obtain a non-admin Customer JWT token via API.
+ * Fails fast with descriptive error if registration or login fails.
+ */
+async function getCustomerToken(request: APIRequestContext, targetApiUrl: string): Promise<string> {
+  const fresh = await registerFreshUser(request, targetApiUrl);
+  const loginRes = await request.post(`${targetApiUrl}/api/login`, {
+    data: { email: fresh.email, password: fresh.password },
+  });
+  expect(
+    loginRes.status(),
+    `Customer login setup failed [HTTP ${loginRes.status()}]: ${await loginRes.text()}`
+  ).toBe(200);
+  const loginBody = await loginRes.json();
+  expect(loginBody.token, 'Customer login response must contain a valid JWT token').toBeTruthy();
+  return loginBody.token;
+}
+
 test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
   let adminToken = '';
   let createdCouponId: number | null = null;
 
   test.beforeAll(async ({ request }) => {
-    try {
-      adminToken = await getAdminToken(request, apiUrl);
-    } catch {
-      // Backend auth helper fallback
-    }
+    adminToken = await getAdminToken(request, apiUrl);
+    expect(adminToken, 'Admin token setup must succeed for FR-17 test suite').toBeTruthy();
   });
 
   test.afterEach(async ({ request }) => {
@@ -64,9 +85,17 @@ test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
   });
 
   for (const tc of testCases) {
-    test(`${tc.id} [${tc.type}] ${tc.title}`, async ({ page, request }) => {
+    test(`${tc.id} [${tc.type}] ${tc.title}`, async ({ page, request }, testInfo) => {
+      // Annotate expected failure cases for defect tracking in HTML report
+      if (tc.automation_decision === 'automate_expected_failure') {
+        testInfo.annotations.push({
+          type: 'defect_tracking',
+          description: `Defect ID: ${tc.defect_id ?? 'Known Defect'}. Reason: ${tc.notes ?? 'SUT behavior diverges from SRS'}`,
+        });
+      }
+
       // -------------------------------------------------------------
-      // LAYER 1: API TESTING (Validation payloads & Concurrency)
+      // LAYER 1: API TESTING (Validation payloads, Auth, & Concurrency)
       // -------------------------------------------------------------
       if (tc.test_layer === 'api') {
         // CONCURRENCY TEST CASE (TC_FR17_36)
@@ -106,7 +135,39 @@ test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
           return;
         }
 
-        // Standard API payload validation
+        // --- AUTHENTICATION MODE BRANCHING ---
+        let authToken: string | null = null;
+        const authMode = tc.auth_mode ?? 'admin';
+
+        if (authMode === 'admin') {
+          expect(adminToken, `Admin token must be available for test ${tc.id}`).toBeTruthy();
+          authToken = adminToken;
+        } else if (authMode === 'customer') {
+          authToken = await getCustomerToken(request, apiUrl);
+          expect(authToken, `Customer token setup must succeed for test ${tc.id}`).toBeTruthy();
+        } else if (authMode === 'none') {
+          authToken = null;
+        }
+
+        const headers: Record<string, string> = {};
+        if (authToken) {
+          headers['Authorization'] = `Bearer ${authToken}`;
+        }
+
+        // --- ACTION BRANCH A: DELETE COUPON (TC_FR17_24, TC_FR17_25, TC_FR17_26) ---
+        if (tc.action === 'delete_coupon_id' || tc.action === 'delete') {
+          // Preserve raw target_id without coercing string "abc" or negative number -1
+          const targetId = tc.target_id;
+          const deleteUrl = `${apiUrl}/api/admin/coupons/${targetId}`;
+          const res = await request.delete(deleteUrl, { headers });
+
+          if (tc.expected.status !== undefined) {
+            expect(res.status()).toBe(tc.expected.status);
+          }
+          return;
+        }
+
+        // --- ACTION BRANCH B: CREATE COUPON (Default POST /api/admin/coupons) ---
         const payload: Record<string, unknown> = {
           code: tc.code,
           type: tc.discount_type,
@@ -117,7 +178,7 @@ test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
         };
 
         const res = await request.post(`${apiUrl}/api/admin/coupons`, {
-          headers: { Authorization: `Bearer ${adminToken}` },
+          headers,
           data: payload,
         });
 
