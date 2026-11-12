@@ -2,7 +2,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object Model for EShop Web Login (/login).
- * AI Draft implementation for FR-02.
+ * Refined implementation adhering to Accessible Locators and Web-First Assertions.
  */
 export class LoginPage {
   readonly page: Page;
@@ -10,14 +10,16 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
   readonly errorAlert: Locator;
+  readonly registerLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    // Basic locator targeting
-    this.usernameInput = page.getByLabel(/username/i).or(page.locator('input').first());
-    this.passwordInput = page.getByLabel(/mật khẩu|password/i).or(page.locator('input[type="text"]').nth(1));
-    this.submitButton = page.getByRole('button', { name: /sign in|đăng nhập/i });
-    this.errorAlert = page.locator('.bg-red-100');
+    // Accessible locators prioritized (Rule 4 GEMINI.md)
+    this.usernameInput = page.getByLabel('Username').or(page.getByPlaceholder(/username|email/i));
+    this.passwordInput = page.getByLabel('Mật khẩu').or(page.getByPlaceholder(/mật khẩu|password/i));
+    this.submitButton = page.getByRole('button', { name: /sign in/i });
+    this.errorAlert = page.locator('div.bg-red-100');
+    this.registerLink = page.getByRole('link', { name: /đăng ký ngay/i });
   }
 
   async goto() {
