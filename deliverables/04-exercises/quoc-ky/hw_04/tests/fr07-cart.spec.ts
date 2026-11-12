@@ -83,32 +83,108 @@ test.describe('FR-07: Giỏ hàng (Web Frontend & API)', () => {
       // LAYER 2: UI E2E TESTS
       switch (tc.action) {
         case 'add_from_product_detail': {
-          // Standard single-click addition from product detail
-          await page.goto(`/product/${tc.product_id ?? '1'}`);
+          // Verify cart is initially empty
+          await cartPage.goto();
+          await expect(cartPage.emptyCartHeading).toBeVisible();
+          await expect(cartPage.tableRows).toHaveCount(0);
+
+          // Navigate to specific product detail by ID
+          const productId = tc.product_id ?? '1';
+          await page.goto(`/product/${productId}`);
+          const productNameHeading = page.getByRole('heading', { level: 1 });
+          await expect(productNameHeading).toBeVisible();
+          const expectedProductName = await productNameHeading.innerText();
+
+          // Fill quantity if specified and different from default 1
+          if (tc.quantity !== undefined && tc.quantity !== 1) {
+            const qtyInput = page.locator('input[type="number"]');
+            if (await qtyInput.isVisible()) {
+              await qtyInput.fill(String(tc.quantity));
+            }
+          }
+
+          // Single click only: do not use workaround retry helpers
           const addBtn = page.getByRole('button', { name: /thêm vào giỏ hàng/i });
           await expect(addBtn).toBeVisible();
           await addBtn.click();
 
+          // Navigate to cart and verify expected outcomes per SRS
           await cartPage.goto();
+
+          // 1. Verify row count
           if (tc.expected.row_count !== undefined) {
             await expect(cartPage.tableRows).toHaveCount(tc.expected.row_count);
+          }
+
+          // 2. Verify product identity
+          const firstRow = cartPage.tableRows.first();
+          await expect(firstRow.locator('td').nth(0)).toContainText(expectedProductName);
+
+          // 3. Verify product quantity
+          if (tc.expected.quantity !== undefined) {
+            await expect(firstRow.locator('td').nth(2)).toHaveText(String(tc.expected.quantity));
+          }
+
+          // 4. Verify item subtotal
+          if (tc.expected.subtotal !== undefined) {
+            const subtotal = await cartPage.getRowSubtotal(0);
+            expect(subtotal).toBe(tc.expected.subtotal);
+          }
+
+          // 5. Verify cart grand total
+          if (tc.expected.total !== undefined) {
+            const total = await cartPage.getTotalAmount();
+            expect(total).toBe(tc.expected.total);
           }
           break;
         }
 
         case 'add_duplicate_product': {
-          // Add product once from home, then add same product again
-          await cartPage.addProductFromHome(0);
-          await cartPage.addProductFromHome(0);
+          // Verify cart is initially empty
+          await cartPage.goto();
+          await expect(cartPage.emptyCartHeading).toBeVisible();
+          await expect(cartPage.tableRows).toHaveCount(0);
+
+          // Setup precondition: Add product first time using stable Product ID identifier
+          const productId = tc.product_id ?? '1';
+          await cartPage.addProductFromHome(productId);
+
+          // Verify precondition established: cart contains exactly 1 row with quantity 1
+          await cartPage.goto();
+          await expect(cartPage.tableRows).toHaveCount(1);
+          const initialRow = cartPage.tableRows.first();
+          const addedProductName = await initialRow.locator('td').nth(0).innerText();
+          await expect(initialRow.locator('td').nth(2)).toHaveText('1');
+
+          // Main action: Add same product second time by stable Product ID
+          await cartPage.addProductFromHome(productId);
           await cartPage.goto();
 
-          // Per SRS: Should consolidate into 1 row with incremented quantity
+          // Verify outcomes per SRS FR-07 (Duplicate product should consolidate into single row)
+          // 1. Row count consolidation
           if (tc.expected.row_count !== undefined) {
             await expect(cartPage.tableRows).toHaveCount(tc.expected.row_count);
           }
+
+          // 2. Product identity matches
+          const consolidatedRow = cartPage.tableRows.first();
+          await expect(consolidatedRow.locator('td').nth(0)).toContainText(addedProductName);
+
+          // 3. Incremented quantity
           if (tc.expected.quantity !== undefined) {
-            const qtyCell = cartPage.tableRows.first().locator('td').nth(2);
-            await expect(qtyCell).toHaveText(String(tc.expected.quantity));
+            await expect(consolidatedRow.locator('td').nth(2)).toHaveText(String(tc.expected.quantity));
+          }
+
+          // 4. Line subtotal
+          if (tc.expected.subtotal !== undefined) {
+            const subtotal = await cartPage.getRowSubtotal(0);
+            expect(subtotal).toBe(tc.expected.subtotal);
+          }
+
+          // 5. Grand total
+          if (tc.expected.total !== undefined) {
+            const total = await cartPage.getTotalAmount();
+            expect(total).toBe(tc.expected.total);
           }
           break;
         }
