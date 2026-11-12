@@ -161,13 +161,68 @@ test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
           const deleteUrl = `${apiUrl}/api/admin/coupons/${targetId}`;
           const res = await request.delete(deleteUrl, { headers });
 
-          if (tc.expected.status !== undefined) {
-            expect(res.status()).toBe(tc.expected.status);
+          const deleteBodyText = await res.text();
+          let deleteBody: Record<string, unknown> | null = null;
+          try {
+            deleteBody = JSON.parse(deleteBodyText);
+          } catch {
+            // Non-JSON response
           }
+
+          // 1. Differentiate validation/operational errors from unhandled internal server error (HTTP 500)
+          expect(
+            res.status(),
+            `DELETE /api/admin/coupons/${targetId} must not fail with unhandled internal server error (HTTP 500)`
+          ).not.toBe(500);
+
+          // 2. Validate response body does not falsely report successful deletion of invalid/non-existent coupon
+          if (deleteBody?.message) {
+            expect(
+              deleteBody.message,
+              `SUT defect: API must not report successful deletion for invalid/non-existent target ID ${targetId}`
+            ).not.toBe('Coupon deleted');
+          }
+
+          // 3. Validate expected HTTP status
+          if (tc.expected.status !== undefined) {
+            expect(
+              res.status(),
+              `DELETE /api/admin/coupons/${targetId} expected status ${tc.expected.status} but got ${res.status()}`
+            ).toBe(tc.expected.status);
+          }
+
+          // 4. When 4xx error contract is returned, verify presence of descriptive error details
+          if (res.status() >= 400 && res.status() < 500) {
+            expect(
+              deleteBody?.error || deleteBody?.message || deleteBodyText,
+              'Error response body must describe the deletion failure reason'
+            ).toBeTruthy();
+          }
+
           return;
         }
 
         // --- ACTION BRANCH B: CREATE COUPON (Default POST /api/admin/coupons) ---
+        // Pre-request verification: enforce authentication mode contract
+        if (tc.id === 'TC_FR17_22') {
+          expect(
+            headers['Authorization'],
+            'TC_FR17_22: Request must not carry Authorization header'
+          ).toBeUndefined();
+        } else if (tc.id === 'TC_FR17_23') {
+          expect(
+            headers['Authorization'],
+            'TC_FR17_23: Request must carry Authorization header'
+          ).toBeTruthy();
+          const token = headers['Authorization']!.replace(/^Bearer\s+/, '');
+          const payloadBase64 = token.split('.')[1];
+          const decoded = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('utf8'));
+          expect(
+            decoded.role,
+            'TC_FR17_23: Token must belong to a customer role, not admin'
+          ).not.toBe('admin');
+        }
+
         const payload: Record<string, unknown> = {
           code: tc.code,
           type: tc.discount_type,
@@ -182,13 +237,60 @@ test.describe('FR-17: Quản lý mã giảm giá Admin', () => {
           data: payload,
         });
 
-        if (tc.expected.status !== undefined) {
-          expect(res.status()).toBe(tc.expected.status);
+        const resBodyText = await res.text();
+        let resBodyJson: Record<string, unknown> | null = null;
+        try {
+          resBodyJson = JSON.parse(resBodyText);
+        } catch {
+          // Non-JSON response
         }
 
+        // 1. Differentiate validation/auth errors from unhandled internal server error (HTTP 500)
+        expect(
+          res.status(),
+          `POST /api/admin/coupons for ${tc.id} must not fail with unhandled internal server error (HTTP 500)`
+        ).not.toBe(500);
+
+        // 2. Validate expected HTTP status
+        if (tc.expected.status !== undefined) {
+          expect(
+            res.status(),
+            `${tc.id} expected HTTP ${tc.expected.status} but got HTTP ${res.status()}`
+          ).toBe(tc.expected.status);
+        }
+
+        // 3. Error response contract verification
+        if (tc.id === 'TC_FR17_22') {
+          // Backend server.js line 103 contract: return res.status(401).json({ error: "Unauthorized" })
+          expect(
+            resBodyJson?.error,
+            'TC_FR17_22: Unauthenticated response body must indicate Unauthorized'
+          ).toBe('Unauthorized');
+        } else if (tc.id === 'TC_FR17_23' && res.status() === 403) {
+          const errInfo = ((resBodyJson?.error as string) ?? (resBodyJson?.message as string) ?? resBodyText).toLowerCase();
+          expect(
+            errInfo,
+            'TC_FR17_23: Forbidden response body must indicate permission or role restriction'
+          ).toMatch(/forbidden|permission|unauthorized|admin|role/i);
+        } else if (tc.id === 'TC_FR17_12' && res.status() === 400) {
+          const errInfo = ((resBodyJson?.error as string) ?? (resBodyJson?.message as string) ?? resBodyText).toLowerCase();
+          expect(
+            errInfo,
+            'TC_FR17_12: Validation error body must identify invalid code field'
+          ).toMatch(/code|whitespace|blank|empty|mã/i);
+        } else if (tc.id === 'TC_FR17_13' && res.status() === 400) {
+          const errInfo = ((resBodyJson?.error as string) ?? (resBodyJson?.message as string) ?? resBodyText).toLowerCase();
+          expect(
+            errInfo,
+            'TC_FR17_13: Validation error body must identify invalid discount type field'
+          ).toMatch(/type|loại/i);
+        }
+
+        // SUT defect cleanup tracking: if SUT erroneously created coupon (defect), track ID for teardown in afterEach
         if ([200, 201].includes(res.status())) {
-          const body = await res.json().catch(() => ({}));
-          if (body.id) createdCouponId = body.id;
+          if (resBodyJson && typeof resBodyJson.id === 'number') {
+            createdCouponId = resBodyJson.id;
+          }
         }
         return;
       }
