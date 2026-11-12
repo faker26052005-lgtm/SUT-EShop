@@ -1,3 +1,5 @@
+b78b48c | Nguyen Quoc Ky | 2026-11-12 23:12:28 +0700 | fix(FR-17): route API coupon validation and auth modes with strict targets
+e0f5628 | Nguyen Quoc Ky | 2026-11-12 23:06:02 +0700 | docs(git): update git commit log after FR-07 review fixes
 567f91f | Nguyen Quoc Ky | 2026-11-12 23:05:58 +0700 | fix(FR-07): refine TC_FR07_01 and TC_FR07_02 with strict assertions and stable identifiers
 c62be7a | Nguyen Quoc Ky | 2026-11-12 23:05:52 +0700 | refactor(FR-07): remove double-click workaround and improve currency parsing in CartPage
 76d9624 | Nguyen Quoc Ky | 2026-11-12 22:53:09 +0700 | docs(git): update git commit log after FR-02 review fixes
