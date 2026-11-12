@@ -11,6 +11,8 @@
     "test:fr01": "playwright test tests/fr01-register.spec.ts",
     "test:fr09": "playwright test tests/fr09-coupons.spec.ts",
     "test:fr15": "playwright test tests/fr15-products.spec.ts",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
     "report": "playwright show-report"
   },
   "devDependencies": {
