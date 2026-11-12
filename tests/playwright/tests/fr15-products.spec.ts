@@ -134,7 +134,11 @@ test.describe('FR-15: Admin Product Management CRUD (Data-Driven)', () => {
           adminPage.saveButton.click(),
         ]);
 
-        // Verify other row was not overwritten after alert/state update
+        // Wait until React commits the PUT state update to row 0 before checking row 1 isolation
+        await expect(
+          adminPage.productRows.first().locator('td').nth(1)
+        ).toHaveText(resolvedName, { timeout: 2500 });
+
         await expect(
           adminPage.productRows.nth(1).locator('td').nth(1),
           tc.expected.bugNote ?? 'Other products must remain unchanged when updating one product'
