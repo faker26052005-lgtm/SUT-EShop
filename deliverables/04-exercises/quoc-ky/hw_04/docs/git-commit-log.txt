@@ -1,0 +1,13 @@
+c385ecc | Nguyen Quoc Ky | 2026-11-12 08:20:15 +0700 | docs(report): complete main report, audit report, critique and bug reports
+7893e01 | Nguyen Quoc Ky | 2026-11-12 08:17:05 +0700 | fix(FR-02): handle html5 client-side validation for empty credentials
+5139c1f | Nguyen Quoc Ky | 2026-11-12 08:16:30 +0700 | fix(FR-17): refine admin selectors and add coupon cleanup teardown
+6a906f3 | Nguyen Quoc Ky | 2026-11-12 08:15:54 +0700 | fix(FR-07): correct cart state assertions and dynamic row subtotal
+45ced00 | Nguyen Quoc Ky | 2026-11-12 08:15:14 +0700 | fix(FR-02): replace fragile locators and isolate users via api helper
+c0d1fa4 | Nguyen Quoc Ky | 2026-11-12 00:30:21 +0700 | test(FR-17): generate AI draft for TC_FR17_01-36
+2cd4cf5 | Nguyen Quoc Ky | 2026-11-12 00:29:42 +0700 | test(FR-07): generate AI draft for TC_FR07_01-20
+8ca29e8 | Nguyen Quoc Ky | 2026-11-12 00:29:05 +0700 | test(FR-02): generate AI draft for TC_FR02_01-24
+ca62be9 | Nguyen Quoc Ky | 2026-11-12 00:27:24 +0700 | test(data): extract test cases from hw02 to json data files
+fc3a5a5 | Nguyen Quoc Ky | 2026-11-12 00:26:55 +0700 | chore(config): initialize playwright typescript project and 3 browser configs
+b10dc9f | Nguyen Quoc Ky | 2026-11-12 00:05:36 +0700 | skill guidelines and update the plan that matches the skill.
+41c5cd8 | Nguyen Quoc Ky | 2026-11-11 23:29:50 +0700 | playright-automation-coach skill create
+417d712 | Nguyen Quoc Ky | 2026-11-11 10:57:47 +0700 | hw04 planning
