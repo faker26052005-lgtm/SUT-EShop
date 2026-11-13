@@ -26,14 +26,16 @@
 
 | Chỉ số kiểm thử (Metric) | Giá trị (Value) | Ghi chú kỹ thuật |
 | :--- | :---: | :--- |
-| **Số tính năng được tự động hóa (Features)** | **3** | FR-02 (Web/API), FR-07 (Web), FR-17 (Admin/API) |
-| **Số test case tự động hóa (Automated TCs)** | **≥ 36** | Lưu trữ độc lập trong thư mục `data/*.json` |
-| **Số test case không tự động hóa (Not Automated)** | *(Cập nhật)* | Đã giải trình kỹ thuật chi tiết trong `docs/main-report.md` |
+| **Số tính năng được tự động hóa (Features)** | **3 features** | FR-02 (Web/API), FR-07 (Web), FR-17 (Admin/API) |
+| **Tổng số test case định nghĩa (Defined TCs)** | **80 TCs** | 37 pass kỳ vọng, 42 fail kỳ vọng (lỗi SUT), 1 hoãn |
+| **Số test case tự động hóa (Automated TCs)** | **79 TCs (98.8%)** | Lưu trữ độc lập trong thư mục `data/*.json` |
+| **Số test case không tự động hóa (Not Automated)** | **1 TC** (`TC_FR02_12`) | Do SUT khóa cứng 180s server-side, giải trình ở Main Report |
 | **Tổng số lượt chạy kiểm thử (Executed Runs)** | **9 runs** | 3 tính năng $\times$ 3 trình duyệt (Chromium, Firefox, WebKit) |
-| **Số lượt kiểm thử Đạt (Passed)** | *(Cập nhật)* | Báo cáo chi tiết trong `reports/<feature>/<browser>/` |
-| **Số lượt kiểm thử Thất bại (Failed)** | *(Cập nhật)* | Do lỗi thật của SUT (đã đối chiếu SRS và bug HW02) |
-| **Số lỗi phát hiện & tạo GitHub Issue (Bugs)** | *(Cập nhật)* | Ghi nhận trong `docs/bug-report.md` kèm ảnh trong `evidence/` |
-| **Số commit Git sửa file test (`.spec.ts`)** | **≥ 8 commits** | Lọc theo tác giả: `Nguyen Quoc Ky` |
+| **Tổng số lượt test thực thi (Total Executed Tests)** | **237 tests** | Thực thi tuần tự với `workers: 1`, `retries: 0` |
+| **Số lượt kiểm thử Đạt (Passed Tests)** | **29 lượt** | Báo cáo chi tiết trong `reports/<feature>/<browser>/` |
+| **Số lượt kiểm thử Thất bại (Failed Tests)** | **208 lượt** | Do lỗi thực tế của SUT (đã đối chiếu SRS và bug HW02) |
+| **Tỷ lệ Flaky (Flaky Rate)** | **0%** | Nhờ cách ly user qua API helper và hook cleanup |
+| **Số commit Git sửa file test (`.spec.ts`)** | **16 commits** | Tác giả: `Nguyen Quoc Ky` (vượt yêu cầu $\ge 8$ commit) |
 | **Link Video Demo Automation Testing (YouTube)** | [Đang cập nhật link]() | Video ≥ 5 phút, tiếng Việt, chứng minh danh tính, thuyết minh fix |
 | **Link Video Demo Agent Skill (YouTube)** | [Đang cập nhật link]() | Demo workflow trên 1 tính năng hoàn chỉnh theo kịch bản skill |
 

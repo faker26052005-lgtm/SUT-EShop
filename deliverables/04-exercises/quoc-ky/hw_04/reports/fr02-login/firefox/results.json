@@ -1,0 +1,1886 @@
+{
+  "config": {
+    "argv": [
+      "/home/quocky05/.nvm/versions/node/v24.21.0/bin/node",
+      "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/node_modules/.bin/playwright",
+      "test",
+      "tests/fr02-login.spec.ts",
+      "--project=firefox"
+    ],
+    "configFile": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/playwright.config.ts",
+    "rootDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "Run by": "23120138",
+      "Run at": "2026-11-13T00:37:28.318Z",
+      "Feature": "fr02-login",
+      "Browser": "firefox",
+      "Host": "quocky-linux",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:37:28.318Z",
+          "Feature": "fr02-login",
+          "Browser": "firefox",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:37:28.318Z",
+          "Feature": "fr02-login",
+          "Browser": "firefox",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:37:28.318Z",
+          "Feature": "fr02-login",
+          "Browser": "firefox",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:37:28.318Z",
+          "Feature": "fr02-login",
+          "Browser": "firefox",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "name": "firefox",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "snapshotDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:5173",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:159.0) Gecko/20100101 Firefox/159.0",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "firefox"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "firefox"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "reports/fr02-login/firefox",
+          "open": "never",
+          "title": "Run by: 23120138 | fr02-login | firefox | 2026-11-13T00:37:28.318Z"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/fr02-login/firefox/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fr02-login.spec.ts",
+      "file": "fr02-login.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FR-02: Đăng nhập & Khóa tài khoản",
+          "file": "fr02-login.spec.ts",
+          "line": 92,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC_FR02_01 [positive] Verify login authentication with valid registered credentials on Web & API",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1097,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":32} (Email: test_user_75d1834e-713d-48c3-b77b-18598017bcbf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":32} (Email: test_user_75d1834e-713d-48c3-b77b-18598017bcbf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:138:29",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":32} (Email: test_user_75d1834e-713d-48c3-b77b-18598017bcbf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:138:29\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:29.096Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-18ae5-ered-credentials-on-Web-API-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-18ae5-ered-credentials-on-Web-API-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-18ae5-ered-credentials-on-Web-API-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-a1446add4adf9d03a10b",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_02 [boundary] Verify login authentication with boundary password length exactly 8 chars",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1084,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":33} (Email: test_user_2b2a396c-3655-4458-8b91-e1cf4b58cc26@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":33} (Email: test_user_2b2a396c-3655-4458-8b91-e1cf4b58cc26@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:143:29",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":33} (Email: test_user_2b2a396c-3655-4458-8b91-e1cf4b58cc26@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:143:29\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:31.088Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-a73ec-word-length-exactly-8-chars-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-a73ec-word-length-exactly-8-chars-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-a73ec-word-length-exactly-8-chars-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-3eeba84a055f34039af9",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_03 [negative] Validate consecutive failure counter increment on attempt N=1 (Below threshold)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-02. Reason: SUT tăng bộ đếm +2 thay vì +1 theo yêu cầu SRS."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 656,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":34} (Email: test_user_74c5225e-2beb-4ea3-9bcd-1fe76535cf9a@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":34} (Email: test_user_74c5225e-2beb-4ea3-9bcd-1fe76535cf9a@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":34} (Email: test_user_74c5225e-2beb-4ea3-9bcd-1fe76535cf9a@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:33.056Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-02. Reason: SUT tăng bộ đếm +2 thay vì +1 theo yêu cầu SRS."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-1feca-ttempt-N-1-Below-threshold--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-1feca-ttempt-N-1-Below-threshold--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-1feca-ttempt-N-1-Below-threshold--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-f9d8a92753a120b20c4d",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_04 [boundary] Validate consecutive failure counter increment on attempt N=2 (Boundary Off-point)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-02. Reason: SUT bị khóa sớm từ lần 2 do bộ đếm tăng +2 thành 4 >= 3."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 651,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":35} (Email: test_user_b0c96156-58c7-415d-8c5e-ce3b29020dd4@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":35} (Email: test_user_b0c96156-58c7-415d-8c5e-ce3b29020dd4@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":35} (Email: test_user_b0c96156-58c7-415d-8c5e-ce3b29020dd4@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:34.596Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-02. Reason: SUT bị khóa sớm từ lần 2 do bộ đếm tăng +2 thành 4 >= 3."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-bdf5d-mpt-N-2-Boundary-Off-point--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-bdf5d-mpt-N-2-Boundary-Off-point--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-bdf5d-mpt-N-2-Boundary-Off-point--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-72acf857b67cd1037808",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_05 [positive] Verify failure counter reset to 0 upon submitting correct password after N=2 failures",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 761,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":36} (Email: test_user_4327f32b-5700-488d-be7d-80223d289407@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":36} (Email: test_user_4327f32b-5700-488d-be7d-80223d289407@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":36} (Email: test_user_4327f32b-5700-488d-be7d-80223d289407@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:36.168Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c77ee-password-after-N-2-failures-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c77ee-password-after-N-2-failures-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c77ee-password-after-N-2-failures-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-67a0ec32de2923783991",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_06 [boundary] Validate account lockout activation upon reaching threshold N=3 consecutive failures",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-02. Reason: SRS quy định lần 3 kích hoạt khóa tài khoản. SUT bị lỗi bộ đếm nên đã khóa từ lần 2."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 737,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":37} (Email: test_user_617f2c12-ace3-47af-be9e-27b7d6ca2db7@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":37} (Email: test_user_617f2c12-ace3-47af-be9e-27b7d6ca2db7@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":37} (Email: test_user_617f2c12-ace3-47af-be9e-27b7d6ca2db7@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:37.917Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-02. Reason: SRS quy định lần 3 kích hoạt khóa tài khoản. SUT bị lỗi bộ đếm nên đã khóa từ lần 2."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-9f61f-ld-N-3-consecutive-failures-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-9f61f-ld-N-3-consecutive-failures-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-9f61f-ld-N-3-consecutive-failures-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-485f7dbe8416a43e90d6",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_07 [negative] Validate login rejection when submitting correct password during lockout at t=15s",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 731,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":38} (Email: test_user_705fd803-4173-4808-9e3b-6a54bae1b99f@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":38} (Email: test_user_705fd803-4173-4808-9e3b-6a54bae1b99f@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":38} (Email: test_user_705fd803-4173-4808-9e3b-6a54bae1b99f@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:39.574Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-f0f83-ord-during-lockout-at-t-15s-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-f0f83-ord-during-lockout-at-t-15s-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-f0f83-ord-during-lockout-at-t-15s-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-3a7549a1b6a7d4840313",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_08 [negative] Validate lockout timer non-reset behavior when submitting wrong password at t=15s",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 719,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":39} (Email: test_user_314d7f54-c0ea-4e60-83fc-453825f369ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":39} (Email: test_user_314d7f54-c0ea-4e60-83fc-453825f369ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":39} (Email: test_user_314d7f54-c0ea-4e60-83fc-453825f369ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:41.268Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-209ab-ing-wrong-password-at-t-15s-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-209ab-ing-wrong-password-at-t-15s-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-209ab-ing-wrong-password-at-t-15s-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-38c48eb7308d413e0d7b",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_09 [boundary] Validate lockout rejection enforcement at boundary offset t=29s (1s before unlock)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 719,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":40} (Email: test_user_cdc0e755-bf75-456f-bbbf-7979c97b0df3@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":40} (Email: test_user_cdc0e755-bf75-456f-bbbf-7979c97b0df3@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":40} (Email: test_user_cdc0e755-bf75-456f-bbbf-7979c97b0df3@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:42.923Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-95b15-set-t-29s-1s-before-unlock--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-95b15-set-t-29s-1s-before-unlock--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-95b15-set-t-29s-1s-before-unlock--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-e9d4403150893216203e",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_10 [boundary] Verify automatic account unlock transition at exact boundary expiration t=30s",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-01. Reason: SRS quy định mở khóa tại t=30s; SUT khóa 180s nên tại t=30s vẫn trả 403 Forbidden."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 722,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":41} (Email: test_user_2d928508-bcde-4129-9a11-99fc1edd2f74@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":41} (Email: test_user_2d928508-bcde-4129-9a11-99fc1edd2f74@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":41} (Email: test_user_2d928508-bcde-4129-9a11-99fc1edd2f74@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:44.549Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-01. Reason: SRS quy định mở khóa tại t=30s; SUT khóa 180s nên tại t=30s vẫn trả 403 Forbidden."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-82b9a-t-boundary-expiration-t-30s-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-82b9a-t-boundary-expiration-t-30s-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-82b9a-t-boundary-expiration-t-30s-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-cb3c14020835cdb00149",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_11 [boundary] Verify login authentication success at boundary offset t=31s (1s after unlock)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-01. Reason: SRS quy định đã mở khóa hoàn toàn; SUT vẫn trả 403 do khóa 180s."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 729,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":42} (Email: test_user_23bcb513-92ae-4eb1-a172-e4a23eba19ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":42} (Email: test_user_23bcb513-92ae-4eb1-a172-e4a23eba19ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":42} (Email: test_user_23bcb513-92ae-4eb1-a172-e4a23eba19ea@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:376:23\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:46.152Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-01. Reason: SRS quy định đã mở khóa hoàn toàn; SUT vẫn trả 403 do khóa 180s."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c0aa4-fset-t-31s-1s-after-unlock--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c0aa4-fset-t-31s-1s-after-unlock--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c0aa4-fset-t-31s-1s-after-unlock--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-54e3b4f362be67c1b14a",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_12 [negative] Validate lockout duration non-escalation behavior on repeated second lockout cycle",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "blocked_reason",
+                      "description": "[BLOCKED] SUT hardcode thời gian khóa 180s (180000ms), không có test hook hay biến môi trường cấu hình thời gian. Chờ 2 chu kỳ khóa thực tế mất > 360 giây gây nghẽn CI/CD.. Requires: SUT hỗ trợ cấu hình LOCK_TIME_MS hoặc có endpoint test hook đặt trạng thái locked_until."
+                    },
+                    {
+                      "type": "skip",
+                      "description": "[BLOCKED] SUT hardcode thời gian khóa 180s (180000ms), không có test hook hay biến môi trường cấu hình thời gian. Chờ 2 chu kỳ khóa thực tế mất > 360 giây gây nghẽn CI/CD.. Requires: SUT hỗ trợ cấu hình LOCK_TIME_MS hoặc có endpoint test hook đặt trạng thái locked_until.",
+                      "location": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                        "line": 114,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 690,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:47.782Z",
+                      "annotations": [
+                        {
+                          "type": "blocked_reason",
+                          "description": "[BLOCKED] SUT hardcode thời gian khóa 180s (180000ms), không có test hook hay biến môi trường cấu hình thời gian. Chờ 2 chu kỳ khóa thực tế mất > 360 giây gây nghẽn CI/CD.. Requires: SUT hỗ trợ cấu hình LOCK_TIME_MS hoặc có endpoint test hook đặt trạng thái locked_until."
+                        },
+                        {
+                          "type": "skip",
+                          "description": "[BLOCKED] SUT hardcode thời gian khóa 180s (180000ms), không có test hook hay biến môi trường cấu hình thời gian. Chờ 2 chu kỳ khóa thực tế mất > 360 giây gây nghẽn CI/CD.. Requires: SUT hỗ trợ cấu hình LOCK_TIME_MS hoặc có endpoint test hook đặt trạng thái locked_until.",
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                            "line": 114,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-93111feed8a4d744070e",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_13 [negative] Validate rejection of additional login attempt N=4 while already in lockout",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 413,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":43} (Email: test_user_7304ef38-c2fa-41c4-851d-d96c85c33bfc@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":43} (Email: test_user_7304ef38-c2fa-41c4-851d-d96c85c33bfc@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":43} (Email: test_user_7304ef38-c2fa-41c4-851d-d96c85c33bfc@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:48.869Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-cdbcf--4-while-already-in-lockout-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-cdbcf--4-while-already-in-lockout-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-cdbcf--4-while-already-in-lockout-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-dcedb61a975b47d1e3fe",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_14 [negative] Validate rejection of invalid email format lacking '@' symbol (Single Fault)",
+              "ok": false,
+              "tags": [
+                "'"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-05. Reason: SUT dùng input type='text' không chặn thiếu '@', gửi lên backend trả 401."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30213,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts",
+                            "column": 32,
+                            "line": 32
+                          },
+                          "message": "Error: locator.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Username').or(getByPlaceholder(/username|email/i))\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../pages/login.page.ts:32\n\n \u001b[90m 30 |\u001b[39m   \u001b[36masync\u001b[39m login(username\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m pass\u001b[33m:\u001b[39m string) {\n \u001b[90m 31 |\u001b[39m     \u001b[36mif\u001b[39m (username \u001b[33m!==\u001b[39m \u001b[32m''\u001b[39m \u001b[33m&&\u001b[39m username \u001b[33m!==\u001b[39m \u001b[32m'\"\"'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mfill(username)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     } \u001b[36melse\u001b[39m {\n \u001b[90m 34 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mclear()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     }\n\u001b[2m    at LoginPage.login (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts:32:32)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:168:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:37:49.811Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-05. Reason: SUT dùng input type='text' không chặn thiếu '@', gửi lên backend trả 401."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-6bd57-acking-symbol-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-6bd57-acking-symbol-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-6bd57-acking-symbol-Single-Fault--firefox/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-eaf8c09f440931a720bd",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_15 [negative] Validate rejection of empty email field on Web Client & API (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30152,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts",
+                            "column": 32,
+                            "line": 34
+                          },
+                          "message": "Error: locator.clear: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Username').or(getByPlaceholder(/username|email/i))\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../pages/login.page.ts:34\n\n \u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mfill(username)\u001b[33m;\u001b[39m\n \u001b[90m 33 |\u001b[39m     } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 34 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mclear()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 35 |\u001b[39m     }\n \u001b[90m 36 |\u001b[39m\n \u001b[90m 37 |\u001b[39m     \u001b[36mif\u001b[39m (pass \u001b[33m!==\u001b[39m \u001b[32m''\u001b[39m \u001b[33m&&\u001b[39m pass \u001b[33m!==\u001b[39m \u001b[32m'\"\"'\u001b[39m) {\n\u001b[2m    at LoginPage.login (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts:34:32)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:168:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:38:21.085Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-67405-eb-Client-API-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-67405-eb-Client-API-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-67405-eb-Client-API-Single-Fault--firefox/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-83f66ea7f0b8c76dc898",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_16 [negative] Validate rejection of email containing only whitespace characters (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-05. Reason: SUT không trim khoảng trắng; gửi lên API trả 401."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30168,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts",
+                            "column": 32,
+                            "line": 32
+                          },
+                          "message": "Error: locator.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Username').or(getByPlaceholder(/username|email/i))\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../pages/login.page.ts:32\n\n \u001b[90m 30 |\u001b[39m   \u001b[36masync\u001b[39m login(username\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m pass\u001b[33m:\u001b[39m string) {\n \u001b[90m 31 |\u001b[39m     \u001b[36mif\u001b[39m (username \u001b[33m!==\u001b[39m \u001b[32m''\u001b[39m \u001b[33m&&\u001b[39m username \u001b[33m!==\u001b[39m \u001b[32m'\"\"'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mfill(username)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     } \u001b[36melse\u001b[39m {\n \u001b[90m 34 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mclear()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     }\n\u001b[2m    at LoginPage.login (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts:32:32)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:168:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:38:52.222Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-05. Reason: SUT không trim khoảng trắng; gửi lên API trả 401."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3d3ff-ce-characters-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3d3ff-ce-characters-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3d3ff-ce-characters-Single-Fault--firefox/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-0ab1b6fe4e6e8362cb88",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_17 [boundary] Validate rejection of email exceeding RFC 5321 max length 254 chars (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "defect_tracking",
+                      "description": "Defect ID: BUG-FR02-05. Reason: Vượt chuẩn RFC 5321 (254 ký tự). SUT không cài maxlength và trả 401."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30224,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts",
+                            "column": 32,
+                            "line": 32
+                          },
+                          "message": "Error: locator.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Username').or(getByPlaceholder(/username|email/i))\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../pages/login.page.ts:32\n\n \u001b[90m 30 |\u001b[39m   \u001b[36masync\u001b[39m login(username\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m pass\u001b[33m:\u001b[39m string) {\n \u001b[90m 31 |\u001b[39m     \u001b[36mif\u001b[39m (username \u001b[33m!==\u001b[39m \u001b[32m''\u001b[39m \u001b[33m&&\u001b[39m username \u001b[33m!==\u001b[39m \u001b[32m'\"\"'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mfill(username)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     } \u001b[36melse\u001b[39m {\n \u001b[90m 34 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mclear()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     }\n\u001b[2m    at LoginPage.login (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts:32:32)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:168:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:39:23.395Z",
+                      "annotations": [
+                        {
+                          "type": "defect_tracking",
+                          "description": "Defect ID: BUG-FR02-05. Reason: Vượt chuẩn RFC 5321 (254 ký tự). SUT không cài maxlength và trả 401."
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-eeb80-gth-254-chars-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-eeb80-gth-254-chars-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-eeb80-gth-254-chars-Single-Fault--firefox/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-a3f29a58500a5ad5f89b",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_18 [boundary] Verify acceptance of email with maximum allowable RFC 5321 length of 254 chars",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 678,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:39:54.573Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-4f1866e1493b0cd7e4dd",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_19 [negative] Validate generic error response when submitting non-existent email (Single Fault)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 246,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:39:55.643Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-f55384e72ec44aad4501",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_20 [negative] Validate rejection of empty password field on Web Client & API (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30170,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts",
+                            "column": 32,
+                            "line": 32
+                          },
+                          "message": "Error: locator.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Username').or(getByPlaceholder(/username|email/i))\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../pages/login.page.ts:32\n\n \u001b[90m 30 |\u001b[39m   \u001b[36masync\u001b[39m login(username\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m pass\u001b[33m:\u001b[39m string) {\n \u001b[90m 31 |\u001b[39m     \u001b[36mif\u001b[39m (username \u001b[33m!==\u001b[39m \u001b[32m''\u001b[39m \u001b[33m&&\u001b[39m username \u001b[33m!==\u001b[39m \u001b[32m'\"\"'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mfill(username)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     } \u001b[36melse\u001b[39m {\n \u001b[90m 34 |\u001b[39m       \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39musernameInput\u001b[33m.\u001b[39mclear()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     }\n\u001b[2m    at LoginPage.login (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/pages/login.page.ts:32:32)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:168:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:39:55.899Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c55c9-eb-Client-API-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c55c9-eb-Client-API-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-c55c9-eb-Client-API-Single-Fault--firefox/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-230dc36a5624c81c1af4",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_21 [negative] Validate rejection of password containing only whitespace characters (Single Fault)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 666,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:40:26.666Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-8d966279f5029cb1d113",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_22 [boundary] Validate rejection of password below minimum 8 chars length at Len=7 (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 408,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:310:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                          "column": 32,
+                          "line": 310
+                        },
+                        "snippet": " \u001b[90m 308 |\u001b[39m         \u001b[90m// Assertion 1: HTTP status code\u001b[39m\n \u001b[90m 309 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 310 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 311 |\u001b[39m         }\n \u001b[90m 312 |\u001b[39m\n \u001b[90m 313 |\u001b[39m         \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m res\u001b[33m.\u001b[39mjson()\u001b[33m.\u001b[39mcatch(() \u001b[33m=>\u001b[39m ({}))\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                            "column": 32,
+                            "line": 310
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n \u001b[90m 308 |\u001b[39m         \u001b[90m// Assertion 1: HTTP status code\u001b[39m\n \u001b[90m 309 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 310 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 311 |\u001b[39m         }\n \u001b[90m 312 |\u001b[39m\n \u001b[90m 313 |\u001b[39m         \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m res\u001b[33m.\u001b[39mjson()\u001b[33m.\u001b[39mcatch(() \u001b[33m=>\u001b[39m ({}))\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:310:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:40:27.695Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3deab-ngth-at-Len-7-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3deab-ngth-at-Len-7-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-3deab-ngth-at-Len-7-Single-Fault--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                        "column": 32,
+                        "line": 310
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-9091addccb49b1ebf2bc",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_23 [boundary] Validate handling of password exceeding OWASP max length at Len=256 (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 664,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:310:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                          "column": 32,
+                          "line": 310
+                        },
+                        "snippet": " \u001b[90m 308 |\u001b[39m         \u001b[90m// Assertion 1: HTTP status code\u001b[39m\n \u001b[90m 309 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 310 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 311 |\u001b[39m         }\n \u001b[90m 312 |\u001b[39m\n \u001b[90m 313 |\u001b[39m         \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m res\u001b[33m.\u001b[39mjson()\u001b[33m.\u001b[39mcatch(() \u001b[33m=>\u001b[39m ({}))\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                            "column": 32,
+                            "line": 310
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m403\u001b[39m\n\n \u001b[90m 308 |\u001b[39m         \u001b[90m// Assertion 1: HTTP status code\u001b[39m\n \u001b[90m 309 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 310 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 311 |\u001b[39m         }\n \u001b[90m 312 |\u001b[39m\n \u001b[90m 313 |\u001b[39m         \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m res\u001b[33m.\u001b[39mjson()\u001b[33m.\u001b[39mcatch(() \u001b[33m=>\u001b[39m ({}))\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:310:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:40:28.614Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-5f5e4-th-at-Len-256-Single-Fault--firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-5f5e4-th-at-Len-256-Single-Fault--firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-5f5e4-th-at-Len-256-Single-Fault--firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts",
+                        "column": 32,
+                        "line": 310
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-25d55abf9a8b224e425e",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "TC_FR02_24 [boundary] Verify acceptance of password with maximum safe OWASP length of 255 chars",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 742,
+                      "error": {
+                        "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":45} (Email: test_user_3a4289ff-5a7f-4822-873c-aa08b4abbddf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":45} (Email: test_user_3a4289ff-5a7f-4822-873c-aa08b4abbddf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                          "column": 5,
+                          "line": 48
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                            "column": 5,
+                            "line": 48
+                          },
+                          "message": "Error: Register fresh user failed [HTTP 200]: {\"message\":\"User registered successfully\",\"id\":45} (Email: test_user_3a4289ff-5a7f-4822-873c-aa08b4abbddf@eshop.com)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n\u001b[90m   at \u001b[39m../fixtures.ts:48\n\n \u001b[90m 46 |\u001b[39m     response\u001b[33m.\u001b[39mstatus()\u001b[33m,\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[32m`Register fresh user failed [HTTP ${response.status()}]: ${await response.text()} (Email: ${email})`\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m201\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m   \u001b[36mreturn\u001b[39m { email\u001b[33m,\u001b[39m password\u001b[33m,\u001b[39m name }\u001b[33m;\u001b[39m\n \u001b[90m 51 |\u001b[39m }\n\u001b[2m    at registerFreshUser (/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts:48:5)\u001b[22m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr02-login.spec.ts:248:25\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:40:30.123Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-76159-e-OWASP-length-of-255-chars-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-76159-e-OWASP-length-of-255-chars-firefox/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr02-login-FR-02-Đăng-nhập-76159-e-OWASP-length-of-255-chars-firefox/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/fixtures.ts",
+                        "column": 5,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ea278c5c4f890c6be6c8-fa5dfa4d14541138ac39",
+              "file": "fr02-login.spec.ts",
+              "line": 104,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-13T00:37:28.795Z",
+    "duration": 182696.437,
+    "expected": 3,
+    "skipped": 1,
+    "unexpected": 20,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,1432 @@
+{
+  "config": {
+    "argv": [
+      "/home/quocky05/.nvm/versions/node/v24.21.0/bin/node",
+      "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/node_modules/.bin/playwright",
+      "test",
+      "tests/fr07-cart.spec.ts",
+      "--project=chromium"
+    ],
+    "configFile": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/playwright.config.ts",
+    "rootDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "Run by": "23120138",
+      "Run at": "2026-11-13T00:43:21.486Z",
+      "Feature": "fr07-cart",
+      "Browser": "chromium",
+      "Host": "quocky-linux",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:43:21.486Z",
+          "Feature": "fr07-cart",
+          "Browser": "chromium",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:43:21.486Z",
+          "Feature": "fr07-cart",
+          "Browser": "chromium",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:43:21.486Z",
+          "Feature": "fr07-cart",
+          "Browser": "chromium",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120138",
+          "Run at": "2026-11-13T00:43:21.486Z",
+          "Feature": "fr07-cart",
+          "Browser": "chromium",
+          "Host": "quocky-linux",
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "snapshotDir": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:5173",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.8127.18 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "reports/fr07-cart/chromium",
+          "open": "never",
+          "title": "Run by: 23120138 | fr07-cart | chromium | 2026-11-13T00:43:21.486Z"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/fr07-cart/chromium/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fr07-cart.spec.ts",
+      "file": "fr07-cart.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FR-07: Giỏ hàng (Web Frontend & API)",
+          "file": "fr07-cart.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC_FR07_01 [positive] Verify adding a new valid product to empty cart on Web & API",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7491,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:116:46",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 46,
+                          "line": 116
+                        },
+                        "snippet": " \u001b[90m 114 |\u001b[39m           \u001b[90m// 1. Verify row count\u001b[39m\n \u001b[90m 115 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mrow_count \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m             \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mrow_count)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m           }\n \u001b[90m 118 |\u001b[39m\n \u001b[90m 119 |\u001b[39m           \u001b[90m// 2. Verify product identity\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 46,
+                            "line": 116
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 114 |\u001b[39m           \u001b[90m// 1. Verify row count\u001b[39m\n \u001b[90m 115 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mrow_count \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m             \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mrow_count)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m           }\n \u001b[90m 118 |\u001b[39m\n \u001b[90m 119 |\u001b[39m           \u001b[90m// 2. Verify product identity\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:116:46\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:22.273Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-61538-ct-to-empty-cart-on-Web-API-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-61538-ct-to-empty-cart-on-Web-API-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-61538-ct-to-empty-cart-on-Web-API-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 46,
+                        "line": 116
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-d76b63cf9183e44cb5f5",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_02 [positive] Verify adding duplicate product increments quantity without creating new row",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7524,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:154:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 154
+                        },
+                        "snippet": " \u001b[90m 152 |\u001b[39m           \u001b[90m// Verify precondition established: cart contains exactly 1 row with quantity 1\u001b[39m\n \u001b[90m 153 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 154 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 155 |\u001b[39m           \u001b[36mconst\u001b[39m initialRow \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 156 |\u001b[39m           \u001b[36mconst\u001b[39m addedProductName \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m initialRow\u001b[33m.\u001b[39mlocator(\u001b[32m'td'\u001b[39m)\u001b[33m.\u001b[39mnth(\u001b[35m0\u001b[39m)\u001b[33m.\u001b[39minnerText()\u001b[33m;\u001b[39m\n \u001b[90m 157 |\u001b[39m           \u001b[36mawait\u001b[39m expect(initialRow\u001b[33m.\u001b[39mlocator(\u001b[32m'td'\u001b[39m)\u001b[33m.\u001b[39mnth(\u001b[35m2\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'1'\u001b[39m)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 154
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 152 |\u001b[39m           \u001b[90m// Verify precondition established: cart contains exactly 1 row with quantity 1\u001b[39m\n \u001b[90m 153 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 154 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 155 |\u001b[39m           \u001b[36mconst\u001b[39m initialRow \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 156 |\u001b[39m           \u001b[36mconst\u001b[39m addedProductName \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m initialRow\u001b[33m.\u001b[39mlocator(\u001b[32m'td'\u001b[39m)\u001b[33m.\u001b[39mnth(\u001b[35m0\u001b[39m)\u001b[33m.\u001b[39minnerText()\u001b[33m;\u001b[39m\n \u001b[90m 157 |\u001b[39m           \u001b[36mawait\u001b[39m expect(initialRow\u001b[33m.\u001b[39mlocator(\u001b[32m'td'\u001b[39m)\u001b[33m.\u001b[39mnth(\u001b[35m2\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'1'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:154:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:30.156Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-3c09f-ty-without-creating-new-row-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-3c09f-ty-without-creating-new-row-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-3c09f-ty-without-creating-new-row-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 154
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-856e82a8df61ba41673b",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_03 [negative] Validate rejection when adding well-formed non-existent product ID (Single Fault)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 237,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:38.073Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-983f859ce17ee74a9dcb",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_04 [negative] Validate rejection when submitting malformed product ID via API (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 105,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:78:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 32,
+                          "line": 78
+                        },
+                        "snippet": " \u001b[90m 76 |\u001b[39m         \u001b[36mconst\u001b[39m res \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost(\u001b[32m`${apiUrl}/api/cart`\u001b[39m\u001b[33m,\u001b[39m { data\u001b[33m:\u001b[39m payload })\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 78 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 79 |\u001b[39m         }\n \u001b[90m 80 |\u001b[39m         \u001b[36mreturn\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 81 |\u001b[39m       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 32,
+                            "line": 78
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n\n \u001b[90m 76 |\u001b[39m         \u001b[36mconst\u001b[39m res \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost(\u001b[32m`${apiUrl}/api/cart`\u001b[39m\u001b[33m,\u001b[39m { data\u001b[33m:\u001b[39m payload })\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 78 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 79 |\u001b[39m         }\n \u001b[90m 80 |\u001b[39m         \u001b[36mreturn\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 81 |\u001b[39m       }\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:78:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:38.376Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a4b7a-ct-ID-via-API-Single-Fault--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a4b7a-ct-ID-via-API-Single-Fault--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a4b7a-ct-ID-via-API-Single-Fault--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 32,
+                        "line": 78
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-3d4a20c78c2408f41cdc",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_05 [boundary] Validate rejection of quantity zero input on Cart item (Boundary Off-point)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 462,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:38.795Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-662bdd301a68b8679d0c",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_06 [negative] Validate rejection of negative integer quantity input (Single Fault)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 334,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:39.331Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-e0b68d1cb29eef06cc11",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_07 [negative] Validate rejection of empty or whitespace quantity input (Single Fault)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 357,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:39.674Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-9e293d4adf6e19182f96",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_08 [negative] Validate rejection of non-numeric string characters in quantity field (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 250,
+                      "error": {
+                        "message": "Error: locator.fill: Error: Cannot type text into input[type=number]\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"1\" type=\"number\" class=\"border p-2 w-20 rounded\"/>\u001b[22m\n\u001b[2m    - fill(\"abc\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n",
+                        "stack": "Error: locator.fill: Error: Cannot type text into input[type=number]\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"1\" type=\"number\" class=\"border p-2 w-20 rounded\"/>\u001b[22m\n\u001b[2m    - fill(\"abc\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:232:26",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 26,
+                          "line": 232
+                        },
+                        "snippet": " \u001b[90m 230 |\u001b[39m           \u001b[36mconst\u001b[39m qtyInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"number\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 231 |\u001b[39m           \u001b[90m// Browser input[type=\"number\"] should reject alphabetic characters\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 232 |\u001b[39m           \u001b[36mawait\u001b[39m qtyInput\u001b[33m.\u001b[39mfill(\u001b[32m'abc'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 233 |\u001b[39m           \u001b[36mconst\u001b[39m value \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m qtyInput\u001b[33m.\u001b[39minputValue()\u001b[33m;\u001b[39m\n \u001b[90m 234 |\u001b[39m           expect(value)\u001b[33m.\u001b[39mtoBe(\u001b[32m''\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 235 |\u001b[39m           \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 26,
+                            "line": 232
+                          },
+                          "message": "Error: locator.fill: Error: Cannot type text into input[type=number]\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"1\" type=\"number\" class=\"border p-2 w-20 rounded\"/>\u001b[22m\n\u001b[2m    - fill(\"abc\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n\n\n \u001b[90m 230 |\u001b[39m           \u001b[36mconst\u001b[39m qtyInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"number\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 231 |\u001b[39m           \u001b[90m// Browser input[type=\"number\"] should reject alphabetic characters\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 232 |\u001b[39m           \u001b[36mawait\u001b[39m qtyInput\u001b[33m.\u001b[39mfill(\u001b[32m'abc'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 233 |\u001b[39m           \u001b[36mconst\u001b[39m value \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m qtyInput\u001b[33m.\u001b[39minputValue()\u001b[33m;\u001b[39m\n \u001b[90m 234 |\u001b[39m           expect(value)\u001b[33m.\u001b[39mtoBe(\u001b[32m''\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 235 |\u001b[39m           \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:232:26\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:40.044Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-d5dde-uantity-field-Single-Fault--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-d5dde-uantity-field-Single-Fault--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-d5dde-uantity-field-Single-Fault--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 26,
+                        "line": 232
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-c494a3f37db511360f74",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_09 [boundary] Validate rejection of decimal quantity near lower boundary (Boundary Off-point)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 390,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:40.612Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-4533ee30d23d68f7485b",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_10 [negative] Validate API rejection when quantity is omitted or null in payload (Single Fault)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 129,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:78:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 32,
+                          "line": 78
+                        },
+                        "snippet": " \u001b[90m 76 |\u001b[39m         \u001b[36mconst\u001b[39m res \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost(\u001b[32m`${apiUrl}/api/cart`\u001b[39m\u001b[33m,\u001b[39m { data\u001b[33m:\u001b[39m payload })\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 78 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 79 |\u001b[39m         }\n \u001b[90m 80 |\u001b[39m         \u001b[36mreturn\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 81 |\u001b[39m       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 32,
+                            "line": 78
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n\n \u001b[90m 76 |\u001b[39m         \u001b[36mconst\u001b[39m res \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost(\u001b[32m`${apiUrl}/api/cart`\u001b[39m\u001b[33m,\u001b[39m { data\u001b[33m:\u001b[39m payload })\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m         \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus \u001b[33m!==\u001b[39m undefined) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 78 |\u001b[39m           expect(res\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mstatus)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 79 |\u001b[39m         }\n \u001b[90m 80 |\u001b[39m         \u001b[36mreturn\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 81 |\u001b[39m       }\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:78:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:41.078Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-404b9-ll-in-payload-Single-Fault--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-404b9-ll-in-payload-Single-Fault--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-404b9-ll-in-payload-Single-Fault--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 32,
+                        "line": 78
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-9f419d846b06067bcf34",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_11 [edge] Validate system robustness against extremely large integer quantity (Robustness)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30087,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 60,
+                            "line": 248
+                          },
+                          "message": "Error: locator.innerText: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.text-red-600')\u001b[22m\n\n\n \u001b[90m 246 |\u001b[39m\n \u001b[90m 247 |\u001b[39m           \u001b[90m// Verify no NaN or Infinity crash\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 248 |\u001b[39m           \u001b[36mconst\u001b[39m totalText \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mtotalAmountText\u001b[33m.\u001b[39minnerText()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 249 |\u001b[39m           expect(totalText)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoContain(\u001b[32m'NaN'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 250 |\u001b[39m           expect(totalText)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoContain(\u001b[32m'Infinity'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 251 |\u001b[39m           \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:248:60\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:43:41.519Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-34131-nteger-quantity-Robustness--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-34131-nteger-quantity-Robustness--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-34131-nteger-quantity-Robustness--chromium/trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-5f5b9ba723f368bd49b2",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_12 [positive] Verify arithmetic calculation of line subtotals and cart total for multiple items",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7528,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:331:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 331
+                        },
+                        "snippet": " \u001b[90m 329 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n \u001b[90m 330 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 331 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m2\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 332 |\u001b[39m           \u001b[36mconst\u001b[39m subtotal1 \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetRowSubtotal(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 333 |\u001b[39m           \u001b[36mconst\u001b[39m subtotal2 \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetRowSubtotal(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 334 |\u001b[39m           \u001b[36mconst\u001b[39m total \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetTotalAmount()\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 331
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 329 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n \u001b[90m 330 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 331 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m2\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 332 |\u001b[39m           \u001b[36mconst\u001b[39m subtotal1 \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetRowSubtotal(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 333 |\u001b[39m           \u001b[36mconst\u001b[39m subtotal2 \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetRowSubtotal(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 334 |\u001b[39m           \u001b[36mconst\u001b[39m total \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgetTotalAmount()\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:331:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:11.992Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-acf2a-rt-total-for-multiple-items-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-acf2a-rt-total-for-multiple-items-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-acf2a-rt-total-for-multiple-items-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 331
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-a4200f07bf221c207320",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_13 [positive] Verify quantity decrement via '-' button when quantity exceeds minimum (Normal)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7398,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:261:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 32,
+                          "line": 261
+                        },
+                        "snippet": " \u001b[90m 259 |\u001b[39m           \u001b[90m// Per SRS: Cart must provide accessible '-' button for decrementing\u001b[39m\n \u001b[90m 260 |\u001b[39m           \u001b[36mconst\u001b[39m decBtn \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'-'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 261 |\u001b[39m           \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 262 |\u001b[39m\n \u001b[90m 263 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mdisabled) {\n \u001b[90m 264 |\u001b[39m             \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 32,
+                            "line": 261
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n\n\n \u001b[90m 259 |\u001b[39m           \u001b[90m// Per SRS: Cart must provide accessible '-' button for decrementing\u001b[39m\n \u001b[90m 260 |\u001b[39m           \u001b[36mconst\u001b[39m decBtn \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'-'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 261 |\u001b[39m           \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 262 |\u001b[39m\n \u001b[90m 263 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mdisabled) {\n \u001b[90m 264 |\u001b[39m             \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:261:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:19.924Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a16bb-ity-exceeds-minimum-Normal--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a16bb-ity-exceeds-minimum-Normal--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-a16bb-ity-exceeds-minimum-Normal--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 32,
+                        "line": 261
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-9d7e98cccf7f0af72afb",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_14 [boundary] Validate boundary decrement behavior via '-' button at minimum quantity Q=1 (Probe)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7456,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:261:32",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 32,
+                          "line": 261
+                        },
+                        "snippet": " \u001b[90m 259 |\u001b[39m           \u001b[90m// Per SRS: Cart must provide accessible '-' button for decrementing\u001b[39m\n \u001b[90m 260 |\u001b[39m           \u001b[36mconst\u001b[39m decBtn \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'-'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 261 |\u001b[39m           \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 262 |\u001b[39m\n \u001b[90m 263 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mdisabled) {\n \u001b[90m 264 |\u001b[39m             \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 32,
+                            "line": 261
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table tbody tr').first().getByRole('button', { name: '-' })\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('table tbody tr').first().getByRole('button', { name: '-' }) with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr').first().getByRole('button', { name: '-' })\u001b[22m\n\n\n \u001b[90m 259 |\u001b[39m           \u001b[90m// Per SRS: Cart must provide accessible '-' button for decrementing\u001b[39m\n \u001b[90m 260 |\u001b[39m           \u001b[36mconst\u001b[39m decBtn \u001b[33m=\u001b[39m cartPage\u001b[33m.\u001b[39mtableRows\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'-'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 261 |\u001b[39m           \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 262 |\u001b[39m\n \u001b[90m 263 |\u001b[39m           \u001b[36mif\u001b[39m (tc\u001b[33m.\u001b[39mexpected\u001b[33m.\u001b[39mdisabled) {\n \u001b[90m 264 |\u001b[39m             \u001b[36mawait\u001b[39m expect(decBtn)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:261:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:27.704Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-39fd0-minimum-quantity-Q-1-Probe--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-39fd0-minimum-quantity-Q-1-Probe--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-39fd0-minimum-quantity-Q-1-Probe--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 32,
+                        "line": 261
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-0e0d2c8d48cf9fa55881",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_15 [positive] Verify item removal upon confirming delete dialog (Interaction Flow)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7459,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 274
+                        },
+                        "snippet": " \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 274
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:35.555Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4ef64-te-dialog-Interaction-Flow--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4ef64-te-dialog-Interaction-Flow--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4ef64-te-dialog-Interaction-Flow--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 274
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-aea05ca8538dc7d4a59b",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_16 [positive] Verify item retention upon cancelling delete dialog (Interaction Flow)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7482,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 274
+                        },
+                        "snippet": " \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 274
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:43.398Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-66312-te-dialog-Interaction-Flow--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-66312-te-dialog-Interaction-Flow--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-66312-te-dialog-Interaction-Flow--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 274
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-1663dab918ab4fd6e350",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_17 [boundary] Verify empty cart state display upon deleting last remaining item (State Boundary)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7425,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:300:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 300
+                        },
+                        "snippet": " \u001b[90m 298 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 299 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 300 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 301 |\u001b[39m\n \u001b[90m 302 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mremoveItem(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 303 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39memptyCartHeading)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 300
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 298 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 299 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 300 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 301 |\u001b[39m\n \u001b[90m 302 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mremoveItem(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 303 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39memptyCartHeading)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:300:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:51.242Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-8fa79-aining-item-State-Boundary--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-8fa79-aining-item-State-Boundary--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-8fa79-aining-item-State-Boundary--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 300
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-1ccdf5ce7e0592b97882",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_18 [negative] Validate total amount UI label matches required 'Tổng cộng' text (UI Assertion)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7424,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Tổng cộng')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Tổng cộng') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tổng cộng')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Tổng cộng')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Tổng cộng') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tổng cộng')\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:313:31",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 31,
+                          "line": 313
+                        },
+                        "snippet": " \u001b[90m 311 |\u001b[39m           \u001b[90m// Per SRS FR-07: Summary label must be 'Tổng cộng'\u001b[39m\n \u001b[90m 312 |\u001b[39m           \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Tổng cộng'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 313 |\u001b[39m           \u001b[36mawait\u001b[39m expect(label)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 314 |\u001b[39m           \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 315 |\u001b[39m         }\n \u001b[90m 316 |\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 31,
+                            "line": 313
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Tổng cộng')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Tổng cộng') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tổng cộng')\u001b[22m\n\n\n \u001b[90m 311 |\u001b[39m           \u001b[90m// Per SRS FR-07: Summary label must be 'Tổng cộng'\u001b[39m\n \u001b[90m 312 |\u001b[39m           \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Tổng cộng'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 313 |\u001b[39m           \u001b[36mawait\u001b[39m expect(label)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 314 |\u001b[39m           \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 315 |\u001b[39m         }\n \u001b[90m 316 |\u001b[39m\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:313:31\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:44:59.032Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-2db45-ổng-cộng-text-UI-Assertion--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-2db45-ổng-cộng-text-UI-Assertion--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-2db45-ổng-cộng-text-UI-Assertion--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 31,
+                        "line": 313
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-8771e3ece1d9c14b4793",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_19 [negative] Validate enforcement of confirmation dialog before product deletion (Safety Probe)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7431,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44",
+                        "location": {
+                          "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                          "column": 44,
+                          "line": 274
+                        },
+                        "snippet": " \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                            "column": 44,
+                            "line": 274
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('table tbody tr')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('table tbody tr') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('table tbody tr')\u001b[22m\n\u001b[2m    18 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n \u001b[90m 272 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39maddProductFromHome(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 273 |\u001b[39m           \u001b[36mawait\u001b[39m cartPage\u001b[33m.\u001b[39mgoto()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 274 |\u001b[39m           \u001b[36mawait\u001b[39m expect(cartPage\u001b[33m.\u001b[39mtableRows)\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m           \u001b[36mlet\u001b[39m dialogTriggered \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 277 |\u001b[39m           page\u001b[33m.\u001b[39monce(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m (dialog) \u001b[33m=>\u001b[39m {\n\u001b[2m    at /home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts:274:44\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:45:06.810Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4e8d3-duct-deletion-Safety-Probe--chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4e8d3-duct-deletion-Safety-Probe--chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/test-results/fr07-cart-FR-07-Giỏ-hàng-W-4e8d3-duct-deletion-Safety-Probe--chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/quocky05/academy/software-testing/seminar/SUT-EShop/deliverables/04-exercises/quoc-ky/hw_04/tests/fr07-cart.spec.ts",
+                        "column": 44,
+                        "line": 274
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-ed3205965594efbfdf37",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            },
+            {
+              "title": "TC_FR07_20 [positive] Verify navigation back to home page via 'Tiếp tục mua sắm' button (Navigation Flow)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 338,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-13T00:45:14.684Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a488ed3c73326fcb8510-96a0645008b0733cbb51",
+              "file": "fr07-cart.spec.ts",
+              "line": 67,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-13T00:43:21.975Z",
+    "duration": 113149.084,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 14,
+    "flaky": 0
+  }
+}
