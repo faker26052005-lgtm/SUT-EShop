@@ -17,39 +17,6 @@ Bài tập triển khai tự động hóa kiểm thử giao diện cho 3 tính n
 2. **Pool B – FR-07:** Giỏ hàng (Web React Frontend `:5173` – Quản lý trạng thái bằng `CartContext`).
 3. **Pool C – FR-17:** Quản lý mã giảm giá Admin (Admin Web Frontend `:5174` & Backend API `:3000`).
 
-```mermaid
-flowchart LR
-    subgraph Test_Runner["Playwright Test Suite"]
-        PConfig["playwright.config.ts\n(workers: 1, retries: 0)"]
-        F02["fr02-login.spec.ts"]
-        F07["fr07-cart.spec.ts"]
-        F17["fr17-coupon.spec.ts"]
-    end
-
-    subgraph Data_Layer["Data-Driven Layer (data/*.json)"]
-        D02["fr02-login.json\n(24 TCs)"]
-        D07["fr07-cart.json\n(20 TCs)"]
-        D17["fr17-coupon.json\n(36 TCs)"]
-    end
-
-    subgraph SUT_System["SUT EShop Local Environment"]
-        Web["Web Frontend (:5173)"]
-        Admin["Admin Frontend (:5174)"]
-        API["Backend API (:3000)"]
-        DB[(SQLite DB)]
-    end
-
-    D02 --> F02
-    D07 --> F07
-    D17 --> F17
-    F02 --> Web
-    F02 --> API
-    F07 --> Web
-    F17 --> Admin
-    F17 --> API
-    API --> DB
-```
-
 ### 1.2. Thống kê Ma trận Test Cases
 Toàn bộ dữ liệu kiểm thử được trích xuất trực tiếp từ HW02 bằng công cụ `scripts/tc_to_json.py`, độc lập 100% với mã nguồn spec:
 
@@ -171,3 +138,26 @@ Qua quá trình rà soát phản biện tại Phase 4, các commit sửa lỗi t
 - **Minh chứng mã nguồn (Diff Commit `c62be7a` & `567f91f`):**
   - Trình chiếu việc kiên quyết xóa bỏ lệnh click thứ 2, giữ nguyên thao tác single-click để phản ánh trung thực defect của SUT.
   - Trình chiếu hàm `parseCurrencyAmount()` ném ngoại lệ khi gặp `NaN` hoặc `Infinity`, bảo vệ tính toàn vẹn của kết quả kiểm thử.
+
+---
+
+## PHẦN 4: TỔNG KẾT KHIẾM KHUYẾT SUT & LIÊN KẾT BÁO CÁO LỖI (DEFECT TRACEABILITY)
+
+Toàn bộ **208 lượt test thất bại** trong 9 lượt chạy đa trình duyệt không phải do lỗi của script kiểm thử tự động, mà phản ánh đúng **42 test case thuộc nhóm `automate_expected_failure`** do các lỗi thật (Genuine Defects) của hệ thống SUT EShop.
+
+### 4.1. Các Lỗi Mới Bộc Lộ Qua Kiểm Thử Tự Động (Newly Discovered Defects)
+So với kiểm thử thủ công Domain Testing (HW02), quá trình kiểm tra sâu thuộc tính DOM, phân tích mã phản hồi HTTP và vòng đời React State đã phát hiện **3 lỗi mới**:
+1. **BUG-NEW-01 (FR-02):** Form đăng nhập tiêu đề sai *"Đăng Ký"* và trường mật khẩu sử dụng `type="text"` làm lộ mật khẩu bản rõ (Plaintext Password) trên giao diện Web.  
+   👉 **GitHub Issue:** [Issue #178](https://github.com/faker26052005-lgtm/SUT-EShop/issues/178) *(Mức độ: Major / Security)*
+2. **BUG-NEW-02 (API Auth):** Endpoint `POST /api/register` trả về status code `HTTP 200 OK` thay vì chuẩn RESTful `HTTP 201 Created` khi tạo người dùng mới thành công.  
+   👉 **GitHub Issue:** [Issue #179](https://github.com/faker26052005-lgtm/SUT-EShop/issues/179) *(Mức độ: Medium / Standards)*
+3. **BUG-NEW-03 (FR-07):** Giỏ hàng bị mất sạch dữ liệu khi tải lại trang (F5) do chỉ lưu tạm trong RAM React State (`useState([])`) và hoàn toàn đứt gãy với API `/api/cart`.  
+   👉 **GitHub Issue:** [Issue #122](https://github.com/faker26052005-lgtm/SUT-EShop/issues/122) *(Mức độ: Critical / Data Loss)*
+
+### 4.2. Kế Thừa & Tái Hiện 36 Lỗi Nghiệp Vụ Cốt Lõi Từ HW02
+Bộ Playwright test suite đã tự động hóa và tái hiện thành công toàn bộ **36 lỗi nghiệp vụ SUT thật** đã được báo cáo tại HW02, gồm:
+- **FR-02 (5 bugs):** Khóa phạt 180s thay vì 30s ([Issue #5](https://github.com/faker26052005-lgtm/SUT-EShop/issues/5)), Counter nhảy cóc +2 mỗi lần sai ([Issue #4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4), [#6](https://github.com/faker26052005-lgtm/SUT-EShop/issues/6)), Mật khẩu đúng bypass khóa tài khoản ([Issue #7](https://github.com/faker26052005-lgtm/SUT-EShop/issues/7)), Email dùng input text ([Issue #8](https://github.com/faker26052005-lgtm/SUT-EShop/issues/8)).
+- **FR-07 (13 bugs):** Nút thêm vào giỏ hàng bỏ qua click đầu ([Issue #9](https://github.com/faker26052005-lgtm/SUT-EShop/issues/9)), Thêm cùng sản phẩm tạo 2 dòng ([Issue #10](https://github.com/faker26052005-lgtm/SUT-EShop/issues/10)), Ô số lượng rỗng tính ra `NaN ₫` ([Issue #15](https://github.com/faker26052005-lgtm/SUT-EShop/issues/15)), Thiếu nút `+`/`-` ([Issue #18](https://github.com/faker26052005-lgtm/SUT-EShop/issues/18)), Nút xóa không có Confirm Dialog ([Issue #19](https://github.com/faker26052005-lgtm/SUT-EShop/issues/19)), Nhãn footer ghi nhầm "Tổng tạm tính" ([Issue #21](https://github.com/faker26052005-lgtm/SUT-EShop/issues/21)).
+- **FR-17 (18 bugs):** Trùng mã coupon crash SQLite HTTP 500 ([Issue #22](https://github.com/faker26052005-lgtm/SUT-EShop/issues/22)), Nhận mã rỗng/khoảng trắng ([Issue #23](https://github.com/faker26052005-lgtm/SUT-EShop/issues/23), [#24](https://github.com/faker26052005-lgtm/SUT-EShop/issues/24)), Tỷ lệ giảm giá > 100% ([Issue #28](https://github.com/faker26052005-lgtm/SUT-EShop/issues/28)), Thiếu phân quyền Admin cho phép customer tạo coupon ([Issue #33](https://github.com/faker26052005-lgtm/SUT-EShop/issues/33)), API xóa báo thành công giả mạo ([Issue #34](https://github.com/faker26052005-lgtm/SUT-EShop/issues/34) đến [#36](https://github.com/faker26052005-lgtm/SUT-EShop/issues/36)), Công thức tính tiền giảm giá phần trăm bị đảo ngược làm tăng giá đơn hàng ([Issue #37](https://github.com/faker26052005-lgtm/SUT-EShop/issues/37)).
+
+Chi tiết từng bug report kèm các bước tái hiện, mã nguồn vi phạm và ảnh bằng chứng trực quan được trình bày đầy đủ tại [docs/bug-report.md](bug-report.md).
