@@ -33,6 +33,7 @@ Toàn bộ mã nguồn do AI sinh ra (AI Draft) đều được tôi trực ti�
 | **12** | `2026-11-12T23:19:00+07:00` | Google Antigravity (Gemini 3.8 Flash) | Hoàn thiện toàn diện các assertion cho nhóm API Validation & Authorization FR-17 | AI chỉ kiểm tra HTTP status, không xác minh body hoặc phân biệt lỗi HTTP 500. | **Sinh viên chỉ đạo bổ sung:**<br>1. Xác nhận request thực sự mang mode auth tương ứng (kiểm tra `headers['Authorization']` và giải mã JWT kiểm tra `role !== 'admin'`).<br>2. Thêm assertion `expect(res.status()).not.toBe(500)` trước mọi kiểm tra để loại trừ lỗi sập server nội bộ.<br>3. Bắt lỗi defect `BUG-FR17-10..12` qua assertion `deleteBody.message !== 'Coupon deleted'` khi xóa ID không hợp lệ.<br>4. Tự động lưu `createdCouponId` khi SUT tạo nhầm coupon rác để dọn dẹp trong `afterEach`. | `f1cbb39` |
 | **13** | `2026-11-13T07:59:00+07:00` | Google Antigravity (Gemini 3.8 Flash) | Điều phối Phase 5: Reseed database, chạy 9 lượt test đa trình duyệt và thẩm định báo cáo HTML | AI kích hoạt test bên trong sandbox CLI dẫn đến lỗi thiếu shared libraries đồ họa (`libatk-1.0.so.0`, `libgtk-3.so.0`). | **Sinh viên nhận diện giới hạn sandbox:**<br>1. Nhận định môi trường Snap sandbox thiếu GUI libraries tầng OS.<br>2. Sinh viên trực tiếp tải browser qua `npx playwright install` trên terminal máy thật (host OS).<br>3. Sinh viên tự tay thực thi `node scripts/run-all.mjs` trên 3 browser (Chromium, Firefox, WebKit), sinh ra 9 bộ báo cáo HTML thật với 237 lượt test, đạt 100% compliance theo `check_requirements.py`. | `bd00ec9` (Phase 5) |
 | **14** | `2026-11-13T08:35:00+07:00` | Google Antigravity (Gemini 3.8 Flash) | Rà soát phản biện Phase 6: Phân tách chi tiết 23 lỗi kỹ thuật và tinh chỉnh nguyên nhân AI mắc lỗi theo chuẩn học thuật | AI ban đầu đề xuất bảng 8 lỗi gộp chung với các giải thích mang tính suy đoán chủ quan ("AI cố tình", "chọn cách nhanh nhất"). | **Sinh viên chỉ đạo phản biện:**<br>1. Yêu cầu bóc tách từng commit Phase 4 thành 23 lỗi kỹ thuật vi mô độc lập.<br>2. Trực tiếp chỉ đạo điều chỉnh 7 nguyên nhân (STT 07, 09, 13, 16, 21, 22, 23) theo 4 tiêu chí khoa học: *Backend observable state*, *Grounding vào CartContext.jsx*, *Test data lifecycle*, *Diagnostic vs Business assertion*, *JWT claim verification*. | `2a551f0`, `c9f7e07` |
+| **15** | `2026-11-13T09:32:00+07:00` | Google Antigravity (Gemini 3.8 Flash) | Điều phối Phase 7: Rà soát đối chiếu lỗi HW02 vs HW04, chuẩn hóa bug-report.md và tạo GitHub Issues qua gh CLI | AI ban đầu đề xuất tạo mới cả 3 issue mà không rà soát lịch sử repo, và báo `gh` chưa cài do giới hạn môi trường sandbox Snap. | **Sinh viên rà soát & chỉ đạo:**<br>1. Nhắc nhở `gh` đã được cấu hình trong các bài tập trước.<br>2. Hỗ trợ cấu hình `gh` CLI phiên bản 2.104.0 xác thực tài khoản `quocky05`.<br>3. Phát hiện lỗi giỏ hàng mất khi reload đã có sẵn tại Issue #122 nên chỉ gắn tham chiếu tránh trùng lặp.<br>4. Duyệt nội dung và tự động tạo thành công 2 GitHub Issues mới: Issue #178 (Mật khẩu `type="text"`) và Issue #179 (POST `/api/register` trả về HTTP 200). | `docs(bug)` |
 
 ---
 
@@ -46,11 +47,13 @@ flowchart TD
     A --> C["2. Khuynh hướng Workaround Che Giấu Defect<br/>(False Green Optimization)"]
     A --> D["3. Phá Hỏng Dữ Liệu Biên & Cách Ly<br/>(Boundary Invalidation)"]
     A --> E["4. Assertion Yếu & Nuốt Lỗi<br/>(Weak Assertions & Error Swallowing)"]
+    A --> F["5. Điểm Mù Sandbox & Đột Biến Mù Quáng<br/>(Sandbox & Blind Mutation Risk)"]
     
     B --> B1["Mặc định React State persist qua reload; dùng chung user gây kẹt khóa 180s"]
     C --> C1["Tự double-click hoặc đổi 2 lần sai để script test pass thay vì phát hiện bug"]
     D --> D1["Dùng helper tiện ích tự ghi đè password 8/255 chars, email 254 chars"]
     E --> E1["Dùng try-catch che giấu lỗi setup; chỉ assert status HTTP, bỏ qua body/role"]
+    F --> F1["Báo thiếu gh do bị chặn bởi AppArmor Snap; tạo mới issue mù quáng nếu không kiểm tra trùng"]
 ```
 
 ### Chi tiết phân loại lỗi:
@@ -82,3 +85,9 @@ flowchart TD
 10. **Thiếu bao quát Vòng đời Dữ liệu và Thiếu phân định Assertion Chẩn đoán:**
    - *Biểu hiện:* AI chỉ kiểm tra status code mong đợi mà không phân biệt lỗi sập server HTTP 500 với lỗi validation 4xx; đồng thời bỏ quên vòng đời dữ liệu kiểm thử (test data lifecycle) và bỏ qua việc kiểm chứng các trường claims trong JWT token.
    - *Bài học:* Cần phân biệt rõ giữa assertion kiểm tra nghiệp vụ và assertion chẩn đoán tính ổn định hệ thống; luôn thiết kế test data lifecycle hoàn chỉnh (tạo độc lập, theo dõi bản ghi, teardown dọn sạch) và xác minh tính toàn vẹn của token trước khi kích hoạt request.
+11. **Mù mờ về ranh giới môi trường cô lập (Sandbox Confinement Blindspot):**
+   - *Biểu hiện:* Khi thực thi lệnh `gh` trả về mã lỗi 127 (`command not found`), AI lập tức kết luận máy chủ chưa cài đặt công cụ và gợi ý lệnh `sudo apt install gh`. AI không nhận biết được nó đang chạy trong Snap mount namespace bị AppArmor giới hạn quyền truy cập `/var/lib/snapd/hostfs`.
+   - *Bài học:* Sinh viên phải duy trì vai trò kiểm soát kiến trúc hệ thống (System Architecture Gatekeeper); không vội vàng áp dụng các khuyến nghị cài đặt của AI khi chưa xác định ranh giới cách ly giữa môi trường Agent Sandbox và Host OS.
+12. **Nguy cơ gây ô nhiễm dữ liệu do thiếu bước kiểm tra idempotent (Blind Mutation Risk):**
+   - *Biểu hiện:* AI có xu hướng "nhận việc là làm", sẵn sàng tự động tạo mới hàng loạt issue trên GitHub nếu không được sinh viên chủ động yêu cầu rà soát trùng lặp trước đó. Điều này suýt dẫn đến việc tạo thêm 1 issue trùng lặp cho lỗi giỏ hàng vốn đã được ghi nhận tại Issue #122.
+   - *Bài học:* Mọi thao tác thay đổi trạng thái (Create / Mutate) trên hệ sinh thái kiểm thử dùng chung (GitHub Issues, Cơ sở dữ liệu) bắt buộc phải tuân thủ nguyên tắc Idempotency – luôn kiểm tra sự tồn tại của tài nguyên trước khi kích hoạt hành động tạo mới.
