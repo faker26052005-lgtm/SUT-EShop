@@ -112,24 +112,62 @@ Toàn bộ 9 lượt chạy thực tế được thực thi tuần tự (`worker
    - *AI Draft:* Dễ bị "ngộ nhận" theo hành vi hiện tại của app (ví dụ thấy app khóa 180s thì sửa assertion mong đợi thành 180s).
    - *Human Fix:* Giữ vững kết quả mong đợi theo đặc tả SRS (30s), từ đó nhận diện chính xác đây là bug SUT thật (`BUG-FR02-01`) chứ không sửa test để che giấu lỗi.
 
-### 2.2. Bảng Phân Tích Chi Tiết Sai Sót Của AI (Gap Analysis Matrix)
+### 2.2. Bảng Phân Tích Chi Tiết Sai Sót Của AI Theo Từng Commit (Gap Analysis Matrix)
 
-| STT | Feature | Test Case ID | Lỗi của AI Draft | Phân loại lỗi | Cách Sinh viên Sửa chữa (Human Fix) | Nguyên nhân AI mắc lỗi |
+Qua quá trình rà soát phản biện tại Phase 4, các commit sửa lỗi thực tế của sinh viên đã giải quyết 23 lỗi kỹ thuật độc lập do AI sinh ra, được phân tách chi tiết theo từng tính năng và commit như sau:
+
+#### Nhóm 1: Tính năng FR-02 – Đăng nhập & Khóa tài khoản
+
+| STT | Commit | Test Case ID | Lỗi của AI Draft ban đầu | Phân loại lỗi | Cách Sinh viên Sửa chữa (Human Fix) | Nguyên nhân AI mắc lỗi (AI Perspective) |
 | :---: | :---: | :---: | :--- | :--- | :--- | :--- |
-| **01** | FR-02 | `TC_FR02_01`..`24` | Dùng chung 1 tài khoản `test@eshop.com` cho toàn bộ test suite. Khi các test sai kích hoạt khóa, các test đúng chạy sau bị fail oan. | Data / State Isolation | Tích hợp helper `registerFreshUser(request)` tạo user mới cho mỗi test positive và chuỗi sequence riêng cho test lockout. | AI không nhận thức được hiệu ứng phụ (side-effect) tích lũy của state máy chủ giữa các lần chạy liên tiếp. |
-| **02** | FR-02 | `TC_FR02_01` | Dùng selector CSS `.bg-red-100` để bắt hộp thông báo lỗi. | Fragile Selector | Thay bằng `getByLabel`, `getByRole` và `locator('div.bg-red-100')` có kiểm tra text ngữ nghĩa. | AI ưu tiên các thuộc tính style có sẵn trong DOM thô thay vì accessible roles. |
-| **03** | FR-02 | `TC_FR02_15`, `20` | Đợi response mạng `POST /api/login` cho trường hợp để trống input, gây treo 7s rồi fail. | Flaky Wait / Logic Error | Bổ sung xử lý HTML5 client-side validation (`isClientValidationCase` giảm timeout và kiểm tra URL). | AI không nhận ra thuộc tính `required` của form HTML5 ngăn chặn trình duyệt gửi HTTP request. |
-| **04** | FR-07 | `TC_FR07_01`..`20` | Giả định giỏ hàng lưu ở database; dùng locator hàng cứng nhắc không tính toán động số tiền. | State Assumption & Assertion Depth | Thao tác trực tiếp từ Home page, kiểm tra tính toán số học động: `subtotal = price * qty` và `total = sum(subtotal)`. | AI hiểu sai cơ chế React Context state (mất khi reload) là backend persistent cart. |
-| **05** | FR-17 | `TC_FR17_01`..`36` | Mã coupon tĩnh `PROMO2026` không có teardown, gây crash SQLite UNIQUE constraint ở lần chạy 2. | Missing Teardown / DB Constraint | Thêm mã động kèm timestamp và triển khai hook `afterEach` gọi `deleteAdminCoupon()`. | AI chỉ tập trung vào luồng gửi form thành công mà không quan tâm đến tính tái lập (idempotency) của suite. |
+| **01** | `45ced00` | `TC_FR02_01`..`24` | Dùng chung 1 tài khoản `test@eshop.com`. Khi negative test gây khóa 180s, toàn bộ positive test sau đó bị fail oan. | **Stateful Interference** | Viết helper `registerFreshUser()` tạo email ngẫu nhiên độc lập cho từng ca test để cô lập bộ đếm. | AI mặc định database luôn sạch, không lường trước side-effect tích lũy trên server qua các lần chạy. |
+| **02** | `45ced00` | `TC_FR02_01` | Dùng selector class Tailwind `.bg-red-100` để bắt hộp thông báo lỗi. | **Fragile Selector** | Chuyển sang accessible locators `getByRole`, `getByLabel` và kiểm tra text ngữ nghĩa. | AI bám vào các thuộc tính style có sẵn trong DOM thô thay vì tiêu chuẩn Accessible W3C. |
+| **03** | `7893e01` | `TC_FR02_15`, `20` | Đặt `page.waitForResponse('/api/login')` cho test để trống trường, gây treo timeout 7s rồi fail. | **Flaky Wait / Logic Error** | Bổ sung nhánh client-side validation kiểm tra trạng thái form và URL mà không đợi network request. | AI không nhận ra thuộc tính `required` của form HTML5 ngăn chặn trình duyệt kích hoạt HTTP request. |
+| **04** | `7a657df`<br>`35234e3` | `TC_FR02_02`, `18`, `24` | Helper tiện ích của AI tự tạo random password mặc định, vô tình ghi đè làm mất giá trị kiểm thử biên (pass 8/255 chars, email 254 chars). | **Boundary Invalidation** | Tái cấu trúc helper nhận tham số tùy biến `options: { email?, password? }` và UUID để bảo toàn giá trị biên từ JSON. | AI có thói quen viết code tiện ích generic với default parameters để chạy được mà quên mục tiêu kiểm thử biên. |
+| **05** | `7a657df`<br>`86d8124` | `TC_FR02_06` | AI thấy backend có bug cộng thừa số lần sai (+2) nên tự ý chỉ gửi 2 lần sai để test pass theo bug của app. | **False Green Compromise** | Khôi phục gửi đúng 3 lần sai theo đặc tả SRS để test fail tự nhiên, vạch trần defect của backend. | AI có khuynh hướng tự nhiên là tối ưu hóa để code chạy "xanh/pass" thay vì giữ vai trò kiểm thử độc lập phát hiện bug. |
+| **06** | `86d8124` | `TC_FR02_07`..`11` | Kiểm tra hành vi trong lúc khóa (t=15s, 29s) nhưng nhảy thẳng vào assert mà không gửi 3 lần sai trước đó. | **Missing Preconditions** | Viết helper `setupFailedAttempts()` gửi đúng 3 lần sai (assert 401/403) trước khi thực hiện bước test chính. | AI thiếu khả năng tự suy luận chuỗi hành động tiền đề để đưa hệ thống vào trạng thái kiểm thử mong muốn. |
+| **07** | `86d8124` | `TC_FR02_03`..`06` | Chỉ nhìn UI một cách nông cạn, không kiểm chứng được trạng thái thực tế trong database backend. | **Shallow Client Assertion** | Viết helper `getAdminUserRecord()` gọi `GET /api/admin/users` để assert trực tiếp trường `login_attempts` và `locked_until` trong SQLite. | AI bị giới hạn góc nhìn client-side, không chủ động tích hợp API Admin để quan sát observable state phía server. |
+| **08** | `86d8124` | `TC_FR02_01`..`05` | Dùng regex URL lỏng lẻo `expect(page).toHaveURL(/.*login/)` chấp nhận cả URL sai như `/login-failed`. | **Imprecise URL Assertion** | Chuyển sang assertion URL endpoint tuyệt đối, phân định rõ ràng giữa `/login` và trang chủ `/`. | AI dùng regex như một giải pháp an toàn để tránh test bị rớt do khác biệt query string hay domain. |
+
+#### Nhóm 2: Tính năng FR-07 – Giỏ hàng (Web Frontend)
+
+| STT | Commit | Test Case ID | Lỗi của AI Draft ban đầu | Phân loại lỗi | Cách Sinh viên Sửa chữa (Human Fix) | Nguyên nhân AI mắc lỗi (AI Perspective) |
+| :---: | :---: | :---: | :--- | :--- | :--- | :--- |
+| **09** | `6a906f3` | `TC_FR07_01`..`20` | Giả định giỏ hàng lưu ở database và reload trang (`page.reload()`) dữ liệu vẫn còn. | **State Persistence Illusion** | Thao tác trực tiếp từ Home page, duy trì session liên tục để giữ React state (`CartContext`). | AI suy diễn từ các trang e-commerce thông thường mà không đọc kỹ cơ chế lưu cục bộ trong `CartContext.jsx`. |
+| **10** | `6a906f3` | `TC_FR07_01`..`05` | So sánh text chuỗi cố định, không kiểm tra được tính toán tổng tiền khi số lượng thay đổi. | **Static vs Dynamic Verification** | Thêm logic tính toán số học động: `subtotal = price * qty` và `total = sum(subtotal)`. | AI chỉ so khớp chuỗi mức giao diện thay vì kiểm thử logic số học của giỏ hàng. |
+| **11** | `c62be7a` | `TC_FR07_01`, `02` | Tự chèn thêm lệnh click lần 2 (`addProductFromHome` click 2 lần) để chữa cháy lỗi không nhận click lần đầu của SUT. | **False Green Workaround** | Kiên quyết xóa bỏ workaround click lần 2; chỉ click 1 lần duy nhất để phản ánh trung thực defect của SUT. | Phản xạ giải quyết vấn đề (problem-solving) khiến AI tìm cách làm test pass thay vì phát hiện bug. |
+| **12** | `c62be7a` | `TC_FR07_01`..`20` | Hàm parse tiền dùng `parseInt() || 0`, tự động ép chuỗi `NaN` hoặc rỗng về `0`, nuốt chửng lỗi hiển thị `NaN ₫`. | **Silent Error Swallowing** | Viết lại `parseCurrencyAmount()` kiểm tra nghiêm ngặt `NaN`, `Infinity`, số âm và ném `Error` ngay lập tức. | Thói quen lập trình phòng thủ (defensive programming) để code không crash, gây hại cho kiểm thử tự động. |
+| **13** | `c62be7a` | `TC_FR07_01`, `02` | Dùng chỉ mục mảng `cardIndex: 0` (thẻ đầu tiên), dễ vỡ khi thứ tự sản phẩm thay đổi hoặc phân trang. | **Fragile Positional Selector** | Chuyển sang định danh sản phẩm bằng Product ID ổn định `/product/${target}`. | AI chọn giải pháp nhanh nhất dựa trên cấu trúc DOM tĩnh tại thời điểm viết code. |
+| **14** | `567f91f` | `TC_FR07_01`, `02` | Không kiểm tra giỏ hàng ban đầu có thực sự rỗng hay không trước khi thực hiện thêm sản phẩm. | **Unchecked Initial State** | Bổ sung assertion kiểm tra giỏ hàng ban đầu rỗng (`toHaveCount(0)`, `emptyCartHeading.toBeVisible()`). | AI bỏ qua bước xác nhận trạng thái nền (baseline state) trước khi thực hiện hành vi kiểm thử. |
+| **15** | `567f91f` | `TC_FR07_01`, `02` | Sau khi thêm, chỉ đếm số dòng (`toHaveCount(1)`) mà không kiểm tra tên sản phẩm, số lượng và giá tiền. | **Shallow Assertion** | Bắt tên sản phẩm từ thẻ `h1` trang chi tiết, assert đủ cả 5 chiều: row count, tên, số lượng, subtotal, và total. | AI thỏa mãn khi thấy 1 assertion pass mà không xây dựng chuỗi kiểm chứng tính toàn vẹn dữ liệu đa chiều. |
+
+#### Nhóm 3: Tính năng FR-17 – Quản lý mã giảm giá Admin
+
+| STT | Commit | Test Case ID | Lỗi của AI Draft ban đầu | Phân loại lỗi | Cách Sinh viên Sửa chữa (Human Fix) | Nguyên nhân AI mắc lỗi (AI Perspective) |
+| :---: | :---: | :---: | :--- | :--- | :--- | :--- |
+| **16** | `5139c1f` | `TC_FR17_01`..`36` | Tạo coupon với mã tĩnh `PROMO2026` không dọn dẹp, khiến lần chạy 2 bị crash do trùng khóa `UNIQUE`. | **Missing Teardown & DB Crash** | Thêm timestamp động `_${Date.now()}` và hook `afterEach` gọi API xóa coupon để đảm bảo tính tái lập. | AI chỉ quan tâm đến kịch bản thành công của 1 lần chạy đơn lẻ mà không tính đến tính tái lập (idempotency). |
+| **17** | `5139c1f` | `TC_FR17_01`..`05` | Form tạo coupon dùng selector CSS input theo thứ tự hoặc class trong form Admin. | **Brittle Form Selectors** | Chuyển sang accessible label/role locators chuẩn W3C trên giao diện Admin. | Form admin không có `id`/`name` rõ ràng khiến AI bám vào CSS layout thay vì tìm cách định vị ngữ nghĩa. |
+| **18** | `b78b48c` | `TC_FR17_22`..`26` | Gộp chung toàn bộ test API vào `POST /api/admin/coupons`, không phân định được test Tạo mới và test Xóa (`DELETE`). | **Multi-Action Routing Failure** | Bổ sung trường `action: "create" | "delete"` vào data JSON; tách hai nhánh route API riêng biệt trong spec. | AI đọc file test case phẳng và mặc định mọi test của feature coupon đều gọi vào endpoint Create thông thường. |
+| **19** | `b78b48c` | `TC_FR17_25`, `26` | Khi test xóa với ID dị thường (chuỗi `'abc'`, số âm `-1`), code AI vô tình ép kiểu sang số dương. | **Mangled Target ID** | Bảo toàn nguyên vẹn giá trị target ID dạng chuỗi hoặc số âm và truyền trực tiếp vào URL `/api/admin/coupons/${targetId}`. | AI áp dụng type casting tự động làm mất giá trị kiểm thử dị thường (anomalous input). |
+| **20** | `f1cbb39` | `TC_FR17_22`..`26` | Đặt khối `try-catch` rỗng quanh bước lấy token Admin, khi helper lỗi thì gán token rỗng khiến test chạy sai lệch. | **Silent Error Masking** | Loại bỏ hoàn toàn khối `try-catch`, áp dụng nguyên tắc fail-fast (lỗi setup phải dừng test ngay). | AI dùng `try-catch` bừa bãi để tránh cho script bị dừng đột ngột (unhandled exception). |
+| **21** | `f1cbb39` | `TC_FR17_12`..`26` | Chỉ kiểm tra `res.status() === 400`, khi server crash trả về HTTP 500 thì test chỉ báo fail chung chung. | **Missing Server Crash Differentiation** | Thêm assertion loại trừ lỗi sập server `expect(res.status()).not.toBe(500)` trước mọi kiểm tra nghiệp vụ. | AI không phân biệt được lỗi nghiệp vụ hợp lệ (Client Error 4xx) với lỗi hệ thống sập không kiểm soát (Server Error 500). |
+| **22** | `f1cbb39` | `TC_FR17_23` | Giả định cứ gọi API với customer token là đủ, không kiểm tra request thực sự mang token quyền Customer. | **Unverified Client Auth Context** | Giải mã payload JWT base64 để assert chắc chắn `decoded.role !== 'admin'` trước khi gửi request. | AI ngộ nhận rằng các helper thiết lập dữ liệu luôn trả về đúng token mà không cần kiểm chứng tính toàn vẹn. |
+| **23** | `f1cbb39` | `TC_FR17_24`..`26` | Bỏ qua không kiểm tra nội dung body khi xóa ID không tồn tại, khiến không phát hiện bug SUT trả về `"Coupon deleted"`. | **Swallowing Bogus Delete Feedback** | Assert kiểm tra `deleteBody.message !== 'Coupon deleted'` khi xóa ID không hợp lệ để bắt trọn defect `BUG-FR17-10..12`. | AI chỉ kiểm tra HTTP status code mà bỏ qua phần thân (body), không nhận ra mâu thuẫn giữa thông báo và dữ liệu thực tế. |
 
 ---
 
 ## PHẦN 3: ĐIỂM NHẤN KỸ THUẬT THUYẾT MINH VIDEO DEMO
 
-Để minh chứng năng lực kiểm soát và phản biện AI trong video demo (theo yêu cầu mục 8 và mục 12):
-- **Điểm nhấn thuyết minh:** Lỗi **Stateful Interference & Lockout Collision** tại `FR-02`.
-- **Nội dung trình bày:**
-  1. Chỉ ra đoạn mã AI Draft ban đầu dùng chung `test@eshop.com`.
-  2. Giải thích vì sao khi chạy đến `TC_FR02_06` (lần nhập sai thứ 3), tài khoản bị khóa 180s.
-  3. Dẫn đến `TC_FR02_10` (nhập đúng) bị fail với mã HTTP 403 thay vì 200.
-  4. Trình chiếu diff commit `fix(FR-02): replace fragile locators and isolate users via api helper`: minh họa cách sử dụng API helper `registerFreshUser()` để cô lập hoàn toàn trạng thái giữa các test case, đảm bảo 100% độc lập và ổn định trên cả 3 trình duyệt.
+Để minh chứng năng lực kiểm soát và phản biện AI trong video demo (theo yêu cầu mục 8 và mục 12), sinh viên lựa chọn **2 điểm nhấn tiêu biểu** để trình chiếu diff mã nguồn và thuyết minh:
+
+### Điểm nhấn 1: Khắc phục lỗi Stateful Interference & Lockout Collision (FR-02)
+- **Vấn đề AI mắc phải:** AI Draft ban đầu dùng chung tài khoản tĩnh `test@eshop.com`. Khi chạy đến `TC_FR02_06` (lần nhập sai thứ 3), tài khoản bị khóa 180s. Dẫn đến `TC_FR02_10` (nhập đúng) chạy ngay sau đó bị fail oan với mã HTTP 403 thay vì HTTP 200.
+- **Minh chứng mã nguồn (Diff Commit `45ced00` & `86d8124`):**
+  - Trình chiếu việc thay thế email tĩnh bằng helper `registerFreshUser(request)` cấp phát tài khoản động kèm UUID cho mỗi test case.
+  - Trình chiếu helper `setupFailedAttempts()` thiết lập đúng 3 lần sai trước khi kiểm tra trạng thái khóa ở t=15s và t=29s.
+
+### Điểm nhấn 2: Loại bỏ Workaround che giấu lỗi & Chuẩn hóa tiền tệ (FR-07)
+- **Vấn đề AI mắc phải:** Trong `CartPage`, AI tự động click 2 lần nút "Thêm vào giỏ hàng" (`addProductFromHome`) vì phát hiện lần click đầu SUT không cập nhật state. Đồng thời hàm parse tiền tự ép `NaN` về `0`. Đây là hành vi "False Green" che giấu bug nghiêm trọng của phần mềm.
+- **Minh chứng mã nguồn (Diff Commit `c62be7a` & `567f91f`):**
+  - Trình chiếu việc kiên quyết xóa bỏ lệnh click thứ 2, giữ nguyên thao tác single-click để phản ánh trung thực defect của SUT.
+  - Trình chiếu hàm `parseCurrencyAmount()` ném ngoại lệ khi gặp `NaN` hoặc `Infinity`, bảo vệ tính toàn vẹn của kết quả kiểm thử.
