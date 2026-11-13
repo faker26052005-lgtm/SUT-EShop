@@ -1,3 +1,6 @@
+92eb201 | Nguyen Quoc Ky | 2026-11-13 09:37:31 +0700 | docs(audit): record session 15 for phase 7 bug reporting and issue creation
+657ba51 | Nguyen Quoc Ky | 2026-11-13 09:37:27 +0700 | docs(bug): record genuine sut defects and link github issues #178 #179 #122
+857ac38 | Nguyen Quoc Ky | 2026-11-13 08:43:54 +0700 | docs(git): update git commit log after recording session 14
 e5121dc | Nguyen Quoc Ky | 2026-11-13 08:43:46 +0700 | docs(audit): record session 14 for phase 6 gap analysis refinement
 ca89b9f | Nguyen Quoc Ky | 2026-11-13 08:39:03 +0700 | docs(git): update git commit log after refining gap analysis causes
 c9f7e07 | Nguyen Quoc Ky | 2026-11-13 08:38:56 +0700 | docs(report): refine ai error causes in gap analysis matrix based on human review
