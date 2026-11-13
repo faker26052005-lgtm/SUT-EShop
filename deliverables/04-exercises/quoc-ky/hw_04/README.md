@@ -36,6 +36,7 @@
 | **Số lượt kiểm thử Thất bại (Failed Tests)** | **208 lượt** | Do lỗi thực tế của SUT (đã đối chiếu SRS và bug HW02) |
 | **Tỷ lệ Flaky (Flaky Rate)** | **0%** | Nhờ cách ly user qua API helper và hook cleanup |
 | **Số commit Git sửa file test (`.spec.ts`)** | **16 commits** | Tác giả: `Nguyen Quoc Ky` (vượt yêu cầu $\ge 8$ commit) |
+| **Số lỗi SUT phát hiện & xác thực (Defects Logged)** | **39 bugs** | 3 lỗi mới ([#178](https://github.com/faker26052005-lgtm/SUT-EShop/issues/178), [#179](https://github.com/faker26052005-lgtm/SUT-EShop/issues/179), [#122](https://github.com/faker26052005-lgtm/SUT-EShop/issues/122)) + 36 lỗi HW02 ([#4](https://github.com/faker26052005-lgtm/SUT-EShop/issues/4) → [#39](https://github.com/faker26052005-lgtm/SUT-EShop/issues/39)) |
 | **Link Video Demo Automation Testing (YouTube)** | [Đang cập nhật link]() | Video ≥ 5 phút, tiếng Việt, chứng minh danh tính, thuyết minh fix |
 | **Link Video Demo Agent Skill (YouTube)** | [Đang cập nhật link]() | Demo workflow trên 1 tính năng hoàn chỉnh theo kịch bản skill |
 
@@ -90,3 +91,19 @@ npx playwright show-report reports/fr02-login/chromium
 # 5. Chạy thẩm định tự động các yêu cầu của đề bài
 python3 .agents/skills/playwright-automation-coach/scripts/check_requirements.py
 ```
+
+---
+
+## 5. Danh Mục Hồ Sơ Giao Nộp (Submission Deliverables Checklist)
+
+Được đóng gói theo định dạng file nén: `23120138_HW04_AI_Automation_100.zip`
+
+- [x] **Main Report:** [docs/main-report.md](docs/main-report.md) & `docs/main-report.pdf` (Automation Report + Gap Analysis 23 lỗi vi mô).
+- [x] **GitHub Repository Public:** [faker26052005-lgtm/SUT-EShop](https://github.com/faker26052005-lgtm/SUT-EShop) (thư mục `deliverables/04-exercises/quoc-ky/hw_04/`).
+- [x] **HTML Reports Đa Trình Duyệt:** 9 lượt chạy thực tế tại `reports/<feature>/<browser>/index.html` hiển thị `Run by: 23120138` và ISO timestamp.
+- [ ] **Video Demo Automation Testing:** Link YouTube unlisted (≥ 5 phút, tiếng Việt, chứng minh danh tính, thuyết minh fix).
+- [x] **AI Audit Report & AI Critique:** [docs/ai-audit-report.md](docs/ai-audit-report.md) & [docs/ai-critique.md](docs/ai-critique.md) (kèm bản PDF).
+- [x] **Git Commit History Log:** [docs/git-commit-log.txt](docs/git-commit-log.txt) (16 commit sửa file `.spec.ts` do Nguyễn Quốc Kỳ tạo).
+- [x] **Bug Report & Evidence:** [docs/bug-report.md](docs/bug-report.md) & `docs/bug-report.pdf` kèm 6 ảnh screenshot trong [evidence/](evidence/) và link GitHub Issues ([#178](https://github.com/faker26052005-lgtm/SUT-EShop/issues/178), [#179](https://github.com/faker26052005-lgtm/SUT-EShop/issues/179), [#122](https://github.com/faker26052005-lgtm/SUT-EShop/issues/122)).
+- [x] **Agent Skill & Demo:** [`.agents/skills/playwright-automation-coach/`](.agents/skills/playwright-automation-coach/README.md) và kịch bản demo [skill-demo-script.md](skill-demo-script.md).
+
