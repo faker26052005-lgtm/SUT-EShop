@@ -1,0 +1,16 @@
+{
+  "name": "hw04-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HW04 - Automation Testing (Playwright) for EShop SUT",
+  "scripts": {
+    "test": "playwright test",
+    "test:fr13": "node scripts/run-matrix.js fr13",
+    "test:fr04": "node scripts/run-matrix.js fr04",
+    "test:fr08": "node scripts/run-matrix.js fr08",
+    "test:all": "node scripts/run-matrix.js fr04,fr08,fr13",
+    "summary": "node scripts/summarize.js",
+    "gitlog": "node scripts/git-log.js",
+    "whoami": "whoami && hostname"
+  }
+}

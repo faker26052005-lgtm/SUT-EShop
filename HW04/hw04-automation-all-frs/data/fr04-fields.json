@@ -1,0 +1,9 @@
+[
+  { "id": "F01", "title": "A plain name is saved, phone and address are untouched", "field": "name", "value": "Nguyen Van A", "expect": "accept", "source": "HW02 DT-10, BL-02" },
+  { "id": "F02", "title": "A name with Vietnamese accents is saved", "field": "name", "value": "Nguyễn Văn Ánh", "expect": "accept", "source": "HW02 DT-11" },
+  { "id": "F03", "title": "A normal address is saved, name and phone are untouched", "field": "address", "value": "123 Le Loi, Q1, TP.HCM", "expect": "accept", "source": "HW02 DT-15, BL-02" },
+  { "id": "F04", "title": "Empty name (SRS unclear: is the name required?)", "field": "name", "value": "", "expect": "clarify", "source": "HW02 DT-12, appendix A item 3" },
+  { "id": "F05", "title": "Name made of spaces only (SRS unclear)", "field": "name", "value": "   ", "expect": "clarify", "source": "HW02 DT-13, appendix A item 4" },
+  { "id": "F06", "title": "Empty address (SRS unclear: is the address optional?)", "field": "address", "value": "", "expect": "clarify", "source": "HW02 DT-16, appendix A item 6" },
+  { "id": "F07", "title": "1000-character name (SRS gives no length limit)", "field": "name", "repeat": { "char": "A", "count": 1000 }, "expect": "clarify", "source": "HW02 DT-17, appendix A item 7" }
+]

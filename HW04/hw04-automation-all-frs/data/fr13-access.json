@@ -1,0 +1,50 @@
+[
+  {
+    "id": "A01",
+    "title": "A non-admin account cannot enter the admin web (UI login)",
+    "kind": "ui-login",
+    "account": "user",
+    "expect": "reject",
+    "source": "SRS FR-12"
+  },
+  {
+    "id": "A02",
+    "title": "A wrong password is rejected at the admin login",
+    "kind": "ui-login",
+    "account": "throwaway-wrong-password",
+    "expect": "reject",
+    "source": "SRS FR-12"
+  },
+  {
+    "id": "A03",
+    "title": "Without a token the admin web shows the login form, not the dashboard",
+    "kind": "no-token",
+    "expect": "login-form",
+    "source": "HW02 AC-01"
+  },
+  {
+    "id": "A04",
+    "title": "A non-admin JWT placed in the admin web must not open the dashboard (FR-12, SEC-03)",
+    "kind": "inject-token",
+    "token": "user",
+    "expect": "login-form",
+    "source": "HW02 AC-02 (FR-13-BUG-02) reproduced through the UI"
+  },
+  {
+    "id": "A05",
+    "title": "A malformed token is rejected and the login form is shown",
+    "kind": "inject-token",
+    "token": "literal",
+    "tokenValue": "not.a.valid.jwt",
+    "expect": "login-form",
+    "source": "HW02 AC-03"
+  },
+  {
+    "id": "A06",
+    "title": "An admin logs in and sees both dashboard tiles",
+    "kind": "ui-login",
+    "account": "admin",
+    "expect": "dashboard",
+    "source": "SRS FR-13 (positive baseline)"
+  }
+]
