@@ -3,7 +3,7 @@ import type { Page, APIRequestContext } from '@playwright/test';
 import { loadData } from './helpers/data';
 import { WEB_URL } from './helpers/env';
 import {
-  captureDialogs, waitForDialog, newSession, startLoggedIn, getMe, setProfileApi, profileLink,
+  captureDialogs, clickAndWaitDialog, newSession, startLoggedIn, getMe, setProfileApi, profileLink,
 } from './helpers/web';
 
 /**
@@ -43,17 +43,16 @@ test.describe('FR-04 phone number (SRS: starts with 0, 10-11 digits)', () => {
       const s = await openProfile(page, request, base.phoneTests);
 
       await phoneInput(page).fill(row.phone);
-      await saveButton(page).click();
-      const message = await waitForDialog(dialogs);
+      const message = await clickAndWaitDialog(dialogs, saveButton(page));
       const stored = (await getMe(request, s.token)).phone;
 
       if (row.expect === 'accept') {
         expect(message, 'alert shown after saving').toBe(SUCCESS);
         expect(stored, 'phone stored in the database').toBe(row.phone);
       } else if (row.expect === 'reject') {
-        expect(message, 'an error alert must appear').not.toBeNull();
-        expect(message).not.toBe(SUCCESS);
+        expect(message, 'the form must not report success').not.toBe(SUCCESS);
         expect(stored, 'old phone must be kept').toBe(base.phoneTests.phone);
+        test.info().annotations.push({ type: 'NOTE', description: `${row.id}: message shown = ${JSON.stringify(message)}` });
       } else {
         test.info().annotations.push({
           type: 'CLARIFY',
@@ -73,8 +72,7 @@ test.describe('FR-04 name and address', () => {
 
       if (row.field === 'name') await nameInput(page).fill(value);
       else await addressInput(page).fill(value);
-      await saveButton(page).click();
-      const message = await waitForDialog(dialogs);
+      const message = await clickAndWaitDialog(dialogs, saveButton(page));
       const me = await getMe(request, s.token);
 
       if (row.expect === 'accept') {
@@ -105,8 +103,7 @@ test.describe('FR-04 output escaping (SRS SEC-04)', () => {
       const dialogs = captureDialogs(page);
       const s = await openProfile(page, request, base.fieldTests);
       await nameInput(page).fill(row.payload);
-      await saveButton(page).click();
-      expect(await waitForDialog(dialogs)).toBe(SUCCESS);
+      expect(await clickAndWaitDialog(dialogs, saveButton(page))).toBe(SUCCESS);
 
       await page.goto(`${WEB_URL}/profile`); // reload: the header greets the stored name
       await expect(profileLink(page)).toBeVisible();

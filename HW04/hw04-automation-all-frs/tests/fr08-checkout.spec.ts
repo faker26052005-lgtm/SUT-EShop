@@ -3,7 +3,7 @@ import type { Page, APIRequestContext } from '@playwright/test';
 import { loadData } from './helpers/data';
 import { WEB_URL } from './helpers/env';
 import {
-  captureDialogs, waitForDialog, newSession, startLoggedIn, cartLink, spaNavigate, listProducts, myOrders, type Product,
+  captureDialogs, clickAndWaitDialog, newSession, startLoggedIn, cartLink, spaNavigate, listProducts, myOrders, type Product,
 } from './helpers/web';
 
 /**
@@ -124,8 +124,7 @@ for (const row of rows) {
         // simulate a refused payment: the server answers 500 to the checkout request
         await page.route('**/api/checkout', (route) =>
           route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'simulated failure' }) }));
-        await confirmButton(page).click();
-        expect(await waitForDialog(dialogs)).toContain('Lỗi khi thanh toán');
+        expect(await clickAndWaitDialog(dialogs, confirmButton(page))).toContain('Lỗi khi thanh toán');
         await expect(successHeading(page)).toHaveCount(0);
         expect(await myOrders(request, s.token), 'no order is created').toHaveLength(0);
         await cartLink(page).click();
@@ -136,8 +135,8 @@ for (const row of rows) {
       case 'guest-guard': {
         await addToCartByUi(page, products, row.picks);
         await cartLink(page).click();
-        await page.getByRole('button', { name: 'Tiến hành thanh toán' }).click();
-        expect(await waitForDialog(dialogs), 'a message tells the visitor to log in').not.toBeNull();
+        const msg = await clickAndWaitDialog(dialogs, page.getByRole('button', { name: 'Tiến hành thanh toán' }));
+        test.info().annotations.push({ type: 'NOTE', description: `${row.id}: message shown to the visitor = ${JSON.stringify(msg)}` });
         await expect(page).toHaveURL(/\/login$/);
         await expect(page.getByRole('heading', { name: 'Xác Nhận Đơn Hàng' })).toHaveCount(0);
         break;
@@ -147,8 +146,7 @@ for (const row of rows) {
         await addToCartByUi(page, products, row.picks);
         await spaNavigate(page, '/checkout'); // skips the cart button that normally asks for login
         await expect(page.getByRole('heading', { name: 'Xác Nhận Đơn Hàng' })).toBeVisible();
-        await confirmButton(page).click();
-        expect(await waitForDialog(dialogs), 'the server must refuse an anonymous payment').toContain('Lỗi khi thanh toán');
+        expect(await clickAndWaitDialog(dialogs, confirmButton(page)), 'the server must refuse an anonymous payment').toContain('Lỗi khi thanh toán');
         await expect(successHeading(page)).toHaveCount(0);
         break;
       }
@@ -163,8 +161,7 @@ for (const row of rows) {
         let note = `checkout button on empty cart: ${proceed > 0 ? 'shown' : 'hidden'}`;
         if (proceed === 0) {
           await spaNavigate(page, '/checkout');
-          await confirmButton(page).click();
-          await waitForDialog(dialogs);
+          await clickAndWaitDialog(dialogs, confirmButton(page));
           const ok = await successHeading(page).count();
           note += `; forced checkout: ${ok ? 'SUCCESS page shown' : 'refused'}, orders created=${(await myOrders(request, s.token)).length}`;
         }

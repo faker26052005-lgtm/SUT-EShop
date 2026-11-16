@@ -1,0 +1,881 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\LOQ\\AppData\\Local\\Author Software\\nvm\\installs\\v24.14.0\\node.exe",
+      "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "fr08-",
+      "--project=webkit"
+    ],
+    "configFile": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\playwright.config.ts",
+    "rootDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "Run by": "23120056",
+      "Run at": "2026-11-16T00:26:02.214Z",
+      "Run label": "FR08 on webkit",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-16T00:26:02.214Z",
+          "Run label": "FR08 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-16T00:26:02.214Z",
+          "Run label": "FR08 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-16T00:26:02.214Z",
+          "Run label": "FR08 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-16T00:26:02.214Z",
+          "Run label": "FR08 on webkit",
+          "actualWorkers": 1
+        },
+        "name": "webkit",
+        "testDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests",
+        "snapshotDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "actionTimeout": 10000,
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1792,
+            "height": 1120
+          },
+          "deviceScaleFactor": 2,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "reports/fr08-webkit",
+          "open": "never",
+          "title": "HW04 | Run by: 23120056 | FR08 on webkit | 2026-11-16T00:26:02.214Z"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/_json/fr08-webkit.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fr08-checkout.spec.ts",
+      "file": "fr08-checkout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C01 One product: checkout succeeds and the stored total equals the cart total",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1030,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:02.511Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-db386fc1a6385bc32553",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C02 Two different products: stored total is the sum of both",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:03.617Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-4317cad18849eff4e790",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C03 The same product added twice: stored total is twice the price",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1095,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:04.697Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-9370779192d7c94dd869",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C04 Three products: stored total is the sum of all three",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1138,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:05.798Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-e0138a5d47d160f74ecf",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C05 R4: a client that sends total_amount = 1 must not change the stored total",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1149,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m58000000\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m58000000\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:82:64",
+                    "location": {
+                      "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                      "column": 64,
+                      "line": 82
+                    },
+                    "snippet": " \u001b[90m 80 |\u001b[39m         \u001b[90m// R4: the stored total is the real cart total, whatever the browser sent\u001b[39m\n \u001b[90m 81 |\u001b[39m         \u001b[90m// (if the server refuses the tampered request and stores nothing, that is also correct)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m         \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m o \u001b[36mof\u001b[39m orders) expect(\u001b[33mNumber\u001b[39m(o\u001b[33m.\u001b[39mtotal_amount))\u001b[33m.\u001b[39mtoBe(sum(chosen))\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 84 |\u001b[39m       }\n \u001b[90m 85 |\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                        "column": 64,
+                        "line": 82
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m58000000\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n \u001b[90m 80 |\u001b[39m         \u001b[90m// R4: the stored total is the real cart total, whatever the browser sent\u001b[39m\n \u001b[90m 81 |\u001b[39m         \u001b[90m// (if the server refuses the tampered request and stores nothing, that is also correct)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m         \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m o \u001b[36mof\u001b[39m orders) expect(\u001b[33mNumber\u001b[39m(o\u001b[33m.\u001b[39mtotal_amount))\u001b[33m.\u001b[39mtoBe(sum(chosen))\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 84 |\u001b[39m       }\n \u001b[90m 85 |\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:82:64\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:06.948Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C05-R4-a-cli-471f7-not-change-the-stored-total-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C05-R4-a-cli-471f7-not-change-the-stored-total-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C05-R4-a-cli-471f7-not-change-the-stored-total-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                    "column": 64,
+                    "line": 82
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-3a80a992b4f5ce43d83f",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C06 R4: a client that sends total_amount = 0 must not change the stored total",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1053,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m30000000\u001b[39m\nReceived: \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m30000000\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:82:64",
+                    "location": {
+                      "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                      "column": 64,
+                      "line": 82
+                    },
+                    "snippet": " \u001b[90m 80 |\u001b[39m         \u001b[90m// R4: the stored total is the real cart total, whatever the browser sent\u001b[39m\n \u001b[90m 81 |\u001b[39m         \u001b[90m// (if the server refuses the tampered request and stores nothing, that is also correct)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m         \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m o \u001b[36mof\u001b[39m orders) expect(\u001b[33mNumber\u001b[39m(o\u001b[33m.\u001b[39mtotal_amount))\u001b[33m.\u001b[39mtoBe(sum(chosen))\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 84 |\u001b[39m       }\n \u001b[90m 85 |\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                        "column": 64,
+                        "line": 82
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m30000000\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n \u001b[90m 80 |\u001b[39m         \u001b[90m// R4: the stored total is the real cart total, whatever the browser sent\u001b[39m\n \u001b[90m 81 |\u001b[39m         \u001b[90m// (if the server refuses the tampered request and stores nothing, that is also correct)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m         \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m o \u001b[36mof\u001b[39m orders) expect(\u001b[33mNumber\u001b[39m(o\u001b[33m.\u001b[39mtotal_amount))\u001b[33m.\u001b[39mtoBe(sum(chosen))\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 84 |\u001b[39m       }\n \u001b[90m 85 |\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:82:64\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:08.488Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C06-R4-a-cli-18778-not-change-the-stored-total-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C06-R4-a-cli-18778-not-change-the-stored-total-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C06-R4-a-cli-18778-not-change-the-stored-total-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                    "column": 64,
+                    "line": 82
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-38f84b13a9f4c8ead472",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C07 R3: the order summary lists every product with name, quantity and line amount",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1029,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:09.990Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-481a54b3148e077043c7",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C08 R2: the payment total shown equals the cart total",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 911,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:11.100Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-0ee3eece5f2bce5bc378",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C09 R2: the payment total cannot be edited by the user",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7839,
+                  "error": {
+                    "message": "Error: the payment total must be read-only\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[type=\"number\"]')\nExpected: disabled\nReceived: enabled\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - the payment total must be read-only locator('input[type=\"number\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <input type=\"number\" value=\"30000000\" class=\"border p-2 rounded text-red-600 font-bold\"/>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n",
+                    "stack": "Error: the payment total must be read-only\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[type=\"number\"]')\nExpected: disabled\nReceived: enabled\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - the payment total must be read-only locator('input[type=\"number\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <input type=\"number\" value=\"30000000\" class=\"border p-2 rounded text-red-600 font-bold\"/>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:103:81",
+                    "location": {
+                      "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                      "column": 81,
+                      "line": 103
+                    },
+                    "snippet": " \u001b[90m 101 |\u001b[39m         } \u001b[36melse\u001b[39m {\n \u001b[90m 102 |\u001b[39m           \u001b[90m// SRS FR-08: the total is shown to the user, it must not be an editable field\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m           \u001b[36mawait\u001b[39m expect(totalInput(page)\u001b[33m,\u001b[39m \u001b[32m'the payment total must be read-only'\u001b[39m)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m         }\n \u001b[90m 105 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 106 |\u001b[39m       }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                        "column": 81,
+                        "line": 103
+                      },
+                      "message": "Error: the payment total must be read-only\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[type=\"number\"]')\nExpected: disabled\nReceived: enabled\nTimeout:  7000ms\n\nCall log:\n\u001b[2m  - the payment total must be read-only locator('input[type=\"number\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"number\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <input type=\"number\" value=\"30000000\" class=\"border p-2 rounded text-red-600 font-bold\"/>\u001b[22m\n\u001b[2m       - unexpected value \"enabled\"\u001b[22m\n\n\n \u001b[90m 101 |\u001b[39m         } \u001b[36melse\u001b[39m {\n \u001b[90m 102 |\u001b[39m           \u001b[90m// SRS FR-08: the total is shown to the user, it must not be an editable field\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m           \u001b[36mawait\u001b[39m expect(totalInput(page)\u001b[33m,\u001b[39m \u001b[32m'the payment total must be read-only'\u001b[39m)\u001b[33m.\u001b[39mtoBeDisabled()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m         }\n \u001b[90m 105 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 106 |\u001b[39m       }\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:103:81\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:12.018Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C09-R2-the-p-16706-annot-be-edited-by-the-user-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C09-R2-the-p-16706-annot-be-edited-by-the-user-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C09-R2-the-p-16706-annot-be-edited-by-the-user-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                    "column": 81,
+                    "line": 103
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-a4542f87eb441a51c4e2",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C10 R5: after a successful checkout the cart is empty",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8252,
+                  "error": {
+                    "message": "Error: cart must be empty after a successful payment\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Giỏ hàng của bạn đang trống')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - cart must be empty after a successful payment getByText('Giỏ hàng của bạn đang trống') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Giỏ hàng của bạn đang trống')\u001b[22m\n",
+                    "stack": "Error: cart must be empty after a successful payment\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Giỏ hàng của bạn đang trống')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - cart must be empty after a successful payment getByText('Giỏ hàng của bạn đang trống') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Giỏ hàng của bạn đang trống')\u001b[22m\n\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:116:92",
+                    "location": {
+                      "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                      "column": 92,
+                      "line": 116
+                    },
+                    "snippet": " \u001b[90m 114 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Quay lại trang chủ'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 115 |\u001b[39m         \u001b[36mawait\u001b[39m cartLink(page)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m         \u001b[36mawait\u001b[39m expect(emptyCartText(page)\u001b[33m,\u001b[39m \u001b[32m'cart must be empty after a successful payment'\u001b[39m)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 118 |\u001b[39m       }\n \u001b[90m 119 |\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                        "column": 92,
+                        "line": 116
+                      },
+                      "message": "Error: cart must be empty after a successful payment\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Giỏ hàng của bạn đang trống')\nExpected: visible\nTimeout: 7000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - cart must be empty after a successful payment getByText('Giỏ hàng của bạn đang trống') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Giỏ hàng của bạn đang trống')\u001b[22m\n\n\n \u001b[90m 114 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Quay lại trang chủ'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 115 |\u001b[39m         \u001b[36mawait\u001b[39m cartLink(page)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m         \u001b[36mawait\u001b[39m expect(emptyCartText(page)\u001b[33m,\u001b[39m \u001b[32m'cart must be empty after a successful payment'\u001b[39m)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m         \u001b[36mbreak\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 118 |\u001b[39m       }\n \u001b[90m 119 |\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts:116:92\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:20.239Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C10-R5-after-a8273--checkout-the-cart-is-empty-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C10-R5-after-a8273--checkout-the-cart-is-empty-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr08-checkout-C10-R5-after-a8273--checkout-the-cart-is-empty-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr08-checkout.spec.ts",
+                    "column": 92,
+                    "line": 116
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-1acb685e1ede652d1e3a",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C11 R5: when the payment is refused the cart keeps its products and no success page is shown",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1163,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:28.940Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-84d979484318de6121ed",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C12 R1: a visitor who is not logged in is sent to the login page from the cart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "NOTE",
+                  "description": "C12: message shown to the visitor = \"Bạn cần đăng nhập để thanh toán!\""
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 695,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:30.180Z",
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "C12: message shown to the visitor = \"Bạn cần đăng nhập để thanh toán!\""
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-ffe8de9de6de86088603",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C13 R1: a visitor who opens the checkout page directly cannot complete a payment",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:30.885Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-4434e53f89a550e49963",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C14 Checkout with an empty cart (SRS unclear: is it allowed?)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "CLARIFY",
+                  "description": "C14: checkout button on empty cart: hidden; forced checkout: SUCCESS page shown, orders created=1 (SRS silent, recorded only)"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4550,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:31.535Z",
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "C14: checkout button on empty cart: hidden; forced checkout: SUCCESS page shown, orders created=1 (SRS silent, recorded only)"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-9b755c3981db551f8eec",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        },
+        {
+          "title": "C15 Shipping address at checkout (API spec asks for it, SRS FR-08 does not mention it)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "CLARIFY",
+                  "description": "C15: address field on checkout page=false, stored shipping_address=null (API spec requires it, SRS silent)"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T00:26:36.092Z",
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "C15: address field on checkout page=false, stored shipping_address=null (API spec requires it, SRS silent)"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "73e01848b7ce7ee3ad28-21e43a04909d48aac841",
+          "file": "fr08-checkout.spec.ts",
+          "line": 61,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-16T00:26:02.216Z",
+    "duration": 34829.542,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

@@ -12,5 +12,8 @@
     "summary": "node scripts/summarize.js",
     "gitlog": "node scripts/git-log.js",
     "whoami": "whoami && hostname"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
   }
 }

@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import type { APIRequestContext, Page } from '@playwright/test';
+import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { API, WEB_URL } from './env';
 
 /**
@@ -25,15 +25,21 @@ export function captureDialogs(page: Page): string[] {
   return messages;
 }
 
-/** Waits up to `ms` for an alert; returns its text, or null when none appeared (e.g. blocked by "required"). */
-export async function waitForDialog(messages: string[], ms = 3_000): Promise<string | null> {
-  const before = messages.length;
+/**
+ * Clicks, then returns the alert text that this click caused (null if none appeared within `ms`).
+ * The position in the message list is remembered BEFORE the click: an alert raised by the page's own
+ * JavaScript appears while the click is still running, so looking for "a new alert" only after the click
+ * would miss it (this was the cause of false failures that depended on the browser).
+ */
+export async function clickAndWaitDialog(messages: string[], target: Locator, ms = 4_000): Promise<string | null> {
+  const mark = messages.length;
+  await target.click();
   try {
-    await expect.poll(() => messages.length, { timeout: ms }).toBeGreaterThan(before);
+    await expect.poll(() => messages.length, { timeout: ms }).toBeGreaterThan(mark);
   } catch {
     return null;
   }
-  return messages[messages.length - 1];
+  return messages[mark];
 }
 
 /** A fresh account with a known password, so tests never share state and never lock the shared accounts. */
