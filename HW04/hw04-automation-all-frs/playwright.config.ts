@@ -31,6 +31,7 @@ export default defineConfig({
     ['json', { outputFile: REPORT_JSON }],
   ],
   use: {
+    locale: 'en-US', // money / number formats shown by the SUT must not depend on the OS language of the machine
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
     actionTimeout: 10_000,

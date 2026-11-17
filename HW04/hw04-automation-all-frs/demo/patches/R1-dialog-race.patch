@@ -1,0 +1,20 @@
+--- a/tests/helpers/web.ts
++++ b/tests/helpers/web.ts
+@@ -25,10 +25,15 @@
+   return messages;
+ }
+ 
+-/** Clicks, then returns the alert text that this click caused (null if none appeared within `ms`). */
++/**
++ * Clicks, then returns the alert text that this click caused (null if none appeared within `ms`).
++ * The position in the message list is remembered BEFORE the click: an alert raised by the page's own
++ * JavaScript appears while the click is still running, so looking for "a new alert" only after the click
++ * would miss it (this was the cause of false failures that depended on the browser).
++ */
+ export async function clickAndWaitDialog(messages: string[], target: Locator, ms = 4_000): Promise<string | null> {
++  const mark = messages.length;
+   await target.click();
+-  const mark = messages.length; // position is taken AFTER the click
+   try {
+     await expect.poll(() => messages.length, { timeout: ms }).toBeGreaterThan(mark);
+   } catch {

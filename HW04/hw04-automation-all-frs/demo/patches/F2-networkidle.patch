@@ -1,0 +1,12 @@
+--- a/tests/fr04-profile.spec.ts
++++ b/tests/fr04-profile.spec.ts
+@@ -111,7 +111,8 @@
+         await expect(profileLink(page)).toContainText(row.payload); // the tag is visible as text
+         await expect(profileLink(page).locator('b')).toHaveCount(0); // and was not turned into an element
+       } else {
+-        await page.waitForTimeout(500);
++        // Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.
++        await page.waitForLoadState('networkidle');
+         expect(await page.evaluate(() => (window as any).__xss), 'script from the name must not run').toBeUndefined();
+         await expect(profileLink(page).locator('img')).toHaveCount(0);
+       }
