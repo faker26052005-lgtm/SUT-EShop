@@ -12,6 +12,7 @@
     "title": "A wrong password is rejected at the admin login",
     "kind": "ui-login",
     "account": "throwaway-wrong-password",
+    "password": "WrongPass1!",
     "expect": "reject",
     "source": "SRS FR-12"
   },
