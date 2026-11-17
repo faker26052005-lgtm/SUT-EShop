@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
-import { API, WEB_URL } from './env';
+import { API, DEFAULTS, WEB_URL } from './env';
 
 /**
  * Helpers for the customer web (port 5173). Facts about the SUT that shape them:
@@ -43,9 +43,9 @@ export async function clickAndWaitDialog(messages: string[], target: Locator, ms
 }
 
 /** A fresh account with a known password, so tests never share state and never lock the shared accounts. */
-export async function newSession(request: APIRequestContext, name = 'HW04 User'): Promise<Session> {
+export async function newSession(request: APIRequestContext, name = DEFAULTS.defaultUserName): Promise<Session> {
   const email = `hw04.${Date.now()}.${Math.floor(Math.random() * 100000)}@example.com`;
-  const password = 'Throwaway1!';
+  const password = DEFAULTS.throwawayPassword;
   const reg = await request.post(`${API}/register`, { data: { name, email, password } });
   expect(reg.ok(), 'register throwaway user').toBeTruthy();
   const login = await request.post(`${API}/login`, { data: { email, password } });

@@ -6,3 +6,6 @@ export const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:5174';
 
 export type Account = { email: string; password: string };
 export const ACCOUNTS = loadData<{ admin: Account; user: Account }>('accounts.json');
+export const DEFAULTS = loadData<{
+  throwawayName: string; defaultUserName: string; throwawayPassword: string; shippingAddress: string; seedOrderAmount: number;
+}>('defaults.json');

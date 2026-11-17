@@ -43,6 +43,8 @@ async function addToCartByUi(page: Page, products: Product[], picks: number[]): 
 }
 
 const sum = (ps: Product[]) => ps.reduce((t, p) => t + Number(p.price), 0);
+// The page formats money in the BROWSER locale (pinned to en-US in playwright.config.ts); never use the Node/OS locale here.
+const money = (n: number) => Number(n).toLocaleString('en-US');
 
 async function toCheckoutByUi(page: Page) {
   await cartLink(page).click();
@@ -79,6 +81,11 @@ for (const row of rows) {
         }
         // R4: the stored total is the real cart total, whatever the browser sent
         // (if the server refuses the tampered request and stores nothing, that is also correct)
+        expect(orders.length, 'a single checkout must create at most one order').toBeLessThanOrEqual(1);
+        if (orders.length === 0) {
+          // storing nothing is acceptable only as a visible refusal (error alert); a success page with no stored order must fail
+          expect(dialogs.length, 'a refused checkout must show an error to the user').toBeGreaterThan(0);
+        }
         for (const o of orders) expect(Number(o.total_amount)).toBe(sum(chosen));
         break;
       }
@@ -93,11 +100,11 @@ for (const row of rows) {
           for (let i = 0; i < chosen.length; i++) {
             await expect(items.nth(i)).toContainText(chosen[i].name);
             await expect(items.nth(i)).toContainText(' x 1 ');
-            await expect(items.nth(i)).toContainText(Number(chosen[i].price).toLocaleString());
+            await expect(items.nth(i)).toContainText(money(chosen[i].price));
           }
         } else if (row.check === 'total-value') {
           await expect(totalInput(page)).toHaveValue(String(sum(chosen)));
-          await expect(page.getByText(`Tổng thanh toán: ${sum(chosen).toLocaleString()} ₫`)).toBeVisible();
+          await expect(page.getByText(`Tổng thanh toán: ${money(sum(chosen))} ₫`)).toBeVisible();
         } else {
           // SRS FR-08: the total is shown to the user, it must not be an editable field
           await expect(totalInput(page), 'the payment total must be read-only').toBeDisabled();

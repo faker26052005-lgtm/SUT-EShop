@@ -57,6 +57,7 @@ type AccessCase = {
   title: string;
   kind: 'ui-login' | 'no-token' | 'inject-token';
   account?: 'admin' | 'user' | 'throwaway-wrong-password';
+  password?: string;
   token?: 'user' | 'literal';
   tokenValue?: string;
   expect: 'reject' | 'dashboard' | 'login-form';
@@ -216,7 +217,7 @@ test.describe('FR-13 / FR-12 Admin access', () => {
       if (ac.kind === 'ui-login') {
         const creds =
           ac.account === 'throwaway-wrong-password'
-            ? { email: (await registerThrowawayUser(request)).email, password: 'WrongPass1!' }
+            ? { email: (await registerThrowawayUser(request)).email, password: ac.password as string }
             : ACCOUNTS[ac.account as 'admin' | 'user'];
 
         await openAdmin(page);

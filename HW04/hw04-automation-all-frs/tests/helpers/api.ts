@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import type { APIRequestContext } from '@playwright/test';
-import { ACCOUNTS, API } from './env';
+import { ACCOUNTS, API, DEFAULTS } from './env';
 
 /**
  * API helpers used ONLY to arrange state (log in, create orders, move them through the state machine)
@@ -27,8 +27,8 @@ export async function loginApi(request: APIRequestContext, who: 'admin' | 'user'
 /** A one-off account, so that wrong-password tests never touch (and never lock) the shared accounts. */
 export async function registerThrowawayUser(request: APIRequestContext): Promise<{ email: string; password: string }> {
   const email = `hw04.${Date.now()}.${Math.floor(Math.random() * 10000)}@example.com`;
-  const password = 'Throwaway1!';
-  const res = await request.post(`${API}/register`, { data: { name: 'HW04 Throwaway', email, password } });
+  const password = DEFAULTS.throwawayPassword;
+  const res = await request.post(`${API}/register`, { data: { name: DEFAULTS.throwawayName, email, password } });
   expect(res.ok(), 'throwaway user registration').toBeTruthy();
   return { email, password };
 }
@@ -36,7 +36,7 @@ export async function registerThrowawayUser(request: APIRequestContext): Promise
 export async function createOrder(request: APIRequestContext, userToken: string, amount: number): Promise<number> {
   const res = await request.post(`${API}/checkout`, {
     headers: bearer(userToken),
-    data: { total_amount: amount, shipping_address: '123 Le Loi, Q1, TP.HCM' },
+    data: { total_amount: amount, shipping_address: DEFAULTS.shippingAddress },
   });
   expect(res.ok(), `checkout with total_amount=${amount}`).toBeTruthy();
   return (await res.json()).orderId as number;
@@ -80,6 +80,6 @@ export const revenueOf = (orders: Order[]): number =>
 export async function ensureAtLeastOneOrder(request: APIRequestContext): Promise<void> {
   const adminToken = await loginApi(request, 'admin');
   if ((await listOrders(request, adminToken)).length === 0) {
-    await createOrder(request, await loginApi(request, 'user'), 1000);
+    await createOrder(request, await loginApi(request, 'user'), DEFAULTS.seedOrderAmount);
   }
 }

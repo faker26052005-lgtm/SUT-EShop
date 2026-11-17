@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 import { ADMIN_URL } from './env';
 import type { Status } from './api';
@@ -21,7 +21,12 @@ export const ACTION_BUTTON: Partial<Record<Status, string>> = {
 };
 
 /** "6,200,000 ₫" (en-US) and "6.200.000 ₫" (vi-VN) both become 6200000, so the locale of each browser does not matter. */
-export const digits = (text: string): number => Number((text.match(/\d/g) ?? []).join(''));
+export const digits = (text: string): number => {
+  const found = text.match(/\d/g);
+  // "NaN", "-" or an empty tile must NOT be read as 0: that would let every "revenue did not change" case pass.
+  // NaN (not an exception) on purpose: inside expect.poll() a thrown error aborts the poll, a NaN just keeps polling.
+  return found ? Number(found.join('')) : NaN;
+};
 
 /** Native alert() boxes are auto-dismissed by Playwright; this keeps their text so a test can read it. */
 export function captureDialogs(page: Page): string[] {
@@ -51,7 +56,10 @@ export async function openAdmin(page: Page, opts: { token?: string; waitForOrder
           .catch(() => null)
       : null;
   await page.goto(ADMIN_URL);
-  if (ordersLoaded) await ordersLoaded;
+  if (ordersLoaded && (await ordersLoaded) === null) {
+    // Not fatal here (waitDashboardLoaded decides), but it must be visible in the report instead of being swallowed.
+    test.info().annotations.push({ type: 'WARN', description: 'GET /api/admin/orders was not observed within 10 s after opening the admin web' });
+  }
 }
 
 export const loginHeading = (page: Page): Locator => page.getByRole('heading', { name: 'Admin Login' });

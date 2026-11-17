@@ -17,7 +17,7 @@ const base = loadData<{ phoneTests: Baseline; fieldTests: Baseline }>('fr04-base
 const phones = loadData<{ id: string; title: string; phone: string; expect: 'accept' | 'reject' | 'clarify'; source: string }[]>('fr04-phone.json');
 const fields = loadData<{ id: string; title: string; field: 'name' | 'address'; value?: string; repeat?: { char: string; count: number }; expect: 'accept' | 'clarify'; source: string }[]>('fr04-fields.json');
 const security = loadData<{ id: string; title: string; payload: string; check: 'text' | 'no-script'; source: string }[]>('fr04-security.json');
-const misc = loadData<{ id: string; title: string; kind: 'email-disabled' | 'guest' | 'ui-login'; source: string }[]>('fr04-misc.json');
+const misc = loadData<{ id: string; title: string; kind: 'email-disabled' | 'guest' | 'ui-login'; accountName?: string; source: string }[]>('fr04-misc.json');
 
 const SUCCESS = 'Cập nhật thành công!';
 
@@ -111,7 +111,8 @@ test.describe('FR-04 output escaping (SRS SEC-04)', () => {
         await expect(profileLink(page)).toContainText(row.payload); // the tag is visible as text
         await expect(profileLink(page).locator('b')).toHaveCount(0); // and was not turned into an element
       } else {
-        await page.waitForTimeout(500);
+        // Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.
+        await page.waitForLoadState('networkidle');
         expect(await page.evaluate(() => (window as any).__xss), 'script from the name must not run').toBeUndefined();
         await expect(profileLink(page).locator('img')).toHaveCount(0);
       }
@@ -134,14 +135,15 @@ test.describe('FR-04 access and read-only fields', () => {
         await expect(email).toHaveValue(s.email);
         await expect(email).toBeDisabled();
       } else {
-        const s = await newSession(request, 'Ten Dang Nhap');
+        const accountName = row.accountName as string;
+        const s = await newSession(request, accountName);
         await page.goto(`${WEB_URL}/login`);
         await page.locator('xpath=//label[normalize-space()="Username"]/following-sibling::input').fill(s.email);
         await page.locator('xpath=//label[normalize-space()="Mật khẩu"]/following-sibling::input').fill(s.password);
         await page.getByRole('button', { name: 'Sign In' }).click();
-        await expect(profileLink(page)).toContainText('Chào, Ten Dang Nhap');
+        await expect(profileLink(page)).toContainText(`Chào, ${accountName}`);
         await profileLink(page).click();
-        await expect(nameInput(page)).toHaveValue('Ten Dang Nhap');
+        await expect(nameInput(page)).toHaveValue(accountName);
       }
     });
   }
