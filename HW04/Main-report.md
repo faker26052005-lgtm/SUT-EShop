@@ -2,8 +2,6 @@
 
 Sinh viên: MSSV 23120056. Công cụ: Playwright (TypeScript), chạy Chromium, Firefox và WebKit. SUT: EShop (backend 3000, web khách 5173, admin 5174). Ba feature: **FR-04** (hồ sơ cá nhân), **FR-08** (thanh toán), **FR-13** (dashboard admin).
 
-Báo cáo gồm hai phần: **Phần 1** tổng hợp kết quả automation và các phát hiện của cả ba feature; **Phần 2** là review / gap analysis của các script do AI sinh, cùng chi tiết các chỉnh sửa đã thực hiện.
-
 ---
 
 ## Phần 1. Automation report: tổng hợp phát hiện
@@ -367,14 +365,6 @@ Tác động: không đổi kết quả pass/fail; báo cáo HTML hiển thị c
 
 Đã làm: kiểm tra kiểu toàn bộ `tests/` bằng `tsc --strict`, nạp danh sách test bằng `playwright test --list` (60 test mỗi trình duyệt, 180 test tổng cộng, khớp `docs/test-summary.md`), và thử riêng hàm `digits` với các chuỗi `6,200,000 ₫`, `6.200.000 ₫`, `NaN`, rỗng, `0 ₫`. **Chưa chạy các test với SUT thật** sau các chỉnh sửa F1-F5.
 
-Kết quả kỳ vọng khi chạy lại `npm run test:all` (nếu khác, đó là regression do chỉnh sửa):
-
-| Feature | Executed / lượt | Passed | Failed | Kết quả chạy lại |
-| :-- | --: | --: | --: | :-- |
-| FR-04 | 26 | 18 | 8 | [điền sau khi chạy lại] |
-| FR-08 | 15 | 11 | 4 | [điền sau khi chạy lại] |
-| FR-13 | 19 | 11 | 8 | [điền sau khi chạy lại] |
-
 ### 2.6 Bài học và khuyến nghị cho prompt
 
 - **Cung cấp môi trường thật:** nói rõ hệ điều hành, locale, cách bật SUT, và đưa cho AI đoạn mã nguồn giao diện liên quan; phần lớn lỗi R1, R2 và các lỗi selector đến từ việc AI không thấy SUT.
@@ -382,4 +372,3 @@ Kết quả kỳ vọng khi chạy lại `npm run test:all` (nếu khác, đó l
 - **Yêu cầu assertion không rỗng:** mỗi nhánh của test phải có ít nhất một assertion; vòng lặp trên danh sách phải kiểm tra danh sách không rỗng khi cần.
 - **Đối chiếu ghi chú với test:** mỗi quyết định trong `spec-notes.md` cần có test tương ứng hoặc ghi chú phạm vi (như C10).
 - **Kiểm chứng đề xuất sửa trước khi áp dụng:** cả ý định "ném lỗi" ở F1 lẫn đề xuất thu hẹp assertion ở S11/S12 đều cần đọc mã nguồn thư viện hoặc đối chiếu bug đã biết.
-- **Review ngoài bằng một AI khác:** lượt rà soát lại code bắt được các lỗi mà chính lượt sinh code không thấy (nhóm assertion yếu, chờ cố định, thiếu edge case), nên nên đưa vào quy trình.

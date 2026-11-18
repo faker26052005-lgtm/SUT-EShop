@@ -1,0 +1,4 @@
+{
+  "admin": { "email": "REPLACE_WITH_ADMIN_EMAIL_FROM_THE_SRS", "password": "REPLACE_WITH_ADMIN_PASSWORD" },
+  "user": { "email": "REPLACE_WITH_USER_EMAIL_FROM_THE_SRS", "password": "REPLACE_WITH_USER_PASSWORD" }
+}

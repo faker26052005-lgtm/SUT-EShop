@@ -31,12 +31,12 @@ Playwright (TypeScript), data-driven, chạy trên Chromium / Firefox / WebKit. 
 
 | No. | Tiêu chí | Điểm | Tự chấm |
 | :-: | :-- | :-: | :-: |
-| 1 | Task 1 - Feature A (FR-04) | 25 | |
-| 1 | Task 1 - Feature B (FR-08) | 25 | |
-| 1 | Task 1 - Feature C (FR-13) | 25 | |
-| 2 | Task 2 - Demo video | 15 | |
-| 3 | Agent Skills | 10 | |
-| | **Tổng** | **100** | |
+| 1 | Task 1 - Feature A (FR-04) | 25 | 24 |
+| 1 | Task 1 - Feature B (FR-08) | 25 | 24 |
+| 1 | Task 1 - Feature C (FR-13) | 25 | 24 |
+| 2 | Task 2 - Demo video | 15 | 14 |
+| 3 | Agent Skills | 10 | 14 |
+| | **Tổng** | **100** | 95 |
 
 ## Tóm tắt kết quả kiểm thử
 
@@ -89,4 +89,4 @@ Lượt chạy trình duyệt: **9** (yêu cầu >= 9). Số tính năng: **3**.
 - Số test case tự động hóa / thực thi / pass / fail: 60 / 180 / 120 / 60
 - Số lượt chạy trình duyệt: 9
 - Số bug: 20
-- Link video demo: 
+- Link video demo: Demo-videos.txt
