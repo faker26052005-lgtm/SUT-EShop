@@ -4,7 +4,8 @@
     "name": "eshop api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "56201103",
-    "_collection_link": "https://go.postman.co/collection/56201103-1c5d9c72-1b2c-422d-a7eb-98568a93da61?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/56201103-1c5d9c72-1b2c-422d-a7eb-98568a93da61?source=collection_link",
+    "description": "CÁCH CHẠY: (1) Khởi động lại server (node server.js) trước MỖI lần chạy để reset dữ liệu. (2) Chạy tuần tự từ trên xuống: Login User, Login Admin trước, các request sau dùng lại token qua biến collection. (3) Không chạy chồng với bộ test tổng hợp mà không khởi động lại server. Assertion viết theo hành vi MONG ĐỢI theo đặc tả/SRS: assertion đỏ nghĩa là hệ thống lỗi, không phải lỗi script. Kết quả kỳ vọng trên SUT hiện tại: 68 request, 131 assertion, 18 đỏ."
   },
   "item": [
     {
@@ -519,7 +520,69 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Reset password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\":\"{{newUserEmail}}\",\"resetToken\":\"{{resetToken}}\",\"newPassword\":\"NewPassword123!\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/reset-password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "reset-password"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "46"
+                },
+                {
+                  "key": "date",
+                  "value": "Tue, 13 Oct 2026 12:21:03 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Password reset successfully\"\n}"
+            }
+          ]
         }
       ]
     },
@@ -1034,7 +1097,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Bị chặn 401/403\", () => pm.expect(pm.response.code).to.be.oneOf([401,403]));\r\npm.test(\"status code is 200\", () => pm.expect(pm.response.code).to.eql(200));\r\n"
+                  "pm.test(\"Bị chặn 401/403\", () => pm.expect(pm.response.code).to.be.oneOf([401,403]));\r\n"
                 ]
               }
             }
@@ -5644,8 +5707,8 @@
                   ]
                 }
               },
-              "status": "Not Found",
-              "code": 404,
+              "status": "Bad Request",
+              "code": 400,
               "_postman_previewlanguage": "json",
               "header": [
                 {
@@ -5662,11 +5725,7 @@
                 },
                 {
                   "key": "content-length",
-                  "value": "27"
-                },
-                {
-                  "key": "etag",
-                  "value": "W/\"1b-G7RX01EQFHhrsSpXHe3p7uxrQrs\""
+                  "value": "42"
                 },
                 {
                   "key": "date",
@@ -5682,7 +5741,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n  \"error\": \"Order not found\"\n}"
+              "body": "{\n  \"error\": \"Cannot cancel this order.\"\n}"
             }
           ]
         },
@@ -6761,11 +6820,7 @@
                 },
                 {
                   "key": "content-length",
-                  "value": "56"
-                },
-                {
-                  "key": "etag",
-                  "value": "W/\"38-DSqpzP2mPiG2WzFgxBgTUmGusrA\""
+                  "value": "62"
                 },
                 {
                   "key": "date",
@@ -6781,7 +6836,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n  \"error\": \"Invalid state transition from pending to abc\"\n}"
+              "body": "{\n  \"error\": \"Invalid state transition from canceled to abc\"\n}"
             }
           ]
         }
