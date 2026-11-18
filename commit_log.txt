@@ -1,0 +1,1331 @@
+================================================================================
+GIT COMMIT LOG - BRANCH: KIEN-HW04
+================================================================================
+Repository: faker26052005-lgtm/SUT-EShop
+Repository URL: https://github.com/faker26052005-lgtm/SUT-EShop
+Branch: KIEN-HW04
+Base Branch (Inherited): KIEN-HW03
+Total Commits in this Branch: 12
+Generated At: 2026-11-18T03:15:05.958Z
+================================================================================
+
+--- SUMMARY (COMMIT LIST) ---
+d01ae1b Finalize HW04 reports, demo video references, and installed skills
+1a0734c add Playwright agent-skill, AI audit reports and updated review docs for HW04
+480d629 add Main-report.md to HW04
+6b4606d refactoring and add evidences
+d00ae49 prepared ai audit & critique
+a28c493 Configure Playwright locale and add demo assets for HW04
+583a49c Update review documents and add demo guide for HW04
+02f3e9e Fix test race conditions, locale formatting, and refactor test helpers in HW04
+4a5afbc Update test data in HW04 automation
+391c385 adjustment to review files
+6267645 finishing base of task 1 and add some back up
+c77e01f initial test and prepare a small mock test
+
+================================================================================
+--- DETAILED COMMIT LOG ---
+================================================================================
+
+commit d01ae1b965ce50415b88c6a9b1693700ede1fdc6
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-18 10:13:46 +0700
+
+    Finalize HW04 reports, demo video references, and installed skills
+
+ .../skills/data-driven-playwright-testing/SKILL.md |  97 ++++++++++++
+ .../examples/eshop-fr04/README.md                  |  21 +++
+ .../examples/eshop-fr04/data/fr04-baseline.json    |   5 +
+ .../examples/eshop-fr04/data/fr04-fields.json      |   9 ++
+ .../examples/eshop-fr04/data/fr04-misc.json        |   5 +
+ .../examples/eshop-fr04/data/fr04-phone.json       |  16 ++
+ .../examples/eshop-fr04/data/fr04-security.json    |  16 ++
+ .../examples/eshop-fr04/fr04-profile.spec.ts       | 150 ++++++++++++++++++
+ .../resources/conventions.md                       |  50 ++++++
+ .../resources/eshop/data/accounts.json             |   4 +
+ .../resources/eshop/data/defaults.json             |   7 +
+ .../resources/eshop/tests/helpers/admin.ts         |  85 ++++++++++
+ .../resources/eshop/tests/helpers/api.ts           |  85 ++++++++++
+ .../resources/eshop/tests/helpers/env.ts           |  11 ++
+ .../resources/eshop/tests/helpers/web.ts           |  77 ++++++++++
+ .../resources/review-checklist.md                  |  67 ++++++++
+ .../resources/templates/docs/bug-list.md.tpl       |   4 +
+ .../resources/templates/docs/bug-report.md.tpl     |  27 ++++
+ .../resources/templates/docs/spec-notes.md.tpl     |   8 +
+ .../resources/templates/feature/cases.json.tpl     |   5 +
+ .../templates/feature/feature.spec.ts.tpl          |  55 +++++++
+ .../resources/templates/feature/review.md.tpl      |  37 +++++
+ .../resources/templates/project/README.md.tpl      |  13 ++
+ .../resources/templates/project/gitignore.tpl      |   5 +
+ .../resources/templates/project/package.json.tpl   |  17 ++
+ .../templates/project/playwright.config.ts.tpl     |  37 +++++
+ .../templates/project/scripts/run-matrix.js        |  54 +++++++
+ .../templates/project/scripts/summarize.js         |  67 ++++++++
+ .../templates/project/tests/helpers/data.ts        |  42 +++++
+ .../templates/project/tests/helpers/dialogs.ts     |  30 ++++
+ .../templates/project/tests/helpers/env.ts.tpl     |   3 +
+ .../templates/project/tests/helpers/numbers.ts     |  14 ++
+ .../resources/templates/project/tsconfig.json.tpl  |  13 ++
+ .../scripts/compare-runs.js                        |  60 ++++++++
+ .../scripts/lint-tests.js                          | 171 +++++++++++++++++++++
+ .../scripts/scaffold-feature.js                    |  78 ++++++++++
+ .../scripts/scaffold-project.js                    | 111 +++++++++++++
+ HW04/Demo-videos.txt                               |   0
+ HW04/Main-report.md                                |  11 --
+ HW04/README.md                                     |  14 +-
+ 40 files changed, 1563 insertions(+), 18 deletions(-)
+
+commit 1a0734cceda217eea2f9c05fc184ae9829f969e4
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-18 09:29:10 +0700
+
+    add Playwright agent-skill, AI audit reports and updated review docs for HW04
+
+ HW04/README.md                                     |   55 +-
+ .../data-driven-playwright-testing/SKILL.md        |   97 ++
+ .../examples/eshop-fr04/README.md                  |   21 +
+ .../examples/eshop-fr04/data/fr04-baseline.json    |    5 +
+ .../examples/eshop-fr04/data/fr04-fields.json      |    9 +
+ .../examples/eshop-fr04/data/fr04-misc.json        |    5 +
+ .../examples/eshop-fr04/data/fr04-phone.json       |   16 +
+ .../examples/eshop-fr04/data/fr04-security.json    |   16 +
+ .../examples/eshop-fr04/fr04-profile.spec.ts       |  150 +++
+ .../resources/conventions.md                       |   50 +
+ .../resources/eshop/data/accounts.json             |    4 +
+ .../resources/eshop/data/defaults.json             |    7 +
+ .../resources/eshop/tests/helpers/admin.ts         |   85 ++
+ .../resources/eshop/tests/helpers/api.ts           |   85 ++
+ .../resources/eshop/tests/helpers/env.ts           |   11 +
+ .../resources/eshop/tests/helpers/web.ts           |   77 ++
+ .../resources/review-checklist.md                  |   67 ++
+ .../resources/templates/docs/bug-list.md.tpl       |    4 +
+ .../resources/templates/docs/bug-report.md.tpl     |   27 +
+ .../resources/templates/docs/spec-notes.md.tpl     |    8 +
+ .../resources/templates/feature/cases.json.tpl     |    5 +
+ .../templates/feature/feature.spec.ts.tpl          |   55 +
+ .../resources/templates/feature/review.md.tpl      |   37 +
+ .../resources/templates/project/README.md.tpl      |   13 +
+ .../resources/templates/project/gitignore.tpl      |    5 +
+ .../resources/templates/project/package.json.tpl   |   17 +
+ .../templates/project/playwright.config.ts.tpl     |   37 +
+ .../templates/project/scripts/run-matrix.js        |   54 +
+ .../templates/project/scripts/summarize.js         |   67 ++
+ .../templates/project/tests/helpers/data.ts        |   42 +
+ .../templates/project/tests/helpers/dialogs.ts     |   30 +
+ .../templates/project/tests/helpers/env.ts.tpl     |    3 +
+ .../templates/project/tests/helpers/numbers.ts     |   14 +
+ .../resources/templates/project/tsconfig.json.tpl  |   13 +
+ .../scripts/compare-runs.js                        |   60 ++
+ .../scripts/lint-tests.js                          |  171 ++++
+ .../scripts/scaffold-feature.js                    |   78 ++
+ .../scripts/scaffold-project.js                    |  111 ++
+ HW04/ai-audit/AI_Audit_Report.md                   |   98 ++
+ HW04/ai-audit/AI_critique.md                       |    7 +
+ HW04/ai-audit/AUDIT_LOG.md                         |   39 -
+ HW04/ai-audit/claude-session-export.md             | 1071 ++++++++++++++++++++
+ HW04/ai-audit/exports/.gitkeep                     |    0
+ HW04/docs/review/fr04-review.md                    |   24 +-
+ HW04/docs/review/fr08-review.md                    |   25 +-
+ HW04/docs/review/fr13-review.md                    |   28 +-
+ HW04/docs/test-summary.md                          |    6 +-
+ 47 files changed, 2815 insertions(+), 94 deletions(-)
+
+commit 480d6298b8051c75f8ea1717f626d3a461363f91
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-18 08:47:31 +0700
+
+    add Main-report.md to HW04
+
+ HW04/Main-report.md | 385 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 385 insertions(+)
+
+commit 6b4606d4ab9feb38481c5875809d7b96f33467b1
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-18 08:36:59 +0700
+
+    refactoring and add evidences
+
+ HW04/{hw04-automation-FR13 => }/.gitignore         |    0
+ HW04/{hw04-automation-FR13 => }/README.md          |    0
+ .../docs => }/ai-audit/AUDIT_LOG.md                |    0
+ .../bugs => ai-audit/exports}/.gitkeep             |    0
+ .../docs/ai-audit/exports => bugs}/.gitkeep        |    0
+ .../{hw04-automation-all-frs => }/bugs/BUG_LIST.md |    0
+ .../bugs/FR04-BUG-01.md                            |    0
+ .../bugs/FR04-BUG-02.md                            |    0
+ .../bugs/FR04-BUG-03.md                            |    0
+ .../bugs/FR08-BUG-01.md                            |    0
+ .../bugs/FR08-BUG-02.md                            |    0
+ .../bugs/FR08-BUG-03.md                            |    0
+ .../bugs/FR13-BUG-01.md                            |    0
+ .../bugs/FR13-BUG-02.md                            |    0
+ .../bugs/FR13-BUG-03.md                            |    0
+ HW04/bugs/screenshots/FR04-BUG-01.png              |  Bin 0 -> 111007 bytes
+ HW04/bugs/screenshots/FR04-BUG-02.png              |  Bin 0 -> 109090 bytes
+ HW04/bugs/screenshots/FR04-BUG-03.png              |  Bin 0 -> 92944 bytes
+ HW04/bugs/screenshots/FR08-BUG-01-a.png            |  Bin 0 -> 100002 bytes
+ HW04/bugs/screenshots/FR08-BUG-01-b.png            |  Bin 0 -> 81121 bytes
+ HW04/bugs/screenshots/FR08-BUG-02.png              |  Bin 0 -> 100002 bytes
+ HW04/bugs/screenshots/FR08-BUG-03.png              |  Bin 0 -> 73571 bytes
+ HW04/bugs/screenshots/FR13-BUG-01-a.png            |  Bin 0 -> 89385 bytes
+ HW04/bugs/screenshots/FR13-BUG-01-b.png            |  Bin 0 -> 76433 bytes
+ HW04/bugs/screenshots/FR13-BUG-02.png              |  Bin 0 -> 92551 bytes
+ HW04/bugs/screenshots/FR13-BUG-03.png              |  Bin 0 -> 288832 bytes
+ HW04/{hw04-automation-FR13 => }/data/accounts.json |    0
+ .../data/defaults.json                             |    0
+ .../data/fr04-baseline.json                        |    0
+ .../data/fr04-fields.json                          |    0
+ .../data/fr04-misc.json                            |    0
+ .../data/fr04-phone.json                           |    0
+ .../data/fr04-security.json                        |    0
+ .../data/fr08-checkout.json                        |    0
+ .../data/fr13-access.json                          |    0
+ .../data/fr13-dashboard.json                       |    0
+ .../demo/compare-runs.js                           |    0
+ .../demo/digits-poll.demo.spec.ts                  |    0
+ .../demo/patches/F1-digits.patch                   |    0
+ .../demo/patches/F2-networkidle.patch              |    0
+ .../demo/patches/F3-locale.patch                   |    0
+ .../demo/patches/F4-orders-guard.patch             |    0
+ .../demo/patches/F5-warn.patch                     |    0
+ .../demo/patches/R1-dialog-race.patch              |    0
+ .../demo/playwright.demo.config.ts                 |    0
+ HW04/{hw04-automation-all-frs => }/docs/errors.md  |    0
+ .../docs/review/fr04-review.md                     |    0
+ .../docs/review/fr08-review.md                     |    0
+ .../docs/review/fr13-review.md                     |    0
+ HW04/{hw04-automation-FR13 => }/docs/spec-notes.md |    0
+ .../docs/test-summary.md                           |    0
+ HW04/hw04-automation-FR13/data/fr13-access.json    |   50 -
+ .../docs/review/fr13-review.md                     |   28 -
+ HW04/hw04-automation-FR13/package.json             |   19 -
+ HW04/hw04-automation-FR13/playwright.config.ts     |   43 -
+ HW04/hw04-automation-FR13/reports/.gitkeep         |    0
+ .../hw04-automation-FR13/reports/_json/latest.json |  880 -----------
+ .../6dcd8de36a6b549501e1f9b4f5d9fe3c91e8a0c2.zip   |  Bin 9354 -> 0 bytes
+ .../e61d26f7956ccb56188993a98297423bd9def3d7.md    |   25 -
+ .../tests/fr13-dashboard.spec.ts                   |  242 ---
+ HW04/hw04-automation-FR13/tests/helpers/admin.ts   |   87 --
+ HW04/hw04-automation-FR13/tests/helpers/api.ts     |   85 --
+ HW04/hw04-automation-FR13/tests/helpers/env.ts     |    8 -
+ HW04/hw04-automation-all-frs.zip                   |  Bin 2002552 -> 0 bytes
+ HW04/hw04-automation-all-frs/.gitignore            |    4 -
+ HW04/hw04-automation-all-frs/README.md             |   47 -
+ HW04/hw04-automation-all-frs/ai-audit/AUDIT_LOG.md |   39 -
+ .../ai-audit/exports/.gitkeep                      |    0
+ HW04/hw04-automation-all-frs/bugs/.gitkeep         |    0
+ HW04/hw04-automation-all-frs/data/accounts.json    |    4 -
+ .../data/fr13-dashboard.json                       |  218 ---
+ HW04/hw04-automation-all-frs/docs/demo-guide.md    |  265 ----
+ HW04/hw04-automation-all-frs/docs/spec-notes.md    |   18 -
+ HW04/hw04-automation-all-frs/package-lock.json     |   60 -
+ .../1c7d0d4a9eaa843ac2b405abfc4e83192e01f4dc.zip   |  Bin 185648 -> 0 bytes
+ .../28cd8e776e0ffe37d539f7148350d1aac5e0e958.zip   |  Bin 166098 -> 0 bytes
+ .../2eda5bea77ebf15ba0091e5f6ffae312deb0131a.png   |  Bin 27007 -> 0 bytes
+ .../35948a24e8279f9489bf58c4aefcafe3d0cc85fb.zip   |  Bin 225551 -> 0 bytes
+ .../3eda17c00546dfd26f2855c6fa2e587bc35f021a.png   |  Bin 26952 -> 0 bytes
+ .../3fb55c6b6c9d1a47581ad71f09df63bb2bcc1b1b.png   |  Bin 26850 -> 0 bytes
+ .../52640c633d0ce8c737f83f1af5ebf0e22b701fa1.zip   |  Bin 186469 -> 0 bytes
+ .../6f54ab99ef453ef66af6c5a658cc2c866bb18588.png   |  Bin 26490 -> 0 bytes
+ .../8c8f7df26dc131a2720539e214ef938af9266c1e.png   |  Bin 27764 -> 0 bytes
+ .../94e93bbd46f81d0aec0d8287db8b2a5a9fb56b48.zip   |  Bin 165332 -> 0 bytes
+ .../b829d47b46810b4cae86f776a4b408d6ef6c4e51.png   |  Bin 26843 -> 0 bytes
+ .../bc81f17f3c587e22e59e12c8ca5c222d53fd9749.png   |  Bin 26919 -> 0 bytes
+ .../d763d208055e1cb522cadb0887ed6008b8fb85cc.png   |  Bin 26865 -> 0 bytes
+ .../e01685dda59156fea987af8c8acfda10b71e141f.zip   |  Bin 262141 -> 0 bytes
+ .../ef823f98fa8b4c5ec9786808be5916376f4fb5dc.zip   |  Bin 166189 -> 0 bytes
+ .../f779fc46266697d076309bfed89aeb1f70a5c8f9.zip   |  Bin 145878 -> 0 bytes
+ .../02f5303de0cd8e93c861013cfbcd7a6572fe8f79.zip   |  Bin 499204 -> 0 bytes
+ .../085a3a6d2faed40fec9b5d6254397dbb73982da8.png   |  Bin 33168 -> 0 bytes
+ .../1455e43fd239340b5b485e79edc1e33fac674fd6.png   |  Bin 32988 -> 0 bytes
+ .../1f608ea694b3c6a0bf2f5b73d5ffa874e14f8feb.png   |  Bin 33161 -> 0 bytes
+ .../3734569f7c21758c4342ac7f75903a81b8fc7ab1.png   |  Bin 33263 -> 0 bytes
+ .../3e8a38dd13ab66186c48e1eaa4ca46cb1b29280e.zip   |  Bin 1127469 -> 0 bytes
+ .../3ee597ef597a7bd2059f01640bed2fd874c69966.zip   |  Bin 230566 -> 0 bytes
+ .../6586acfd0f2bf60a231807dee4cb0cada89ed4e1.png   |  Bin 33166 -> 0 bytes
+ .../6e0ba49b92b9246a448a0b075836eb62275cec88.png   |  Bin 33891 -> 0 bytes
+ .../7f7791807c093f8123a2a20dd3471d4c8ecf8b8b.zip   |  Bin 607606 -> 0 bytes
+ .../a6840ed5f95b80bdb556a60f0731b06567a76930.zip   |  Bin 226362 -> 0 bytes
+ .../bf40faa82d0cb697d75587a5078eb899309939e7.zip   |  Bin 578415 -> 0 bytes
+ .../e31e51357fbb0839c0879bff89807476bf6dc76b.zip   |  Bin 491063 -> 0 bytes
+ .../f6af59c61ae41e4facead68228953fee45bc66b4.png   |  Bin 33071 -> 0 bytes
+ .../f83225e0589d7edad3e3c388814973e24a1c2d57.png   |  Bin 33217 -> 0 bytes
+ .../f8f837447fa7d7fc580ce6f0c4d242e12f17b231.zip   |  Bin 619728 -> 0 bytes
+ .../0e67064005843d6daea928ff5c54e802044545e2.zip   |  Bin 164695 -> 0 bytes
+ .../179ee912e64f84fea5cfb6dda280a09e362f000a.png   |  Bin 74479 -> 0 bytes
+ .../29152b8006abcd4308110ad8eb8385b2b14b1872.zip   |  Bin 184456 -> 0 bytes
+ .../2d0193bec80634e27bc9b7eac0baa82e9e1681d8.zip   |  Bin 157340 -> 0 bytes
+ .../2f15f811a0c834294bb2cf7201c0c0c67e468d45.png   |  Bin 74941 -> 0 bytes
+ .../3606fb1e08943808028f7f0cdacb13dec41a104e.zip   |  Bin 220698 -> 0 bytes
+ .../3e018115e3abc94a280d174510225325ce5632ab.png   |  Bin 75183 -> 0 bytes
+ .../43e7db34d549cffc2b174846a6e84998477cf694.png   |  Bin 74954 -> 0 bytes
+ .../45407f195a694ae956c7173ae165ddc909b096bf.png   |  Bin 73590 -> 0 bytes
+ .../63840c2f19ae98ed6f39c76e99666aeb9e5a8d54.zip   |  Bin 164110 -> 0 bytes
+ .../886f136dcb90bf2d8331602d15a1070dfe3c8a28.zip   |  Bin 165223 -> 0 bytes
+ .../a2aab5aa7247bd767b2dd2bee14b902eaa98e10f.zip   |  Bin 157055 -> 0 bytes
+ .../d253e217b58b0decf6f792170e297f8ac6aaf1e5.png   |  Bin 76619 -> 0 bytes
+ .../e47cb10141bd2b26b93414e102cd5b7ecb813635.png   |  Bin 75006 -> 0 bytes
+ .../e6381553f0bf1f07879a6f044201654da6f92431.png   |  Bin 74846 -> 0 bytes
+ .../eae0f9631bed8cc2add1b251bb7d58c600cefa60.zip   |  Bin 165323 -> 0 bytes
+ HW04/hw04-automation-all-frs/scripts/git-log.js    |   27 -
+ HW04/hw04-automation-all-frs/scripts/run-matrix.js |   49 -
+ HW04/hw04-automation-all-frs/scripts/summarize.js  |   66 -
+ HW04/hw04-automation-all-frs/tests/helpers/data.ts |   11 -
+ HW04/{hw04-automation-FR13 => }/package-lock.json  |    0
+ HW04/{hw04-automation-all-frs => }/package.json    |    0
+ .../playwright.config.ts                           |    0
+ .../reports/_json/fr04-chromium.json               |  173 +--
+ .../reports/_json/fr04-firefox.json                |  169 +--
+ .../reports/_json/fr04-webkit.json                 |  165 +--
+ .../reports/_json/fr08-chromium.json               |    0
+ .../reports/_json/fr08-firefox.json                |    0
+ .../reports/_json/fr08-webkit.json                 |    0
+ .../reports/_json/fr13-chromium.json               |    0
+ .../reports/_json/fr13-firefox.json                |    0
+ .../reports/_json/fr13-webkit.json                 |    0
+ HW04/reports/_json/latest.json                     | 1539 ++++++++++++++++++++
+ .../0b443822f185748079c9e64411d09f95d68f74bb.zip   |  Bin 0 -> 185260 bytes
+ .../2cabbf7305ffee83d5f8b95769a6507e0db80f40.md}   |   78 +-
+ .../3ae3df097ddae251253e69e1ebe3782091f8a220.md}   |   77 +-
+ .../51812a2de87c9734d8503573f50bc76599fa5737.png   |  Bin 0 -> 26819 bytes
+ .../5a3a9b9f98585e78c76f5602a13b008725db81ff.zip   |  Bin 0 -> 222555 bytes
+ .../6635889491fe5353eb3837f7fae5fdf75d08f5a8.zip   |  Bin 0 -> 165296 bytes
+ .../851f313370b01eb8a39284f9be40e53235107111.png   |  Bin 0 -> 26723 bytes
+ .../89b8f9c2f27a161f61d3bd4dfec3c01b558b2dc1.png   |  Bin 0 -> 26465 bytes
+ .../9586dfd17252e0fcf5a9c6b91b3d125f466c3fca.md}   |   78 +-
+ .../99c76ef45600958edd56ed3246008971bc44a3e2.zip   |  Bin 0 -> 166892 bytes
+ .../99f89e54c41b1037daac9f9c939e2c0d764cdb7d.zip   |  Bin 0 -> 245022 bytes
+ .../9d642f31b391fd170d400a55fd701bdf0cf66385.png   |  Bin 0 -> 26689 bytes
+ .../9e807de647ce3872de701dfd4dd712fc36cc4bdb.md}   |   79 +-
+ .../a2a547838a9b632dcf43081f6edfce4ec3529331.zip   |  Bin 0 -> 166672 bytes
+ .../a30bcb4b92e35cd01f6980cf82284b3fcec43eec.png   |  Bin 0 -> 26672 bytes
+ .../aac4d8ab141cf7f9a5058b73131d186b5c3d1332.png   |  Bin 0 -> 27672 bytes
+ .../b10d1ac9bb94d78886a38ead7f8f7068b53a5c0f.md}   |   77 +-
+ .../c4048503f883439afb1a47dbb56baa339beff918.zip   |  Bin 0 -> 186029 bytes
+ .../c795854d646bc3731e318ec84933fcc9d33f7ed1.md}   |   77 +-
+ .../cc28a091018df734377c851694b8b90d249e5680.png   |  Bin 0 -> 26809 bytes
+ .../d188075d2856f4b8bfc064fc4b84153c5aca1222.zip   |  Bin 0 -> 165679 bytes
+ .../d6434ad58efd4eeff52850c3cce426780664c1d0.png   |  Bin 0 -> 26809 bytes
+ .../de6c9a207abaf5ed88cde13c92a9f3246299ad78.md}   |   77 +-
+ .../ef968e70198fe745d744112e3f2a961770dba9fc.md}   |   78 +-
+ .../reports/fr04-chromium/index.html               |    2 +-
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr04-chromium}/trace/codicon.DCmgc-ay.ttf      |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr04-chromium}/trace/index.BY2vkw8A.js         |    0
+ .../fr04-chromium}/trace/index.B_TqY17P.css        |    0
+ .../fr04-chromium}/trace/index.html                |    0
+ .../fr04-chromium}/trace/manifest.webmanifest      |    0
+ .../fr04-chromium}/trace/playwright-logo.svg       |    0
+ .../fr04-chromium}/trace/snapshot.-ChLTbql.js      |    0
+ .../fr04-chromium}/trace/snapshot.html             |    0
+ .../fr04-chromium}/trace/sw.bundle.js              |    0
+ .../fr04-chromium}/trace/uiMode.CyMfwkXJ.css       |    0
+ .../fr04-chromium}/trace/uiMode.DuLwZHRf.js        |    0
+ .../fr04-chromium}/trace/uiMode.html               |    0
+ .../fr04-chromium}/trace/xtermModule.kHJ-D0s7.css  |    0
+ .../01797f231cf3cee2aa3d08002ea3b9aadddffeda.png   |  Bin 0 -> 32894 bytes
+ .../1d1829ea138ff60dd1c2add2cddb8932fd0e9adc.png   |  Bin 0 -> 33137 bytes
+ .../262e28ea0e0a7d2f053714eeaa428155ad03b530.md}   |   78 +-
+ .../3374d3e78cd18421bb9845797c4823966b75f4ef.md}   |   76 +-
+ .../33de89f9b80ab9487b96e319f3c6a15a2b329c79.png   |  Bin 0 -> 33170 bytes
+ .../3d7c1d9ca47411a8009a101b2ba1e448ebff3563.zip   |  Bin 0 -> 244874 bytes
+ .../40fc7e3b246becce067a421aff48bb10eda28a11.md}   |   77 +-
+ .../41791d541bdf19a118a34edb6ebe502b8202b796.md}   |   77 +-
+ .../67da672addb5bb76c7b5ccac8946b3848eaf3a29.md    |  215 +++
+ .../6cb316a73a858c1268fa1145e5eaa6fcc41e0172.md}   |   78 +-
+ .../8c0f33685aed3662470e71cda4d03ea4a6a155e6.png   |  Bin 0 -> 33211 bytes
+ .../94d64dfb2ae81015f52aa900c5ba8d3a457151ff.zip   |  Bin 0 -> 229816 bytes
+ .../963d7b77fcc656ba45eb937486734b46103835f5.png   |  Bin 0 -> 33111 bytes
+ .../9a4fc7f29931bc2d4b3af7295d2629a299d54764.zip   |  Bin 0 -> 1130737 bytes
+ .../a81a697efdd9f7b3fde6c2ad1025a7a60d1e3472.zip   |  Bin 0 -> 221377 bytes
+ .../c81e4efca3fd6030b6232159b5258f4ca47d4ff8.md}   |   79 +-
+ .../ca2649939f3f1ad9eb74c63bb4eb334262b51ad2.zip   |  Bin 0 -> 579319 bytes
+ .../cc7c7e95408105fb76c0cf58f86f1d1e6260fe98.md}   |   77 +-
+ .../ccaeb9a0e819b6ebea63fca6b0aadc74d169d9e4.zip   |  Bin 0 -> 227556 bytes
+ .../d3cef798e7ca7804eea2e6608bbc7a6bc1878d77.png   |  Bin 0 -> 33255 bytes
+ .../d7a244dec62fac1ee7b78e38d2888607b6ba668c.zip   |  Bin 0 -> 252618 bytes
+ .../e8786775db8243a530924be1e83b4e9fb9cbf96b.zip   |  Bin 0 -> 227212 bytes
+ .../e965ec110dfa970cf11d7fe81639dd004275e3bf.png   |  Bin 0 -> 33103 bytes
+ .../f165654db9d00b61bd04b9a2f850db54fcab9fde.png   |  Bin 0 -> 33910 bytes
+ .../latest => reports/fr04-firefox}/index.html     |    2 +-
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr04-firefox}/trace/codicon.DCmgc-ay.ttf       |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr04-firefox}/trace/index.BY2vkw8A.js          |    0
+ .../fr04-firefox}/trace/index.B_TqY17P.css         |    0
+ .../fr04-firefox}/trace/index.html                 |    0
+ .../fr04-firefox}/trace/manifest.webmanifest       |    0
+ .../fr04-firefox}/trace/playwright-logo.svg        |    0
+ .../fr04-firefox}/trace/snapshot.-ChLTbql.js       |    0
+ .../fr04-firefox}/trace/snapshot.html              |    0
+ .../fr04-firefox}/trace/sw.bundle.js               |    0
+ .../fr04-firefox}/trace/uiMode.CyMfwkXJ.css        |    0
+ .../fr04-firefox}/trace/uiMode.DuLwZHRf.js         |    0
+ .../fr04-firefox}/trace/uiMode.html                |    0
+ .../fr04-firefox}/trace/xtermModule.kHJ-D0s7.css   |    0
+ .../0097f84b1770c165f3c890bfc2123a03537692c6.md}   |   78 +-
+ .../107370dc4eebae174fe276c1cbd619625f15ed9c.png   |  Bin 0 -> 74833 bytes
+ .../185bb6a463bc13574cf0731a6228cc232b5f7d20.zip   |  Bin 0 -> 216526 bytes
+ .../229ad1c3377d0a2ca13e9e15fbc4d45d8426c1f1.png   |  Bin 0 -> 76389 bytes
+ .../2bd33fd9b04fb410c896fccc2199803ff9bff7fb.png   |  Bin 0 -> 75119 bytes
+ .../3374d3e78cd18421bb9845797c4823966b75f4ef.md}   |   76 +-
+ .../38db6814e81051db6e947c751d383ecd390b2440.md}   |   77 +-
+ .../3b5194c7c35cd4577316c47ceac9889117161aa7.md}   |   77 +-
+ .../403da574721dc961db1ff256166681944324bbcb.png   |  Bin 0 -> 74845 bytes
+ .../4f67e5c25ee449f5e889e64e0608cafb601ba322.md}   |   77 +-
+ .../5e739c4c6d80ff9beca5634ffcdfa1873ed2f87c.zip   |  Bin 0 -> 164992 bytes
+ .../5f0025db4bf8258f1760edebd27c660afd0a29ff.md}   |   79 +-
+ .../64c5a026fa1cf6f353ef272dff49345c1f784c8e.zip   |  Bin 0 -> 165678 bytes
+ .../654f98cd480a5a68edb196f1e538010c14b4be2e.png   |  Bin 0 -> 74582 bytes
+ .../6833cd45ea190d3ae84a856e737e7eff7e340297.png   |  Bin 0 -> 74014 bytes
+ .../68f866ba83f1231c0ee9f2c71e9a04bc62b46c61.zip   |  Bin 0 -> 200743 bytes
+ .../8ea6d76f04d1228de045cd2e3decd624276860c4.zip   |  Bin 0 -> 164097 bytes
+ .../a4c4609385e574977f5e8958093825f0b6f55608.zip   |  Bin 0 -> 164492 bytes
+ .../a8e81cdde248edbd56da96c46527b8a78f6d5a43.png   |  Bin 0 -> 74713 bytes
+ .../beecb4d0a7c80b2abed6a462377b75d4764c307b.md}   |   77 +-
+ .../c1d86f2d86053baadf75eb7df138cab4642ff4c3.png   |  Bin 0 -> 73769 bytes
+ .../d90762131e3d9fdc81458d11126592e4906858b1.zip   |  Bin 0 -> 164614 bytes
+ .../dc91535f1172969ba2e5cf8e0da509055b20bb83.zip   |  Bin 0 -> 157464 bytes
+ .../dd125bb3b3c5647b3243879ccdb05eed305ad1d7.md}   |   78 +-
+ .../fr04-webkit}/index.html                        |    2 +-
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../fr04-webkit}/trace/assets/urlMatch-Cgl6axSs.js |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr04-webkit}/trace/codicon.DCmgc-ay.ttf        |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr04-webkit}/trace/index.BY2vkw8A.js           |    0
+ .../fr04-webkit}/trace/index.B_TqY17P.css          |    0
+ .../fr04-webkit}/trace/index.html                  |    0
+ .../fr04-webkit}/trace/manifest.webmanifest        |    0
+ .../fr04-webkit}/trace/playwright-logo.svg         |    0
+ .../fr04-webkit}/trace/snapshot.-ChLTbql.js        |    0
+ .../fr04-webkit}/trace/snapshot.html               |    0
+ .../fr04-webkit}/trace/sw.bundle.js                |    0
+ .../fr04-webkit}/trace/uiMode.CyMfwkXJ.css         |    0
+ .../fr04-webkit}/trace/uiMode.DuLwZHRf.js          |    0
+ .../fr04-webkit}/trace/uiMode.html                 |    0
+ .../fr04-webkit}/trace/xtermModule.kHJ-D0s7.css    |    0
+ .../2c31d9291bd77f33ed645c5128bf5df541a2e141.md    |    0
+ .../4484c4b7c57d2f9644da733911b693964a891130.zip   |  Bin
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |    0
+ .../7ea32efe9bb42b0f49efc768ea8cf00d823e6522.md    |    0
+ .../959ad89728f893b68b88a5263bf2a3f1e506c1e0.png   |  Bin
+ .../cb667e60de4a1938daa0f1ccf9b89bdc47d8a699.zip   |  Bin
+ .../cc7629e6168191bab80d915086fa2ffdaacf69dc.png   |  Bin
+ .../d7f8312ea56044656cc33d55af0b34cf324dcdc9.md    |    0
+ .../d9d29f0f08a7030377615b16dc48478d5cc32e2c.zip   |  Bin
+ .../dbf80ec27d03fd90e5798af4141ea0bf211e5bf7.png   |  Bin
+ .../f73c7f7d2c2f89f14674c653f0eb8952a484754e.zip   |  Bin
+ .../reports/fr08-chromium/index.html               |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr08-chromium}/trace/codicon.DCmgc-ay.ttf      |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr08-chromium}/trace/index.BY2vkw8A.js         |    0
+ .../fr08-chromium}/trace/index.B_TqY17P.css        |    0
+ .../fr08-chromium}/trace/index.html                |    0
+ .../fr08-chromium}/trace/manifest.webmanifest      |    0
+ .../fr08-chromium}/trace/playwright-logo.svg       |    0
+ .../fr08-chromium}/trace/snapshot.-ChLTbql.js      |    0
+ .../fr08-chromium}/trace/snapshot.html             |    0
+ .../fr08-chromium}/trace/sw.bundle.js              |    0
+ .../fr08-chromium}/trace/uiMode.CyMfwkXJ.css       |    0
+ .../fr08-chromium}/trace/uiMode.DuLwZHRf.js        |    0
+ .../fr08-chromium}/trace/uiMode.html               |    0
+ .../fr08-chromium}/trace/xtermModule.kHJ-D0s7.css  |    0
+ .../2978f1f49b28acdacd83df2c6ceb4794bfd60fff.png   |  Bin
+ .../2c31d9291bd77f33ed645c5128bf5df541a2e141.md    |    0
+ .../38a78d38cbba5ce262c01c90a2be17cc7143b9a1.zip   |  Bin
+ .../444cf55bd7c61d6dff3d419c78d7cd196eed55fb.zip   |  Bin
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |    0
+ .../57f1f01a18bc5069c66e04813d580a8afc189546.png   |  Bin
+ .../7ea32efe9bb42b0f49efc768ea8cf00d823e6522.md    |    0
+ .../b7cc55dbdf2ca861ad0f47a8ca47a8aec4c11e39.zip   |  Bin
+ .../cb5fc6f1c1d8fc47de4f0c18395d0a0cfee9a37c.zip   |  Bin
+ .../d7f8312ea56044656cc33d55af0b34cf324dcdc9.md    |    0
+ .../dccced61de3530201f4f08e4a30b4e723d8b2c68.png   |  Bin
+ .../reports/fr08-firefox/index.html                |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr08-firefox}/trace/codicon.DCmgc-ay.ttf       |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr08-firefox}/trace/index.BY2vkw8A.js          |    0
+ .../fr08-firefox}/trace/index.B_TqY17P.css         |    0
+ .../fr08-firefox}/trace/index.html                 |    0
+ .../fr08-firefox}/trace/manifest.webmanifest       |    0
+ .../fr08-firefox}/trace/playwright-logo.svg        |    0
+ .../fr08-firefox}/trace/snapshot.-ChLTbql.js       |    0
+ .../fr08-firefox}/trace/snapshot.html              |    0
+ .../fr08-firefox}/trace/sw.bundle.js               |    0
+ .../fr08-firefox}/trace/uiMode.CyMfwkXJ.css        |    0
+ .../fr08-firefox}/trace/uiMode.DuLwZHRf.js         |    0
+ .../fr08-firefox}/trace/uiMode.html                |    0
+ .../fr08-firefox}/trace/xtermModule.kHJ-D0s7.css   |    0
+ .../076aa4a9077efa69fb076cc18d4d5fcf8b48473b.zip   |  Bin
+ .../1459229dc52ddbaff035039d4218e7bf2738aef4.md    |    0
+ .../34f90d8c664457a842fd98191b276674dcefd8b2.md    |    0
+ .../49897ee3fefb5dbd190e1e783d2eb96481840bff.png   |  Bin
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |    0
+ .../5d4f06971358917624d0a0c2e73e791a37a40473.png   |  Bin
+ .../8456cc34da0d84b31a3b019eea980042490e0b30.png   |  Bin
+ .../9d2234078bd32834ca22ec5ba72aafa941f4f031.zip   |  Bin
+ .../a3bd9614ae5684145098ca9f17c6720fca3b5631.zip   |  Bin
+ .../d5aff83722908164dbbf7691d9641404a20c6296.zip   |  Bin
+ .../fcfb5f0bd874117674abf282a1c55d246166860c.md    |    0
+ .../reports/fr08-webkit/index.html                 |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../fr08-webkit}/trace/assets/urlMatch-Cgl6axSs.js |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr08-webkit}/trace/codicon.DCmgc-ay.ttf        |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr08-webkit}/trace/index.BY2vkw8A.js           |    0
+ .../fr08-webkit}/trace/index.B_TqY17P.css          |    0
+ .../fr08-webkit}/trace/index.html                  |    0
+ .../fr08-webkit}/trace/manifest.webmanifest        |    0
+ .../fr08-webkit}/trace/playwright-logo.svg         |    0
+ .../fr08-webkit}/trace/snapshot.-ChLTbql.js        |    0
+ .../fr08-webkit}/trace/snapshot.html               |    0
+ .../fr08-webkit}/trace/sw.bundle.js                |    0
+ .../fr08-webkit}/trace/uiMode.CyMfwkXJ.css         |    0
+ .../fr08-webkit}/trace/uiMode.DuLwZHRf.js          |    0
+ .../fr08-webkit}/trace/uiMode.html                 |    0
+ .../fr08-webkit}/trace/xtermModule.kHJ-D0s7.css    |    0
+ .../0448700ff0258a198f66d8e9896bbd8229940346.png   |  Bin
+ .../0a517e4aaab86b0c8e921589e2e90d3b75cb94c0.zip   |  Bin
+ .../0f8e37e5f881c025bae14ad2e5233cfd3e81180f.md    |    0
+ .../1bd59d965fc46dab4c53cefc17ece956a8682130.md    |    0
+ .../2806699bd38939b4598734936dd08a5df5cc5056.md    |    0
+ .../3056f62a195fd0de2163ed4339229018aa78a0fc.md    |    0
+ .../4c3d7b0cdb2bef6e82bcf06e8fc7acd5a1e61276.png   |  Bin
+ .../55270bbbc845bc23668c86a930f0da8ae1886aab.zip   |  Bin
+ .../5c6befc1bd81ec1e7d08734a4ba57e6a679e8bd6.zip   |  Bin
+ .../5e03698c0ea806fcfc75a8d58801128782ab55d3.zip   |  Bin
+ .../7839bf149fda60e61c2975ec5e0bbfb86466db29.md    |    0
+ .../7d444c7cb0595fbb8b5344ea2680b2abb8ec00a9.png   |  Bin
+ .../89235c823281e072e7545d6fad30fb7ed16737a0.png   |  Bin
+ .../8ff3d163f023afa0032491c522f6b8dbf484d88c.zip   |  Bin
+ .../9b5308b78a9587996457f9fa3507bd55ef54c0c7.md    |    0
+ .../aa50a9a9758ed89e2016e16c96826298d9e5a5ed.md    |    0
+ .../adf6b63d3ec145664b306dd49085c440cbd7aea4.png   |  Bin
+ .../bfe184273251ec917aefde304d16aecf802e32a6.zip   |  Bin
+ .../c19ef7c0d13bce12a42148237d0d5a826db09f95.png   |  Bin
+ .../cabad90abc945c69c713f51171e2456b2f87489d.png   |  Bin
+ .../d322347434a2d2914cb1a48d5ccfab2ccee256db.zip   |  Bin
+ .../f544d190efdc61e7a43fbd6ec727b23193db672e.md    |    0
+ .../ffc17a9539232e787bf191335d1fd32031e82326.zip   |  Bin
+ .../reports/fr13-chromium/index.html               |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr13-chromium}/trace/codicon.DCmgc-ay.ttf      |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr13-chromium}/trace/index.BY2vkw8A.js         |    0
+ .../fr13-chromium}/trace/index.B_TqY17P.css        |    0
+ .../fr13-chromium}/trace/index.html                |    0
+ .../fr13-chromium}/trace/manifest.webmanifest      |    0
+ .../fr13-chromium}/trace/playwright-logo.svg       |    0
+ .../fr13-chromium}/trace/snapshot.-ChLTbql.js      |    0
+ .../fr13-chromium}/trace/snapshot.html             |    0
+ .../fr13-chromium}/trace/sw.bundle.js              |    0
+ .../fr13-chromium}/trace/uiMode.CyMfwkXJ.css       |    0
+ .../fr13-chromium}/trace/uiMode.DuLwZHRf.js        |    0
+ .../fr13-chromium}/trace/uiMode.html               |    0
+ .../fr13-chromium}/trace/xtermModule.kHJ-D0s7.css  |    0
+ .../0a9f573f012e3f380afb384af63c815b55987b83.png   |  Bin
+ .../1cc7af082cea0446847caf9a35bd407afdc5cfac.zip   |  Bin
+ .../2844f81f11ec22367632577b2235be4c912d80a6.md    |    0
+ .../2dd3d59207fe0ddfa52ea707e863d0cad5881c63.zip   |  Bin
+ .../3205772851cde9de221da4fe3d1db3c21bb6ebd1.png   |  Bin
+ .../361203a8728e3bea7f32084a03a69de2b8296029.png   |  Bin
+ .../3ace81f7d06a7dcd41b9cf8f65bad47bf6d71ba1.png   |  Bin
+ .../43c0d46ed496893fd5e5bc666b9165bd4423f3f9.md    |    0
+ .../4d95ac7c114404b0b7f6035f3e763da4688835a7.md    |    0
+ .../61c37d6ebe579c0a262c96a57cd4641b7468ef65.md    |    0
+ .../77233077ab699877642e565200963a7498b83681.png   |  Bin
+ .../783ca9d4044697e119689658979a694817c82c82.zip   |  Bin
+ .../79797fb64bf7e411566eb5977f8ca4ab944fb587.zip   |  Bin
+ .../8f489878989f049d62012d011f50734469479ac8.md    |    0
+ .../902efb35e9a2e77889d571c4825bb1674a031530.zip   |  Bin
+ .../91ea53d6efa1b994d3329ba46150b3c238c9055b.zip   |  Bin
+ .../959787dbeecc69dd432a5397b18d286041fe1c55.zip   |  Bin
+ .../d14480e7917dbdff35cb5a21858e8f0df4cde465.md    |    0
+ .../d1c1de2e99bd7672642340f11d81b672474ef6bc.png   |  Bin
+ .../e2f05c70d22cd33a222d48fa3e2b598cbe6d7aab.md    |    0
+ .../e61494692e089c946647d3a6b069f51f125d4b3c.zip   |  Bin
+ .../eaa7529e94f7ac76ca31f5b7f2bc72ab10adcbfc.png   |  Bin
+ .../fc78146c0b82c3e5caa9187a08ed3abff702b4af.md    |    0
+ .../reports/fr13-firefox/index.html                |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr13-firefox}/trace/codicon.DCmgc-ay.ttf       |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr13-firefox}/trace/index.BY2vkw8A.js          |    0
+ .../fr13-firefox}/trace/index.B_TqY17P.css         |    0
+ .../fr13-firefox}/trace/index.html                 |    0
+ .../fr13-firefox}/trace/manifest.webmanifest       |    0
+ .../fr13-firefox}/trace/playwright-logo.svg        |    0
+ .../fr13-firefox}/trace/snapshot.-ChLTbql.js       |    0
+ .../fr13-firefox}/trace/snapshot.html              |    0
+ .../fr13-firefox}/trace/sw.bundle.js               |    0
+ .../fr13-firefox}/trace/uiMode.CyMfwkXJ.css        |    0
+ .../fr13-firefox}/trace/uiMode.DuLwZHRf.js         |    0
+ .../fr13-firefox}/trace/uiMode.html                |    0
+ .../fr13-firefox}/trace/xtermModule.kHJ-D0s7.css   |    0
+ .../0557d2d6b294a07b2015ebb227eefd93b30e7cd5.md    |    0
+ .../05c8e4bda1dcbd98d8da9627e4a3ab3baa573858.zip   |  Bin
+ .../25507ba9319d2c0cf5baba73dc3ebf9e4a508ca7.zip   |  Bin
+ .../2783d779db9f75c395e3d82b5d717347f96ee053.png   |  Bin
+ .../3bd969eae913e4305b20f892a6d7cb698866a2cd.png   |  Bin
+ .../4aae6af4c8b3d14b23e4946f8cda5f65ec05e56e.md    |    0
+ .../4da5d7b127d51c93ea64a08e4810433ab85d1529.md    |    0
+ .../7efdc38bf519d6d1adebad938f4d076351e04505.png   |  Bin
+ .../872dc380d273795d031da5f19f543ec816b89a08.md    |    0
+ .../87a6fcea6df4d61e9f7b74847fbc394cde023618.zip   |  Bin
+ .../89f753ce9195f250edba65da2f7962b939840bb2.zip   |  Bin
+ .../947973ea36674a067065e53c7887433297aebd6b.png   |  Bin
+ .../a613e661085106350320a9b8f8668acfa62433e7.zip   |  Bin
+ .../ab4e928621621e3fab87fbdaf64ae498836bbac3.png   |  Bin
+ .../b067afcd1406c288a5b7ea273e78718ca312691f.zip   |  Bin
+ .../b3c445462eb640fbf8298c378e21ba2d2a3cfc58.png   |  Bin
+ .../bbcc5ff560b8115af18fab1e08cf5559d3633167.md    |    0
+ .../bf11d726ddb74eb1e47de755120c8ba43e7a68c3.zip   |  Bin
+ .../c0dea8e85d349f4d86f55507dbd7292102be924c.zip   |  Bin
+ .../da0c919d472b524d173628b53f1c007dc72d1c68.md    |    0
+ .../deac6673f513b3fd7652dfec701e36fc46f8d941.png   |  Bin
+ .../df41d660eb2b0bde7c8f61257b886d07f29b5044.md    |    0
+ .../fa4ce2a93287c2f29cbb0c6157bdea964543b9a3.md    |    0
+ .../reports/fr13-webkit/index.html                 |    0
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../fr13-webkit}/trace/assets/urlMatch-Cgl6axSs.js |    0
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    0
+ .../fr13-webkit}/trace/codicon.DCmgc-ay.ttf        |  Bin
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    0
+ .../fr13-webkit}/trace/index.BY2vkw8A.js           |    0
+ .../fr13-webkit}/trace/index.B_TqY17P.css          |    0
+ .../fr13-webkit}/trace/index.html                  |    0
+ .../fr13-webkit}/trace/manifest.webmanifest        |    0
+ .../fr13-webkit}/trace/playwright-logo.svg         |    0
+ .../fr13-webkit}/trace/snapshot.-ChLTbql.js        |    0
+ .../fr13-webkit}/trace/snapshot.html               |    0
+ .../fr13-webkit}/trace/sw.bundle.js                |    0
+ .../fr13-webkit}/trace/uiMode.CyMfwkXJ.css         |    0
+ .../fr13-webkit}/trace/uiMode.DuLwZHRf.js          |    0
+ .../fr13-webkit}/trace/uiMode.html                 |    0
+ .../fr13-webkit}/trace/xtermModule.kHJ-D0s7.css    |    0
+ .../00a6cfbc45080ea9bf878b2b463c2fa785675307.zip   |  Bin 0 -> 246435 bytes
+ .../010a7ad61ec67529d0ccb56d22b20af3835a75c5.zip   |  Bin 0 -> 165499 bytes
+ .../03857d030b151888a6287013c051e04f47b56d0a.md}   |   77 +-
+ .../1acc65eae88a279ec8d84685a51d40ce0b192974.png   |  Bin 0 -> 26679 bytes
+ .../2008ebd146890a27a5018fb602b28d0eb0fa9f74.zip   |  Bin 0 -> 186624 bytes
+ .../216f72c946400ae40e5f3914b54e38ef60ae1c74.png   |  Bin 0 -> 26788 bytes
+ .../38049f4ec118fdde4746534119a70e22b635552e.md    |  215 +++
+ .../47e97bd38b6ce1d8656092e49098b2339b4d44ef.zip   |  Bin 0 -> 165734 bytes
+ .../5a5e3d9b7a2dd0cc684e7cbcf5dc66af88848bbb.png   |  Bin 0 -> 26881 bytes
+ .../5c22a7009882033dd2cfdba51e8646a9910499a7.md    |  200 +++
+ .../677660b487ab35aff364d11acd9c0ca5be982523.md    |  215 +++
+ .../7b082c6496811f0cb1ac10bfda1c1c26c8ffa708.png   |  Bin 0 -> 27692 bytes
+ .../826858733732152c1d6eb33e1a5eaabc0125549a.zip   |  Bin 0 -> 222836 bytes
+ .../8632ae8becc19c57f7b059ce78abb9c9713647f0.png   |  Bin 0 -> 26856 bytes
+ .../872ae9202f0ed62a8927a337d8aa04a105f9b983.zip   |  Bin 0 -> 166457 bytes
+ .../9586dfd17252e0fcf5a9c6b91b3d125f466c3fca.md    |  180 +++
+ .../9e0207e8ed3e68f6f0c8a7678dd5eb3ab289686f.zip   |  Bin 0 -> 186052 bytes
+ .../b357ab78005677a9913d763585dd70156d0f029a.png   |  Bin 0 -> 26782 bytes
+ .../b99f69eccccce8869f1337f9b9a2b480238e6a71.png   |  Bin 0 -> 26659 bytes
+ .../d1aad296d84b62d7589f73acc2abe98fa8c870f8.zip   |  Bin 0 -> 166297 bytes
+ .../daa63c7d9075664513d114f8829c12cef4063147.md    |  215 +++
+ .../dc0c0fbf43c0a65d6166167e570fad3f2c83b9cd.md    |  215 +++
+ .../e4aa4a7dc6bac5b0fbbff9577a72523940d94ae3.md    |  215 +++
+ .../eefb28ef5d7d64bca36ffbf8cc1756d9ce527737.png   |  Bin 0 -> 27025 bytes
+ .../fr04-webkit => reports/latest}/index.html      |    2 +-
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |    0
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |    0
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    0
+ .../latest}/trace/assets/urlMatch-Cgl6axSs.js      |    0
+ .../latest}/trace/codeMirrorModule.-QdMvsKi.css    |    0
+ .../latest}/trace/codicon.DCmgc-ay.ttf             |  Bin
+ .../latest}/trace/defaultSettingsView.C8BeHuxd.css |    0
+ .../latest}/trace/index.BY2vkw8A.js                |    0
+ .../latest}/trace/index.B_TqY17P.css               |    0
+ .../latest}/trace/index.html                       |    0
+ .../latest}/trace/manifest.webmanifest             |    0
+ .../latest}/trace/playwright-logo.svg              |    0
+ .../latest}/trace/snapshot.-ChLTbql.js             |    0
+ .../latest}/trace/snapshot.html                    |    0
+ .../latest}/trace/sw.bundle.js                     |    0
+ .../latest}/trace/uiMode.CyMfwkXJ.css              |    0
+ .../latest}/trace/uiMode.DuLwZHRf.js               |    0
+ .../latest}/trace/uiMode.html                      |    0
+ .../latest}/trace/xtermModule.kHJ-D0s7.css         |    0
+ .../scripts/errors.js                              |    0
+ HW04/{hw04-automation-FR13 => }/scripts/git-log.js |    0
+ HW04/{hw04-automation-all-frs => }/scripts/hw.py   |    0
+ .../scripts/run-matrix.js                          |    0
+ .../scripts/summarize.js                           |    0
+ .../tests/fr04-profile.spec.ts                     |    0
+ .../tests/fr08-checkout.spec.ts                    |    0
+ .../tests/fr13-dashboard.spec.ts                   |    0
+ .../tests/helpers/admin.ts                         |    0
+ .../tests/helpers/api.ts                           |    0
+ .../tests/helpers/data.ts                          |    0
+ .../tests/helpers/env.ts                           |    0
+ .../tests/helpers/web.ts                           |    0
+ 550 files changed, 4414 insertions(+), 3444 deletions(-)
+
+commit d00ae49b440dc9624aeaf0b0e563b5b1d8a7162b
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-17 19:22:45 +0700
+
+    prepared ai audit & critique
+
+ HW04/{ => hw04-automation-all-frs}/ai-audit/AUDIT_LOG.md     | 0
+ HW04/{ => hw04-automation-all-frs}/ai-audit/exports/.gitkeep | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit a28c4932446ff0c8c615af094c267876b7f90998
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-17 16:12:04 +0700
+
+    Configure Playwright locale and add demo assets for HW04
+
+ HW04/hw04-automation-all-frs/demo/compare-runs.js  | 60 ++++++++++++++++++++++
+ .../demo/digits-poll.demo.spec.ts                  | 57 ++++++++++++++++++++
+ .../demo/patches/F1-digits.patch                   | 16 ++++++
+ .../demo/patches/F2-networkidle.patch              | 12 +++++
+ .../demo/patches/F3-locale.patch                   | 35 +++++++++++++
+ .../demo/patches/F4-orders-guard.patch             | 14 +++++
+ .../demo/patches/F5-warn.patch                     | 20 ++++++++
+ .../demo/patches/R1-dialog-race.patch              | 20 ++++++++
+ .../demo/playwright.demo.config.ts                 | 10 ++++
+ HW04/hw04-automation-all-frs/playwright.config.ts  |  1 +
+ 10 files changed, 245 insertions(+)
+
+commit 583a49c0855986996e209f88c91cf2b51a302d10
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-17 15:59:34 +0700
+
+    Update review documents and add demo guide for HW04
+
+ HW04/hw04-automation-all-frs/docs/demo-guide.md    | 265 +++++++++++++++++++++
+ .../docs/review/fr04-review.md                     |  25 +-
+ .../docs/review/fr08-review.md                     |  29 +--
+ .../docs/review/fr13-review.md                     |  33 +--
+ 4 files changed, 308 insertions(+), 44 deletions(-)
+
+commit 02f3e9ebf8386afaa384562c536be34fed90b860
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-17 15:21:51 +0700
+
+    Fix test race conditions, locale formatting, and refactor test helpers in HW04
+
+ HW04/hw04-automation-all-frs/tests/fr04-profile.spec.ts   | 12 +++++++-----
+ HW04/hw04-automation-all-frs/tests/fr08-checkout.spec.ts  | 11 +++++++++--
+ HW04/hw04-automation-all-frs/tests/fr13-dashboard.spec.ts |  3 ++-
+ HW04/hw04-automation-all-frs/tests/helpers/admin.ts       | 14 +++++++++++---
+ HW04/hw04-automation-all-frs/tests/helpers/api.ts         | 10 +++++-----
+ HW04/hw04-automation-all-frs/tests/helpers/env.ts         |  3 +++
+ HW04/hw04-automation-all-frs/tests/helpers/web.ts         |  6 +++---
+ 7 files changed, 40 insertions(+), 19 deletions(-)
+
+commit 4a5afbc3e71bc1921cd814b07f11607610bb2a08
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-17 14:45:19 +0700
+
+    Update test data in HW04 automation
+
+ HW04/hw04-automation-all-frs/data/defaults.json    | 7 +++++++
+ HW04/hw04-automation-all-frs/data/fr04-misc.json   | 2 +-
+ HW04/hw04-automation-all-frs/data/fr04-phone.json  | 4 ++--
+ HW04/hw04-automation-all-frs/data/fr13-access.json | 1 +
+ 4 files changed, 11 insertions(+), 3 deletions(-)
+
+commit 391c385f630a8d999cd1d9e4618b10d900024802
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-16 09:24:41 +0700
+
+    adjustment to review files
+
+ .../docs/review/fr04-review.md                     | 25 ++++++++++++++--
+ .../docs/review/fr08-review.md                     | 32 +++++++++++++++-----
+ .../docs/review/fr13-review.md                     | 34 +++++++++++++++++-----
+ 3 files changed, 73 insertions(+), 18 deletions(-)
+
+commit 6267645a28d6ba53533c4b6ec9759b7004392faa
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-16 09:09:11 +0700
+
+    finishing base of task 1 and add some back up
+
+ .../docs => }/ai-audit/AUDIT_LOG.md                |    0
+ .../docs => }/ai-audit/exports/.gitkeep            |    0
+ HW04/hw04-automation-FR13/package-lock.json        |   60 +
+ HW04/hw04-automation-FR13/package.json             |    3 +
+ .../hw04-automation-FR13/reports/_json/latest.json |  880 +++++++++++
+ .../6dcd8de36a6b549501e1f9b4f5d9fe3c91e8a0c2.zip   |  Bin 0 -> 9354 bytes
+ .../e61d26f7956ccb56188993a98297423bd9def3d7.md    |   25 +
+ .../hw04-automation-FR13/reports/latest/index.html |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../latest/trace/assets/urlMatch-Cgl6axSs.js       |    1 +
+ .../latest/trace/codeMirrorModule.-QdMvsKi.css     |    1 +
+ .../reports/latest/trace/codicon.DCmgc-ay.ttf      |  Bin 0 -> 80340 bytes
+ .../latest/trace/defaultSettingsView.C8BeHuxd.css  |    1 +
+ .../reports/latest/trace/index.BY2vkw8A.js         |    1 +
+ .../reports/latest/trace/index.B_TqY17P.css        |    1 +
+ .../reports/latest/trace/index.html                |   45 +
+ .../reports/latest/trace/manifest.webmanifest      |   16 +
+ .../reports/latest/trace/playwright-logo.svg       |    9 +
+ .../reports/latest/trace/snapshot.-ChLTbql.js      |    1 +
+ .../reports/latest/trace/snapshot.html             |   10 +
+ .../reports/latest/trace/sw.bundle.js              |    4 +
+ .../reports/latest/trace/uiMode.CyMfwkXJ.css       |    1 +
+ .../reports/latest/trace/uiMode.DuLwZHRf.js        |    5 +
+ .../reports/latest/trace/uiMode.html               |   19 +
+ .../reports/latest/trace/xtermModule.kHJ-D0s7.css  |    1 +
+ HW04/hw04-automation-all-frs.zip                   |  Bin 0 -> 2002552 bytes
+ HW04/hw04-automation-all-frs/bugs/BUG_LIST.md      |   13 +
+ HW04/hw04-automation-all-frs/bugs/FR04-BUG-01.md   |   34 +
+ HW04/hw04-automation-all-frs/bugs/FR04-BUG-02.md   |   34 +
+ HW04/hw04-automation-all-frs/bugs/FR04-BUG-03.md   |   37 +
+ HW04/hw04-automation-all-frs/bugs/FR08-BUG-01.md   |   36 +
+ HW04/hw04-automation-all-frs/bugs/FR08-BUG-02.md   |   33 +
+ HW04/hw04-automation-all-frs/bugs/FR08-BUG-03.md   |   34 +
+ HW04/hw04-automation-all-frs/bugs/FR13-BUG-01.md   |   46 +
+ HW04/hw04-automation-all-frs/bugs/FR13-BUG-02.md   |   34 +
+ HW04/hw04-automation-all-frs/bugs/FR13-BUG-03.md   |   31 +
+ HW04/hw04-automation-all-frs/docs/errors.md        |  935 ++++++++++++
+ .../docs/review/fr04-review.md                     |   63 +
+ .../docs/review/fr08-review.md                     |   62 +
+ .../docs/review/fr13-review.md                     |   13 +-
+ HW04/hw04-automation-all-frs/docs/test-summary.md  |   46 +
+ HW04/hw04-automation-all-frs/package-lock.json     |   60 +
+ .../reports/_json/fr04-chromium.json               | 1538 ++++++++++++++++++++
+ .../reports/_json/fr04-firefox.json                | 1538 ++++++++++++++++++++
+ .../reports/_json/fr04-webkit.json                 | 1538 ++++++++++++++++++++
+ .../reports/_json/fr08-chromium.json               |  881 +++++++++++
+ .../reports/_json/fr08-firefox.json                |  881 +++++++++++
+ .../reports/_json/fr08-webkit.json                 |  881 +++++++++++
+ .../reports/_json/fr13-chromium.json               | 1204 +++++++++++++++
+ .../reports/_json/fr13-firefox.json                | 1204 +++++++++++++++
+ .../reports/_json/fr13-webkit.json                 | 1204 +++++++++++++++
+ .../06e8d3e840abb7f62491937d3fe4bdd8608af041.md    |  213 +++
+ .../18b55249e945cc7fe5f6fe34252c608841340e46.md    |  199 +++
+ .../1c7d0d4a9eaa843ac2b405abfc4e83192e01f4dc.zip   |  Bin 0 -> 185648 bytes
+ .../28cd8e776e0ffe37d539f7148350d1aac5e0e958.zip   |  Bin 0 -> 166098 bytes
+ .../2eda5bea77ebf15ba0091e5f6ffae312deb0131a.png   |  Bin 0 -> 27007 bytes
+ .../35948a24e8279f9489bf58c4aefcafe3d0cc85fb.zip   |  Bin 0 -> 225551 bytes
+ .../3eda17c00546dfd26f2855c6fa2e587bc35f021a.png   |  Bin 0 -> 26952 bytes
+ .../3fb55c6b6c9d1a47581ad71f09df63bb2bcc1b1b.png   |  Bin 0 -> 26850 bytes
+ .../43632b3a94cffb5f9232171512af4aa8e19b4c00.md    |  214 +++
+ .../4dc779df61fdd7471c94ef2ca95ba3aad8e1ed6c.md    |  214 +++
+ .../52640c633d0ce8c737f83f1af5ebf0e22b701fa1.zip   |  Bin 0 -> 186469 bytes
+ .../6f54ab99ef453ef66af6c5a658cc2c866bb18588.png   |  Bin 0 -> 26490 bytes
+ .../80d489846cb2c7100e8cfd55371651969a38accd.md    |  178 +++
+ .../8c8f7df26dc131a2720539e214ef938af9266c1e.png   |  Bin 0 -> 27764 bytes
+ .../94e93bbd46f81d0aec0d8287db8b2a5a9fb56b48.zip   |  Bin 0 -> 165332 bytes
+ .../a9f1f5a14995091e583569c5ac03b9b3884bc158.md    |  213 +++
+ .../b829d47b46810b4cae86f776a4b408d6ef6c4e51.png   |  Bin 0 -> 26843 bytes
+ .../bc81f17f3c587e22e59e12c8ca5c222d53fd9749.png   |  Bin 0 -> 26919 bytes
+ .../c71775e7ea506cf9e5c3c086132ac8c31df761ab.md    |  214 +++
+ .../ce1ac33a0d3d1340be5c019db3eb33503a9d561e.md    |  214 +++
+ .../d763d208055e1cb522cadb0887ed6008b8fb85cc.png   |  Bin 0 -> 26865 bytes
+ .../e01685dda59156fea987af8c8acfda10b71e141f.zip   |  Bin 0 -> 262141 bytes
+ .../ef823f98fa8b4c5ec9786808be5916376f4fb5dc.zip   |  Bin 0 -> 166189 bytes
+ .../f779fc46266697d076309bfed89aeb1f70a5c8f9.zip   |  Bin 0 -> 145878 bytes
+ .../reports/fr04-chromium/index.html               |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr04-chromium/trace/codicon.DCmgc-ay.ttf       |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr04-chromium/trace/index.BY2vkw8A.js  |    1 +
+ .../reports/fr04-chromium/trace/index.B_TqY17P.css |    1 +
+ .../reports/fr04-chromium/trace/index.html         |   45 +
+ .../fr04-chromium/trace/manifest.webmanifest       |   16 +
+ .../fr04-chromium/trace/playwright-logo.svg        |    9 +
+ .../fr04-chromium/trace/snapshot.-ChLTbql.js       |    1 +
+ .../reports/fr04-chromium/trace/snapshot.html      |   10 +
+ .../reports/fr04-chromium/trace/sw.bundle.js       |    4 +
+ .../fr04-chromium/trace/uiMode.CyMfwkXJ.css        |    1 +
+ .../reports/fr04-chromium/trace/uiMode.DuLwZHRf.js |    5 +
+ .../reports/fr04-chromium/trace/uiMode.html        |   19 +
+ .../fr04-chromium/trace/xtermModule.kHJ-D0s7.css   |    1 +
+ .../00b9d197f79e9af37a1451e4b766e68381551416.md    |  214 +++
+ .../02f5303de0cd8e93c861013cfbcd7a6572fe8f79.zip   |  Bin 0 -> 499204 bytes
+ .../085a3a6d2faed40fec9b5d6254397dbb73982da8.png   |  Bin 0 -> 33168 bytes
+ .../1455e43fd239340b5b485e79edc1e33fac674fd6.png   |  Bin 0 -> 32988 bytes
+ .../1f608ea694b3c6a0bf2f5b73d5ffa874e14f8feb.png   |  Bin 0 -> 33161 bytes
+ .../2b0194b4c8b90b4f6ed226b6dd98ae5e00115110.md    |  214 +++
+ .../3734569f7c21758c4342ac7f75903a81b8fc7ab1.png   |  Bin 0 -> 33263 bytes
+ .../3e8a38dd13ab66186c48e1eaa4ca46cb1b29280e.zip   |  Bin 0 -> 1127469 bytes
+ .../3ee597ef597a7bd2059f01640bed2fd874c69966.zip   |  Bin 0 -> 230566 bytes
+ .../6586acfd0f2bf60a231807dee4cb0cada89ed4e1.png   |  Bin 0 -> 33166 bytes
+ .../6e0ba49b92b9246a448a0b075836eb62275cec88.png   |  Bin 0 -> 33891 bytes
+ .../750ec9354d156f25fdb24225196f1cefc50716d5.md    |  214 +++
+ .../7f7791807c093f8123a2a20dd3471d4c8ecf8b8b.zip   |  Bin 0 -> 607606 bytes
+ .../80d489846cb2c7100e8cfd55371651969a38accd.md    |  178 +++
+ .../824ffb5c13ae1bd2b8e2ce2ddb3ab38ee2f7d80a.md    |  214 +++
+ .../858ec0196c406c64c5636d2cba0f33ffffbb8aa0.md    |  213 +++
+ .../8db2d5325570608e7fb1ad502803fcf34453961a.md    |  199 +++
+ .../a6840ed5f95b80bdb556a60f0731b06567a76930.zip   |  Bin 0 -> 226362 bytes
+ .../bf40faa82d0cb697d75587a5078eb899309939e7.zip   |  Bin 0 -> 578415 bytes
+ .../dc413ba29af047dbb553a085f803b6f23e1ab896.md    |  213 +++
+ .../e31e51357fbb0839c0879bff89807476bf6dc76b.zip   |  Bin 0 -> 491063 bytes
+ .../f6af59c61ae41e4facead68228953fee45bc66b4.png   |  Bin 0 -> 33071 bytes
+ .../f83225e0589d7edad3e3c388814973e24a1c2d57.png   |  Bin 0 -> 33217 bytes
+ .../f8f837447fa7d7fc580ce6f0c4d242e12f17b231.zip   |  Bin 0 -> 619728 bytes
+ .../reports/fr04-firefox/index.html                |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr04-firefox/trace/assets/urlMatch-Cgl6axSs.js |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr04-firefox/trace/codicon.DCmgc-ay.ttf        |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr04-firefox/trace/index.BY2vkw8A.js   |    1 +
+ .../reports/fr04-firefox/trace/index.B_TqY17P.css  |    1 +
+ .../reports/fr04-firefox/trace/index.html          |   45 +
+ .../fr04-firefox/trace/manifest.webmanifest        |   16 +
+ .../reports/fr04-firefox/trace/playwright-logo.svg |    9 +
+ .../fr04-firefox/trace/snapshot.-ChLTbql.js        |    1 +
+ .../reports/fr04-firefox/trace/snapshot.html       |   10 +
+ .../reports/fr04-firefox/trace/sw.bundle.js        |    4 +
+ .../reports/fr04-firefox/trace/uiMode.CyMfwkXJ.css |    1 +
+ .../reports/fr04-firefox/trace/uiMode.DuLwZHRf.js  |    5 +
+ .../reports/fr04-firefox/trace/uiMode.html         |   19 +
+ .../fr04-firefox/trace/xtermModule.kHJ-D0s7.css    |    1 +
+ .../0e67064005843d6daea928ff5c54e802044545e2.zip   |  Bin 0 -> 164695 bytes
+ .../13bbbe097568254422b56d64199747023f257df1.md    |  214 +++
+ .../179ee912e64f84fea5cfb6dda280a09e362f000a.png   |  Bin 0 -> 74479 bytes
+ .../21a3c0d5614fe89a8625c0b04e35832b58364d08.md    |  213 +++
+ .../29152b8006abcd4308110ad8eb8385b2b14b1872.zip   |  Bin 0 -> 184456 bytes
+ .../2d0193bec80634e27bc9b7eac0baa82e9e1681d8.zip   |  Bin 0 -> 157340 bytes
+ .../2f15f811a0c834294bb2cf7201c0c0c67e468d45.png   |  Bin 0 -> 74941 bytes
+ .../2f669a720a8c0f45604851d81e23b9c3f007f85e.md    |  199 +++
+ .../2fc76dd270557715e4a0725859bc83262c9444bd.md    |  213 +++
+ .../3606fb1e08943808028f7f0cdacb13dec41a104e.zip   |  Bin 0 -> 220698 bytes
+ .../3e018115e3abc94a280d174510225325ce5632ab.png   |  Bin 0 -> 75183 bytes
+ .../43e7db34d549cffc2b174846a6e84998477cf694.png   |  Bin 0 -> 74954 bytes
+ .../45407f195a694ae956c7173ae165ddc909b096bf.png   |  Bin 0 -> 73590 bytes
+ .../58e4e0efec674c2b7bccf26c4a1537d6cdd1b947.md    |  214 +++
+ .../63840c2f19ae98ed6f39c76e99666aeb9e5a8d54.zip   |  Bin 0 -> 164110 bytes
+ .../7a8e4b3e17dcbc4f79e2c54cb4a19e4a8b05146d.md    |  214 +++
+ .../80d489846cb2c7100e8cfd55371651969a38accd.md    |  178 +++
+ .../886f136dcb90bf2d8331602d15a1070dfe3c8a28.zip   |  Bin 0 -> 165223 bytes
+ .../a2aab5aa7247bd767b2dd2bee14b902eaa98e10f.zip   |  Bin 0 -> 157055 bytes
+ .../d253e217b58b0decf6f792170e297f8ac6aaf1e5.png   |  Bin 0 -> 76619 bytes
+ .../dfb4b881c5591c7841461de355a2aa3fd04259b6.md    |  214 +++
+ .../e47cb10141bd2b26b93414e102cd5b7ecb813635.png   |  Bin 0 -> 75006 bytes
+ .../e6381553f0bf1f07879a6f044201654da6f92431.png   |  Bin 0 -> 74846 bytes
+ .../eae0f9631bed8cc2add1b251bb7d58c600cefa60.zip   |  Bin 0 -> 165323 bytes
+ .../reports/fr04-webkit/index.html                 |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr04-webkit/trace/assets/urlMatch-Cgl6axSs.js  |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../reports/fr04-webkit/trace/codicon.DCmgc-ay.ttf |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr04-webkit/trace/index.BY2vkw8A.js    |    1 +
+ .../reports/fr04-webkit/trace/index.B_TqY17P.css   |    1 +
+ .../reports/fr04-webkit/trace/index.html           |   45 +
+ .../reports/fr04-webkit/trace/manifest.webmanifest |   16 +
+ .../reports/fr04-webkit/trace/playwright-logo.svg  |    9 +
+ .../reports/fr04-webkit/trace/snapshot.-ChLTbql.js |    1 +
+ .../reports/fr04-webkit/trace/snapshot.html        |   10 +
+ .../reports/fr04-webkit/trace/sw.bundle.js         |    4 +
+ .../reports/fr04-webkit/trace/uiMode.CyMfwkXJ.css  |    1 +
+ .../reports/fr04-webkit/trace/uiMode.DuLwZHRf.js   |    5 +
+ .../reports/fr04-webkit/trace/uiMode.html          |   19 +
+ .../fr04-webkit/trace/xtermModule.kHJ-D0s7.css     |    1 +
+ .../2c31d9291bd77f33ed645c5128bf5df541a2e141.md    |  229 +++
+ .../4484c4b7c57d2f9644da733911b693964a891130.zip   |  Bin 0 -> 445769 bytes
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |  253 ++++
+ .../7ea32efe9bb42b0f49efc768ea8cf00d823e6522.md    |  230 +++
+ .../959ad89728f893b68b88a5263bf2a3f1e506c1e0.png   |  Bin 0 -> 29201 bytes
+ .../cb667e60de4a1938daa0f1ccf9b89bdc47d8a699.zip   |  Bin 0 -> 363958 bytes
+ .../cc7629e6168191bab80d915086fa2ffdaacf69dc.png   |  Bin 0 -> 18853 bytes
+ .../d7f8312ea56044656cc33d55af0b34cf324dcdc9.md    |  229 +++
+ .../d9d29f0f08a7030377615b16dc48478d5cc32e2c.zip   |  Bin 0 -> 258917 bytes
+ .../dbf80ec27d03fd90e5798af4141ea0bf211e5bf7.png   |  Bin 0 -> 25152 bytes
+ .../f73c7f7d2c2f89f14674c653f0eb8952a484754e.zip   |  Bin 0 -> 315529 bytes
+ .../reports/fr08-chromium/index.html               |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr08-chromium/trace/codicon.DCmgc-ay.ttf       |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr08-chromium/trace/index.BY2vkw8A.js  |    1 +
+ .../reports/fr08-chromium/trace/index.B_TqY17P.css |    1 +
+ .../reports/fr08-chromium/trace/index.html         |   45 +
+ .../fr08-chromium/trace/manifest.webmanifest       |   16 +
+ .../fr08-chromium/trace/playwright-logo.svg        |    9 +
+ .../fr08-chromium/trace/snapshot.-ChLTbql.js       |    1 +
+ .../reports/fr08-chromium/trace/snapshot.html      |   10 +
+ .../reports/fr08-chromium/trace/sw.bundle.js       |    4 +
+ .../fr08-chromium/trace/uiMode.CyMfwkXJ.css        |    1 +
+ .../reports/fr08-chromium/trace/uiMode.DuLwZHRf.js |    5 +
+ .../reports/fr08-chromium/trace/uiMode.html        |   19 +
+ .../fr08-chromium/trace/xtermModule.kHJ-D0s7.css   |    1 +
+ .../2978f1f49b28acdacd83df2c6ceb4794bfd60fff.png   |  Bin 0 -> 17390 bytes
+ .../2c31d9291bd77f33ed645c5128bf5df541a2e141.md    |  229 +++
+ .../38a78d38cbba5ce262c01c90a2be17cc7143b9a1.zip   |  Bin 0 -> 1154044 bytes
+ .../444cf55bd7c61d6dff3d419c78d7cd196eed55fb.zip   |  Bin 0 -> 307085 bytes
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |  253 ++++
+ .../57f1f01a18bc5069c66e04813d580a8afc189546.png   |  Bin 0 -> 27025 bytes
+ .../7ea32efe9bb42b0f49efc768ea8cf00d823e6522.md    |  230 +++
+ .../b7cc55dbdf2ca861ad0f47a8ca47a8aec4c11e39.zip   |  Bin 0 -> 311539 bytes
+ .../cb5fc6f1c1d8fc47de4f0c18395d0a0cfee9a37c.zip   |  Bin 0 -> 1190779 bytes
+ .../d7f8312ea56044656cc33d55af0b34cf324dcdc9.md    |  229 +++
+ .../dccced61de3530201f4f08e4a30b4e723d8b2c68.png   |  Bin 0 -> 30731 bytes
+ .../reports/fr08-firefox/index.html                |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr08-firefox/trace/assets/urlMatch-Cgl6axSs.js |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr08-firefox/trace/codicon.DCmgc-ay.ttf        |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr08-firefox/trace/index.BY2vkw8A.js   |    1 +
+ .../reports/fr08-firefox/trace/index.B_TqY17P.css  |    1 +
+ .../reports/fr08-firefox/trace/index.html          |   45 +
+ .../fr08-firefox/trace/manifest.webmanifest        |   16 +
+ .../reports/fr08-firefox/trace/playwright-logo.svg |    9 +
+ .../fr08-firefox/trace/snapshot.-ChLTbql.js        |    1 +
+ .../reports/fr08-firefox/trace/snapshot.html       |   10 +
+ .../reports/fr08-firefox/trace/sw.bundle.js        |    4 +
+ .../reports/fr08-firefox/trace/uiMode.CyMfwkXJ.css |    1 +
+ .../reports/fr08-firefox/trace/uiMode.DuLwZHRf.js  |    5 +
+ .../reports/fr08-firefox/trace/uiMode.html         |   19 +
+ .../fr08-firefox/trace/xtermModule.kHJ-D0s7.css    |    1 +
+ .../076aa4a9077efa69fb076cc18d4d5fcf8b48473b.zip   |  Bin 0 -> 251486 bytes
+ .../1459229dc52ddbaff035039d4218e7bf2738aef4.md    |  229 +++
+ .../34f90d8c664457a842fd98191b276674dcefd8b2.md    |  229 +++
+ .../49897ee3fefb5dbd190e1e783d2eb96481840bff.png   |  Bin 0 -> 49596 bytes
+ .../4bdf7dc25cb0177ea7d82ef66d4f0decc702e765.md    |  253 ++++
+ .../5d4f06971358917624d0a0c2e73e791a37a40473.png   |  Bin 0 -> 72612 bytes
+ .../8456cc34da0d84b31a3b019eea980042490e0b30.png   |  Bin 0 -> 72009 bytes
+ .../9d2234078bd32834ca22ec5ba72aafa941f4f031.zip   |  Bin 0 -> 241354 bytes
+ .../a3bd9614ae5684145098ca9f17c6720fca3b5631.zip   |  Bin 0 -> 244627 bytes
+ .../d5aff83722908164dbbf7691d9641404a20c6296.zip   |  Bin 0 -> 341678 bytes
+ .../fcfb5f0bd874117674abf282a1c55d246166860c.md    |  230 +++
+ .../reports/fr08-webkit/index.html                 |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr08-webkit/trace/assets/urlMatch-Cgl6axSs.js  |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../reports/fr08-webkit/trace/codicon.DCmgc-ay.ttf |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr08-webkit/trace/index.BY2vkw8A.js    |    1 +
+ .../reports/fr08-webkit/trace/index.B_TqY17P.css   |    1 +
+ .../reports/fr08-webkit/trace/index.html           |   45 +
+ .../reports/fr08-webkit/trace/manifest.webmanifest |   16 +
+ .../reports/fr08-webkit/trace/playwright-logo.svg  |    9 +
+ .../reports/fr08-webkit/trace/snapshot.-ChLTbql.js |    1 +
+ .../reports/fr08-webkit/trace/snapshot.html        |   10 +
+ .../reports/fr08-webkit/trace/sw.bundle.js         |    4 +
+ .../reports/fr08-webkit/trace/uiMode.CyMfwkXJ.css  |    1 +
+ .../reports/fr08-webkit/trace/uiMode.DuLwZHRf.js   |    5 +
+ .../reports/fr08-webkit/trace/uiMode.html          |   19 +
+ .../fr08-webkit/trace/xtermModule.kHJ-D0s7.css     |    1 +
+ .../0448700ff0258a198f66d8e9896bbd8229940346.png   |  Bin 0 -> 54101 bytes
+ .../0a517e4aaab86b0c8e921589e2e90d3b75cb94c0.zip   |  Bin 0 -> 928621 bytes
+ .../0f8e37e5f881c025bae14ad2e5233cfd3e81180f.md    |  235 +++
+ .../1bd59d965fc46dab4c53cefc17ece956a8682130.md    |  235 +++
+ .../2806699bd38939b4598734936dd08a5df5cc5056.md    |  235 +++
+ .../3056f62a195fd0de2163ed4339229018aa78a0fc.md    |  235 +++
+ .../4c3d7b0cdb2bef6e82bcf06e8fc7acd5a1e61276.png   |  Bin 0 -> 21468 bytes
+ .../55270bbbc845bc23668c86a930f0da8ae1886aab.zip   |  Bin 0 -> 140305 bytes
+ .../5c6befc1bd81ec1e7d08734a4ba57e6a679e8bd6.zip   |  Bin 0 -> 101590 bytes
+ .../5e03698c0ea806fcfc75a8d58801128782ab55d3.zip   |  Bin 0 -> 137133 bytes
+ .../7839bf149fda60e61c2975ec5e0bbfb86466db29.md    |  869 +++++++++++
+ .../7d444c7cb0595fbb8b5344ea2680b2abb8ec00a9.png   |  Bin 0 -> 20556 bytes
+ .../89235c823281e072e7545d6fad30fb7ed16737a0.png   |  Bin 0 -> 23385 bytes
+ .../8ff3d163f023afa0032491c522f6b8dbf484d88c.zip   |  Bin 0 -> 91108 bytes
+ .../9b5308b78a9587996457f9fa3507bd55ef54c0c7.md    |  235 +++
+ .../aa50a9a9758ed89e2016e16c96826298d9e5a5ed.md    |  198 +++
+ .../adf6b63d3ec145664b306dd49085c440cbd7aea4.png   |  Bin 0 -> 23282 bytes
+ .../bfe184273251ec917aefde304d16aecf802e32a6.zip   |  Bin 0 -> 215806 bytes
+ .../c19ef7c0d13bce12a42148237d0d5a826db09f95.png   |  Bin 0 -> 23449 bytes
+ .../cabad90abc945c69c713f51171e2456b2f87489d.png   |  Bin 0 -> 23762 bytes
+ .../d322347434a2d2914cb1a48d5ccfab2ccee256db.zip   |  Bin 0 -> 129363 bytes
+ .../f544d190efdc61e7a43fbd6ec727b23193db672e.md    |  258 ++++
+ .../ffc17a9539232e787bf191335d1fd32031e82326.zip   |  Bin 0 -> 131115 bytes
+ .../reports/fr13-chromium/index.html               |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../trace/assets/urlMatch-Cgl6axSs.js              |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr13-chromium/trace/codicon.DCmgc-ay.ttf       |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr13-chromium/trace/index.BY2vkw8A.js  |    1 +
+ .../reports/fr13-chromium/trace/index.B_TqY17P.css |    1 +
+ .../reports/fr13-chromium/trace/index.html         |   45 +
+ .../fr13-chromium/trace/manifest.webmanifest       |   16 +
+ .../fr13-chromium/trace/playwright-logo.svg        |    9 +
+ .../fr13-chromium/trace/snapshot.-ChLTbql.js       |    1 +
+ .../reports/fr13-chromium/trace/snapshot.html      |   10 +
+ .../reports/fr13-chromium/trace/sw.bundle.js       |    4 +
+ .../fr13-chromium/trace/uiMode.CyMfwkXJ.css        |    1 +
+ .../reports/fr13-chromium/trace/uiMode.DuLwZHRf.js |    5 +
+ .../reports/fr13-chromium/trace/uiMode.html        |   19 +
+ .../fr13-chromium/trace/xtermModule.kHJ-D0s7.css   |    1 +
+ .../0a9f573f012e3f380afb384af63c815b55987b83.png   |  Bin 0 -> 22491 bytes
+ .../1cc7af082cea0446847caf9a35bd407afdc5cfac.zip   |  Bin 0 -> 1352640 bytes
+ .../2844f81f11ec22367632577b2235be4c912d80a6.md    |  258 ++++
+ .../2dd3d59207fe0ddfa52ea707e863d0cad5881c63.zip   |  Bin 0 -> 2468082 bytes
+ .../3205772851cde9de221da4fe3d1db3c21bb6ebd1.png   |  Bin 0 -> 56426 bytes
+ .../361203a8728e3bea7f32084a03a69de2b8296029.png   |  Bin 0 -> 22773 bytes
+ .../3ace81f7d06a7dcd41b9cf8f65bad47bf6d71ba1.png   |  Bin 0 -> 22818 bytes
+ .../43c0d46ed496893fd5e5bc666b9165bd4423f3f9.md    |  235 +++
+ .../4d95ac7c114404b0b7f6035f3e763da4688835a7.md    |  235 +++
+ .../61c37d6ebe579c0a262c96a57cd4641b7468ef65.md    |  235 +++
+ .../77233077ab699877642e565200963a7498b83681.png   |  Bin 0 -> 22935 bytes
+ .../783ca9d4044697e119689658979a694817c82c82.zip   |  Bin 0 -> 3565386 bytes
+ .../79797fb64bf7e411566eb5977f8ca4ab944fb587.zip   |  Bin 0 -> 1595663 bytes
+ .../8f489878989f049d62012d011f50734469479ac8.md    |  198 +++
+ .../902efb35e9a2e77889d571c4825bb1674a031530.zip   |  Bin 0 -> 1564507 bytes
+ .../91ea53d6efa1b994d3329ba46150b3c238c9055b.zip   |  Bin 0 -> 1641312 bytes
+ .../959787dbeecc69dd432a5397b18d286041fe1c55.zip   |  Bin 0 -> 626455 bytes
+ .../d14480e7917dbdff35cb5a21858e8f0df4cde465.md    |  235 +++
+ .../d1c1de2e99bd7672642340f11d81b672474ef6bc.png   |  Bin 0 -> 22866 bytes
+ .../e2f05c70d22cd33a222d48fa3e2b598cbe6d7aab.md    |  235 +++
+ .../e61494692e089c946647d3a6b069f51f125d4b3c.zip   |  Bin 0 -> 1643397 bytes
+ .../eaa7529e94f7ac76ca31f5b7f2bc72ab10adcbfc.png   |  Bin 0 -> 22882 bytes
+ .../fc78146c0b82c3e5caa9187a08ed3abff702b4af.md    |  980 +++++++++++++
+ .../reports/fr13-firefox/index.html                |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr13-firefox/trace/assets/urlMatch-Cgl6axSs.js |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../fr13-firefox/trace/codicon.DCmgc-ay.ttf        |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr13-firefox/trace/index.BY2vkw8A.js   |    1 +
+ .../reports/fr13-firefox/trace/index.B_TqY17P.css  |    1 +
+ .../reports/fr13-firefox/trace/index.html          |   45 +
+ .../fr13-firefox/trace/manifest.webmanifest        |   16 +
+ .../reports/fr13-firefox/trace/playwright-logo.svg |    9 +
+ .../fr13-firefox/trace/snapshot.-ChLTbql.js        |    1 +
+ .../reports/fr13-firefox/trace/snapshot.html       |   10 +
+ .../reports/fr13-firefox/trace/sw.bundle.js        |    4 +
+ .../reports/fr13-firefox/trace/uiMode.CyMfwkXJ.css |    1 +
+ .../reports/fr13-firefox/trace/uiMode.DuLwZHRf.js  |    5 +
+ .../reports/fr13-firefox/trace/uiMode.html         |   19 +
+ .../fr13-firefox/trace/xtermModule.kHJ-D0s7.css    |    1 +
+ .../0557d2d6b294a07b2015ebb227eefd93b30e7cd5.md    |  258 ++++
+ .../05c8e4bda1dcbd98d8da9627e4a3ab3baa573858.zip   |  Bin 0 -> 101181 bytes
+ .../25507ba9319d2c0cf5baba73dc3ebf9e4a508ca7.zip   |  Bin 0 -> 129913 bytes
+ .../2783d779db9f75c395e3d82b5d717347f96ee053.png   |  Bin 0 -> 58331 bytes
+ .../3bd969eae913e4305b20f892a6d7cb698866a2cd.png   |  Bin 0 -> 59123 bytes
+ .../4aae6af4c8b3d14b23e4946f8cda5f65ec05e56e.md    |  235 +++
+ .../4da5d7b127d51c93ea64a08e4810433ab85d1529.md    |  198 +++
+ .../7efdc38bf519d6d1adebad938f4d076351e04505.png   |  Bin 0 -> 58698 bytes
+ .../872dc380d273795d031da5f19f543ec816b89a08.md    |  235 +++
+ .../87a6fcea6df4d61e9f7b74847fbc394cde023618.zip   |  Bin 0 -> 266753 bytes
+ .../89f753ce9195f250edba65da2f7962b939840bb2.zip   |  Bin 0 -> 137752 bytes
+ .../947973ea36674a067065e53c7887433297aebd6b.png   |  Bin 0 -> 157841 bytes
+ .../a613e661085106350320a9b8f8668acfa62433e7.zip   |  Bin 0 -> 134180 bytes
+ .../ab4e928621621e3fab87fbdaf64ae498836bbac3.png   |  Bin 0 -> 58536 bytes
+ .../b067afcd1406c288a5b7ea273e78718ca312691f.zip   |  Bin 0 -> 492329 bytes
+ .../b3c445462eb640fbf8298c378e21ba2d2a3cfc58.png   |  Bin 0 -> 58886 bytes
+ .../bbcc5ff560b8115af18fab1e08cf5559d3633167.md    | 1091 ++++++++++++++
+ .../bf11d726ddb74eb1e47de755120c8ba43e7a68c3.zip   |  Bin 0 -> 134484 bytes
+ .../c0dea8e85d349f4d86f55507dbd7292102be924c.zip   |  Bin 0 -> 101589 bytes
+ .../da0c919d472b524d173628b53f1c007dc72d1c68.md    |  235 +++
+ .../deac6673f513b3fd7652dfec701e36fc46f8d941.png   |  Bin 0 -> 58771 bytes
+ .../df41d660eb2b0bde7c8f61257b886d07f29b5044.md    |  235 +++
+ .../fa4ce2a93287c2f29cbb0c6157bdea964543b9a3.md    |  235 +++
+ .../reports/fr13-webkit/index.html                 |   49 +
+ .../trace/assets/codeMirrorModule-DNqxPF-E.js      |   32 +
+ .../trace/assets/defaultSettingsView-BQT9Z6FV.js   |  184 +++
+ .../trace/assets/rolldown-runtime-QTnfLwEv.js      |    1 +
+ .../fr13-webkit/trace/assets/urlMatch-Cgl6axSs.js  |    1 +
+ .../trace/codeMirrorModule.-QdMvsKi.css            |    1 +
+ .../reports/fr13-webkit/trace/codicon.DCmgc-ay.ttf |  Bin 0 -> 80340 bytes
+ .../trace/defaultSettingsView.C8BeHuxd.css         |    1 +
+ .../reports/fr13-webkit/trace/index.BY2vkw8A.js    |    1 +
+ .../reports/fr13-webkit/trace/index.B_TqY17P.css   |    1 +
+ .../reports/fr13-webkit/trace/index.html           |   45 +
+ .../reports/fr13-webkit/trace/manifest.webmanifest |   16 +
+ .../reports/fr13-webkit/trace/playwright-logo.svg  |    9 +
+ .../reports/fr13-webkit/trace/snapshot.-ChLTbql.js |    1 +
+ .../reports/fr13-webkit/trace/snapshot.html        |   10 +
+ .../reports/fr13-webkit/trace/sw.bundle.js         |    4 +
+ .../reports/fr13-webkit/trace/uiMode.CyMfwkXJ.css  |    1 +
+ .../reports/fr13-webkit/trace/uiMode.DuLwZHRf.js   |    5 +
+ .../reports/fr13-webkit/trace/uiMode.html          |   19 +
+ .../fr13-webkit/trace/xtermModule.kHJ-D0s7.css     |    1 +
+ HW04/hw04-automation-all-frs/scripts/errors.js     |   37 +
+ HW04/hw04-automation-all-frs/scripts/hw.py         |  381 +++++
+ .../tests/fr04-profile.spec.ts                     |   15 +-
+ .../tests/fr08-checkout.spec.ts                    |   15 +-
+ HW04/hw04-automation-all-frs/tests/helpers/web.ts  |   18 +-
+ backend/database.sqlite                            |  Bin 36864 -> 73728 bytes
+ 413 files changed, 33239 insertions(+), 28 deletions(-)
+
+commit c77e01f21e9c552f231ddf0974bb6105fbb25dab
+Author: kienha5 <kienquocha5@gmail.com>
+Date:   2026-11-15 22:08:12 +0700
+
+    initial test and prepare a small mock test
+
+ HW03/00_AI_AUDIT_REPORT.md                         |  90 ----
+ HW03/00_AI_AUDIT_REPORT.pdf                        | Bin 745564 -> 0 bytes
+ HW03/AI_CRITIQUE.md                                |   3 -
+ HW03/HW03_Bug_Report.md                            | 117 -----
+ HW03/HW03_Main_Report.md                           | 535 ---------------------
+ HW03/HW03_Main_Report.pdf                          | Bin 1335048 -> 0 bytes
+ HW03/README.md                                     |  70 ---
+ HW03/Task-1/HW03_Task1_Checklist.csv               |  52 --
+ .../HW03_Task1_GUI_Checklist_Auth_Profile.md       | 155 ------
+ HW03/Task-1/bugs/BUG_LIST.md                       |  19 -
+ HW03/Task-1/bugs/GUI-BUG-01.md                     |  32 --
+ HW03/Task-1/bugs/GUI-BUG-02.md                     |  32 --
+ HW03/Task-1/bugs/GUI-BUG-03.md                     |  36 --
+ HW03/Task-1/bugs/GUI-BUG-04.md                     |  31 --
+ HW03/Task-1/bugs/GUI-BUG-05.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-06.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-07.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-08.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-09.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-10.md                     |  28 --
+ HW03/Task-1/bugs/GUI-BUG-11.md                     |  28 --
+ HW03/Task-1/bugs/GUI-BUG-12.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-13.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-14.md                     |  27 --
+ HW03/Task-1/bugs/GUI-BUG-15.md                     |  32 --
+ .../Task-1/bugs/screenshots/GUI-BUG-01-Firefox.png | Bin 98304 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-02-Firefox.png | Bin 96407 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-03-Firefox.png | Bin 110566 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-04-Firefox.png | Bin 180143 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-05-Firefox.png | Bin 83118 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-06-Firefox.png | Bin 71957 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-07-Firefox.png | Bin 103205 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-08-Firefox.png | Bin 79015 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-09-Firefox.png | Bin 103205 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-10-Firefox.png | Bin 212177 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-11-Firefox.png | Bin 212177 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-12-Firefox.png | Bin 72652 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-13-Firefox.png | Bin 253274 -> 0 bytes
+ .../Task-1/bugs/screenshots/GUI-BUG-14-Firefox.png | Bin 110566 -> 0 bytes
+ HW03/Task-2/HW03_Task2_Evidence.md                 | 125 -----
+ HW03/Task-2/HW03_Task2_Report.md                   | 269 -----------
+ HW03/Task-3/HW03_Task3_Report.md                   | 101 ----
+ HW03/Task-3/HW03_Task3_Results.csv                 |  52 --
+ HW03/Task-3/screenshots/GUI-BUG-01-Chrome.png      | Bin 99993 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-01-Firefox.png     | Bin 103781 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-02-Chrome.png      | Bin 98675 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-02-Firefox.png     | Bin 101998 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-03-Chrome.png      | Bin 107781 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-03-Firefox.png     | Bin 111241 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-04-Chrome.png      | Bin 178114 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-04-Firefox.png     | Bin 174741 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-05-Chrome.png      | Bin 93116 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-05-Firefox.png     | Bin 91099 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-06-Chrome.png      | Bin 83618 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-06-Firefox.png     | Bin 82537 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-07-Chrome.png      | Bin 102027 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-07-Firefox.png     | Bin 107385 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-08-Chrome.png      | Bin 88074 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-08-Firefox.png     | Bin 87057 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-09-Chrome.png      | Bin 102027 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-09-Firefox.png     | Bin 107385 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-10-Chrome.png      | Bin 197204 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-10-Firefox.png     | Bin 188037 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-11-Chrome.png      | Bin 197204 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-11-Firefox.png     | Bin 188037 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-12-Chrome.png      | Bin 85410 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-12-Firefox.png     | Bin 83056 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-13-Chrome.png      | Bin 215019 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-13-Firefox.png     | Bin 224873 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-14-Chrome.png      | Bin 107781 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-14-Firefox.png     | Bin 111241 -> 0 bytes
+ HW03/Task-3/screenshots/GUI-BUG-15-Chrome.png      | Bin 89111 -> 0 bytes
+ HW03/Test_cases_checklist.xlsx                     | Bin 12702 -> 0 bytes
+ HW03/commit_log.txt                                | Bin 1332 -> 0 bytes
+ HW03/scripts/hw.py                                 | 400 ---------------
+ HW03/scripts/stamp.py                              | 148 ------
+ HW04/hw04-automation-FR13/.gitignore               |   4 +
+ HW04/hw04-automation-FR13/README.md                |  47 ++
+ HW04/hw04-automation-FR13/bugs/.gitkeep            |   0
+ HW04/hw04-automation-FR13/data/accounts.json       |   4 +
+ HW04/hw04-automation-FR13/data/fr13-access.json    |  50 ++
+ HW04/hw04-automation-FR13/data/fr13-dashboard.json | 218 +++++++++
+ .../docs/ai-audit/AUDIT_LOG.md                     |  39 ++
+ .../docs/ai-audit/exports/.gitkeep                 |   0
+ .../docs/review/fr13-review.md                     |  28 ++
+ HW04/hw04-automation-FR13/docs/spec-notes.md       |  18 +
+ HW04/hw04-automation-FR13/package.json             |  16 +
+ HW04/hw04-automation-FR13/playwright.config.ts     |  43 ++
+ HW04/hw04-automation-FR13/reports/.gitkeep         |   0
+ HW04/hw04-automation-FR13/scripts/git-log.js       |  27 ++
+ HW04/hw04-automation-FR13/scripts/run-matrix.js    |  49 ++
+ HW04/hw04-automation-FR13/scripts/summarize.js     |  66 +++
+ .../tests/fr13-dashboard.spec.ts                   | 242 ++++++++++
+ HW04/hw04-automation-FR13/tests/helpers/admin.ts   |  87 ++++
+ HW04/hw04-automation-FR13/tests/helpers/api.ts     |  85 ++++
+ HW04/hw04-automation-FR13/tests/helpers/data.ts    |  11 +
+ HW04/hw04-automation-FR13/tests/helpers/env.ts     |   8 +
+ HW04/hw04-automation-all-frs/.gitignore            |   4 +
+ HW04/hw04-automation-all-frs/README.md             |  47 ++
+ HW04/hw04-automation-all-frs/bugs/.gitkeep         |   0
+ HW04/hw04-automation-all-frs/data/accounts.json    |   4 +
+ .../data/fr04-baseline.json                        |   5 +
+ HW04/hw04-automation-all-frs/data/fr04-fields.json |   9 +
+ HW04/hw04-automation-all-frs/data/fr04-misc.json   |   5 +
+ HW04/hw04-automation-all-frs/data/fr04-phone.json  |  16 +
+ .../data/fr04-security.json                        |  16 +
+ .../data/fr08-checkout.json                        |  17 +
+ HW04/hw04-automation-all-frs/data/fr13-access.json |  50 ++
+ .../data/fr13-dashboard.json                       | 218 +++++++++
+ .../docs/ai-audit/AUDIT_LOG.md                     |  39 ++
+ .../docs/ai-audit/exports/.gitkeep                 |   0
+ .../docs/review/fr13-review.md                     |  28 ++
+ HW04/hw04-automation-all-frs/docs/spec-notes.md    |  18 +
+ HW04/hw04-automation-all-frs/package.json          |  16 +
+ HW04/hw04-automation-all-frs/playwright.config.ts  |  43 ++
+ HW04/hw04-automation-all-frs/scripts/git-log.js    |  27 ++
+ HW04/hw04-automation-all-frs/scripts/run-matrix.js |  49 ++
+ HW04/hw04-automation-all-frs/scripts/summarize.js  |  66 +++
+ .../tests/fr04-profile.spec.ts                     | 151 ++++++
+ .../tests/fr08-checkout.spec.ts                    | 194 ++++++++
+ .../tests/fr13-dashboard.spec.ts                   | 242 ++++++++++
+ .../hw04-automation-all-frs/tests/helpers/admin.ts |  87 ++++
+ HW04/hw04-automation-all-frs/tests/helpers/api.ts  |  85 ++++
+ HW04/hw04-automation-all-frs/tests/helpers/data.ts |  11 +
+ HW04/hw04-automation-all-frs/tests/helpers/env.ts  |   8 +
+ HW04/hw04-automation-all-frs/tests/helpers/web.ts  |  95 ++++
+ 126 files changed, 2592 insertions(+), 2571 deletions(-)
