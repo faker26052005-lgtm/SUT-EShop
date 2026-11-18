@@ -1,0 +1,7 @@
+# AI Critique
+
+Agent sinh được bộ 60 test Playwright (180 lượt chạy trên 3 trình duyệt) cho FR-04, FR-08 và FR-13, tìm ra 9 bug thật (2 Critical, 6 High, 1 Medium), và kết quả giống hệt nhau trên Chromium, Firefox, WebKit. Điểm mạnh là thiết kế data-driven, dùng API làm oracle để đọc lại đơn đã lưu và tính lại doanh thu, và tách riêng các ca CLARIFY thay vì tự bịa kỳ vọng khi SRS im lặng. Agent cũng tự phát hiện được một số lỗi khi chạy thử, ví dụ giỏ hàng không đi qua API, hay `alert()` không nằm trong DOM.
+
+Điểm yếu chính là agent không thấy SUT thật. Lần chạy đầu, race condition khi bắt `alert()` làm 15/26 test FR-04 đỏ; một số assertion chặt hơn SRS; dữ liệu nền phụ thuộc vào bug. Khi rà soát lại, nhiều chỗ vẫn yếu dù test xanh: selector theo vị trí hoặc class Tailwind, `waitForTimeout` cố định, assertion rỗng (vòng lặp trên danh sách có thể rỗng), `digits()` đọc chuỗi rỗng thành 0. 7 ca CLARIFY luôn pass nên làm số pass bị thổi phồng; số pass có assertion thật chỉ là 33/60. Đề xuất sửa của AI cũng có lúc sai (ném lỗi trong `expect.poll`, thu hẹp assertion S11/S12 sẽ bỏ sót bug), các chỉnh sửa F1-F5 chưa chạy lại với SUT thật, và còn thiếu edge case như bấm thanh toán hai lần, phân trang, CSDL rỗng.
+
+Nên dùng agent để dựng nhanh khung regression khi đã có SRS, mã nguồn giao diện và một người rà soát lại kết quả. Không nên tin kết quả xanh/đỏ hay đưa thẳng vào báo cáo cuối khi chưa chạy kiểm chứng trên SUT thật.

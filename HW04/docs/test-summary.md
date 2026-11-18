@@ -2,9 +2,9 @@
 
 | Run | Executed | Passed | Failed | Skipped | Flaky | Recorded as CLARIFY |
 | :-- | --: | --: | --: | --: | --: | --: |
-| fr04-chromium | 26 | 18 | 8 | 0 | 0 | 5 |
-| fr04-firefox | 26 | 18 | 8 | 0 | 0 | 5 |
-| fr04-webkit | 26 | 18 | 8 | 0 | 0 | 5 |
+| fr04-chromium | 26 | 18 | 8 | 0 | 0 | 7 |
+| fr04-firefox | 26 | 18 | 8 | 0 | 0 | 7 |
+| fr04-webkit | 26 | 18 | 8 | 0 | 0 | 7 |
 | fr08-chromium | 15 | 11 | 4 | 0 | 0 | 2 |
 | fr08-firefox | 15 | 11 | 4 | 0 | 0 | 2 |
 | fr08-webkit | 15 | 11 | 4 | 0 | 0 | 2 |

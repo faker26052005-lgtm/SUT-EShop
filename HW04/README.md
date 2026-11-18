@@ -38,10 +38,55 @@ Playwright (TypeScript), data-driven, chạy trên Chromium / Firefox / WebKit. 
 | 3 | Agent Skills | 10 | |
 | | **Tổng** | **100** | |
 
-## Test summary (điền từ `npm run summary`)
+## Tóm tắt kết quả kiểm thử
 
-- Số feature: 
-- Số test case tự động hóa / thực thi / pass / fail: 
-- Số lượt chạy trình duyệt: 
-- Số bug: 
+| Lượt chạy (Run) | Đã thực thi | Đạt (Passed) | Lỗi (Failed) | Bỏ qua | Chập chờn | Ghi nhận là CLARIFY |
+| :-- | --: | --: | --: | --: | --: | --: |
+| fr04-chromium | 26 | 18 | 8 | 0 | 0 | 7 |
+| fr04-firefox | 26 | 18 | 8 | 0 | 0 | 7 |
+| fr04-webkit | 26 | 18 | 8 | 0 | 0 | 7 |
+| fr08-chromium | 15 | 11 | 4 | 0 | 0 | 2 |
+| fr08-firefox | 15 | 11 | 4 | 0 | 0 | 2 |
+| fr08-webkit | 15 | 11 | 4 | 0 | 0 | 2 |
+| fr13-chromium | 19 | 11 | 8 | 0 | 0 | 4 |
+| fr13-firefox | 19 | 11 | 8 | 0 | 0 | 4 |
+| fr13-webkit | 19 | 11 | 8 | 0 | 0 | 4 |
+
+## Theo từng tính năng (số test case tự động hóa = số test case trong một lượt chạy trình duyệt)
+
+| Tính năng | Tự động hóa | Lượt chạy trình duyệt | Đã thực thi (tất cả lượt) | Đạt (Passed) | Lỗi (Failed) |
+| :-- | --: | --: | --: | --: | --: |
+| FR04 | 26 | 3 | 78 | 54 | 24 |
+| FR08 | 15 | 3 | 45 | 33 | 12 |
+| FR13 | 19 | 3 | 57 | 33 | 24 |
+
+Lượt chạy trình duyệt: **9** (yêu cầu >= 9). Số tính năng: **3**.
+
+## Các test case bị lỗi 
+
+- P01 10 chữ số bắt đầu bằng 0 được chấp nhận và lưu - lỗi trên: chromium, firefox, webkit
+- P02 11 chữ số bắt đầu bằng 0 được chấp nhận và lưu - lỗi trên: chromium, firefox, webkit
+- P03 Biên: 10 chữ số (giới hạn dưới) được chấp nhận - lỗi trên: chromium, firefox, webkit
+- P04 Biên: 11 chữ số (giới hạn trên) được chấp nhận - lỗi trên: chromium, firefox, webkit
+- P05 10 chữ số không bắt đầu bằng 0 bị từ chối - lỗi trên: chromium, firefox, webkit
+- P13 Chữ số đầu tiên là 1 (kế bên 0 hợp lệ) bị từ chối - lỗi trên: chromium, firefox, webkit
+- X01 SEC-04: tên chứa thẻ HTML được hiển thị dưới dạng văn bản thuần túy (plain text) trên tiêu đề trang - lỗi trên: chromium, firefox, webkit
+- X02 SEC-04: tên chứa payload <img onerror> không được chạy bất kỳ script nào - lỗi trên: chromium, firefox, webkit
+- C05 R4: client gửi total_amount = 1 không được làm thay đổi tổng tiền đã lưu - lỗi trên: chromium, firefox, webkit
+- C06 R4: client gửi total_amount = 0 không được làm thay đổi tổng tiền đã lưu - lỗi trên: chromium, firefox, webkit
+- C09 R2: tổng tiền thanh toán không thể bị người dùng chỉnh sửa - lỗi trên: chromium, firefox, webkit
+- C10 R5: sau khi thanh toán thành công, giỏ hàng phải trống - lỗi trên: chromium, firefox, webkit
+- S01 - Một đơn hàng đã giao (delivered) được cộng vào doanh thu - lỗi trên: chromium, firefox, webkit
+- S06 - Biên: số tiền đã giao nhỏ nhất (1 VNĐ) được cộng chính xác - lỗi trên: chromium, firefox, webkit
+- S07 - Biên: số tiền 32-bit lớn nhất (2147483647) được cộng chính xác - lỗi trên: chromium, firefox, webkit
+- S08 - Đơn hàng hỗn hợp: chỉ hai đơn hàng đã giao (delivered) mới được tính tổng - lỗi trên: chromium, firefox, webkit
+- S09 - Admin duyệt vòng đời trạng thái đơn hàng pending > confirmed > shipping > delivered trên UI; doanh thu chỉ thay đổi ở trạng thái delivered - lỗi trên: chromium, firefox, webkit
+- S12 - FR-10: đơn hàng bị hủy (canceled) là trạng thái cuối cùng, danh sách đơn hàng không cung cấp thao tác nào cho nó - lỗi trên: chromium, firefox, webkit
+- S13 - Ô doanh thu bằng tổng tất cả các đơn hàng đã giao trong hệ thống, ô đơn hàng bằng số lượng đơn hàng - lỗi trên: chromium, firefox, webkit
+- A04 - Một JWT không phải của admin đặt trong web admin không được mở dashboard (FR-12, SEC-03) - lỗi trên: chromium, firefox, webkit
+
+- Số feature: 3
+- Số test case tự động hóa / thực thi / pass / fail: 60 / 180 / 120 / 60
+- Số lượt chạy trình duyệt: 9
+- Số bug: 20
 - Link video demo: 
