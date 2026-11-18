@@ -1,0 +1,1539 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\LOQ\\AppData\\Local\\Author Software\\nvm\\installs\\v24.14.0\\node.exe",
+      "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "fr04-",
+      "--project=webkit"
+    ],
+    "configFile": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\playwright.config.ts",
+    "rootDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "Run by": "23120056",
+      "Run at": "2026-11-17T11:33:47.169Z",
+      "Run label": "FR04 on webkit",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-17T11:33:47.169Z",
+          "Run label": "FR04 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-17T11:33:47.169Z",
+          "Run label": "FR04 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-17T11:33:47.169Z",
+          "Run label": "FR04 on webkit",
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/LOQ/CODING/Testing/SUT-EShop/HW04/hw04-automation-all-frs/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "Run by": "23120056",
+          "Run at": "2026-11-17T11:33:47.169Z",
+          "Run label": "FR04 on webkit",
+          "actualWorkers": 1
+        },
+        "name": "webkit",
+        "testDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests",
+        "snapshotDir": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "locale": "en-US",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "actionTimeout": 10000,
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1792,
+            "height": 1120
+          },
+          "deviceScaleFactor": 2,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "reports/fr04-webkit",
+          "open": "never",
+          "title": "HW04 | Run by: 23120056 | FR04 on webkit | 2026-11-17T11:33:47.169Z"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/_json/fr04-webkit.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fr04-profile.spec.ts",
+      "file": "fr04-profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FR-04 phone number (SRS: starts with 0, 10-11 digits)",
+          "file": "fr04-profile.spec.ts",
+          "line": 39,
+          "column": 6,
+          "specs": [
+            {
+              "title": "P01 10 digits starting with 0 is accepted and saved",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1087,
+                      "error": {
+                        "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m",
+                        "stack": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 53,
+                          "line": 50
+                        },
+                        "snippet": " \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 53,
+                            "line": 50
+                          },
+                          "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:47.471Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-ddd69-ith-0-is-accepted-and-saved-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-ddd69-ith-0-is-accepted-and-saved-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-ddd69-ith-0-is-accepted-and-saved-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 53,
+                        "line": 50
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-7fb9e3d5396d1f6a9129",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P02 11 digits starting with 0 is accepted and saved",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 735,
+                      "error": {
+                        "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m",
+                        "stack": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 53,
+                          "line": 50
+                        },
+                        "snippet": " \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 53,
+                            "line": 50
+                          },
+                          "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:50.837Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-70d4b-ith-0-is-accepted-and-saved-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-70d4b-ith-0-is-accepted-and-saved-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-70d4b-ith-0-is-accepted-and-saved-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 53,
+                        "line": 50
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-08fd4ebd93b4843f76d2",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P03 Boundary: 10 digits (lower limit) is accepted",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 755,
+                      "error": {
+                        "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m",
+                        "stack": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 53,
+                          "line": 50
+                        },
+                        "snippet": " \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 53,
+                            "line": 50
+                          },
+                          "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:52.019Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-75c5c-its-lower-limit-is-accepted-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-75c5c-its-lower-limit-is-accepted-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-75c5c-its-lower-limit-is-accepted-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 53,
+                        "line": 50
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-3c59a6046e44b078c7e8",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P04 Boundary: 11 digits (upper limit) is accepted",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 714,
+                      "error": {
+                        "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m",
+                        "stack": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 53,
+                          "line": 50
+                        },
+                        "snippet": " \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 53,
+                            "line": 50
+                          },
+                          "message": "Error: alert shown after saving\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Cập nhật thành công!\"\u001b[39m\nReceived: \u001b[31m\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\"\u001b[39m\n\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'accept'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 50 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'alert shown after saving'\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n \u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:50:53\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:53.215Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-5652d-its-upper-limit-is-accepted-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-5652d-its-upper-limit-is-accepted-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-5652d-its-upper-limit-is-accepted-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 53,
+                        "line": 50
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-b87e80c3fdda35cfe71b",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P05 10 digits not starting with 0 is rejected",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 880,
+                      "error": {
+                        "message": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m",
+                        "stack": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:53:65",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 65,
+                          "line": 53
+                        },
+                        "snippet": " \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'old phone must be kept'\u001b[39m)\u001b[33m.\u001b[39mtoBe(base\u001b[33m.\u001b[39mphoneTests\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m         test\u001b[33m.\u001b[39minfo()\u001b[33m.\u001b[39mannotations\u001b[33m.\u001b[39mpush({ type\u001b[33m:\u001b[39m \u001b[32m'NOTE'\u001b[39m\u001b[33m,\u001b[39m description\u001b[33m:\u001b[39m \u001b[32m`${row.id}: message shown = ${JSON.stringify(message)}`\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 56 |\u001b[39m       } \u001b[36melse\u001b[39m {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 65,
+                            "line": 53
+                          },
+                          "message": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m\n\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'old phone must be kept'\u001b[39m)\u001b[33m.\u001b[39mtoBe(base\u001b[33m.\u001b[39mphoneTests\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m         test\u001b[33m.\u001b[39minfo()\u001b[33m.\u001b[39mannotations\u001b[33m.\u001b[39mpush({ type\u001b[33m:\u001b[39m \u001b[32m'NOTE'\u001b[39m\u001b[33m,\u001b[39m description\u001b[33m:\u001b[39m \u001b[32m`${row.id}: message shown = ${JSON.stringify(message)}`\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 56 |\u001b[39m       } \u001b[36melse\u001b[39m {\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:53:65\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:54.376Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-b765e-starting-with-0-is-rejected-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-b765e-starting-with-0-is-rejected-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-b765e-starting-with-0-is-rejected-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 65,
+                        "line": 53
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-06de2eee9583de894382",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P06 Letters in the number are rejected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "P06: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 630,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:55.709Z",
+                      "annotations": [
+                        {
+                          "type": "NOTE",
+                          "description": "P06: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-bb82276308a358a44967",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P07 Spaces in the number (SRS unclear: is formatting allowed?)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "P07: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 628,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:56.431Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "P07: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-68f3552966d89b9108c6",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P08 International +84 format is rejected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "P08: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 603,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:57.066Z",
+                      "annotations": [
+                        {
+                          "type": "NOTE",
+                          "description": "P08: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-0f4c44fe118384f6a77a",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P09 Dashes in the number (SRS unclear: is formatting allowed?)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "P09: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 566,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:57.675Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "P09: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-e78f79ba12aaa255b6d4",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P10 Boundary: 9 digits (one below the limit) is rejected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "P10: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 582,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:58.247Z",
+                      "annotations": [
+                        {
+                          "type": "NOTE",
+                          "description": "P10: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-4b7027ce9635d1d6b631",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P11 Boundary: 12 digits (one above the limit) is rejected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "P11: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 586,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:58.835Z",
+                      "annotations": [
+                        {
+                          "type": "NOTE",
+                          "description": "P11: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-cd7b7c49b8bda95a2f60",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P12 Extreme: a single digit is rejected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "NOTE",
+                      "description": "P12: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 610,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:33:59.427Z",
+                      "annotations": [
+                        {
+                          "type": "NOTE",
+                          "description": "P12: message shown = \"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-0f1c51171b85f43a3ca5",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P13 First digit 1 (next to the valid 0) is rejected",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 799,
+                      "error": {
+                        "message": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m",
+                        "stack": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:53:65",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 65,
+                          "line": 53
+                        },
+                        "snippet": " \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'old phone must be kept'\u001b[39m)\u001b[33m.\u001b[39mtoBe(base\u001b[33m.\u001b[39mphoneTests\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m         test\u001b[33m.\u001b[39minfo()\u001b[33m.\u001b[39mannotations\u001b[33m.\u001b[39mpush({ type\u001b[33m:\u001b[39m \u001b[32m'NOTE'\u001b[39m\u001b[33m,\u001b[39m description\u001b[33m:\u001b[39m \u001b[32m`${row.id}: message shown = ${JSON.stringify(message)}`\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 56 |\u001b[39m       } \u001b[36melse\u001b[39m {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 65,
+                            "line": 53
+                          },
+                          "message": "Error: the form must not report success\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"Cập nhật thành công!\"\u001b[39m\n\n \u001b[90m 51 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'phone stored in the database'\u001b[39m)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 52 |\u001b[39m       } \u001b[36melse\u001b[39m \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mexpect \u001b[33m===\u001b[39m \u001b[32m'reject'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m         expect(message\u001b[33m,\u001b[39m \u001b[32m'the form must not report success'\u001b[39m)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[33mSUCCESS\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m         expect(stored\u001b[33m,\u001b[39m \u001b[32m'old phone must be kept'\u001b[39m)\u001b[33m.\u001b[39mtoBe(base\u001b[33m.\u001b[39mphoneTests\u001b[33m.\u001b[39mphone)\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m         test\u001b[33m.\u001b[39minfo()\u001b[33m.\u001b[39mannotations\u001b[33m.\u001b[39mpush({ type\u001b[33m:\u001b[39m \u001b[32m'NOTE'\u001b[39m\u001b[33m,\u001b[39m description\u001b[33m:\u001b[39m \u001b[32m`${row.id}: message shown = ${JSON.stringify(message)}`\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 56 |\u001b[39m       } \u001b[36melse\u001b[39m {\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:53:65\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:00.043Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-07889--to-the-valid-0-is-rejected-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-07889--to-the-valid-0-is-rejected-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-phone-n-07889--to-the-valid-0-is-rejected-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 65,
+                        "line": 53
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-a38f47b23018ed6c092c",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "P14 Empty phone (SRS unclear: is the phone optional?)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "P14: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 674,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:01.219Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "P14: alert=\"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.\", stored phone=\"0900000000\" (SRS silent, recorded only)"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-b32328b30e2e3cd4a054",
+              "file": "fr04-profile.spec.ts",
+              "line": 41,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "FR-04 name and address",
+          "file": "fr04-profile.spec.ts",
+          "line": 66,
+          "column": 6,
+          "specs": [
+            {
+              "title": "F01 A plain name is saved, phone and address are untouched",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 732,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:01.972Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-a724e10fe3d297dfafd4",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F02 A name with Vietnamese accents is saved",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 712,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:02.710Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-89ae26a2774a3087584c",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F03 A normal address is saved, name and phone are untouched",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 743,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:03.428Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-577c5e43fc8fdb7ecb3b",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F04 Empty name (SRS unclear: is the name required?)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "F04: alert=null, stored name=\"Ten Goc\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4541,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:04.177Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "F04: alert=null, stored name=\"Ten Goc\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-165415f09a3bb532fb8d",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F05 Name made of spaces only (SRS unclear)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "F05: alert=\"Cập nhật thành công!\", stored name=\"   \""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 718,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:08.724Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "F05: alert=\"Cập nhật thành công!\", stored name=\"   \""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-4db081a40a471a7fdfed",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F06 Empty address (SRS unclear: is the address optional?)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "F06: alert=\"Cập nhật thành công!\", stored address=\"\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 726,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:09.448Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "F06: alert=\"Cập nhật thành công!\", stored address=\"\""
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-96a44c8f2dc16b4cc3ec",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "F07 1000-character name (SRS gives no length limit)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "CLARIFY",
+                      "description": "F07: alert=\"Cập nhật thành công!\", stored name=\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"... (1000 chars)"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 590,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:10.181Z",
+                      "annotations": [
+                        {
+                          "type": "CLARIFY",
+                          "description": "F07: alert=\"Cập nhật thành công!\", stored name=\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"... (1000 chars)"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-97aa56a6a62003411f17",
+              "file": "fr04-profile.spec.ts",
+              "line": 68,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "FR-04 output escaping (SRS SEC-04)",
+          "file": "fr04-profile.spec.ts",
+          "line": 100,
+          "column": 6,
+          "specs": [
+            {
+              "title": "X01 SEC-04: a name containing an HTML tag is shown as plain text in the page header",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7896,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href=\"/profile\"]')\nExpected substring: \u001b[32m\"<b>x</b>\"\u001b[39m\nReceived string:    \u001b[31m\"Chào, x\"\u001b[39m\nTimeout: 7000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('a[href=\"/profile\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href=\"/profile\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <a href=\"/profile\" data-discover=\"true\" class=\"hover:underline text-yellow-300\">…</a>\u001b[22m\n\u001b[2m       - unexpected value \"Chào, x\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href=\"/profile\"]')\nExpected substring: \u001b[32m\"<b>x</b>\"\u001b[39m\nReceived string:    \u001b[31m\"Chào, x\"\u001b[39m\nTimeout: 7000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('a[href=\"/profile\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href=\"/profile\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <a href=\"/profile\" data-discover=\"true\" class=\"hover:underline text-yellow-300\">…</a>\u001b[22m\n\u001b[2m       - unexpected value \"Chào, x\"\u001b[22m\n\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:111:41",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 41,
+                          "line": 111
+                        },
+                        "snippet": " \u001b[90m 109 |\u001b[39m       \u001b[36mawait\u001b[39m expect(profileLink(page))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 110 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mcheck \u001b[33m===\u001b[39m \u001b[32m'text'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 111 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page))\u001b[33m.\u001b[39mtoContainText(row\u001b[33m.\u001b[39mpayload)\u001b[33m;\u001b[39m \u001b[90m// the tag is visible as text\u001b[39m\n \u001b[90m     |\u001b[39m                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page)\u001b[33m.\u001b[39mlocator(\u001b[32m'b'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// and was not turned into an element\u001b[39m\n \u001b[90m 113 |\u001b[39m       } \u001b[36melse\u001b[39m {\n \u001b[90m 114 |\u001b[39m         \u001b[90m// Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 41,
+                            "line": 111
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a[href=\"/profile\"]')\nExpected substring: \u001b[32m\"<b>x</b>\"\u001b[39m\nReceived string:    \u001b[31m\"Chào, x\"\u001b[39m\nTimeout: 7000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('a[href=\"/profile\"]') with timeout 7000ms\u001b[22m\n\u001b[2m  - waiting for locator('a[href=\"/profile\"]')\u001b[22m\n\u001b[2m    17 × locator resolved to <a href=\"/profile\" data-discover=\"true\" class=\"hover:underline text-yellow-300\">…</a>\u001b[22m\n\u001b[2m       - unexpected value \"Chào, x\"\u001b[22m\n\n\n \u001b[90m 109 |\u001b[39m       \u001b[36mawait\u001b[39m expect(profileLink(page))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 110 |\u001b[39m       \u001b[36mif\u001b[39m (row\u001b[33m.\u001b[39mcheck \u001b[33m===\u001b[39m \u001b[32m'text'\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 111 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page))\u001b[33m.\u001b[39mtoContainText(row\u001b[33m.\u001b[39mpayload)\u001b[33m;\u001b[39m \u001b[90m// the tag is visible as text\u001b[39m\n \u001b[90m     |\u001b[39m                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page)\u001b[33m.\u001b[39mlocator(\u001b[32m'b'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// and was not turned into an element\u001b[39m\n \u001b[90m 113 |\u001b[39m       } \u001b[36melse\u001b[39m {\n \u001b[90m 114 |\u001b[39m         \u001b[90m// Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:111:41\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:10.776Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--2eb8a-ain-text-in-the-page-header-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--2eb8a-ain-text-in-the-page-header-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--2eb8a-ain-text-in-the-page-header-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 41,
+                        "line": 111
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-3495a52efa1dc56888c4",
+              "file": "fr04-profile.spec.ts",
+              "line": 102,
+              "column": 5
+            },
+            {
+              "title": "X02 SEC-04: a name containing an <img onerror> payload must not run any script",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1582,
+                      "error": {
+                        "message": "Error: script from the name must not run\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeUndefined\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m1\u001b[39m",
+                        "stack": "Error: script from the name must not run\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeUndefined\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m1\u001b[39m\n    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:116:103",
+                        "location": {
+                          "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                          "column": 103,
+                          "line": 116
+                        },
+                        "snippet": " \u001b[90m 114 |\u001b[39m         \u001b[90m// Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.\u001b[39m\n \u001b[90m 115 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m         expect(\u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(() \u001b[33m=>\u001b[39m (window \u001b[36mas\u001b[39m any)\u001b[33m.\u001b[39m__xss)\u001b[33m,\u001b[39m \u001b[32m'script from the name must not run'\u001b[39m)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page)\u001b[33m.\u001b[39mlocator(\u001b[32m'img'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 118 |\u001b[39m       }\n \u001b[90m 119 |\u001b[39m       expect((\u001b[36mawait\u001b[39m getMe(request\u001b[33m,\u001b[39m s\u001b[33m.\u001b[39mtoken))\u001b[33m.\u001b[39mname)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mpayload)\u001b[33m;\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                            "column": 103,
+                            "line": 116
+                          },
+                          "message": "Error: script from the name must not run\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeUndefined\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m1\u001b[39m\n\n \u001b[90m 114 |\u001b[39m         \u001b[90m// Wait for the page (and a possible <img src=x> request + its onerror) to settle instead of sleeping 500 ms.\u001b[39m\n \u001b[90m 115 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 116 |\u001b[39m         expect(\u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(() \u001b[33m=>\u001b[39m (window \u001b[36mas\u001b[39m any)\u001b[33m.\u001b[39m__xss)\u001b[33m,\u001b[39m \u001b[32m'script from the name must not run'\u001b[39m)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 117 |\u001b[39m         \u001b[36mawait\u001b[39m expect(profileLink(page)\u001b[33m.\u001b[39mlocator(\u001b[32m'img'\u001b[39m))\u001b[33m.\u001b[39mtoHaveCount(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 118 |\u001b[39m       }\n \u001b[90m 119 |\u001b[39m       expect((\u001b[36mawait\u001b[39m getMe(request\u001b[33m,\u001b[39m s\u001b[33m.\u001b[39mtoken))\u001b[33m.\u001b[39mname)\u001b[33m.\u001b[39mtoBe(row\u001b[33m.\u001b[39mpayload)\u001b[33m;\u001b[39m\n\u001b[2m    at C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts:116:103\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:19.065Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--72f74-oad-must-not-run-any-script-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--72f74-oad-must-not-run-any-script-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\test-results\\fr04-profile-FR-04-output--72f74-oad-must-not-run-any-script-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\LOQ\\CODING\\Testing\\SUT-EShop\\HW04\\hw04-automation-all-frs\\tests\\fr04-profile.spec.ts",
+                        "column": 103,
+                        "line": 116
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-1c781787cdaebeab4898",
+              "file": "fr04-profile.spec.ts",
+              "line": 102,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "FR-04 access and read-only fields",
+          "file": "fr04-profile.spec.ts",
+          "line": 124,
+          "column": 6,
+          "specs": [
+            {
+              "title": "E01 The email field shows the account email and cannot be edited",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 627,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:21.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-21e596845d2de386ef90",
+              "file": "fr04-profile.spec.ts",
+              "line": 126,
+              "column": 5
+            },
+            {
+              "title": "A01 A visitor who is not logged in cannot use the profile page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 402,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:21.823Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-c6e0c64ce18b9037d352",
+              "file": "fr04-profile.spec.ts",
+              "line": 126,
+              "column": 5
+            },
+            {
+              "title": "A02 Login through the form, open the profile from the header, the form shows the stored name",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 728,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T11:34:22.232Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf0906947d51652330ca-13f50b2d21ca52d00aba",
+              "file": "fr04-profile.spec.ts",
+              "line": 126,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T11:33:47.171Z",
+    "duration": 35853.234,
+    "expected": 18,
+    "skipped": 0,
+    "unexpected": 8,
+    "flaky": 0
+  }
+}
