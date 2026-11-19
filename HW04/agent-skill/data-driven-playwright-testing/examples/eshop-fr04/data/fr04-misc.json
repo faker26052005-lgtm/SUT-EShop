@@ -1,5 +1,0 @@
-[
-  { "id": "E01", "title": "The email field shows the account email and cannot be edited", "kind": "email-disabled", "source": "SRS FR-04 / HW02 R3" },
-  { "id": "A01", "title": "A visitor who is not logged in cannot use the profile page", "kind": "guest", "source": "SRS FR-04 (only logged-in users)" },
-  { "id": "A02", "title": "Login through the form, open the profile from the header, the form shows the stored name", "kind": "ui-login", "accountName": "Ten Dang Nhap", "source": "SRS FR-04 R1" }
-]

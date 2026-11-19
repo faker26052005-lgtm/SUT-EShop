@@ -1,5 +1,0 @@
-{
-  "_note": "phoneTests uses the HW02 baseline profile. fieldTests uses a phone number that the web form itself accepts, so that a problem with the phone rule cannot hide the behaviour of the name and address fields (one variable at a time).",
-  "phoneTests": { "name": "Ten Goc", "phone": "0900000000", "shipping_address": "Dia chi goc" },
-  "fieldTests": { "name": "Ten Goc", "phone": "912345678", "shipping_address": "Dia chi goc" }
-}
