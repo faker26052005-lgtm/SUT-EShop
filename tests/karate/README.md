@@ -147,3 +147,21 @@ Bộ khung Karate đã được thiết kế sẵn để tích hợp tự độn
    ```bash
    mvn test -Dkarate.options="classpath:eshop/generated"
    ```
+
+---
+
+## 8. Tích Hợp CI/CD Pipeline (GitHub Actions)
+
+Bộ test suite Karate đã được tích hợp hoàn chỉnh vào GitHub Actions qua workflow `.github/workflows/karate-ci.yml`.
+
+### 8.1. Cơ Chế Tự Động Kích Hoạt (Triggers)
+- **Tự động kích hoạt (Push / PR):** Khi có thay đổi trong `backend/**`, `tests/karate/**`, `specs/**`, hoặc workflow file trên các nhánh `main`, `karate-presentation`, `feature/**`.
+- **Kích hoạt thủ công (`workflow_dispatch`):** Cho phép chạy trực tiếp từ GitHub tab **Actions**, hỗ trợ tùy chọn lọc tag hoặc feature (ví dụ: `--tags @k1` hoặc `classpath:eshop/products.feature`).
+
+### 8.2. Quy Trình Điều Phối Trong CI
+1. **Khởi tạo môi trường:** Cài đặt JDK 17 (Temurin) và Node.js 20, kích hoạt cache Maven (`~/.m2`) và npm cache.
+2. **Khởi động Backend SUT:** Chạy `npm start` dưới dạng background process và ghi log vào `backend.log`.
+3. **Healthcheck:** Tự động thăm dò `http://localhost:3000/api/products` đến khi server sẵn sàng nhận request.
+4. **Thực thi Karate:** Chạy `mvn clean test` qua runner `EshopTest.java`.
+5. **Thu thập Artifacts & Báo cáo:** Tự động upload báo cáo HTML (`karate-test-reports`) và `backend-server-logs` tồn lưu 14 ngày, đồng thời xuất bảng tóm tắt lên GitHub Job Summary.
+

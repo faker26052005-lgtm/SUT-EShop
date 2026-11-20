@@ -1,0 +1,112 @@
+name: Karate API Test Suite
+
+on:
+  push:
+    branches: [ main, karate-presentation, "feature/**" ]
+    paths:
+      - 'backend/**'
+      - 'tests/karate/**'
+      - 'specs/**'
+      - '.github/workflows/karate-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'tests/karate/**'
+      - 'specs/**'
+      - '.github/workflows/karate-ci.yml'
+  workflow_dispatch:
+    inputs:
+      karate_options:
+        description: 'Custom Karate options or tags (e.g. --tags @k1, classpath:eshop/products.feature)'
+        required: false
+        default: ''
+
+jobs:
+  karate-tests:
+    name: Run Karate API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+        continue-on-error: true
+
+      - name: Setup Java 17 (Temurin) & Maven Cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Start Backend SUT Server
+        run: |
+          cd backend
+          npm start > ../backend.log 2>&1 &
+          echo "BACKEND_PID=$!" >> $GITHUB_ENV
+          cd ..
+
+      - name: Wait for Backend SUT Readiness (Healthcheck)
+        run: |
+          echo "Waiting for Backend SUT to respond on http://localhost:3000/api/products..."
+          timeout 30 bash -c 'until curl -s -f http://localhost:3000/api/products > /dev/null; do
+            echo "Waiting for backend..."
+            sleep 1
+          done'
+          echo "Backend SUT is UP and HEALTHY!"
+
+      - name: Execute Karate Tests
+        working-directory: tests/karate
+        run: |
+          if [ -n "${{ inputs.karate_options }}" ]; then
+            echo "Running with options: ${{ inputs.karate_options }}"
+            mvn clean test -Dkarate.options="${{ inputs.karate_options }}"
+          else
+            echo "Running all Karate tests..."
+            mvn clean test
+          fi
+
+      - name: Generate Job Summary
+        if: always()
+        run: |
+          echo "### 📊 Karate API Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Execution Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **SUT Host:** \`http://localhost:3000\`" >> $GITHUB_STEP_SUMMARY
+          if [ -d "tests/karate/target/karate-reports" ]; then
+            echo "- **Karate Reports Generated:** Yes (See Artifacts tab to download)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Karate Reports Generated:** No" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Karate HTML Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: karate-test-reports
+          path: tests/karate/target/karate-reports/
+          retention-days: 14
+
+      - name: Upload Backend Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-server-logs
+          path: backend.log
+          retention-days: 14

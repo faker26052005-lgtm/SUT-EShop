@@ -4,8 +4,10 @@ function fn() {
   if (!env) {
     env = 'dev';
   }
+  var baseUrl = karate.properties['baseUrl'] || 'http://localhost:3000';
   var config = {
-    baseUrl: 'http://localhost:3000'
+    env: env,
+    baseUrl: baseUrl
   };
   karate.configure('connectTimeout', 5000);
   karate.configure('readTimeout', 5000);

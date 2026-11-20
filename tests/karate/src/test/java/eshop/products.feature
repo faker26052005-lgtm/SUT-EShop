@@ -1,5 +1,5 @@
 @products
-Feature: EShop Product Catalog API
+Feature: EShop Product API
 
   Background:
     * url baseUrl
