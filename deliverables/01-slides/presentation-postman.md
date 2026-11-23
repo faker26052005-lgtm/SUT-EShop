@@ -9,31 +9,31 @@ style: |
     background-color: #ffffff;
     color: #111827;
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 24px;
-    padding: 36px 52px;
+    font-size: 25px;
+    padding: 38px 55px;
   }
   h1 {
     color: #0f172a;
-    font-size: 34px;
-    margin-bottom: 16px;
+    font-size: 38px;
+    margin-bottom: 18px;
     border-bottom: 3px solid #2563eb;
     padding-bottom: 8px;
   }
   h2 {
     color: #1e3a8a;
-    font-size: 28px;
+    font-size: 30px;
   }
   h3 {
     color: #1d4ed8;
-    font-size: 22px;
-    margin-top: 8px;
+    font-size: 24px;
+    margin-top: 10px;
     margin-bottom: 6px;
   }
   table {
-    font-size: 18px;
+    font-size: 19px;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 12px;
   }
   th {
     background-color: #f1f5f9;
@@ -50,7 +50,7 @@ style: |
     background-color: #f1f5f9;
     color: #0f172a;
     font-family: 'Consolas', monospace;
-    font-size: 19px;
+    font-size: 20px;
     padding: 2px 5px;
     border-radius: 4px;
     border: 1px solid #e2e8f0;
@@ -59,22 +59,26 @@ style: |
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 17px;
+    padding: 10px 14px;
+    font-size: 18px;
     line-height: 1.35;
   }
   .highlight-box {
     background-color: #f8fafc;
     border-left: 5px solid #2563eb;
-    padding: 8px 16px;
-    margin: 10px 0;
+    padding: 10px 18px;
+    margin: 12px 0;
     border-radius: 0 6px 6px 0;
-    font-size: 20px;
   }
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 20px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
   }
   .grid-4 {
     display: grid;
@@ -86,50 +90,113 @@ style: |
     border: 1px solid #e2e8f0;
     border-top: 4px solid #2563eb;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 19px;
+    padding: 12px 16px;
+    font-size: 20px;
   }
   .card h3 {
     margin-top: 0;
-    margin-bottom: 6px;
-    font-size: 20px;
+    margin-bottom: 8px;
+    font-size: 23px;
     color: #1e3a8a;
   }
   .card ul {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 20px;
   }
   .card li {
-    margin-bottom: 5px;
-    line-height: 1.3;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .center-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ref-table {
+    font-size: 21px;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .ref-table th {
+    padding: 8px 12px;
+    font-size: 21px;
+    background-color: #f1f5f9;
+  }
+  .ref-table td {
+    padding: 8px 12px;
+    font-size: 21px;
+  }
+  .ref-table code {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .card-blue {
+    background-color: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-top: 5px solid #2563eb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 20px;
+  }
+  .card-blue h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 22px;
+    color: #1d4ed8;
+  }
+  .card-blue ul, .card-red ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .card-blue li, .card-red li {
+    margin-bottom: 6px;
+    line-height: 1.35;
   }
   .card-red {
     background-color: #fef2f2;
     border: 1px solid #fecaca;
-    border-top: 4px solid #dc2626;
+    border-top: 5px solid #dc2626;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 19px;
+    padding: 14px 18px;
+    font-size: 20px;
   }
   .card-red h3 {
     margin-top: 0;
     margin-bottom: 6px;
-    font-size: 20px;
+    font-size: 22px;
     color: #b91c1c;
   }
   .card-red ul {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 20px;
   }
   .card-red li {
-    margin-bottom: 5px;
-    line-height: 1.3;
+    margin-bottom: 6px;
+    line-height: 1.35;
   }
 ---
 
-<!-- Slide 1: Bốn Tầng Kiểm Thử API -->
+<!-- Slide 1: Section Title Slide -->
+<!-- _paginate: false -->
+<!-- _header: "" -->
+<!-- _footer: "" -->
 
-# 1. Kiểm Thử API: Bốn Tầng Cần Kiểm Tra
+<br><br><br>
+
+# POSTMAN & NEWMAN
+## Khảo Sát API, Kiểm Thử Đa Tầng & Tự Động Hóa CI/CD
+
+<div class="highlight-box">
+Token Chaining JWT · Data-Driven Testing · Schema Validation · Phát Hiện 42 Khiếm Khuyết SUT
+</div>
+
+**Nhóm thực hiện:** Nhóm 11 — FIT@HCMUS
+
+---
+
+<!-- Slide 2: Bốn Tầng Kiểm Thử API -->
+
+# Kiểm Thử API: Bốn Tầng Cần Kiểm Tra
 
 Một API có thể dễ dàng vượt qua **Tầng 1 (HTTP 200 OK)** nhưng vẫn **hỏng hoàn toàn ở 3 tầng còn lại**:
 
@@ -171,9 +238,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 2: Bốn Khối Chức Năng Postman Nhóm Sử Dụng -->
+<!-- Slide 3: Bốn Khối Chức Năng Postman Nhóm Sử Dụng -->
 
-# 2. Postman: Bốn Khối Chức Năng Cốt Lõi
+# Postman: Bốn Khối Chức Năng Cốt Lõi
 
 Nhóm khai thác Postman như một **Nền tảng Tự động hóa Toàn diện** thay vì công cụ GUI thủ công:
 
@@ -215,9 +282,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 3: SUT EShop & Hai Collection Kiểm Thử -->
+<!-- Slide 4: SUT EShop & Hai Collection Kiểm Thử -->
 
-# 3. SUT EShop & Kiến Trúc Hai Postman Collection
+# SUT EShop & Kiến Trúc Hai Postman Collection
 
 Phạm vi khảo sát: **30 endpoint theo đặc tả** + **1 endpoint thực tế app Mobile đang gọi** (`POST /api/coupon-usage`):
 
@@ -241,9 +308,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 4: Vòng Đời Request & Cơ Chế Chained Token -->
+<!-- Slide 5: Vòng Đời Request & Cơ Chế Chained Token -->
 
-# 4. Vòng Đời Request & Cơ Chế Chained Token Tự Động
+# Vòng Đời Request & Cơ Chế Chained Token Tự Động
 
 Mỗi request trong Postman trải qua chu trình 4 giai đoạn khép kín, đảm bảo phiên làm việc liên tục:
 
@@ -294,9 +361,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 5: Kết Quả Kiểm Thử Sơ Bộ & Phân Loại Lỗi -->
+<!-- Slide 6: Kết Quả Kiểm Thử Sơ Bộ & Phân Loại Lỗi -->
 
-# 5. Kết Quả Kiểm Thử Sơ Bộ & Phân Loại 42 Lỗi SUT
+# Kết Quả Thực Nghiệm & Phân Loại 42 Lỗi SUT
 
 Toàn bộ **38/38 request chính của luồng nghiệp vụ đều trả về HTTP 200**, che giấu hàng loạt khiếm khuyết:
 
@@ -336,9 +403,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 6: Bốn Lỗi SUT Tiêu Biểu Bị Phát Hiện -->
+<!-- Slide 7: Bốn Lỗi SUT Tiêu Biểu Bị Phát Hiện -->
 
-# 6. Bốn Lỗi Tiêu Biểu: Khi HTTP 200 Che Giấu Khiếm Khuyết
+# Bốn Lỗi Tiêu Biểu: Khi HTTP 200 Che Giấu Khiếm Khuyết
 
 Minh chứng trực quan 4 khiếm khuyết nghiêm trọng nhất của hệ thống SUT được Postman vạch trần:
 
@@ -388,9 +455,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 7: Kết Luận & Định Vị Vai Trò Công Cụ -->
+<!-- Slide 8: Kết Luận & Định Vị Vai Trò Công Cụ -->
 
-# 7. Kết Luận: Bài Học Thực Tiễn & Giới Hạn Của Postman
+# Kết Luận: Bài Học Thực Tiễn & Giới Hạn Của Postman
 
 Ba bài học cốt lõi từ thực nghiệm kiểm thử API EShop và định vị vị trí của Postman trong chiến lược QA:
 
@@ -412,11 +479,11 @@ Ba bài học cốt lõi từ thực nghiệm kiểm thử API EShop và định
 
 ### Định vị khách quan & Giới hạn công cụ
 * **Ưu thế vượt trội của Postman:**
-  * Khám phá API nhanh chóng, tài liệu hóa trực quan, tạo response mẫu (mock examples), dễ sử dụng cho toàn team.
+   * Khám phá API nhanh chóng, tài liệu hóa trực quan, tạo response mẫu (mock examples), dễ sử dụng cho toàn team.
 * **Những hạn chế cố hữu:**
-  * **Chạy thủ công:** Chạy tay phụ thuộc giao diện; cần Newman CLI để chạy headless trong CI/CD.
-  * **Không bắt được API Drift với Mobile:** Postman đứng từ phía server kiểm tra tĩnh, không thể cam kết tính tương thích thời gian thực với ứng dụng Mobile $\rightarrow$ **Cần Pact JS (CDCT)**.
-  * **Khó quản lý luồng nghiệp vụ lớn:** Viết kịch bản E2E phức tạp bằng mã JavaScript trong sandbox cồng kềnh $\rightarrow$ **Cần bổ trợ bởi Karate Framework (BDD DSL)**.
+   * **Chạy thủ công:** Chạy tay phụ thuộc giao diện; cần Newman CLI để chạy headless trong CI/CD.
+   * **Không bắt được API Drift với Mobile:** Postman đứng từ phía server kiểm tra tĩnh, không thể cam kết tính tương thích thời gian thực với ứng dụng Mobile $\rightarrow$ **Cần Pact JS (CDCT)**.
+   * **Khó quản lý luồng nghiệp vụ lớn:** Viết kịch bản E2E phức tạp bằng mã JavaScript trong sandbox cồng kềnh $\rightarrow$ **Cần bổ trợ bởi Karate Framework (BDD DSL)**.
 
 </div>
 </div>
@@ -431,3 +498,4 @@ Ghi chú thuyết trình:
 - Đánh giá khách quan 2 mặt của Postman: rất mạnh để thăm dò, viết test ban đầu, nhưng không phải chiếc đũa thần cho mọi bài toán.
 - Chuyển giao mạch lạc sang phần sau: Chính vì Postman không giải quyết được bài toán tương thích Consumer-Provider giữa Mobile và Backend nên nhóm cần Pact JS; và để viết kịch bản E2E mạch lạc không code rườm rà, nhóm đã triển khai Karate Framework.
 -->
+

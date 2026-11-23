@@ -9,31 +9,31 @@ style: |
     background-color: #ffffff;
     color: #111827;
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 24px;
-    padding: 36px 52px;
+    font-size: 25px;
+    padding: 38px 55px;
   }
   h1 {
     color: #0f172a;
-    font-size: 34px;
-    margin-bottom: 16px;
+    font-size: 38px;
+    margin-bottom: 18px;
     border-bottom: 3px solid #2563eb;
     padding-bottom: 8px;
   }
   h2 {
     color: #1e3a8a;
-    font-size: 28px;
+    font-size: 30px;
   }
   h3 {
     color: #1d4ed8;
-    font-size: 22px;
-    margin-top: 8px;
+    font-size: 24px;
+    margin-top: 10px;
     margin-bottom: 6px;
   }
   table {
-    font-size: 18px;
+    font-size: 19px;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 12px;
   }
   th {
     background-color: #f1f5f9;
@@ -50,7 +50,7 @@ style: |
     background-color: #f1f5f9;
     color: #0f172a;
     font-family: 'Consolas', monospace;
-    font-size: 19px;
+    font-size: 20px;
     padding: 2px 5px;
     border-radius: 4px;
     border: 1px solid #e2e8f0;
@@ -59,22 +59,26 @@ style: |
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 17px;
+    padding: 10px 14px;
+    font-size: 18px;
     line-height: 1.35;
   }
   .highlight-box {
     background-color: #f8fafc;
     border-left: 5px solid #2563eb;
-    padding: 8px 16px;
-    margin: 10px 0;
+    padding: 10px 18px;
+    margin: 12px 0;
     border-radius: 0 6px 6px 0;
-    font-size: 20px;
   }
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 20px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
   }
   .grid-4 {
     display: grid;
@@ -86,50 +90,113 @@ style: |
     border: 1px solid #e2e8f0;
     border-top: 4px solid #2563eb;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 19px;
+    padding: 12px 16px;
+    font-size: 20px;
   }
   .card h3 {
     margin-top: 0;
-    margin-bottom: 6px;
-    font-size: 20px;
+    margin-bottom: 8px;
+    font-size: 23px;
     color: #1e3a8a;
   }
   .card ul {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 20px;
   }
   .card li {
-    margin-bottom: 5px;
-    line-height: 1.3;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .center-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ref-table {
+    font-size: 21px;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .ref-table th {
+    padding: 8px 12px;
+    font-size: 21px;
+    background-color: #f1f5f9;
+  }
+  .ref-table td {
+    padding: 8px 12px;
+    font-size: 21px;
+  }
+  .ref-table code {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .card-blue {
+    background-color: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-top: 5px solid #2563eb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 20px;
+  }
+  .card-blue h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 22px;
+    color: #1d4ed8;
+  }
+  .card-blue ul, .card-red ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .card-blue li, .card-red li {
+    margin-bottom: 6px;
+    line-height: 1.35;
   }
   .card-red {
     background-color: #fef2f2;
     border: 1px solid #fecaca;
-    border-top: 4px solid #dc2626;
+    border-top: 5px solid #dc2626;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 19px;
+    padding: 14px 18px;
+    font-size: 20px;
   }
   .card-red h3 {
     margin-top: 0;
     margin-bottom: 6px;
-    font-size: 20px;
+    font-size: 22px;
     color: #b91c1c;
   }
   .card-red ul {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 20px;
   }
   .card-red li {
-    margin-bottom: 5px;
-    line-height: 1.3;
+    margin-bottom: 6px;
+    line-height: 1.35;
   }
 ---
 
-<!-- Slide 1: Tiếp Cận Kiểm Thử Bằng AI Agent -->
+<!-- Slide 1: Section Title Slide -->
+<!-- _paginate: false -->
+<!-- _header: "" -->
+<!-- _footer: "" -->
 
-# 1. Kiểm Thử Với AI Agent: Từ Prompting Đến Agentic Workflow
+<br><br><br>
+
+# AI-AUGMENTED API TESTING
+## Quy Trình Kiểm Thử Có Kiểm Soát Với Agentic Workflow (Run 01: FR-09)
+
+<div class="highlight-box">
+Skill api-test-design · Human-In-The-Loop · Traceability Matrix · Sinh Test Karate Tự Động
+</div>
+
+**Nhóm thực hiện:** Nhóm 11 — FIT@HCMUS
+
+---
+
+<!-- Slide 2: Tiếp Cận Kiểm Thử Bằng AI Agent -->
+
+# Tiếp Cận Kiểm Thử Bằng AI: Từ Prompting Đến Agentic Workflow
 
 Cách tiếp cận kiểm thử API bằng Trí tuệ Nhân tạo thế hệ mới: **Kiểm soát chặt chẽ thay vì phó mặc hoàn toàn cho AI**:
 
@@ -165,9 +232,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 2: Kiến Trúc Bộ Skill & Quy Trình 3 Pha -->
+<!-- Slide 3: Kiến Trúc Bộ Skill & Quy Trình 3 Pha -->
 
-# 2. Bộ Skill `api-test-design` & Quy Trình Có Kiểm Soát
+# Bộ Skill `api-test-design` & Quy Trình Có Kiểm Soát
 
 Kiến trúc quy trình 3 Pha với **2 Điểm dừng bắt buộc (Gateways)** do Kỹ sư QA phê duyệt:
 
@@ -221,9 +288,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 3: Thực Nghiệm Run 01 & Test Matrix -->
+<!-- Slide 4: Thực Nghiệm Run 01 & Test Matrix -->
 
-# 3. Thực Nghiệm Run 01: Phạm Vi FR-09 & Traceability Matrix
+# Thực Nghiệm Run 01: Phạm Vi FR-09 & Traceability Matrix
 
 Áp dụng thực chiến trên phân hệ **FR-09: Mã giảm giá (Coupons)** và các API quản trị liên quan:
 
@@ -249,9 +316,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 4: Kỹ Thuật Viết Test Của AI Agent -->
+<!-- Slide 5: Kỹ Thuật Viết Test Của AI Agent -->
 
-# 4. Kỹ Thuật Viết Test Của AI: Cô Lập Âm Tính & An Toàn Dữ Liệu
+# Kỹ Thuật Viết Test Của AI: Cô Lập Âm Tính & An Toàn Dữ Liệu
 
 Bộ skill áp đặt các nguyên tắc thiết kế kịch bản tự động hóa cấp cao, loại trừ hoàn toàn lỗi phụ:
 
@@ -293,9 +360,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 5: Kết Quả Thực Thi Run 01 Trên SUT Thật -->
+<!-- Slide 6: Kết Quả Thực Thi Run 01 Trên SUT Thật -->
 
-# 5. Kết Quả Thực Thi: 17 Xanh · 10 Đỏ Trên SUT EShop
+# Kết Quả Thực Thi: 17 Xanh · 10 Đỏ Trên SUT EShop
 
 Karate 1.5.2 thực thi toàn bộ **27 kịch bản trong 3.24 giây**, bóc trần hàng loạt lỗi tiềm ẩn:
 
@@ -341,9 +408,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 6: Bốn Lỗi Tiêu Biểu Bị AI Vạch Trần -->
+<!-- Slide 7: Bốn Lỗi Tiêu Biểu Bị AI Vạch Trần -->
 
-# 6. Bốn Lỗi Tiêu Biểu: Khi AI Bắt Lỗi SUT EShop
+# Bốn Lỗi Tiêu Biểu: Khi AI Bắt Lỗi SUT EShop
 
 Minh chứng 4 lỗi nghiêm trọng nhất của SUT được phát hiện độc lập qua kịch bản Karate của Agent:
 
@@ -394,9 +461,9 @@ Ghi chú thuyết trình:
 
 ---
 
-<!-- Slide 7: Kết Luận & Định Vị Vai Trò Human-In-The-Loop -->
+<!-- Slide 8: Kết Luận & Định Vị Vai Trò Human-In-The-Loop -->
 
-# 7. Kết Luận: Vai Trò Cốt Lõi Của Human-In-The-Loop
+# Kết Luận: Vai Trò Cốt Lõi Của Human-In-The-Loop
 
 Bài học thực tiễn rút ra từ mô hình cộng tác giữa **Kỹ sư QA** và **AI Agent** trong kiểm thử phần mềm:
 
