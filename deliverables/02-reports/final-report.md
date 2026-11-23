@@ -15,7 +15,7 @@
 | Họ và Tên | Mã Số Sinh Viên | Vai Trò Chính | Đóng Góp Nổi Bật |
 |---|:---:|---|---|
 | **Nguyễn Hoàng Anh Tú** | **23120183** | Trưởng nhóm / QA Lead | • Pact JS: Consumer Test (C1), Provider Verification (C2)<br>• Newman CLI Tự động hóa CI/CD (P3)<br>• Thiết kế Slide thuyết trình, Báo cáo kỹ thuật tuần |
-| **Nguyễn Quốc Kỳ** | **23120138** | Automation Engineer | • Karate Framework: K1 (Smoke), K2 (Data-driven), K3 (E2E Shopping Workflow)<br>• Pact JS: Breaking Change Simulation (C3)<br>• Thiết kế Bài tập Hands-on Lab cho lớp |
+| **Nguyễn Quốc Kỳ** | **23120138** | Automation Engineer | • Karate Framework: K1 (Smoke), K2 (Data-driven & Bắt 2 Bug SUT), K3 (E2E Shopping Workflow)<br>• GitHub Actions CI/CD: Pipeline kiểm thử tự động (`karate-ci.yml`)<br>• Pact JS: Breaking Change Simulation (C3)<br>• Thiết kế Bài tập Hands-on Lab cho lớp |
 | **Hà Quốc Kiên** | **23120056** | Research & AI Engineer | • Postman & Newman: Kịch bản P1, P2 (Data-driven CSV)<br>• AI Agent Testing: Sinh test từ OpenAPI 3.0 & Prompt engineering<br>• Tổng hợp tài liệu nghiên cứu lý thuyết |
 
 ---
@@ -46,6 +46,7 @@
      - [4.3.3. Kịch bản K2: Data-Driven Testing & Phát hiện 2 Lỗi Thực Tế của SUT EShop](#433-kịch-bản-k2-data-driven-testing--phát-hiện-2-lỗi-thực-tế-của-sut-eshop)
      - [4.3.4. Kịch bản K3: Stateful E2E Shopping Workflow & Bảo Mật](#434-kịch-bản-k3-stateful-e2e-shopping-workflow--bảo-mật-auth-cart-checkoutfeature)
      - [4.3.5. Thực Thi & Báo Cáo Trực Quan (HTML Reports)](#435-thực-thi--báo-cáo-trực-quan-html-reports)
+     - [4.3.6. Tự động hóa Kiểm thử Liên tục trong CI/CD Pipeline (GitHub Actions — karate-ci.yml)](#436-tự-động-hóa-kiểm-thử-liên-tục-trong-cicd-pipeline-github-actions--karate-ciyml)
    - [4.4. Công cụ 3 — Pact JS Contract Testing (Kịch bản C1, C2, C3)](#44-công-cụ-3--pact-js-contract-testing-kịch-bản-c1-c2-c3)
      - [4.4.1. Kịch bản C1: Consumer Contract Test](#441-kịch-bản-c1-consumer-contract-test-productconsumertestjs)
      - [4.4.2. Kịch bản C2: Provider Verification](#442-kịch-bản-c2-provider-verification-verifyjs)
@@ -201,7 +202,7 @@ Contract Testing là phương pháp kiểm thử xác minh thỏa thuận giao t
 | **3** | **Cơ chế Assertions** | Chai.js BDD (`pm.test()`, `pm.expect()`) | Native Fuzzy Matchers (`#number`, `#string`) | Contract Value & Type Matchers |
 | **4** | **Data-Driven Testing** | File CSV/JSON qua Collection Runner | Bảng `Examples` trực tiếp trong Feature | Khởi tạo qua Provider States |
 | **5** | **Khả năng bắt API Drift** | Kém (chỉ kiểm tra tại thời điểm SUT online) | Kém (phụ thuộc SUT thật đang chạy) | **Tuyệt vời** (Bắt lỗi từ file hợp đồng độc lập) |
-| **6** | **Tích hợp CI/CD** | Newman CLI + Báo cáo HTML Extra | Maven / Gradle / JUnit 5 runner | Pact CLI + Pact Broker (`can-i-deploy`) |
+| **6** | **Tích hợp CI/CD** | Newman CLI + Báo cáo HTML Extra | GitHub Actions workflow (`karate-ci.yml`) tự động hóa: Quản lý vòng đời Backend SUT (Healthcheck polling), Maven Surefire Runner, xuất HTML Artifacts & Job Summary | Pact CLI + Pact Broker (`can-i-deploy`) |
 | **7** | **Độ phức tạp cài đặt** | Cực thấp (giao diện kéo thả + npm) | Trung bình (cần Java 17 + Maven) | Trung bình đến cao (cần tư duy Consumer/Provider) |
 | **8** | **Tài nguyên tiêu tốn** | Thấp khi chạy Newman, nặng khi mở GUI | Rất nhẹ, chạy headless tối ưu | Rất nhẹ, mock server cục bộ |
 
@@ -323,7 +324,7 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
 - **Mã kịch bản Gherkin DSL:**
   ```cucumber
   @products
-  Feature: EShop Product Catalog API
+  Feature: EShop Product API
 
     Background:
       * url baseUrl
@@ -356,6 +357,7 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
   ```
 - **Phân tích kỹ thuật & Ưu thế của Karate:**
   - Cú pháp `match response == '#[]'` là Native Array Matcher của Karate, kiểm tra phản hồi phải là một JSON Array mà không cần duyệt qua mảng bằng code JavaScript.
+  - Cú pháp `match each response contains` thể hiện ưu thế vượt trội của Karate trong việc kiểm thử Schema: thay vì chỉ kiểm tra phần tử đầu tiên (`response[0]`) dễ dẫn đến bỏ sót lỗi (False Negative) ở các phần tử phía sau, `match each` tự động lặp và xác thực cấu trúc cho toàn bộ các đối tượng trong mảng phản hồi chỉ với 1 bước Gherkin trực quan.
   - Các chỉ định `#number`, `#string` là **Fuzzy Matchers**, cho phép kiểm tra tính đúng đắn về kiểu dữ liệu (data types) mà không bị phụ thuộc vào giá trị cụ thể (dynamic data).
   - So với Postman (phải viết schema JSON Schema Draft 7 dài 40–50 dòng kèm `tv4` hoặc `ajv`), Karate đạt được mục tiêu tương đương chỉ với 10 dòng biểu diễn trực quan, dễ đọc đối với cả kỹ sư QA lẫn Product Owner.
 
@@ -395,12 +397,15 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
   1. 🚨 **Bug 1: Lỗi Bất Đồng Bộ Kiểu Dữ Liệu (Schema Type Inconsistency):**
      - **Hiện tượng:** Khi truy vấn sản phẩm có ID lẻ (`id = 1`), trường `price` trả về kiểu `number` (`30000000`). Nhưng khi truy vấn sản phẩm có ID chẵn (`id = 2`), trường `price` bị backend ép kiểu thành chuỗi `"28000000"`.
      - **Hậu quả:** Gây lỗi tính toán số học trên ứng dụng Frontend/Mobile (ví dụ phép cộng chuỗi `'28000000' + 50000 = '2800000050000'`).
-     - **Khả năng bắt lỗi của Karate:** Khi viết assertion `match response.price == '#number'`, Karate lập tức đánh FAIL tại `id = 2` với thông báo: `actual: "28000000", expected: '#number', reason: not a number`.
+     - **Khả năng bắt lỗi của Karate:** Khi viết assertion chuẩn đặc tả `match response contains { price: '#number' }`, Karate lập tức đánh **FAIL đỏ** tại `id = 2` với thông báo: `actual: "28000000", expected: '#number', reason: not a number`.
 
   2. 🚨 **Bug 2: Vi phạm chuẩn RESTful HTTP Status (Missing 404 Not Found):**
      - **Hiện tượng:** Khi truy vấn một sản phẩm không tồn tại trong cơ sở dữ liệu (`id = 9999`), SUT trả về mã **HTTP 200 OK kèm payload rỗng `{}`**, thay vì trả về **HTTP 404 Not Found**.
      - **Hậu quả:** Các client ứng dụng di động sẽ hiểu nhầm là request thành công nhưng dữ liệu bị thiếu, dẫn đến crash giao diện khi render các thuộc tính `product.name` (`Cannot read properties of undefined`).
-     - **Xử lý trong Karate:** Kịch bản K2 ghi nhận chính xác hành vi thực tế kèm tag `@discrepancy` để làm minh chứng báo cáo lỗi phần mềm.
+     - **Khả năng bắt lỗi của Karate:** Kịch bản K2 khẳng định kỳ vọng chuẩn `status 404`. Khi SUT trả về 200 OK, Karate lập tức đánh **FAIL đỏ** với thông báo: `status code was: 200, expected: 404`.
+
+- **Triết lý kiểm thử độc lập (Specification-Driven vs Bug Workaround):**
+  Nhóm kiểm thử kiên quyết tuân thủ nguyên tắc cốt lõi: **"Kỳ vọng lấy từ đặc tả, không nắn theo lỗi của hệ thống"**. Thay vì chấp nhận hành vi sai lệch để bài test báo XANH giả tạo (False Positive), kịch bản K2 giữ nguyên kỳ vọng theo đúng đặc tả tài liệu để 2 ca kiểm thử trên báo ĐỎ. Điều này chứng minh năng lực thực chiến cốt lõi của Karate: **phát hiện và khoanh vùng chính xác khiếm khuyết phần mềm trước khi sản phẩm được phát hành.**
 
 ---
 
@@ -510,6 +515,36 @@ Karate là framework kiểm thử tự động mã nguồn mở độc đáo k�
   Karate tự động tổng hợp toàn bộ kết quả thực thi thành các tệp HTML trực quan tại `tests/karate/target/karate-reports/`:
   - `karate-summary.html`: Tổng hợp số lượng kịch bản Passed/Failed, thời gian phản hồi (Response Time) từng endpoint.
   - `eshop.products.html` & `eshop.auth-cart-checkout.html`: Bóc tách chi tiết toàn bộ HTTP Wire Logs (HTTP Method, URL, Request Headers, Request Body, Response Status, Response Headers, Response Body). Mọi assertion thất bại đều được highlight đỏ với lý do sai lệch chi tiết.
+
+---
+
+#### 4.3.6. Tự động hóa Kiểm thử Liên tục trong CI/CD Pipeline (GitHub Actions — `karate-ci.yml`)
+Để đưa bộ kiểm thử Karate vào vòng đời tích hợp liên tục (CI), nhóm đã thiết kế và triển khai hoàn chỉnh workflow GitHub Actions tại [`.github/workflows/karate-ci.yml`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/.github/workflows/karate-ci.yml). Pipeline giải quyết trọn vẹn thách thức điều phối đa môi trường và quản lý vòng đời ứng dụng thử nghiệm (SUT Lifecycle) trong môi trường CI không đầu (Headless CI).
+
+1. **Cơ chế Kích hoạt Linh hoạt (Triggers & Manual Dispatch):**
+   - **Tự động kích hoạt (Push / PR):** Theo dõi thay đổi trong các thư mục `backend/**`, `tests/karate/**`, `specs/**`, và file workflow trên các nhánh `main`, `karate-presentation`, `feature/**`.
+   - **Kích hoạt thủ công (`workflow_dispatch`):** Hỗ trợ tham số đầu vào `karate_options`, cho phép kiểm thử viên chạy tùy biến theo tag (ví dụ: `--tags @k1`, `--tags @smoke`) hoặc chạy riêng từng file feature mà không cần sửa mã nguồn.
+
+2. **Môi trường Kép (Dual-runtime Setup) & Bộ Nhớ Đệm Tối Ưu:**
+   - Cài đặt song song **Node.js 20.x** (để chạy Backend SUT) và **Java 17 LTS (Eclipse Temurin)** (để thực thi Karate JUnit 5).
+   - Tích hợp bộ nhớ đệm tự động cho Maven (`~/.m2`) và npm cache giúp rút ngắn thời gian tải dependencies từ 3–4 phút xuống dưới **30 giây** trong các lần chạy tiếp theo.
+
+3. **Điều phối Vòng Đời Backend & Cơ chế Healthcheck Polling:**
+   - Backend SUT được khởi động ngầm trong nền (`npm start > ../backend.log 2>&1 &`) và lưu biến môi trường `BACKEND_PID`.
+   - **Xử lý triệt để lỗi bất đồng bộ (Race Condition):** Thay vì sử dụng lệnh `sleep` cố định gây lãng phí thời gian hoặc thiếu ổn định, pipeline triển khai bước **Readiness Probe**:
+     ```bash
+     timeout 30 bash -c 'until curl -s -f http://localhost:3000/api/products > /dev/null; do
+       echo "Waiting for backend..."
+       sleep 1
+     done'
+     ```
+     Cơ chế polling này đảm bảo máy chủ Express đã khởi động xong, nạp hoàn tất database SQLite và sẵn sàng nhận request trước khi Maven kích hoạt test runner.
+
+4. **Bảo toàn Dữ liệu Kiểm Thử & Trực Quan Hóa GitHub Job Summary:**
+   - Nhờ mệnh đề `if: always()`, ngay cả khi kịch bản K2 phát hiện 2 bug thật của SUT dẫn đến exit code khác 0, pipeline vẫn đảm bảo:
+     - Xuất trực tiếp bảng tổng quan trạng thái lên **GitHub Step Summary** (`$GITHUB_STEP_SUMMARY`).
+     - Đóng gói toàn bộ báo cáo HTML chi tiết (`tests/karate/target/karate-reports/`) thành artifact `karate-test-reports` tồn lưu 14 ngày.
+     - Lưu trữ toàn bộ nhật ký máy chủ `backend.log` thành artifact `backend-server-logs` giúp đội ngũ phát triển dễ dàng truy vết nguyên nhân gốc rễ (Root Cause Analysis).
 
 ---
 
@@ -684,6 +719,7 @@ Nhóm triển khai mô hình cộng tác giữa AI và Kỹ sư kiểm thử the
 | **Karate** | Lỗi kết nối `Connection Refused: localhost:3000` | Backend SUT chưa được khởi động trước khi chạy lệnh Maven | Cấu hình Hook trong Karate hoặc chạy `./run_servers.sh` trước khi chạy test |
 | **Karate** | `match each response` thất bại ngẫu nhiên | Một số phần tử trong cơ sở dữ liệu bị thiếu trường hoặc null | Dùng matcher dạng tùy chọn: `stock: '##number'` (chấp nhận số hoặc null) |
 | **Karate** | Kịch bản K3 thất bại do lỗi 403 `Tài khoản đã bị khóa` | SUT EShop tự động khóa tài khoản 3 phút nếu `login_attempts >= 3` khi chạy lặp lại | Khởi tạo tài khoản động theo timestamp (`karate_k3_<timestamp>@eshop.com`) tại Step 1 kịch bản K3 |
+| **Karate (CI/CD)** | Lỗi `Connection Refused: localhost:3000` trên GitHub Actions | Backend Node.js chưa kịp nạp SQLite và mở cổng 3000 khi lệnh Maven đã chạy | Bổ sung bước Readiness Healthcheck qua vòng lặp `curl` (timeout 30s) trước khi gọi `mvn test` |
 | **Pact JS** | Verification thất bại do sai lệch dữ liệu động | Dữ liệu ngày tháng (timestamp) hoặc ID tự tăng thay đổi giữa các lần chạy | Sử dụng Matchers dạng type (`like()`, `iso8601DateTime()`) thay vì so sánh giá trị cứng |
 | **Pact JS** | Port 1234 bị chiếm dụng khi chạy Consumer test | Tiến trình Pact Mock Server của lần chạy trước chưa tắt hẳn | Chạy lệnh `npx kill-port 1234` hoặc khởi động lại terminal |
 | **Pact JS (C3)** | Kiểm thử Type Mismatch báo PASS giả (False Positive) | Lõi Pact Rust Core FFI tự động ép kiểu (Coercion) chuỗi thuần chữ số thành integer | Sử dụng chuỗi định dạng tiền tệ chuyên biệt (`'30.000.000 ₫'`) để kiểm soát chặt chẽ việc chặn kiểu String |
@@ -702,7 +738,7 @@ Nhóm tuân thủ nghiêm ngặt mô hình xoay vòng công việc (Cross-functi
 ### 7.2. Minh chứng Git Commits cá nhân
 100% thành viên tham gia commit bằng tài khoản Git cá nhân trên GitHub:
 - **Nguyễn Hoàng Anh Tú (`faker26052005-lgtm`):** Phụ trách Pact C1/C2, Newman P3, Middleware Backend Request Logger, Slide Markdown, Quản lý hồ sơ nhóm.
-- **Nguyễn Quốc Kỳ (`quocky05`):** Phụ trách Karate Setup, Feature K1, K2, K3, Pact Breaking Change C3.
+- **Nguyễn Quốc Kỳ (`quocky05`):** Phụ trách Karate Setup, Feature K1, K2, K3, Tích hợp GitHub Actions CI Pipeline (`karate-ci.yml` - commit `2fc00df`), Refactor kịch bản K2 bắt lỗi SUT (commit `413f2ec`), Thực nghiệm Pact Breaking Change C3.
 - **Hà Quốc Kiên (`kienha5`):** Phụ trách Postman Collection P1, P2, Data-driven CSV, Thực nghiệm AI Agent OpenAPI.
 
 ### 7.3. Cam kết AI Policy & Tuyên bố liêm chính học thuật
