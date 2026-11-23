@@ -196,4 +196,6 @@ target/
 *.ear
 karate.log*
 karate-reports/
+__pycache__/
+*.pyc
 

@@ -1,30 +1,19 @@
 ---
 trigger: always_on
-description: Quy trình kiểm thử API có người duyệt, dùng skill api-test-design
+description: Luật nền khi thiết kế, viết và chạy test API Karate cho EShop SUT. Luôn áp dụng.
 ---
 
-# Quy tắc cho kỹ sư kiểm thử API
+# Luật nền cho test API
 
-Bạn là kỹ sư kiểm thử API. Mục tiêu: tìm CÀNG NHIỀU LỖI THẬT của hệ thống càng tốt.
+Khi người dùng nói về test API, test contract, Karate, matrix hoặc một lần chạy (`run-...`), làm theo skill `api-test-design` tại `.agents/skills/api-test-design/SKILL.md`. Nếu skill không được nạp tự động, hãy mở file đó và đọc trước khi làm bất cứ việc gì. Việc đầu tiên của mỗi cuộc trò chuyện mới là kiểm tra môi trường bằng `doctor.py` (Pha 0 trong skill); không tự cài phần mềm nếu người chưa yêu cầu. Skill tự cho biết đang ở pha nào dựa trên trạng thái thư mục `executions/<run-id>/`, nên người dùng không cần nhắc pha.
 
-## Nạp skill
+## Sáu điều không bao giờ làm
 
-Dùng skill `api-test-design` cho mọi việc sinh test và làm đúng quy trình năm pha của skill.
-Nếu bạn không thấy skill này trong danh sách skill, hãy đọc đầy đủ các tệp sau trong workspace rồi mới làm:
+1. Không đọc mã nguồn hệ thống, danh sách lỗi đã biết, collection Postman, kết quả của các `executions/run-*` khác, hay `README.md` và `DEMO.md` ở gốc workspace. Kỳ vọng chỉ đến từ `inputs/`.
+2. Không viết feature khi cột `Duyệt` của matrix chưa được người điền đủ. Không chạy test khi người chưa nói "chạy".
+3. Không sửa kỳ vọng cho khớp với hành vi thật. Ca đỏ giữ nguyên là đỏ.
+4. Không ghi "đã kiểm chứng", không gán mã lỗi, không điền cột `Duyệt` hay `Người xác nhận`.
+5. Không đổi hoặc xóa dữ liệu mẫu trong `inputs/sample-data.md`. Ca ghi, đổi quyền, xóa dùng dữ liệu tạm tự tạo theo hướng dẫn trong skill. Điều này áp dụng cả với ca **âm tính** (không có quyền, không có token): nếu hệ thống lỗi, thao tác sẽ thành công thật, nên đối tượng bị tác động vẫn phải là dữ liệu tạm.
+6. Không tự bật máy chủ, không sửa `inputs/`, không đổi mã nguồn hệ thống.
 
-- `skills/api-test-design/SKILL.md`
-- `skills/api-test-design/references/design-rules.md`
-- `skills/api-test-design/references/karate-guide.md`
-- `skills/api-test-design/examples/auth.feature` và `coupon.feature`
-- `inputs/srs.md`, `inputs/openapi.yaml`, `inputs/sample-data.md`
-
-## Bốn điều không bao giờ được làm
-
-1. Không viết kỳ vọng theo điều bạn quan sát được từ hệ thống; kỳ vọng chỉ lấy từ SRS và OpenAPI.
-2. Không bịa tài khoản, id hay mã giảm giá; chỉ dùng dữ liệu trong `inputs/sample-data.md`.
-3. Không viết Karate khi người chưa duyệt matrix, và không chạy test khi người chưa nói "chạy".
-4. Không sửa assertion để test chuyển sang xanh.
-
-## Khi tài liệu mâu thuẫn hoặc không rõ
-
-Ghi vào matrix và hỏi người dùng, đừng tự quyết.
+Chưa rõ phạm vi, tên lần chạy hoặc điều khoản tài liệu thì hỏi người một câu hoặc ghi vào mục "Mâu thuẫn và điểm chưa rõ" của matrix, không đoán.

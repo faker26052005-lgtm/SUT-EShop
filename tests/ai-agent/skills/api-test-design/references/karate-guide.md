@@ -1,157 +1,217 @@
-# Hướng dẫn viết Karate feature cho dự án này
+# Hướng dẫn viết Karate feature
 
-Mọi mẫu dưới đây đã được chạy thật trên EShop với Karate 1.5.2 (các ca đỏ trong mẫu là lỗi thật của EShop). Xem thêm `examples/coupon.feature` và `examples/auth.feature`.
+Các mẫu dùng một API giả về thư viện (`/api/loans`, `/api/books`), **không phải EShop**, để không gợi ý đáp án cho phạm vi bạn đang test. Ví dụ đầy đủ ở `examples/loans/`. Cú pháp theo Karate 1.5.2. ID (`LN03`, `LN07`...) trong các đoạn mã dưới đây chỉ để minh họa, có thể không khớp với ID trong `examples/loans/`.
 
 ## Khung một feature
 
 ```gherkin
-Feature: Tên nhóm chức năng (mã FR)
+Feature: Mượn sách (FR-XX)
 
   Background:
     * url baseUrl
+    * def member = callonce read('classpath:helpers/login.feature') { email: '<email mẫu>', password: '<mật khẩu mẫu>' }
+    * def userToken = member.token
 
-  @AC01
-  Scenario: AC01 Mô tả ngắn, nêu căn cứ SRS
-    Given path 'api', 'apply-coupon'
-    And request { code: 'SAVE10', total_amount: 1000000 }
+  @LN01
+  Scenario: LN01 Mượn sách thường thành công, hạn 14 ngày (SRS FR-XX R01)
+    Given path 'api', 'loans'
+    And header Authorization = 'Bearer ' + userToken
+    And request { book_id: 1 }
     When method post
-    Then status 200
-    And match response.final_amount == 900000
+    Then status 201
+    And match response.loan_days == 14
 ```
 
-- Mỗi `Scenario` có **một thẻ `@ID`** ngay phía trên và ID đó cũng mở đầu tên Scenario.
-- `baseUrl` lấy từ `karate/karate-config.js`.
-- Mỗi Scenario nên có **một ý chính**: khi một bước trong Scenario đỏ, các bước sau không được chạy nữa.
-
-## Cần đăng nhập
-
-```gherkin
-  Background:
-    * url baseUrl
-    * def auth = callonce read('classpath:helpers/login.feature') { email: 'test@eshop.com', password: 'Test1234!' }
-    * def token = auth.token
-  ...
-    And header Authorization = 'Bearer ' + token
-```
-
-Dùng `admin@eshop.com` / `Admin123!` cho quyền admin. Chỉ **đọc** hoặc làm thao tác an toàn bằng hai tài khoản này.
+- Mỗi `Scenario` có **đúng một thẻ `@ID`** ngay phía trên, và ID đó cũng mở đầu tên Scenario.
+- Mỗi Scenario nên có **một ý chính**. Khi một bước đỏ, các bước sau không chạy nữa.
+- `baseUrl` do `karate-config.js` cung cấp. Không viết cứng địa chỉ máy chủ.
+- Tài khoản mẫu: biến `userToken` và `adminToken` (xem `project-context.md`). `callonce` chỉ dùng cho đăng nhập.
 
 ## Kiểm phản hồi
 
 | Cần kiểm | Cú pháp |
 |---|---|
-| Giá trị cụ thể | `And match response.final_amount == 900000` |
+| Giá trị cụ thể | `And match response.loan_days == 14` |
 | Kiểu dữ liệu | `And match response.token == '#string'` (cũng có `#number`, `#array`) |
-| Chuỗi chứa | `And match response.error contains 'hết hạn'` |
+| Chuỗi chứa | `And match response.error contains 'hết bản'` |
+| Chuỗi **không** chứa (loại trừ lý do khác) | `And match response.error !contains 'tối đa'` |
 | **Trường không được xuất hiện** | `And match response.user.password == '#notpresent'` |
-| Cả đối tượng đúng cấu trúc | `And match response == { error: '#string' }` |
+| Cả đối tượng | `And match response == { error: '#string' }` |
+| Mảng chứa phần tử | `And match response contains deep { book_id: 1 }` |
 | Mảng rỗng | `And match response == []` |
 | Mã trạng thái | `Then status 403` |
 
-## Ca cần tài khoản hoặc dữ liệu riêng (không đụng tài khoản mẫu)
+Ca nào kiểm chỉ kiểu (`#string`, `#number`, `!= null`...) mà matrix không ghi `Không nêu` sẽ bị `check_coverage.py` báo `LỖI`.
 
-Dùng hàm dùng chung `helpers/create-user.feature`: tạo tài khoản tạm (email duy nhất), đăng nhập, trả về `email`, `password`, `token`, `id`.
+## Biến trong body JSON: luôn bọc `'#(...)'`
+
+Karate **không** nội suy tên biến trần trong JSON. `request { code: tmpCode }` gửi đi chuỗi chữ `"tmpCode"`, không phải giá trị của biến, và mọi ca dùng cách này đều ghi cùng một mã nên xung đột khóa duy nhất ngay ca thứ hai.
 
 ```gherkin
-  @PF01
-  Scenario: PF01 User không tự nâng quyền qua cập nhật hồ sơ (đọc lại sau khi ghi)
-    * def u = call read('classpath:helpers/create-user.feature')
-    Given path 'api', 'users', 'me'
-    And header Authorization = 'Bearer ' + u.token
-    And request { name: 'Moi', role: 'admin' }
-    When method put
-    Then status 200
-    Given path 'api', 'users', 'me'
-    And header Authorization = 'Bearer ' + u.token
-    When method get
-    Then status 200
-    And match response.name == 'Moi'
-    And match response.role == 'user'
+    * def tmpCode = 'tmp_cp_' + java.lang.System.currentTimeMillis()
+    # SAI:  And request { code: tmpCode, total_amount: 500000 }
+    And request { code: '#(tmpCode)', total_amount: 500000 }
+    And request { book_id: 1, user_id: '#(u.id)' }
 ```
 
-## Đọc dữ liệu bên trong qua API admin
+Giá trị số vẫn giữ kiểu số (`'#(u.id)'` gửi đi số nguyên). Quy tắc này áp dụng cho `request`, `def` và `match` có JSON. Với `path`, `header` và các biểu thức khác ngoài JSON thì dùng tên biến trần bình thường (`Given path 'api', 'loans', loanId`). `check_coverage.py` báo `LỖI` khi gặp tên biến trần trong JSON.
 
-Khi cần xem trạng thái mà API người dùng không trả (ví dụ bộ đếm đăng nhập sai), gọi API admin rồi lọc bằng `karate.jsonPath`:
+## Tài khoản tạm (ca ghi, đổi quyền, xóa)
+
+`helpers/create-user.feature` tạo tài khoản mới, đăng nhập, trả về `email`, `password`, `token`, `id`. Mỗi ca dùng `call` (không `callonce`) để có tài khoản riêng.
 
 ```gherkin
-  Background:
-    * url baseUrl
-    * def admin = callonce read('classpath:helpers/login.feature') { email: 'admin@eshop.com', password: 'Admin123!' }
-
-  @LG05
-  Scenario: LG05 Một lần sai mật khẩu làm bộ đếm tăng đúng 1 (SRS FR-02)
+  @LN03
+  Scenario: LN03 Hai cuốn đầu mượn được, tài khoản tạm không ảnh hưởng tài khoản mẫu
     * def u = call read('classpath:helpers/create-user.feature')
-    Given path 'api', 'login'
-    And request { email: '#(u.email)', password: 'Sai1234!' }
+    Given path 'api', 'loans'
+    And header Authorization = 'Bearer ' + u.token
+    And request { book_id: 1 }
     When method post
-    Then status 401
-    Given path 'api', 'admin', 'users'
-    And header Authorization = 'Bearer ' + admin.token
+    Then status 201
+    And match response.book_id == 1
+```
+
+Muốn lặp một thao tác nhiều lần (ví dụ mượn đủ 3 cuốn), cứ viết lặp khối `Given ... Then status` cho rõ từng bước. Bản đầy đủ nằm trong `examples/loans/features/loans.feature`.
+
+## Ca âm tính chỉ sai một lý do
+
+Xem lý do ở `design-rules.md` mục 3. Hai cách viết:
+
+**Cô lập bằng dữ liệu tạm** (kiểm số lượng âm mà không bị chặn bởi quy tắc khác):
+
+```gherkin
+  @LN07
+  Scenario: LN07 Số ngày gia hạn âm bị từ chối (SRS FR-XX R05)
+    * def u = call read('classpath:helpers/create-user.feature')
+    # chuẩn bị khoản mượn riêng của tài khoản tạm
+    Given path 'api', 'loans'
+    And header Authorization = 'Bearer ' + u.token
+    And request { book_id: 1 }
+    When method post
+    Then status 201
+    * def loanId = response.loan_id
+    Given path 'api', 'loans', loanId, 'extend'
+    And header Authorization = 'Bearer ' + u.token
+    And request { days: -3 }
+    When method post
+    Then status 400
+    And match response.error == '#string'
+```
+
+**Loại trừ lý do khác** (khi không thể cô lập):
+
+```gherkin
+    Then status 400
+    And match response.error == '#string'
+    And match response.error !contains 'tối đa'
+```
+
+## Bước đối chứng cho ca trạng thái
+
+Trước khi tạo trạng thái "hết lượt", gọi một lần cùng dữ liệu và kiểm thành công. Mẫu ngắn:
+
+```gherkin
+    # đối chứng: lần đầu phải được
+    Given path 'api', 'loans'
+    And header Authorization = 'Bearer ' + u.token
+    And request { book_id: 2 }
+    When method post
+    Then status 201
+    # tạo trạng thái cần kiểm rồi gọi lần cuối, kỳ vọng bị từ chối
+```
+
+## Ca từ chối trên thao tác xóa, sửa: dùng đối tượng tạm và dọn dẹp trước khi kiểm
+
+Hai nguyên tắc: (1) đối tượng bị tác động là đối tượng tạm; (2) lưu kết quả của bước đang kiểm vào biến, dọn dẹp, **rồi mới** `match`. Karate dừng ở bước đỏ đầu tiên, nên nếu kiểm ngay sau bước chính thì khi ca đỏ, bước dọn dẹp không chạy và đối tượng tạm nằm lại.
+
+```gherkin
+  @LN10
+  Scenario: LN10 Thành viên khác không được hủy khoản mượn của người khác (SRS FR-XX R09)
+    * def owner = call read('classpath:helpers/create-user.feature')
+    * def other = call read('classpath:helpers/create-user.feature')
+    Given path 'api', 'loans'
+    And header Authorization = 'Bearer ' + owner.token
+    And request { book_id: 1 }
+    When method post
+    Then status 201
+    * def loanId = response.loan_id
+
+    Given path 'api', 'loans', loanId
+    And header Authorization = 'Bearer ' + other.token
+    When method delete
+    * def delStatus = responseStatus
+    * def delResponse = response
+
+    # Dọn dẹp bằng chủ khoản mượn trước khi kiểm (không kiểm kết quả: nếu ca đỏ, khoản mượn có thể đã bị xóa)
+    Given path 'api', 'loans', loanId
+    And header Authorization = 'Bearer ' + owner.token
+    When method delete
+
+    Then match delStatus == 403
+    And match delResponse.error == 'Forbidden'
+```
+
+`check_coverage.py` chấp nhận `match <biến>Status == 403` thay cho dòng `status 403` ở mẫu này. Bước tạo đối tượng tạm thì vẫn kiểm `status` ngay (nếu việc tạo hỏng thì chưa có gì để dọn).
+
+Chỉ dùng id cố định cho `DELETE`, `PUT`, `PATCH` khi id chắc chắn không tồn tại, và thêm chú thích trong Scenario: `# an-toan: id 99999 không tồn tại`.
+
+## Đọc trạng thái bên trong qua API admin
+
+Khi API người dùng không trả thứ cần kiểm (ví dụ bộ đếm), gọi API admin rồi lọc bằng `karate.jsonPath`:
+
+```gherkin
+    Given path 'api', 'admin', 'members'
+    And header Authorization = 'Bearer ' + adminToken
     When method get
     Then status 200
     * def row = karate.jsonPath(response, "$[?(@.email=='" + u.email + "')]")[0]
-    And match row.login_attempts == 1
+    And match row.active_loans == 1
 ```
 
-## Ca phải chờ (chạy chậm)
+Chỉ **đọc** bằng `adminToken`. Không đổi dữ liệu bằng tài khoản mẫu.
 
-Dùng `* eval java.lang.Thread.sleep(<mili giây>)`. Gắn thẻ `@slow` và ghi vào mục "Ca chạy chậm" của matrix.
+## Ca phải chờ
+
+Dùng `* eval java.lang.Thread.sleep(<mili giây>)`, gắn thẻ `@slow` và ghi vào ghi chú của ca trong matrix.
 
 ```gherkin
-  @LG06 @slow
-  Scenario: LG06 Hết thời gian khóa thì đăng nhập lại được (SRS FR-02: khóa 30 giây)
-    * def u = call read('classpath:helpers/create-user.feature')
-    Given path 'api', 'login'
-    And request { email: '#(u.email)', password: 'Sai1!' }
-    When method post
-    Then status 401
-    Given path 'api', 'login'
-    And request { email: '#(u.email)', password: 'Sai2!' }
-    When method post
-    Then status 401
+  @LN09 @slow
+  Scenario: LN09 Hết thời gian phạt thì mượn lại được (SRS FR-XX R08: phạt 30 giây)
+    ...
     * eval java.lang.Thread.sleep(31000)
-    Given path 'api', 'login'
-    And request { email: '#(u.email)', password: '#(u.password)' }
-    When method post
-    Then status 200
 ```
 
-Bỏ qua ca chậm khi chạy nhanh: thêm `-t "~@slow"` vào lệnh chạy. Chỉ chạy ca chậm: `-t "@slow"`.
+`run_karate.py` mặc định bỏ qua `@slow`; thêm `--all` để chạy cả ca chậm.
 
-## Nhiều bộ dữ liệu cho cùng một ca (Examples)
+## Nhiều bộ dữ liệu cho một ca
 
-Dùng cho các ca biên hoặc dữ liệu sai. Mỗi dòng bảng là một lần chạy; cả bảng dùng **một** thẻ `@ID` ở phía trên `Scenario Outline`, nên các dòng cùng thuộc một ca trong matrix.
+Một thẻ `@ID` đặt trên `Scenario Outline`, các dòng `Examples` cùng thuộc một ca trong matrix.
 
 ```gherkin
-  @PR01
-  Scenario Outline: PR01 Xem sản phẩm <ten>
-    Given path 'api', 'products', '<id>'
+  @LN06
+  Scenario Outline: LN06 Xem sách <ten>
+    Given path 'api', 'books', '<id>'
     When method get
     Then status <status>
+    And match response.error == '#string'
 
     Examples:
       | ten              | id    | status |
-      | id hợp lệ        | 1     | 200    |
       | id không tồn tại | 99999 | 404    |
       | id không phải số | abc   | 404    |
 ```
 
+(Dòng `And match` ở trên chỉ phù hợp khi mọi dòng Examples đều là lỗi. Ca hỗn hợp thì tách thành các Scenario riêng.)
+
 ## Việc không làm
 
-- Không dùng `* def x = karate.exec(...)` hay gọi lệnh hệ thống.
-- Không đọc dữ liệu từ ca khác. Không dùng `callonce` cho thứ gì ngoài đăng nhập; tài khoản tạm dùng `call` (mỗi ca một tài khoản).
-- Không `delete`/đổi quyền/đổi mật khẩu trên `admin@eshop.com`, `test@eshop.com`.
+- Không dùng `karate.exec(...)` hay gọi lệnh hệ thống.
+- Không đọc dữ liệu từ ca khác.
+- Không dùng `put`, `patch`, `delete`, đổi quyền hay đổi mật khẩu với tài khoản mẫu, và không nhắm chúng vào id có sẵn trong dữ liệu mẫu.
+- Không sửa kỳ vọng cho khớp phản hồi thật khi ca đỏ.
+- Không viết cứng địa chỉ máy chủ hay token.
 
-## Lệnh chạy (dùng khi người nói "chạy")
+## Chạy
 
-Máy chủ EShop do **người** khởi động mới trước khi chạy; Agent không tự bật máy chủ. Chạy từ thư mục `karate/` để `classpath:helpers/...` và `karate-config.js` được tìm thấy.
-
-```
-# Linux, macOS
-java -cp "karate-1.5.2.jar:." com.intuit.karate.Main -t "~@slow" -o ../executions/<run-id>/report ../executions/<run-id>/features
-
-# Windows (PowerShell): dùng dấu chấm phẩy trong classpath
-java -cp "karate-1.5.2.jar;." com.intuit.karate.Main -t "~@slow" -o ../executions/<run-id>/report ../executions/<run-id>/features
-```
-
-Bỏ `-t "~@slow"` để chạy cả ca chậm. Báo cáo HTML: `report/karate-reports/karate-summary.html`.
+Do người nói "chạy", Agent dùng `scripts/run_karate.py` (xem SKILL.md Pha C), không tự ghép lệnh `java`. Người khởi động lại máy chủ trước.
