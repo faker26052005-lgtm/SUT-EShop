@@ -1,0 +1,104 @@
+name: Postman API Test Suite
+
+on:
+  push:
+    branches: [ main, "feature/**", "postman/**" ]
+    paths:
+      - 'backend/**'
+      - 'tests/postman/**'
+      - '.github/workflows/postman-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'tests/postman/**'
+      - '.github/workflows/postman-ci.yml'
+  workflow_dispatch:
+    inputs:
+      fail_on_red:
+        description: 'Fail the job when a Postman test fails (true) or only keep the report (false)'
+        required: false
+        default: 'false'
+
+jobs:
+  postman-tests:
+    name: Run ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Moi collection chay tren mot may moi va mot server moi,
+    # vi du lieu DB va gio hang bi dung chung giua cac lan chay.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: main-collection
+            file: tests/postman/collections/eshop_api_postman_collection_v3.1.json
+          - name: all-tests-suite
+            file: tests/postman/collections/eshop_api_all_tests.postman_collection.json
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+        continue-on-error: true
+
+      - name: Install Newman and HTML reporter
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Start Backend SUT Server
+        run: |
+          cd backend
+          npm start > ../backend.log 2>&1 &
+          cd ..
+
+      - name: Wait for Backend SUT Readiness (Healthcheck)
+        run: |
+          timeout 30 bash -c 'until curl -s -f http://localhost:3000/api/products > /dev/null; do
+            echo "Waiting for backend..."
+            sleep 1
+          done'
+          echo "Backend SUT is UP"
+
+      - name: Run Postman collection with Newman
+        run: |
+          mkdir -p reports
+          EXTRA="--suppress-exit-code"
+          if [ "${{ inputs.fail_on_red }}" = "true" ]; then
+            EXTRA=""
+          fi
+          newman run "${{ matrix.file }}" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export "reports/${{ matrix.name }}.html" \
+            $EXTRA
+
+      - name: Upload Newman HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-report-${{ matrix.name }}
+          path: reports/
+          retention-days: 14
+
+      - name: Upload Backend Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-log-${{ matrix.name }}
+          path: backend.log
+          retention-days: 1

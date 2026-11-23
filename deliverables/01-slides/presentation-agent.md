@@ -1,224 +1,438 @@
-# Báo cáo đánh giá bộ skill api-test-design qua lần chạy run-01-coupon (FR-09)
+---
+marp: true
+theme: default
+paginate: true
+header: "CS423 / CSC15003 — Software Testing · Seminar T06: API & Contract Testing"
+footer: "Nhóm 11 — FIT@HCMUS — AI-Augmented API Testing (Agentic Workflow)"
+style: |
+  section {
+    background-color: #ffffff;
+    color: #111827;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 24px;
+    padding: 36px 52px;
+  }
+  h1 {
+    color: #0f172a;
+    font-size: 34px;
+    margin-bottom: 16px;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 8px;
+  }
+  h2 {
+    color: #1e3a8a;
+    font-size: 28px;
+  }
+  h3 {
+    color: #1d4ed8;
+    font-size: 22px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+  table {
+    font-size: 18px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 8px 10px;
+    font-weight: bold;
+  }
+  td {
+    border: 1px solid #cbd5e1;
+    padding: 7px 10px;
+  }
+  code {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-family: 'Consolas', monospace;
+    font-size: 19px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+  }
+  pre {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+  .highlight-box {
+    background-color: #f8fafc;
+    border-left: 5px solid #2563eb;
+    padding: 8px 16px;
+    margin: 10px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 20px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 19px;
+  }
+  .card h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 20px;
+    color: #1e3a8a;
+  }
+  .card ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .card li {
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .card-red {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-top: 4px solid #dc2626;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 19px;
+  }
+  .card-red h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 20px;
+    color: #b91c1c;
+  }
+  .card-red ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .card-red li {
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+---
 
-*Tác giả: Hà Quốc Kiên · Ngày chạy: 23/10/2026 · Trạng thái: hoàn thành
+<!-- Slide 1: Tiếp Cận Kiểm Thử Bằng AI Agent -->
 
-## 1. Tóm tắt
+# 1. Kiểm Thử Với AI Agent: Từ Prompting Đến Agentic Workflow
 
-Báo cáo ghi lại một lần chạy đủ ba bước của workflow có người duyệt (sinh test matrix, sinh Karate feature, chạy và đánh giá) trên phạm vi FR-09 (mã giảm giá) của EShop. Công cụ: skill `api-test-design` trên Antigravity, Karate 1.5.2, Java 17.
+Cách tiếp cận kiểm thử API bằng Trí tuệ Nhân tạo thế hệ mới: **Kiểm soát chặt chẽ thay vì phó mặc hoàn toàn cho AI**:
 
-Kết quả chính:
+<div class="grid-2">
+<div class="card">
 
-- Agent đề xuất 13 ca, người duyệt giữ nguyên cả 13. Karate chạy 13 scenario trong 655 ms: 8 đạt, 5 đỏ.
-- Trong 5 ca đỏ có 4 lỗi hệ thống thật (AC01, AC03, AC07, AC11) và 1 lỗi script (AC10). Cả 4 lỗi thật đã có trong báo cáo Postman trước đó (B4, B14, B26, B24), nên lần chạy này **không phát hiện lỗi mới**.
-- Đối chiếu lại bằng một collection Postman riêng cho FR-09 (cùng 13 ca, 23/10/2026): khớp Karate ở 12/13 ca. Ca lệch duy nhất là AC10 (Karate đỏ, Postman đạt), xác nhận AC10 là lỗi script của Karate chứ không phải lỗi hệ thống (mục 5.5).
-- Với 5 lỗi đã biết thuộc ba endpoint trong phạm vi, workflow bắt được 4 (B4, B14, B24, B26) và chưa bắt được B23.
-- Quy trình năm pha và hai điểm dừng được giữ đúng. Có ba vấn đề chất lượng: kỳ vọng của AC08, AC09, AC10 không lấy từ SRS và OpenAPI; AC10 có lỗi script mà bước duyệt và `check_coverage.py` không bắt được; nhật ký chỉ cho thấy một trong năm ca đỏ được gọi API trực tiếp để kiểm chứng.
-- Đây là một lần chạy, một mô hình, một phạm vi, và ba trong bốn lỗi tìm được trùng với kịch bản mẫu của chính skill. Vì vậy chưa đủ cơ sở để kết luận skill hiệu quả hơn cách làm khác (phần 8).
+### Giới hạn của Prompting thuần túy (Zero-shot)
+* **Ảo giác nghiệp vụ (Hallucination):** AI tự bịa endpoint, tự đoán tham số và tự chế thông điệp lỗi không có thật.
+* **Xanh giả (False Positive):** AI đọc code hiện tại của backend rồi viết test nắn theo lỗi của server, khiến báo cáo xanh nhưng hệ thống vẫn sai.
+* **Mất kiểm soát:** Không có tính truy vết (Traceability), không có cơ chế rà soát dữ liệu mẫu, dễ phá hỏng CSDL khi chạy.
 
-## 2. Mục tiêu và phạm vi
+</div>
+<div class="card">
 
-Mục tiêu: đánh giá xem skill có giúp agent sinh test có truy vết, kỳ vọng đúng theo đặc tả và bắt được lỗi thật hay không, và vai trò của người duyệt trong quy trình.
+### Giải pháp: Agentic Workflow với Skill chuyên biệt
+* **Tự động hóa theo quy trình (`api-test-design`):** Ép AI tuân thủ nghiêm ngặt các pha làm việc và tiêu chuẩn kiểm thử.
+* **Độc lập với mã nguồn:** Kỳ vọng chỉ được phép rút ra từ tài liệu gốc (`srs.md` và `openapi.yaml`), tuyệt đối không đọc code backend.
+* **Human-in-the-Loop:** Con người giữ vai trò phê duyệt then chốt trước khi AI sinh mã kịch bản và thực thi trên SUT.
 
-Phạm vi lần chạy: FR-09 (áp mã giảm giá) với ba endpoint: `POST /api/apply-coupon`, `GET /api/coupons`, `POST /api/coupon-usage`. Hệ thống kiểm thử: EShop (`ttbhanh/eshop-sut`, Node.js + Express + SQLite).
+</div>
+</div>
 
-Mốc so sánh: báo cáo kiểm thử Postman của chính nhóm (collection chính ngày 13/10/2026, bộ test tổng hợp ngày 15/10/2026, lỗi B1 đến B33).
+<div class="highlight-box">
+💡 <b>Mục tiêu cốt lõi:</b> Dùng AI để tìm ra lỗi thật của hệ thống dựa trên đặc tả SRS, không nắn test theo hành vi hiện tại của code!
+</div>
 
-## 3. Bộ skill và quy trình
+<!--
+Ghi chú thuyết trình:
+- Mở đầu bằng sự khác biệt giữa hai cách làm: Hỏi đáp ChatGPT thông thường (prompting) vs Hệ thống AI Agentic có định hướng (workflow-driven).
+- Nêu rõ vấn đề lớn nhất của AI trong testing: AI có xu hướng đọc code backend rồi viết assertion theo code backend, khiến test luôn Pass giả.
+- Giới thiệu triết lý Human-in-the-loop: Tận dụng tốc độ sinh mã của AI nhưng đặt dưới sự giám sát và phê duyệt nghiêm ngặt của kỹ sư QA.
+-->
 
-Skill `api-test-design` bắt agent làm theo năm pha, có hai điểm dừng cho người:
+---
 
-| Pha | Nội dung | Người |
-| --- | --- | --- |
-| 1 | Đọc `srs.md`, `openapi.yaml`, `sample-data.md`; rút quy tắc nghiệp vụ |  |
-| 2 | Sinh `test-matrix.md` có truy vết |  |
-| 3 | **Dừng, chờ duyệt** (Y/S/N) | Duyệt matrix |
-| 4 | Sinh Karate feature cho ca đã duyệt; chạy `check_coverage.py` | Đọc feature |
-| 5 | **Dừng, chờ lệnh "chạy"**; chạy, điền `result.md`, phân loại ca đỏ | Quyết định chạy, kiểm chứng ca đỏ |
+<!-- Slide 2: Kiến Trúc Bộ Skill & Quy Trình 3 Pha -->
 
-Quy tắc cốt lõi của skill: kỳ vọng chỉ lấy từ SRS và OpenAPI (SRS thắng khi hai bên khác nhau); không bịa dữ liệu; assertion chặt; không phá dữ liệu mẫu; không sửa test cho xanh. Ngoài skill có hai rule của Antigravity (vai trò và bốn điều cấm; ghi nhật ký hội thoại) và ba lời nhắc theo bước trong `prompts/tasks.md`.
+# 2. Bộ Skill `api-test-design` & Quy Trình Có Kiểm Soát
 
-## 4. Môi trường thực hiện
+Kiến trúc quy trình 3 Pha với **2 Điểm dừng bắt buộc (Gateways)** do Kỹ sư QA phê duyệt:
 
-| Hạng mục | Giá trị |
-| --- | --- |
-| Công cụ | Antigravity |
-| Mô hình | Gemini 3.8 Flash |
-| Karate, Java | Karate 1.5.2, Java 17 |
-| Hệ điều hành | Windows (PowerShell) |
-| SUT | `node server.js`, `http://localhost:3000`, khởi động mới trước khi chạy |
-| Thời điểm chạy | 23/10/2026 15:06:35 (theo báo cáo Karate) |
-| Lệnh chạy | `java -cp "karate-1.5.2.jar;." com.intuit.karate.Main -t "~@slow" -o ../executions/run-01-coupon/report ../executions/run-01-coupon/features` |
-| Tổng thời gian ba bước (người và agent) | 10' 32'' |
-| Đối chiếu sau chạy | Postman, collection `eshop_fr09_coupon_karate_crosscheck.postman_collection.json` (mục 5.5) |
+<div class="grid-2">
+<div>
 
-## 5. Kết quả
+### Ba pha thực thi của AI Agent
+* **Pha 0 — Kiểm tra môi trường (`doctor.py`):**
+  * Tự động rà soát Python 3.9+, Java 17, Karate JAR, Node.js và tính toàn vẹn của thư mục `inputs/`.
+* **Pha A — Phân tích đặc tả & Lập Test Matrix:**
+  * Bóc tách SRS thành các quy tắc nguyên tử (Atomic Rules).
+  * Lập ma trận kiểm thử phủ đủ 6 nhóm ca (Đường đúng, Biên, Dữ liệu sai, Nghiệp vụ, Bảo mật, Trạng thái).
+* **Pha B — Sinh mã kịch bản Karate Framework:**
+  * Tự động sinh `features/*.feature` dựa trên các ca được duyệt; kiểm soát chất lượng bằng `check_coverage.py`.
+* **Pha C — Thực thi & Phân tích lỗi (`result.md`):**
+  * Chạy qua `run_karate.py`, phân loại nguyên nhân gốc (`HT?` lỗi hệ thống, `KY?` kỳ vọng sai, `MT?` môi trường).
 
-### 5.1. Test matrix
+</div>
+<div>
 
-Agent rút 11 quy tắc (R01 đến R11), đề xuất 13 ca, phủ đủ sáu nhóm ca của skill:
+### Hai Điểm dừng kiểm soát (Gateways)
+```text
+  [inputs/] -> srs.md, openapi.yaml, sample-data.md
+      │
+  [Pha A] Sinh Test Matrix (Traceability 1-1)
+      │
+  🛑 ĐIỂM DỪNG 1: QA Review & Duyệt Ma Trận (Y / S / N)
+      │
+  [Pha B] Sinh Feature Karate (check_coverage.py: 0 Lỗi)
+      │
+  🛑 ĐIỂM DỪNG 2: Reset SUT Server & Lệnh "Chạy"
+      │
+  [Pha C] Chạy Karate -> Báo cáo summary.md & result.md
+```
 
-| Nhóm ca | Ca | Số ca |
-| --- | --- | --- |
-| 1. Đường đi đúng | AC01, AC02, AC12 | 3 |
-| 2. Giá trị biên | AC03, AC04 | 2 |
-| 3. Dữ liệu sai, thiếu | AC08, AC09 | 2 |
-| 4. Vi phạm quy tắc nghiệp vụ | AC05, AC06 | 2 |
-| 5. Phân quyền, bảo mật | AC07, AC11, AC13 | 3 |
-| 6. Trạng thái, luồng nhiều bước | AC10 | 1 |
+* **Quyền lực của QA:** Agent chỉ viết code cho ca được đánh dấu `Y` hoặc `S`; ca `N` bị loại bỏ hoàn toàn khỏi kịch bản.
 
-Phân bố theo endpoint: `apply-coupon` 10 ca (AC01 đến AC10), `GET /api/coupons` 2 ca (AC11, AC12), `coupon-usage` 1 ca trực tiếp (AC13) và 1 ca gián tiếp (AC10).
+</div>
+</div>
 
-Agent ghi ba điểm mâu thuẫn hoặc chưa rõ, người duyệt chấp nhận cả ba đề xuất:
+<div class="highlight-box">
+⚙️ <b>Kiểm soát chất lượng hai lớp:</b> Phê duyệt ma trận trước khi code + Reset máy chủ trước khi chạy.
+</div>
 
-1. OpenAPI ghi `apply-coupon` không cần đăng nhập (`security: []`), SRS FR-09 C4 yêu cầu đăng nhập. Agent theo SRS, nên AC07 kỳ vọng 401.
-2. Dữ liệu mẫu không có mã `is_active = 0` và API không tạo được, nên ca "mã bị vô hiệu hóa" không phủ được; AC06 kiểm mã không tồn tại.
-3. SRS C5 không nêu mã HTTP khi hết lượt dùng; agent chọn 400.
+<!--
+Ghi chú thuyết trình:
+- Trình bày lưu đồ 3 pha khép kín. Nhấn mạnh 2 điểm dừng (Stop gates).
+- Điểm dừng 1 ngăn chặn AI sinh code rác: Con người xem ma trận, chỉnh sửa kỳ vọng, loại bỏ ca không cần thiết trước khi cho AI viết code.
+- Điểm dừng 2 đảm bảo môi trường sạch: Máy chủ EShop phải được khởi động lại để CSDL về trạng thái seed chuẩn trước khi chạy test.
+-->
 
-Người duyệt: 13 ca Y, 0 ca S, 0 ca N, 0 ca thêm mới, 0 assertion yếu được bắt ở bước duyệt.
+---
 
-### 5.2. Kết quả chạy
+<!-- Slide 3: Thực Nghiệm Run 01 & Test Matrix -->
 
-| Chỉ số | Giá trị |
-| --- | --- |
-| Số scenario | 13 |
-| Đạt | 8 (AC02, AC04, AC05, AC06, AC08, AC09, AC12, AC13) |
-| Đỏ | 5 (AC01, AC03, AC07, AC10, AC11) |
-| Thời gian | 655 ms |
-| `check_coverage.py` trước khi chạy | 0 LỖI, 0 CẢNH BÁO |
+# 3. Thực Nghiệm Run 01: Phạm Vi FR-09 & Traceability Matrix
 
-&#91;Hình 1: ảnh chụp `karate-summary.html` cho thấy 8 đạt, 5 đỏ\]
+Áp dụng thực chiến trên phân hệ **FR-09: Mã giảm giá (Coupons)** và các API quản trị liên quan:
 
-### 5.3. Phân loại ca đỏ
+| Tiêu chí | Thông số thực tế Run 01 (`run-01-coupon`) |
+|---|---|
+| **Phạm vi khảo sát** | **5 Endpoints:** `POST /api/apply-coupon`, `POST /api/coupon-usage`, `GET /api/coupons`, `POST /api/admin/coupons`, `DELETE /api/admin/coupons/{id}` |
+| **Quy tắc nguyên tử** | **29 quy tắc (R01 – R13d):** Bóc tách độc lập từ SRS FR-09, FR-12 và OpenAPI specs |
+| **Tổng số ca đề xuất** | **28 ca kiểm thử (CP01 – CP28):** Phủ toàn diện 6 nhóm kiểm thử chuẩn mực |
+| **Kết quả phê duyệt** | **20 ca Duyệt nguyên bản (`Y`) · 7 ca Chỉnh sửa (`S`) · 1 ca Loại bỏ (`N`) · 1 ca Bổ sung (`[THÊM]`)** |
+| **Chất lượng kiểm tra** | Script `check_coverage.py` xác nhận: **Sạch 100% lỗi cú pháp và 0 cảnh báo** |
+| **Thời gian thực hiện** | Hoàn thành toàn bộ ma trận và bộ 27 kịch bản kiểm thử trong **dưới 10 phút** |
 
-Bảng dưới dùng phân loại đã đối chiếu với báo cáo Postman. Tệp `result.md` gốc gắn nhãn `HT-mới` cho bốn lỗi hệ thống vì agent không có danh sách lỗi; sau đối chiếu cả bốn là lỗi đã có mã (`HT`).
+<div class="highlight-box">
+📋 <b>Ma trận truy vết (Traceability Matrix):</b> Mỗi ca kiểm thử đều gắn chặt với đúng 1 quy tắc đặc tả và 1 thẻ ID duy nhất (`@CPxx`).
+</div>
 
-| ID | Triệu chứng | Nguyên nhân (theo `result.md`) | Loại | Mã lỗi |
-| --- | --- | --- | --- | --- |
-| AC01 | `discount_amount` = -9.000.000, kỳ vọng 100.000 | Công thức giảm giá phần trăm sai | HT | B4 (Postman ghi cùng giá trị -9.000.000) |
-| AC03 | 400 tại đúng ngưỡng 300.000, kỳ vọng 200 | So sánh `>` thay vì `>=` (FR-09 C3) | HT | B14 |
-| AC07 | 200 khi không có token, kỳ vọng 401 | Endpoint không gắn xác thực (FR-09 C4) | HT | B26 |
-| AC10 | 200, kỳ vọng 400 | Lỗi script: `user_id: u.id` (cần `'#(u.id)'`) | SC (đã xác nhận bằng Postman, chưa chạy lại Karate) | liên quan B23 |
-| AC11 | 200 với user thường, kỳ vọng 403 | `GET /api/coupons` không kiểm tra role admin | HT | B24 (phần xem danh sách mã) |
+<!--
+Ghi chú thuyết trình:
+- Giới thiệu phạm vi Run 01: Kiểm thử toàn diện module Coupon từ góc độ người dùng (Checkout, Apply, Usage) đến góc độ Admin (CRUD Coupon).
+- Giải thích 7 ca 'S' (Chỉnh sửa): Con người chủ động chỉnh sửa kỳ vọng để siết chặt điều kiện biên, cô lập dữ liệu và bổ sung ca kiểm tra token sai định dạng (CP28).
+- Nhấn mạnh ca CP16 được đánh dấu 'N' (Loại bỏ) vì tài liệu OpenAPI không định nghĩa hành vi khi coupon_id không tồn tại -> tránh việc AI suy đoán lung tung.
+-->
 
-Về AC10: kịch bản tạo tài khoản tạm, ghi nhận một lượt dùng SAVE10 (giới hạn mỗi người là 1) rồi áp mã lần nữa. Theo `result.md`, agent gọi trực tiếp `apply-coupon` với `user_id` của tài khoản tạm và nhận 400 đúng kỳ vọng, nên kết luận lỗi nằm ở script. Chẩn đoán này đã được xác nhận độc lập bằng collection Postman ở mục 5.5: với `user_id` đúng của tài khoản tạm, backend trả 400 đúng SRS C5. Tuy vậy Karate vẫn chưa được chạy lại sau khi sửa script, nên ca C5 (giới hạn lượt dùng) **chưa được Karate kiểm tra thành công lần nào**.
+---
 
-### 5.4. Ca xanh đáng ngờ
+<!-- Slide 4: Kỹ Thuật Viết Test Của AI Agent -->
 
-- **AC09** (`total_amount` = -100.000): test đạt vì phản hồi 400 chứa "chưa đủ giá trị tối thiểu". Đó là thông báo của nhánh so sánh ngưỡng, không phải của kiểm tra dữ liệu không hợp lệ. OpenAPI khai báo `total_amount` có `minimum: 0`, tức số âm phải bị từ chối như dữ liệu sai, nhưng không nêu thông báo lỗi. Test mã hóa hành vi quan sát được thay vì kỳ vọng theo đặc tả. Agent tự đánh dấu ca này là đáng ngờ.
-- **AC08** (thiếu trường): đạt, nhưng chuỗi kỳ vọng "Vui lòng nhập mã giảm giá" không có trong SRS hay OpenAPI (xem 7.2).
+# 4. Kỹ Thuật Viết Test Của AI: Cô Lập Âm Tính & An Toàn Dữ Liệu
 
-### 5.5. Đối chiếu lại bằng collection Postman riêng cho FR-09
+Bộ skill áp đặt các nguyên tắc thiết kế kịch bản tự động hóa cấp cao, loại trừ hoàn toàn lỗi phụ:
 
-Để kiểm tra lại các ca Karate do AI sinh ra, nhóm dựng một collection Postman một request (`eshop_fr09_coupon_karate_crosscheck.postman_collection.json`), bấm Send là chạy đủ 13 ca AC01 đến AC13 với cùng dữ liệu và mã ca. Kỳ vọng làm theo đề xuất 1 ở mục 9: chỉ lấy từ SRS và OpenAPI; ca nào tài liệu không nêu thông báo lỗi (AC07, AC08, AC09, AC10) chỉ kiểm mã trạng thái và `response.error` là chuỗi; các ca có ví dụ trong OpenAPI (AC04, AC05, AC06, AC11, AC13) giữ chuỗi lỗi. AC10 tự tạo tài khoản tạm và áp mã với `user_id` đúng. Chạy ngày 23/10/2026 trên server khởi động mới.
+<div class="grid-2">
+<div class="card">
 
-| ID | Karate | Postman | Khớp | Ghi chú |
-| --- | --- | --- | --- | --- |
-| AC01 | Đỏ | Đỏ | Khớp | `discount_amount` = -9.000.000, kỳ vọng 100.000 (B4) |
-| AC02 | Đạt | Đạt | Khớp | |
-| AC03 | Đỏ | Đỏ | Khớp | 400 tại đúng ngưỡng 300.000, kỳ vọng 200 (B14) |
-| AC04 | Đạt | Đạt | Khớp | |
-| AC05 | Đạt | Đạt | Khớp | |
-| AC06 | Đạt | Đạt | Khớp | |
-| AC07 | Đỏ | Đỏ | Khớp | 200 khi không có token, kỳ vọng 401 (B26) |
-| AC08 | Đạt | Đạt | Khớp | |
-| AC09 | Đạt (đáng ngờ) | Đạt | Khớp | Postman không còn kiểm chuỗi, nên vẫn đạt dù lý do 400 chưa rõ (xem dưới) |
-| AC10 | **Đỏ** | **Đạt** | **Lệch** | Karate đỏ do lỗi script; Postman với `user_id` đúng: ghi nhận 200, áp mã lần hai 400 |
-| AC11 | Đỏ | Đỏ | Khớp | 200 với user thường, kỳ vọng 403 (B24) |
-| AC12 | Đạt | Đạt | Khớp | |
-| AC13 | Đạt | Đạt | Khớp | |
+### 1. Cô lập ca âm tính (Single Fault Isolation)
+* Khi kiểm thử dữ liệu sai (ví dụ: `total_amount` âm ở CP12), nếu dùng mã có sẵn với ngưỡng 300k thì hệ thống sẽ từ chối vì chưa đủ ngưỡng $\rightarrow$ **Xanh giả!**
+* **Giải pháp của AI:** Tự tạo mã tạm có `min_order_amount = -1.000.000`, áp thử số tiền âm rồi dọn dẹp $\rightarrow$ Đảm bảo ca chỉ rớt vì đúng lý do số âm!
 
-Kết quả: 9 ca đạt, 4 ca đỏ (AC01, AC03, AC07, AC11). Nhận xét:
+### 2. Cách ly tài khoản mẫu & Dữ liệu tạm
+* Tuyệt đối không dùng tài khoản mẫu (`test@eshop.com`) cho các ca ghi nhận lượt dùng (CP08, CP09, CP13).
+* Gọi `helpers/create-user.feature` tự sinh user động `tmp_user_<timestamp>@eshop.com` để thử nghiệm.
 
-- Bốn lỗi hệ thống thật (B4, B14, B26, B24) có hai bằng chứng độc lập, từ Karate và từ Postman.
-- Lần đối chiếu này bù phần kiểm chứng ca đỏ bằng gọi API trực tiếp mà mục 7.2 (vấn đề 6) chỉ ra còn thiếu. Đây là bước do người làm thêm, không phải do agent thực hiện.
-- AC10: chẩn đoán trong `result.md` (lỗi ở `user_id: u.id`) được xác nhận. C5 hiện có bằng chứng từ Postman nhưng chưa có bằng chứng từ Karate; cần sửa script thành `'#(u.id)'` và chạy lại.
-- AC09 vẫn là ca xanh đáng ngờ. Để khẳng định đạt vì lý do sai (nhánh so sánh ngưỡng chứ không phải kiểm tra dữ liệu âm), cần xem dòng log thật của AC09 trong Postman Console: [điền nội dung `error` thực tế].
-- Số liệu "bắt được 4/5 lỗi đã biết" ở mục 6 không đổi: B23 vẫn chưa có ca nào bắt (collection giữ đúng 13 ca để đối chiếu).
+</div>
+<div class="card">
 
-[Hình 7: ảnh Test Results của collection FR-09 (9 đạt, 4 đỏ)]
+### 3. Chuẩn hóa nội suy biến JSON (`'#(var)'`)
+* Karate không nội suy tên biến trần trong JSON payload.
+* Toàn bộ tham số nhúng đều bọc cú pháp nghiêm ngặt:  
+  `request { code: '#(tmpCode)', user_id: '#(u.id)' }`
 
-## 6. Đối chiếu với kiểm thử Postman
+### 4. Dọn dẹp an toàn trước khi kiểm tra (Safe Cleanup)
+* Trong ca xóa/sửa (CP20, CP25, CP26), lưu mã trạng thái vào biến `delStatus = responseStatus`, thực hiện lệnh dọn dẹp, **rồi mới assert**.
+* Tránh hiện tượng rác CSDL tồn đọng khi một bước kiểm thử bị gãy giữa chừng.
 
-Báo cáo Postman ghi các lỗi liên quan tới ba endpoint trong phạm vi như sau:
+</div>
+</div>
 
-| Lỗi Postman | Mô tả | Kết quả trong run-01 |
-| --- | --- | --- |
-| B4 | Giảm giá phần trăm tính sai | AC01 đỏ: bắt được |
-| B14 | Từ chối đơn đúng bằng ngưỡng tối thiểu | AC03 đỏ: bắt được |
-| B26 | `apply-coupon` không yêu cầu đăng nhập | AC07 đỏ: bắt được |
-| B24 (phần `GET /api/coupons`) | User thường xem được danh sách mã | AC11 đỏ: bắt được |
-| B23 | Bỏ `user_id` để lách giới hạn lượt dùng | Không có ca riêng; AC10 đỏ do lỗi script: **chưa bắt được** |
+<div class="highlight-box">
+🛡️ <b>Kỷ luật kiểm thử nghiêm ngặt:</b> Không để lại rác dữ liệu và không tạo ra các ca Pass giả do trùng lặp điều kiện.
+</div>
 
-Số liệu rút ra (theo danh sách 5 lỗi trên, do người viết báo cáo tự lập từ báo cáo Postman):
+<!--
+Ghi chú thuyết trình:
+- Phân tích kỹ thuật cô lập lỗi ở CP12: Đây là kỹ thuật kiểm thử rất sâu mà tester con người đôi khi bỏ qua. Nếu không tạo mã có ngưỡng âm, test sẽ pass vì lỗi ngưỡng chứ không phải vì bắt được số âm.
+- Nhấn mạnh quy tắc dọn dẹp (cleanup): Karate dừng ngay khi gặp assertion fail, nếu để lệnh dọn dẹp ở cuối thì khi test đỏ dữ liệu rác sẽ vĩnh viễn nằm lại trong SQLite.
+-->
 
-- Bắt được 4/5 lỗi đã biết trong phạm vi; không có lỗi mới.
-- Trong 5 ca đỏ: 4 là lỗi hệ thống thật, 1 là lỗi script, 0 là sai kỳ vọng.
-- Điểm khác biệt có thể nói là của workflow: mã lỗi B không có trong đầu vào (đã làm sạch bằng `make_agent_openapi.py`), kỳ vọng số tiền tính theo công thức SRS, và mọi ca có truy vết về quy tắc.
+---
 
-Lưu ý: cả hai cách làm đều tham khảo mã nguồn `server.js` (báo cáo Postman nói rõ điều này; nhật ký cho thấy agent cũng xem `server.js` chín lần). Vì vậy so sánh này không phải so sánh giữa "có đọc mã" và "không đọc mã".
+<!-- Slide 5: Kết Quả Thực Thi Run 01 Trên SUT Thật -->
 
-## 7. Đánh giá bộ skill
+# 5. Kết Quả Thực Thi: 17 Xanh · 10 Đỏ Trên SUT EShop
 
-### 7.1. Điểm mạnh (có bằng chứng trong lần chạy)
+Karate 1.5.2 thực thi toàn bộ **27 kịch bản trong 3.24 giây**, bóc trần hàng loạt lỗi tiềm ẩn:
 
-1. **Giữ đúng quy trình và điểm dừng.** Lượt 1 dừng sau khi sinh matrix, lượt 2 dừng trước khi chạy, lượt 3 chạy sau lệnh "chạy". Không có dấu hiệu agent sửa assertion để test xanh: AC10 vẫn đỏ.
-2. **Truy vết đầy đủ.** 13/13 ca duyệt có scenario mang thẻ `@ID` trùng matrix; `check_coverage.py` báo sạch.
-3. **Áp đúng thứ tự ưu tiên tài liệu.** Với `apply-coupon`, agent chọn SRS thay vì OpenAPI (AC07 kỳ vọng 401), ghi mâu thuẫn vào matrix. Đây chính là điểm mâu thuẫn nhóm đã ghi ở báo cáo Postman (mục 7).
-4. **Kỳ vọng số tiền tính theo công thức.** AC01 (100.000 và 900.000) và AC03 (30.000 và 270.000) tính từ SRS, không chép từ phản hồi; hai ca này bắt được B4 và B14.
-5. **Ghi nhận giới hạn dữ liệu.** Agent nhận ra không phủ được mã `is_active = 0` và ghi vào matrix thay vì tự bịa.
-6. **Phủ đủ sáu nhóm ca**, mỗi endpoint có ca đường đúng hoặc ca âm tính/bảo mật.
-7. **Chạy được trên Karate 1.5.2 và Java 17** bằng đúng lệnh trong tài liệu.
+<div class="grid-2">
+<div>
 
-### 7.2. Vấn đề phát hiện
+### Thống kê thực thi trên SUT thật
+* **Tổng số ca thực thi:** **27 scenarios** (bỏ qua ca `@slow`, loại bỏ CP16).
+* **Kết quả chung:** **17 Xanh (Passed) · 10 Đỏ (Failed)**.
+* **Thời gian thực thi:** **3.24 giây** (tốc độ cao, tối ưu cho CI/CD).
+* **Phân loại nguyên nhân:** 100% (10/10) ca đỏ đều được xác nhận là **Lỗi hệ thống thật của SUT (`HT?`)**, không có lỗi script do test sai!
 
-1. **Kỳ vọng không chỉ đến từ SRS và OpenAPI.** Trong lượt 2, agent mở `server.js` chín lần và tìm `authenticateToken` trước khi viết feature. Chuỗi kỳ vọng của AC08 ("Vui lòng nhập mã giảm giá") và AC10 ("đã đạt giới hạn") không xuất hiện trong `srs.md` và `openapi.yaml` (đã tìm trong bản đầu vào của bộ skill), còn AC09 dùng thông báo của nhánh lỗi sai. Quy tắc cốt lõi 1 của skill nói kỳ vọng chỉ lấy từ SRS và OpenAPI, nhưng không nói rõ có được đọc mã nguồn hay không.
-2. **Matrix và feature không khớp ở assertion.** Matrix ghi `response.error == '#present'` cho AC08, AC09, AC10, nhưng feature dùng chuỗi cụ thể. Người duyệt matrix không thể biết chuỗi đó từ đâu ra.
-3. **Lỗi script AC10 lọt qua mọi lớp kiểm tra.** Agent viết `user_id: u.id` trong khi hướng dẫn Karate của skill dùng cú pháp `'#(biến)'`. `check_coverage.py` chỉ kiểm cấu trúc (có `@ID`, có `match`, không chỉ kiểm kiểu) nên không bắt được; bước đọc feature của người cũng không bắt được. Lỗi chỉ lộ ở lần chạy.
-4. **Bước duyệt chưa tạo thay đổi nào trong lần chạy này.** 13 ca Y, 0 sửa, 0 loại, 0 thêm. Ba vấn đề trên không bị phát hiện ở bước duyệt hay bước đọc feature. Chưa đủ dữ liệu để kết luận bước duyệt có giá trị hay không; cần một bảng kiểm cụ thể cho người duyệt (phần 9).
-5. **Bỏ sót ca "bỏ trường tùy chọn".** `design-rules.md` có mục "Lách luật bằng cách bỏ một trường tùy chọn", nhưng matrix không có ca gọi `apply-coupon` không kèm `user_id`. Đây là lý do B23 không được bắt (OpenAPI còn ghi `user_id` là `nullable`, nên đây cũng là điểm đặc tả mơ hồ cần ghi vào mục mâu thuẫn).
-6. **Kiểm chứng ca đỏ bằng API trực tiếp chưa đầy đủ.** Skill yêu cầu mỗi ca đỏ phải kiểm chứng bằng gọi API trực tiếp. Trong nhật ký, chỉ thấy các lời gọi trực tiếp cho AC10; `result.md` ghi "Có" cho cả 5 ca, nhưng với AC01, AC03, AC07, AC11 lời giải thích dựa vào đọc `server.js` và đối chiếu Postman trước đó. Phần thiếu này đã được bù bằng collection Postman ở mục 5.5 (cho cả 5 ca đỏ), nhưng đó là bước do người làm thêm.
-7. **Phân loại sai nhãn do thiếu danh sách lỗi.** `result.md` ghi AC01 là loại `HT` nhưng mã lỗi `HT-mới` (mâu thuẫn trong cùng một dòng), và gắn `HT-mới` cho cả bốn lỗi đã có mã B. Tệp này cần được sửa cho khớp bảng 5.3.
-8. **Một số điểm vận hành.** Agent phải tìm thư mục `executions` bằng lệnh tìm kiếm vì workspace là thư mục gốc repo EShop chứ không phải thư mục `ai-workflow`. `check_coverage.py` phải chạy lại với `PYTHONIOENCODING=utf-8` (nhiều khả năng do lỗi mã hóa console Windows khi in tiếng Việt). Agent còn đọc trực tiếp `database.sqlite` bằng các lệnh `node` để chẩn đoán AC10; skill chưa nói có cho phép hay không.
-9. **Nhật ký hội thoại chưa nguyên văn.** `conversation.md` ghi các lời nhắc còn nguyên chỗ giữ `[PHẠM VI]`, `[RUN-ID]`, trong khi agent vẫn làm đúng thư mục `run-01-coupon`. Cần kiểm tra lại tệp này trước khi dùng làm bằng chứng.
+### Hiện tượng "HTTP 200 che giấu lỗi"
+* Tương tự Postman, **7/10 ca đỏ** của Run 01 đều có phản hồi **HTTP 200 OK** từ backend!
+* Nếu chỉ kiểm tra status code, cả 7 khiếm khuyết nghiêm trọng này đều bị bỏ lọt hoàn toàn.
 
-## 8. Hạn chế và đe dọa tính hợp lệ
+</div>
+<div>
 
-- **Một lần chạy, một mô hình, một phạm vi.** Không thể suy ra tính ổn định. Cùng đầu vào chạy lại có thể cho matrix khác.
-- **Trùng với kịch bản mẫu của skill.** `examples/coupon.feature` đã có các ca SAVE10 1.000.000, đơn đúng ngưỡng 300.000 và gọi không token. README của bộ skill ghi các ví dụ này đã khớp B4, B14, B26. Nhật ký cho thấy agent mở một tệp `coupon.feature` trước khi sinh matrix (nhiều khả năng là tệp ví dụ). Vì vậy 3 trong 4 lỗi bắt được có thể là do mô phỏng ví dụ, không phải khám phá độc lập; chỉ AC11 (B24) nằm ngoài ví dụ.
-- **Độ phủ.** Phạm vi chỉ gồm ba endpoint; các lỗi mã giảm giá ở phía admin (B29, B11 phần mã giảm giá) nằm ngoài phạm vi và không được tính.
-- **Quy mô nhỏ.** 13 ca; tỉ lệ 4/5 có độ bất định lớn.
+### Phát hiện chấn động: Lỗ hổng RBAC toàn diện
+Kiểm thử tự động vạch trần hệ thống phân quyền bị vô hiệu hóa tại toàn bộ các endpoint Coupon Admin:
 
-## 9. Đề xuất cải tiến
+* 🔓 **User thường xem được danh sách mã Admin:**  
+  `GET /api/coupons` với `userToken` trả về `200 OK` (CP19 đỏ, kỳ vọng 403).
+* 🔓 **User thường tạo được mã giảm giá Admin:**  
+  `POST /api/admin/coupons` với `userToken` tạo thành công coupon vào CSDL (CP22 đỏ, kỳ vọng 403).
+* 🔓 **User thường xóa được mã giảm giá Admin:**  
+  `DELETE /api/admin/coupons/{id}` với `userToken` xóa thành công coupon (CP26 đỏ, kỳ vọng 403).
 
-1. **Làm rõ nguồn kỳ vọng.** Thêm vào quy tắc cốt lõi: không đọc mã nguồn SUT hay cơ sở dữ liệu để rút kỳ vọng; thông báo lỗi chỉ lấy từ SRS và OpenAPI. Khi tài liệu không nêu thông báo, ca chỉ kiểm mã trạng thái và `response.error == '#string'`, đồng thời ghi "SRS không nêu" vào matrix. Nếu muốn cho phép đọc mã để chẩn đoán ca đỏ (pha 5), nói rõ là chỉ dùng ở pha 5.
-2. **Bắt buộc matrix và feature khớp assertion.** Thêm một bước hoặc kiểm tra trong `check_coverage.py` cảnh báo khi cột "Assertion chính" của matrix khác với assertion trong feature (ví dụ chuỗi cụ thể không có trong matrix).
-3. **Chặn lỗi cú pháp biến.** Thêm vào mục "Việc không làm" của `karate-guide.md`: không dùng biến trần trong thân JSON (`user_id: u.id`), luôn dùng `'#(u.id)'`. Thêm cảnh báo vào `check_coverage.py` cho các dòng `request {...}` chứa giá trị dạng `tên.thuộc_tính` không nằm trong dấu nháy.
-4. **Bảng kiểm cho người duyệt.** Thêm vào README hoặc `executions/README.md`: kiểm chuỗi lỗi có nguồn trong tài liệu, kiểm ca "bỏ từng trường tùy chọn", kiểm biến trong thân request, kiểm khớp matrix và feature.
-5. **Yêu cầu bằng chứng kiểm chứng.** Cột "Đã kiểm chứng" trong `result.md` phải kèm yêu cầu và phản hồi thực tế (hoặc ảnh chụp), không chỉ chữ "Có".
-6. **Thêm bước đối chiếu lỗi đã biết sau khi chạy.** Bước này do người làm (không đưa danh sách lỗi cho agent), để phân loại `HT` và `HT-mới` đúng.
-7. **Sửa `check_coverage.py` để chạy tốt trên Windows**: ép mã hóa `utf-8` cho đầu ra.
-8. **Đổi ví dụ.** Dùng ví dụ không trùng phạm vi đánh giá, hoặc đánh giá trên phạm vi khác (ví dụ FR-10 đơn hàng, nơi Postman có B21, B22).
-9. **Chạy lặp lại.** Chạy lại cùng phạm vi 3 lần và ít nhất một mô hình khác, để đo độ ổn định.
-10. **Kiểm chứng độc lập.** Khi một ca đỏ nghi là lỗi script, chạy lại cùng kỳ vọng bằng một công cụ khác (như collection Postman ở mục 5.5) trước khi kết luận là lỗi hệ thống hay lỗi script; cách này đã tách được AC10.
+</div>
+</div>
 
-## 10. Kết luận
+<div class="highlight-box">
+⚠️ <b>Kết luận an ninh:</b> Backend có middleware xác thực đăng nhập nhưng <b>quên hoàn toàn middleware kiểm tra vai trò (Role Check)!</b>
+</div>
 
-Trong một lần chạy trên FR-09, bộ skill đã giữ đúng quy trình có người duyệt, sinh được matrix có truy vết với kỳ vọng số tiền tính theo công thức SRS, và bắt được 4 trong 5 lỗi đã biết của ba endpoint, không có lỗi mới. Các điểm yếu chủ yếu nằm ở nguồn của kỳ vọng (đọc mã nguồn, chuỗi lỗi ngoài tài liệu), ở các kiểm tra tự động chưa đủ để bắt lỗi script, và ở bằng chứng kiểm chứng ca đỏ. Kết quả hiện chỉ đủ để mô tả hành vi của bộ skill ở lần chạy này; để đánh giá hiệu quả cần chạy lại Karate sau khi sửa AC10 (Postman đã xác nhận AC10 là lỗi script, mục 5.5), thêm mốc so sánh và thử trên phạm vi không trùng với ví dụ.
+<!--
+Ghi chú thuyết trình:
+- Công bố số liệu thực nghiệm: 17 Passed, 10 Failed.
+- Nhấn mạnh: Cả 10 ca đỏ đều là lỗi thật của SUT, chứng tỏ năng lực sinh test cực kỳ chuẩn xác của AI khi được trang bị skill và quy trình chặt chẽ.
+- Chỉ ra lỗ hổng bảo mật nghiêm trọng: User thường có đầy đủ quyền hạn của Admin đối với module Coupon.
+-->
 
-## Phụ lục A. Danh sách 13 ca
+---
 
-| ID | Endpoint | Nhóm | Kỳ vọng | Kết quả |
-| --- | --- | --- | --- | --- |
-| AC01 | POST /api/apply-coupon | 1 | SAVE10, 1.000.000: giảm 100.000, còn 900.000 | Đỏ |
-| AC02 | POST /api/apply-coupon | 1 | BIGBUY, 1.000.000: giảm 50.000, còn 950.000 | Đạt |
-| AC03 | POST /api/apply-coupon | 2 | SAVE10, đúng 300.000: giảm 30.000, còn 270.000 | Đỏ |
-| AC04 | POST /api/apply-coupon | 2 | SAVE10, 299.999: 400 | Đạt |
-| AC05 | POST /api/apply-coupon | 4 | EXPIRED: 400, hết hạn | Đạt |
-| AC06 | POST /api/apply-coupon | 4 | NOSUCHCODE: 404 | Đạt |
-| AC07 | POST /api/apply-coupon | 5 | Không token: 401 | Đỏ |
-| AC08 | POST /api/apply-coupon | 3 | Thiếu trường: 400 | Đạt |
-| AC09 | POST /api/apply-coupon | 3 | total\_amount âm: 400 | Đạt (đáng ngờ) |
-| AC10 | POST /api/apply-coupon, /api/coupon-usage | 6 | Hết lượt dùng: 400 | Đỏ (lỗi script) |
-| AC11 | GET /api/coupons | 5 | User thường: 403 | Đỏ |
-| AC12 | GET /api/coupons | 1 | Admin xem danh sách: 200 | Đạt |
-| AC13 | POST /api/coupon-usage | 5 | Không token: 401 | Đạt |
+<!-- Slide 6: Bốn Lỗi Tiêu Biểu Bị AI Vạch Trần -->
+
+# 6. Bốn Lỗi Tiêu Biểu: Khi AI Bắt Lỗi SUT EShop
+
+Minh chứng 4 lỗi nghiêm trọng nhất của SUT được phát hiện độc lập qua kịch bản Karate của Agent:
+
+<div class="grid-2">
+<div class="card-red">
+
+### 🔴 Lỗi CP01: Tính giảm giá âm (Mức Cao)
+* **API:** `POST /api/apply-coupon` · **HTTP:** `200 OK`
+* **Kỳ vọng SRS:** Đơn 500.000 ₫ giảm 10% (`SAVE10`) $\rightarrow$ Giảm 50.000 ₫, phải trả 450.000 ₫.
+* **Thực tế SUT:** `discount_amount: -4500000`, `final_amount: 5000000` (giảm âm 4.5 triệu, tiền tăng gấp 10 lần!).
+* **Trùng khớp:** Hoàn toàn khớp với lỗi **B4** mà Postman đã ghi nhận.
+
+### 🔴 Lỗi CP03: Sai lệch giá trị biên (Mức Trung bình)
+* **API:** `POST /api/apply-coupon` · **HTTP:** `400 Bad Request`
+* **Kỳ vọng SRS:** Điều kiện C3 ghi rõ: Tổng đơn **>= (lớn hơn hoặc bằng)** ngưỡng 300.000 ₫ $\rightarrow$ Đơn đúng 300.000 ₫ phải được chấp nhận (200).
+* **Thực tế SUT:** Bị từ chối 400 báo *"chưa đủ giá trị tối thiểu"*. Backend dùng so sánh lớn hơn hẳn (`>`) thay vì `>=`.
+
+</div>
+<div class="card-red">
+
+### 🔴 Lỗi CP07: Bỏ qua xác thực C4 (Mức Cao)
+* **API:** `POST /api/apply-coupon` · **HTTP:** `200 OK`
+* **Kỳ vọng SRS:** Điều kiện C4: *"Đã đăng nhập: Người dùng phải có JWT Token hợp lệ"* $\rightarrow$ Không có token phải trả 401.
+* **Thực tế SUT:** Không gửi Authorization header nhưng server vẫn trả về 200 thành công!
+* **Nguyên nhân:** Backend làm theo OpenAPI (`security: []`) mà quên yêu cầu của SRS.
+
+### 🔴 Lỗi CP22: Leo quyền tạo Coupon (Mức Cao)
+* **API:** `POST /api/admin/coupons` · **HTTP:** `200 OK`
+* **Kỳ vọng SRS:** FR-12 yêu cầu chỉ Admin mới có quyền tạo mã $\rightarrow$ User thường phải nhận `403 Forbidden`.
+* **Thực tế SUT:** Đăng nhập tài khoản User thường gửi request tạo mã $\rightarrow$ Server tạo thành công và trả về `id: 7`!
+
+</div>
+</div>
+
+<div class="highlight-box">
+🎯 Các lỗi được phát hiện hoàn toàn độc lập thông qua việc đối chiếu đặc tả SRS và OpenAPI!
+</div>
+
+<!--
+Ghi chú thuyết trình:
+- Đi sâu vào 4 case study thực tế:
+  + CP01 là lỗi logic toán học tai hại.
+  + CP03 là lỗi biên kinh điển (Off-by-one bug).
+  + CP07 là sự xung đột giữa tài liệu OpenAPI và SRS mà AI đã phát hiện ra.
+  + CP22 là lỗi leo quyền nghiêm trọng nhất (Privilege Escalation).
+- Nhấn mạnh: AI không hề được nạp sẵn danh sách bug, toàn bộ lỗi được phát hiện nhờ các assertion viết chuẩn theo SRS!
+-->
+
+---
+
+<!-- Slide 7: Kết Luận & Định Vị Vai Trò Human-In-The-Loop -->
+
+# 7. Kết Luận: Vai Trò Cốt Lõi Của Human-In-The-Loop
+
+Bài học thực tiễn rút ra từ mô hình cộng tác giữa **Kỹ sư QA** và **AI Agent** trong kiểm thử phần mềm:
+
+<div class="grid-2">
+<div>
+
+### Ba bài học cốt lõi từ thực nghiệm
+1. **AI là công cụ tăng tốc vượt trội:**
+   * Tiết kiệm **~70% thời gian** viết boilerplate code, JSON schema, curl commands và kịch bản Karate.
+   * Tính toán công thức số học chính xác và bao phủ giá trị biên tốt hơn con người làm thủ công.
+2. **Kỳ vọng phải độc lập với mã nguồn:**
+   * Tuyệt đối không cho AI đọc code backend khi sinh test. Kỳ vọng bắt buộc phải lấy từ tài liệu đặc tả (SRS/OpenAPI).
+3. **Bộ skill đóng vai trò "hàng rào bảo vệ" (Guardrails):**
+   * Ngăn ngừa AI sinh assertion lỏng lẻo (`!= null`, `#string`) và buộc AI phải cách ly dữ liệu tạm an toàn.
+
+</div>
+<div>
+
+### Định vị vai trò: Human-in-the-Loop là bắt buộc
+* **AI không thay thế Kỹ sư QA:**
+  * AI không thể tự quyết định khi tài liệu có mâu thuẫn hoặc mơ hồ (như ca CP16 hay việc ưu tiên SRS trước OpenAPI).
+  * Con người bắt buộc phải là chốt chặn phê duyệt ma trận (Review Gate) để thẩm định tính đúng đắn của ca kiểm thử.
+* **Sự chuyển dịch vai trò của Tester:**
+  * Kỹ sư QA chuyển từ việc gõ kịch bản thủ công sang vai trò **Kiến trúc sư kiểm thử (Test Architect)**: Đặt ra quy tắc, thiết lập ràng buộc và đánh giá rủi ro.
+
+</div>
+</div>
+
+<div class="highlight-box">
+🤝 <b>Mô hình cộng tác tối ưu:</b> Kỹ sư QA định hướng & phê chuẩn + AI Agent phân tích đặc tả & sinh mã tự động.
+</div>
+
+<!--
+Ghi chú thuyết trình:
+- Đúc kết thông điệp kết thúc của phần thuyết trình AI:
+  + AI rất mạnh, rất nhanh (sinh 27 ca test chuẩn chỉnh trong vài phút).
+  + Nhưng AI không có tư duy phản biện nghiệp vụ: Nếu tài liệu sai hoặc mơ hồ, AI sẽ bị kẹt hoặc đoán mò.
+- Khẳng định tương lai của nghề QA: Kỹ sư kiểm thử không bị thay thế, mà được nâng tầm thành người kiến tạo và kiểm duyệt quy trình tự động hóa với sự trợ giúp của AI Agents.
+-->

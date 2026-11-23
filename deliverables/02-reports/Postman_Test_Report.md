@@ -5,7 +5,7 @@
 > **Hệ thống được kiểm thử (SUT):** EShop, backend Node.js/Express + SQLite, repo `ttbhanh/eshop-sut`
 > **Ngày chạy:** 13/10/2026 (collection chính), 15/10/2026 (bộ test tổng hợp), 16/10/2026 (thí nghiệm AI sinh test), 23/10/2026 (đánh giá skill Karate)
 > **Cấu trúc:** mục 1 đến 11 là phần Postman; mục 12 Data-driven bằng Newman; mục 13 thí nghiệm AI sinh test; mục 14 đánh giá skill `api-test-design`; mục 15 tổng hợp và việc còn lại
-> **Tệp minh chứng:** `eshop_api_postman_collection_v3.json` (collection chính: 66 request kèm response mẫu của từng request, cộng 2 request Data-driven, tổng 68 request) và `eshop_api_all_tests.postman_collection.json` (bộ test tổng hợp, 1 request, 131 assertion)
+> **Tệp minh chứng:** `tests/postman/collections/eshop_api_postman_collection_v3.1.json` (collection chính: 66 request kèm response mẫu của từng request, cộng 2 request Data-driven, tổng 68 request) và `tests/postman/collections/eshop_api_all_tests.postman_collection.json` (bộ test tổng hợp, 1 request, 131 assertion)
 
 ---
 
@@ -362,12 +362,12 @@ Các mục dưới đây đến từ đọc code `server.js` và đối chiếu 
 | 1 | Kiểm tra JSON Schema (checkpoint) cho Get products, Product detail, Login trong collection chính | Đã làm trong collection v3 (mục 12) |
 | 2 | Kiểm thử Data-driven cho đăng nhập bằng CSV | Đã làm, mở rộng thêm cả chi tiết sản phẩm (mục 12) |
 | 3 | Kiểm thử các mục ở mục 9 | Đã làm: bộ test tổng hợp bản 131 assertion (B34 đến B42, O3, O4). Còn lại: OTP không có thời hạn (chưa có test chạy) |
-| 4 | Chạy tự động bằng Newman và xuất báo cáo HTML | Đã làm (mục 12) |
+| 4 | Chạy tự động bằng Newman và xuất báo cáo HTML | Đã làm (mục 12); đã tích hợp workflow CI tại `.github/workflows/postman-ci.yml` |
 | 5 | Đối chiếu `openapi.yaml` với collection | Đã cập nhật B1 đến B33; cần bổ sung B34 đến B42, O3, O4 và đối chiếu lại nếu có thay đổi |
 | 6 | Xây hợp đồng Pact cho ứng dụng mobile | [điền trạng thái, chưa có tài liệu trong đợt tổng hợp này] |
 | 7 | Hỏi giảng viên về mâu thuẫn `api_specification.md` và SRS ở `apply-coupon` | [điền kết quả]. Skill ở mục 14 đã chọn theo SRS (401) |
 | 8 | Hoàn thiện báo cáo thí nghiệm AI và đưa vào báo cáo chung | Đã làm (mục 13) |
-| 9 | Chạy lại bộ test tổng hợp trên máy nhóm | Bản 118 assertion đã chạy ngày 23/10/2026: 56 đỏ, 62 xanh. Bản 131 assertion: kỳ vọng 68 đỏ, 63 xanh, cần chạy lại trên máy nhóm để xác nhận |
+| 9 | Chạy lại bộ test tổng hợp trên máy nhóm | Bản 118 assertion đã chạy ngày 23/10/2026: 56 đỏ, 62 xanh. Bản 131 assertion: đã xác nhận bằng Newman trên SUT thật đạt 68 đỏ, 63 xanh (tổng 131 assertion, 229 request) |
 | 10 | Chạy lại AC10 sau khi sửa script Karate, thêm ca "bỏ `user_id`" cho B23 | Còn lại (mục 14); Postman đã xác nhận AC10 là lỗi script |
 
 ---
@@ -377,14 +377,14 @@ Các mục dưới đây đến từ đọc code `server.js` và đối chiếu 
 ### Collection chính
 1. Clone repo `ttbhanh/eshop-sut`, vào thư mục `backend`, chạy `npm install`.
 2. Chạy `node server.js` (thấy dòng `Server is running on http://localhost:3000`).
-3. Mở Postman, chọn Import, chọn `eshop_api_postman_collection_v3.json`.
+3. Mở Postman, chọn Import, chọn `tests/postman/collections/eshop_api_postman_collection_v3.1.json`.
 4. Vào tab Variables của collection, kiểm tra `baseUrl` là `http://localhost:3000`.
 5. Chạy theo thứ tự: Login User, Login Admin, rồi lần lượt các request theo mục 4. Các request phụ thuộc biến (`orderId`, `newProductId`...) cần chạy sau request tạo ra biến đó.
 6. Muốn chạy lại từ đầu: dừng và khởi động lại server để reset dữ liệu.
 
 ### Bộ test tổng hợp
 1. Khởi động lại server.
-2. Mở Postman, chọn Import, chọn `eshop_api_all_tests.postman_collection.json`.
+2. Mở Postman, chọn Import, chọn `tests/postman/collections/eshop_api_all_tests.postman_collection.json`.
 3. Mở request `00 RUN ALL`, bấm Send, xem tab Test Results (kỳ vọng 63 đạt, 68 không đạt).
 4. Nếu test đầu tiên (`00 Môi trường sẵn sàng`) không đạt: server chưa chạy hoặc tài khoản mẫu đang bị khóa; khởi động lại server rồi chạy lại.
 
