@@ -202,7 +202,7 @@ Contract Testing là phương pháp kiểm thử xác minh thỏa thuận giao t
 | **3** | **Cơ chế Assertions** | Chai.js BDD (`pm.test()`, `pm.expect()`) | Native Fuzzy Matchers (`#number`, `#string`) | Contract Value & Type Matchers |
 | **4** | **Data-Driven Testing** | File CSV/JSON qua Collection Runner | Bảng `Examples` trực tiếp trong Feature | Khởi tạo qua Provider States |
 | **5** | **Khả năng bắt API Drift** | Kém (chỉ kiểm tra tại thời điểm SUT online) | Kém (phụ thuộc SUT thật đang chạy) | **Tuyệt vời** (Bắt lỗi từ file hợp đồng độc lập) |
-| **6** | **Tích hợp CI/CD** | Newman CLI + Báo cáo HTML Extra | GitHub Actions workflow (`karate-ci.yml`) tự động hóa: Quản lý vòng đời Backend SUT (Healthcheck polling), Maven Surefire Runner, xuất HTML Artifacts & Job Summary | Pact CLI + Pact Broker (`can-i-deploy`) |
+| **6** | **Tích hợp CI/CD** | Newman CLI + Báo cáo HTML Extra (đã tích hợp workflow GitHub Actions tại `.github/workflows/postman-ci.yml`) | GitHub Actions workflow (`karate-ci.yml`) tự động hóa: Quản lý vòng đời Backend SUT (Healthcheck polling), Maven Surefire Runner, xuất HTML Artifacts & Job Summary | Pact CLI + Pact Broker (`can-i-deploy`) |
 | **7** | **Độ phức tạp cài đặt** | Cực thấp (giao diện kéo thả + npm) | Trung bình (cần Java 17 + Maven) | Trung bình đến cao (cần tư duy Consumer/Provider) |
 | **8** | **Tài nguyên tiêu tốn** | Thấp khi chạy Newman, nặng khi mở GUI | Rất nhẹ, chạy headless tối ưu | Rất nhẹ, mock server cục bộ |
 
@@ -242,30 +242,59 @@ Hệ thống SUT (System Under Test) được cung cấp bởi bộ môn là **E
 ### 4.2. Công cụ 1 — Postman & Newman (Kịch bản P1, P2, P3)
 *Người thực hiện chính: Hà Quốc Kiên & Nguyễn Hoàng Anh Tú*
 
-#### 4.2.1. Kịch bản P1: Cài đặt, Cấu hình Environment & Request Cơ bản
-- **Environment:** Tạo `EShop_Local` với biến `baseUrl = http://localhost:3000`.
-- **Request 1 (`POST /api/auth/login`):** Đăng nhập với tài khoản `test@eshop.com` / `Test1234!`. Kiểm tra Status 200, lưu token vào biến môi trường:
-  ```javascript
-  pm.test("Status code is 200", function () {
-      pm.response.to.have.status(200);
-      var res = pm.response.json();
-      pm.environment.set("jwt_token", res.token);
-  });
-  ```
-- **Request 2 (`GET /api/products`):** Truy vấn danh mục sản phẩm, kiểm tra Status 200 và header `Content-Type: application/json`.
+> **Ghi chú ghép file:** thay mục 4.2.1 và 4.2.2 cũ bằng hai mục bên dưới. Mục 4.2.3 (P3) giữ nguyên bản hiện có. Hai mục 4.2.4 và 4.2.5 là mục mới, đặt ngay sau 4.2.3. Xóa dòng ghi chú này khi ghép.
 
-#### 4.2.2. Kịch bản P2: Runner, Data-Driven CSV & Advanced Checkpoints
-- Sử dụng file dữ liệu [`login_data.csv`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/login_data.csv) (15 trường hợp kiểm thử) và [`product_ids.csv`](file:///home/quocky05/academy/software-testing/seminar/SUT-EShop/tests/postman/data/product_ids.csv).
-- Áp dụng kỹ thuật nạp dữ liệu:
+#### 4.2.1. Kịch bản P1: Thiết lập Collection, Xác thực & Chained Token
+Nhóm xây dựng hai collection bổ sung cho nhau, đặt tại [`tests/postman/collections/`](../../tests/postman/collections):
+
+| Collection | Quy mô | Vai trò |
+|---|---|---|
+| `eshop_api_postman_collection_v3.1.json` (collection chính) | 68 request, 130 assertion | Minh họa từng request, response mẫu, Chained Token, JSON Schema và Data-driven |
+| `eshop_api_all_tests.postman_collection.json` (bộ test tổng hợp) | 1 request kích hoạt, hơn 200 lời gọi `pm.sendRequest` bên trong, 131 assertion | Phủ rộng các yêu cầu SRS và bảo mật, tự tạo và tự dọn dữ liệu nên chạy lặp lại được |
+
+- **Biến collection:** `baseUrl = http://localhost:3000` được điền tay. Các biến còn lại (`userToken`, `adminToken`, `orderId`, `newUserId`, `resetToken`, `newProductId`, `newCategoryId`, `newCouponId`...) do script của từng request tự ghi vào. Collection chính dùng biến collection nên không cần file Environment riêng.
+- **Xác thực:** Bearer Token `{{userToken}}` đặt ở cấp collection, các request con kế thừa. Request quản trị dùng `{{adminToken}}`. Request công khai và các ca "không có token" chọn No Auth.
+- **Chained Token:** đăng nhập một lần, script lưu token để các request sau dùng lại:
   ```javascript
-  var expectedStatus = pm.iterationData.get("status");
-  pm.test("Status matches test matrix: " + expectedStatus, function () {
-      pm.response.to.have.status(expectedStatus);
-  });
+  // Auth / Login User  (POST {{baseUrl}}/api/login, tài khoản test@eshop.com / Test1234!)
+  const body = pm.response.json();
+  if (body.token) pm.collectionVariables.set("userToken", body.token);
+
+  pm.test("Status 200", () => pm.response.to.have.status(200));
+  pm.test("Có token", () => pm.expect(pm.response.json().token).to.be.a("string"));
+  pm.test("User không lộ mật khẩu", () => pm.expect(pm.response.json().user).to.not.have.property("password"));
   ```
-- **Bộ Checkpoints nâng cao:**
-  1. *SLA Response Time:* `pm.expect(pm.response.responseTime).to.be.below(200);`
-  2. *Schema Validation:* Kiểm tra các thuộc tính `id`, `name`, `price`, `stock` luôn tồn tại trong mỗi phần tử.
+  Chuỗi `userToken`, `adminToken` $\rightarrow$ `orderId` giúp luồng đăng nhập, thêm giỏ hàng, thanh toán, xem và hủy đơn chạy liền mạch mà không phải sao chép tay.
+- **Quy ước assertion:** mọi assertion được viết theo **hành vi đúng của đặc tả SRS**, không viết theo những gì hệ thống đang trả về. Vì vậy một test đỏ nghĩa là hệ thống lệch đặc tả (lỗi của SUT), không phải lỗi của script. Đây cũng là nguyên tắc "kỳ vọng lấy từ đặc tả, không nắn theo lỗi của hệ thống" mà nhóm áp dụng cho Karate.
+
+#### 4.2.2. Kịch bản P2: Runner, Data-Driven CSV & JSON Schema Checkpoints
+- **Collection Runner:** chạy tuần tự toàn bộ collection chính. Các thư mục được sắp theo luồng nghiệp vụ: Auth, Products, Cart, Orders, Coupons, Admin, Users, Categories, Orders - Cancel, Errors (28 ca phản hồi lỗi), và hai thư mục Data-driven.
+- **Data-driven bằng CSV:** hai request (`DataDriven - Login` và `DataDriven - Products`) đọc dữ liệu từ file CSV, mỗi dòng là một lần chạy. Các cột được nạp vào biến `dd_*`:
+  - Đăng nhập: `dd_case`, `dd_email`, `dd_password`, `dd_expected_status`, `dd_expected_error`.
+  - Chi tiết sản phẩm: `dd_case`, `dd_id`, `dd_expected_status`, `dd_name_contains`.
+
+  ```javascript
+  // DataDriven - Login: mỗi dòng CSV là một lần chạy
+  const caseId = pm.variables.get("dd_case");
+  const expected = Number(pm.variables.get("dd_expected_status"));
+  pm.test(`[${caseId}] Mã trạng thái ${expected}`, () => pm.response.to.have.status(expected));
+  ```
+  Lệnh chạy riêng từng thư mục bằng Newman (các file `login_data.csv`, `product_ids.csv` đặt tại [`tests/postman/data/`](../../tests/postman/data)):
+  ```bash
+  newman run tests/postman/collections/eshop_api_postman_collection_v3.1.json \
+    --folder "DataDriven - Login" -d tests/postman/data/login_data.csv
+  ```
+  Khi chạy bằng tay trong Postman, các biến `dd_*` giữ giá trị mặc định đã khai báo trong collection.
+- **JSON Schema Checkpoints:** collection chính có 36 checkpoint kiểm tra cấu trúc response bằng `pm.response.to.have.jsonSchema(schema)`, gồm các trường bắt buộc (`required`), kiểu dữ liệu và ràng buộc giá trị. Ví dụ checkpoint của `POST /api/register`:
+  ```javascript
+  const schema = {
+    "type": "object",
+    "required": ["message", "id"],
+    "properties": { "message": { "type": "string" }, "id": { "type": "integer" } }
+  };
+  pm.test("Schema Đăng ký: message và id", () => pm.response.to.have.jsonSchema(schema));
+  ```
+  Nhờ checkpoint này, lỗi kiểu dữ liệu `price` của sản phẩm (B3) được phát hiện ngay, dù server vẫn trả HTTP 200.
 
 #### 4.2.3. Kịch bản P3: Tự động hóa Newman CLI & Báo cáo HTML
 Chạy toàn bộ kiểm thử từ dòng lệnh không cần mở giao diện đồ họa:
@@ -277,6 +306,45 @@ newman run deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-te
   --reporter-htmlextra-export deliverables/05-management/weekly-reports/week-05/Ha-Quoc-Kien/api-tests/reports/newman-dashboard.html
 ```
 - **Kết quả:** Báo cáo HTML Dashboard trực quan hóa toàn bộ số lượng passed/failed assertions, biểu đồ thời gian phản hồi phục vụ pipeline CI/CD.
+
+#### 4.2.4. Kết quả kiểm thử Postman trên SUT EShop
+Kết quả dưới đây được xác nhận bằng Newman trên hệ thống thật (khởi động lại server trước mỗi lần chạy):
+
+| Collection | Request | Assertion | Đỏ | Xanh |
+|---|:---:|:---:|:---:|:---:|
+| Collection chính (v3.1) | 68 | 130 | 18 | 112 |
+| Bộ test tổng hợp | 229 (Newman đếm cả lời gọi `pm.sendRequest`) | 131 | 68 | 63 |
+
+- **Phát hiện chính:** 38 request chính của luồng nghiệp vụ đều trả **HTTP 200**, kể cả khi đặc tả yêu cầu 401, 403 hoặc 404. Một bộ test chỉ kiểm tra mã trạng thái sẽ báo xanh toàn bộ. Các lỗi chỉ lộ ra khi kiểm tra nội dung response, cấu trúc dữ liệu và quy tắc nghiệp vụ. Đây là minh chứng thực nghiệm cho luận điểm "API trả 200 nhưng vẫn sai" ở mục 2.3.
+- **Tổng số lỗi:** 42 lỗi (B1 đến B42) và 3 ghi nhận bảo mật (O2 đến O4), mỗi lỗi đều có request chứng minh, kỳ vọng theo SRS và kết quả thực tế trong báo cáo chi tiết `Postman_Test_Report.md`.
+
+| Mức độ | Số lỗi | Ví dụ |
+|---|:---:|---|
+| Cao | 10 | Lộ mật khẩu, thiếu phân quyền, tính giảm giá sai, SQL injection |
+| Trung bình | 22 | Thiếu kiểm tra dữ liệu đầu vào, sai quy tắc giỏ hàng, đơn hàng, mã giảm giá |
+| Thấp | 10 | Mã trạng thái sai, kiểm tra đầu vào nhẹ, lộ lỗi cơ sở dữ liệu |
+
+Bốn lỗi tiêu biểu:
+
+| Lỗi | Kỳ vọng theo SRS | Thực tế |
+|---|---|---|
+| B1: lộ mật khẩu | Response đăng nhập không chứa mật khẩu (SEC-01) | `user.password` trả về dạng chữ thường (`Test1234!`) |
+| B4: tính giảm giá sai | Đơn 1.000.000 dùng mã giảm 10% còn 900.000 | `discount_amount = -9000000`, `final_amount = 10000000` |
+| B5: thiếu phân quyền | Người dùng thường gọi API quản trị bị từ chối 403 (FR-12) | 200 kèm danh sách toàn bộ người dùng |
+| B17: SQL injection | Chuỗi tìm kiếm chỉ được xử lý như văn bản (SEC-05) | Chuỗi `zzz' OR 1=1 --` trả về toàn bộ sản phẩm; dấu `'` gây lỗi 500 |
+
+- **Đối chiếu với Karate:** hai khiếm khuyết mà Karate K2 phát hiện (kiểu `price` là chuỗi ở sản phẩm có ID chẵn, và sản phẩm không tồn tại trả 200 thay vì 404) tương ứng với B3 và B7 trong danh sách của Postman. Postman khảo sát rộng hơn nên tìm thêm nhiều lỗi nằm ngoài luồng sản phẩm.
+- **Lưu ý khi chạy lại:** dữ liệu cơ sở dữ liệu và giỏ hàng bị dùng chung giữa các lần chạy, nên cần khởi động lại server trước mỗi lần. Nếu chạy lại collection chính mà không khởi động lại, số assertion đỏ tăng từ 18 lên 22.
+
+#### 4.2.5. Tích hợp Postman vào CI/CD (GitHub Actions — `postman-ci.yml`)
+Để đưa collection Postman vào vòng đời tích hợp liên tục, nhóm triển khai workflow [`.github/workflows/postman-ci.yml`](../../.github/workflows/postman-ci.yml), theo cùng khuôn với workflow Karate.
+
+1. **Kích hoạt:** tự động khi có push hoặc pull request thay đổi `backend/**`, `tests/postman/**` hoặc file workflow; có thể chạy thủ công (`workflow_dispatch`) với tham số `fail_on_red`.
+2. **Hai job song song (matrix):** mỗi collection chạy trên một máy ảo mới với một server mới. Việc tách job là bắt buộc, vì dữ liệu và giỏ hàng bị dùng chung giữa các lần chạy; chạy nối tiếp trên một server sẽ cho kết quả đỏ sai.
+3. **Vòng đời backend:** cài Node 20 và Newman, `npm ci`, khởi động server nền (`npm start`), rồi dùng Readiness Probe bằng `curl` tới `GET /api/products` (tối đa 30 giây) trước khi chạy test.
+4. **Chạy Newman:** `newman run <collection> --reporters cli,htmlextra`. Mặc định dùng `--suppress-exit-code`, vì collection được viết theo đặc tả nên cố ý có test đỏ (lỗi thật của SUT); nếu không thì job luôn đỏ và không thể phân biệt lỗi của hệ thống với lỗi của pipeline. Khi chạy tay, chọn `fail_on_red = true` để job đỏ khi có test thất bại.
+5. **Lưu vết:** nhờ `if: always()`, báo cáo HTML của từng collection (`postman-report-*`, lưu 14 ngày) và log máy chủ (`backend-log-*`) luôn được tải lên Artifacts.
+6. **Kết quả xác nhận:** chạy thật trên GitHub Actions cho kết quả khớp với chạy cục bộ: collection chính 130 assertion với 18 đỏ, bộ test tổng hợp 131 assertion với 68 đỏ. Hai test giả mạo JWT (A22, A23) cần thư viện `crypto-js`; nếu môi trường Newman không có thư viện này, hai test được bỏ qua (skip) chứ không làm hỏng cả bộ test.
 
 ---
 
@@ -716,6 +784,9 @@ Nhóm triển khai mô hình cộng tác giữa AI và Kỹ sư kiểm thử the
 |---|---|---|---|
 | **Postman / Newman** | Lỗi 401 Unauthorized hàng loạt khi chạy Newman | Token lưu ở biến Global bị ghi đè hoặc hết hạn giữa chừng | Thiết lập Pre-request Script tự động gọi API Login lấy token mới ở cấp Collection |
 | **Postman / Newman** | Newman chạy sai bộ dữ liệu CSV | Header file CSV chứa ký tự ẩn (BOM UTF-8) hoặc khoảng trắng thừa | Kiểm tra header file CSV bằng VS Code, loại bỏ BOM |
+| **Postman / Newman** | Số test đỏ tăng bất thường khi chạy lại (22 thay vì 18) | Dữ liệu và giỏ hàng của lần chạy trước còn lại trong cơ sở dữ liệu | Khởi động lại server trước mỗi lần chạy; trên CI mỗi job dùng một máy mới |
+| **Postman / Newman (CI)** | `ENOENT: no such file or directory` khi chạy Newman | Đường dẫn collection trong workflow sai (collection nằm trong `tests/postman/collections/`) | Khai báo đúng đường dẫn trong `matrix.file` |
+| **Postman / Newman (CI)** | Job luôn đỏ dù chỉ có lỗi của SUT | Newman trả mã thoát khác 0 khi có test đỏ | Dùng `--suppress-exit-code` và đọc báo cáo HTML trong Artifacts |
 | **Karate** | Lỗi kết nối `Connection Refused: localhost:3000` | Backend SUT chưa được khởi động trước khi chạy lệnh Maven | Cấu hình Hook trong Karate hoặc chạy `./run_servers.sh` trước khi chạy test |
 | **Karate** | `match each response` thất bại ngẫu nhiên | Một số phần tử trong cơ sở dữ liệu bị thiếu trường hoặc null | Dùng matcher dạng tùy chọn: `stock: '##number'` (chấp nhận số hoặc null) |
 | **Karate** | Kịch bản K3 thất bại do lỗi 403 `Tài khoản đã bị khóa` | SUT EShop tự động khóa tài khoản 3 phút nếu `login_attempts >= 3` khi chạy lặp lại | Khởi tạo tài khoản động theo timestamp (`karate_k3_<timestamp>@eshop.com`) tại Step 1 kịch bản K3 |

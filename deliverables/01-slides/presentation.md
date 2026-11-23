@@ -344,7 +344,7 @@ pm.test("Status matches test case", function() {
 <div>
 
 ### Demo Kịch bản P1 & P2:
-* **P1 (Basic):** `POST /api/auth/login` (Lưu token) $\rightarrow$ `GET /api/products` (Mã 200, Content-Type JSON).
+* **P1 (Basic):** `POST /api/login` (Lưu token) $\rightarrow$ `GET /api/products` (Mã 200, Content-Type JSON).
 * **P2 (Runner & Checkpoints):**
   * Nạp file `product_ids.csv` quét kiểm thử biên.
   * Checkpoint SLA: `pm.expect(responseTime).to.be.below(200);`
